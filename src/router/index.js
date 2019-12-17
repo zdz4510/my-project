@@ -32,6 +32,30 @@ const routes = [
           import(
             /* webpackChunkName: "colorLibrary" */ "../views/base/pages/color-library.vue"
           )
+      },
+      {
+        path: "salaryLevel",
+        name: "salaryLevel",
+        component: () =>
+          import(
+            /* webpackChunkName: "salaryLevel" */ "../views/base/pages/salary-level.vue"
+          )
+      },
+      {
+        path: "toolLibrary",
+        name: "toolLibrary",
+        component: () =>
+          import(
+            /* webpackChunkName: "salaryLevel" */ "../views/base/pages/tool-library.vue"
+          )
+      },
+      {
+        path: "deviceLibrary",
+        name: "deviceLibrary",
+        component: () =>
+          import(
+            /* webpackChunkName: "salaryLevel" */ "../views/base/pages/device-library.vue"
+          )
       }
     ]
   },
