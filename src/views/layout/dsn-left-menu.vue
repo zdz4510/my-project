@@ -21,28 +21,48 @@
       @close="handleClose"
       :collapse="!isCollapse"
     >
-      <el-submenu index="1">
+      <el-submenu index="base">
         <template slot="title">
           <i class="el-icon-location"></i>
-          <span slot="title">导航一</span>
+          <span slot="title">基础库</span>
         </template>
-        <el-submenu index="1-4">
-          <span slot="title">选项4</span>
-          <el-menu-item index="/b/1-4-1">选项1</el-menu-item>
-        </el-submenu>
+        <el-menu-item index="/base/colorLibrary">颜色库</el-menu-item>
+        <el-menu-item index="/base/toolLibrary">工具库</el-menu-item>
+        <el-menu-item index="/base/deviceLibrary">设备库</el-menu-item>
+        <el-menu-item index="/base/salaryLevel">工资级别</el-menu-item>
       </el-submenu>
-      <el-menu-item index="2">
-        <i class="el-icon-menu"></i>
-        <span slot="title">导航二</span>
-      </el-menu-item>
-      <el-menu-item index="3" disabled>
-        <i class="el-icon-document"></i>
-        <span slot="title">导航三</span>
-      </el-menu-item>
-      <el-menu-item index="4">
-        <i class="el-icon-setting"></i>
-        <span slot="title">导航四</span>
-      </el-menu-item>
+      <el-submenu index="set">
+        <template slot="title">
+          <i class="el-icon-menu"></i>
+          <span slot="title">设置</span>
+        </template>
+        <el-menu-item index="/set/authority">权限管理</el-menu-item>
+        <el-menu-item index="/set/message">信息管理</el-menu-item>
+      </el-submenu>
+      <el-submenu index="operation">
+        <template slot="title">
+          <i class="el-icon-document"></i>
+          <span slot="title">操作</span>
+        </template>
+        <el-menu-item index="/operation/control">在制管控</el-menu-item>
+        <el-menu-item index="/operation/data">基础数据管理</el-menu-item>
+      </el-submenu>
+      <el-submenu index="query">
+        <template slot="title">
+          <i class="el-icon-setting"></i>
+          <span slot="title">查询</span>
+        </template>
+        <el-menu-item index="/query/materiel">物料管理</el-menu-item>
+        <el-menu-item index="/query/warning">预警管理</el-menu-item>
+      </el-submenu>
+      <el-submenu index="common">
+        <template slot="title">
+          <i class="el-icon-eleme"></i>
+          <span slot="title">常用</span>
+        </template>
+        <el-menu-item index="/common/set">常用设置</el-menu-item>
+        <el-menu-item index="/common/other">其他...</el-menu-item>
+      </el-submenu>
     </el-menu>
   </div>
 </template>
@@ -84,9 +104,14 @@ export default {
   }
   .header {
     display: flex;
-    justify-content: center;
-    .el-input__inner {
-      border-radius: 0px;
+    justify-content: space-between;
+    .el-input {
+      // margin: 0 -10px 0 10px;
+      padding: 3px 8px;
+      .el-input__inner {
+        width: 100%;
+        border-radius: 0px;
+      }
     }
     .el-icon-s-fold {
       font-size: 40px;
@@ -96,8 +121,8 @@ export default {
   .el-menu--collapse {
     width: 60px;
   }
-  i{
-      color: #fff;
+  i {
+    color: #fff;
   }
 }
 </style>
