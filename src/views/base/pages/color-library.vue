@@ -1,5 +1,5 @@
 <template>
     <div>
-        颜色库 tests
+        颜色库 test
     </div>
 </template>
