@@ -56,6 +56,14 @@ const routes = [
           import(
             /* webpackChunkName: "salaryLevel" */ "../views/base/pages/device-library.vue"
           )
+      },
+      {
+        path: "customerStorage",
+        name: "customerStorage",
+        component: () =>
+          import(
+            /* webpackChunkName: "salaryLevel" */ "../views/base/pages/customer-storage.vue"
+          )
       }
     ]
   },

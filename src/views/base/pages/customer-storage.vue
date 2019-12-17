@@ -175,11 +175,11 @@ export default {
   }
 };
 </script>
-<style lang="less">
+<style lang="scss">
 .el-input {
   display: inline;
 }
-.el-input /deep/ .el-input__inner {
+.el-input  .el-input__inner {
   width: 75%;
   height: 36px;
 }
