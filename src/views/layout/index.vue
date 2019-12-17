@@ -1,8 +1,8 @@
 <template>
     <div id="layout">
-        <DsnHeader /> 
-        <DsnLeftMenu />
-        <div class="content">
+        <DsnHeader   /> 
+        <DsnLeftMenu @handleCollapse="handleCollapse" />
+        <div class="content" :class="isCollapse?'active':''">
             <div class="routerHistory">
 
             </div>
@@ -24,6 +24,16 @@ export default {
         DsnFooter,
         DsnHeader,
         DsnLeftMenu
+    },
+    data(){
+        return {
+            isCollapse:true
+        }    
+    },
+    methods:{
+        handleCollapse(status){
+            this.isCollapse = (status == 1?true:false)
+        }
     }
     
 
@@ -35,12 +45,15 @@ export default {
       height: 100%;
       overflow: hidden;
        .content{
-           padding: 60px 0 10px 300px;
+           padding: 60px 0 10px 60px;
            background: yellowgreen;
            display: flex;
            flex-direction: column;
            height: 100%;
            overflow: hidden;
+           &.active{
+               padding-left: 200px;
+           }
            .routerHistory{
                height: 40px;
                width: 100%;
