@@ -3,7 +3,7 @@
 		<div class="search-bar">
 			<el-form :inline="true" :model="searchForm" ref="searchForm" :rules="rules" class="form-style">
 				<el-form-item label="站点:" prop="station">
-					<el-input v-model="searchForm.station" ></el-input>
+					<el-input v-model="searchForm.station" disabled=""></el-input>
 				</el-form-item>
 				<el-form-item label="工序:" prop="operation">
 					<el-autocomplete
@@ -43,7 +43,7 @@ import {getAllOperation, getDataByStation} from '../../../api/material/operation
 				const pinyin = ['上海', '北京', '广州', '深圳', '南京', '西安', '成都'];
 				cities.forEach((city, index) => {
 					data.push({
-						label: city,
+						label: city+' -- '+city,
 						key: index,
 						pinyin: pinyin[index]
 					});
@@ -52,7 +52,7 @@ import {getAllOperation, getDataByStation} from '../../../api/material/operation
 			};
 			return {
 				data: generateData(),
-				value: [],
+				value: [2],
 				filterMethod(query, item) {
 					return item.pinyin.indexOf(query) > -1;
 				},
@@ -106,8 +106,8 @@ import {getAllOperation, getDataByStation} from '../../../api/material/operation
 			},
 			search(){
 				getDataByStation(this.searchForm).then(data => {
-				console.log(data,'da')
-			})
+					console.log(data,'da')
+				})
 			},
 			submitForm(formName) {
 				this.$refs[formName].validate((valid) => {

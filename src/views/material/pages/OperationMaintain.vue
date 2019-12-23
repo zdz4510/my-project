@@ -24,7 +24,7 @@
 		<div class="operate ml30 mtb10">
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="search">查询</el-button>
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="save('addForm')">保存</el-button>
-			<el-button class="mr25 pad1025" size="small" type="warning" @click="del">删除</el-button>
+			<el-button class="mr25 pad1025" size="small" type="warning" @click="del('addForm')">删除</el-button>
 		</div>
 		<div class="content">
 			<el-tabs v-model="activeName" type="card" @tab-click="handleClick">
@@ -170,7 +170,7 @@ import {getAllOperation, getDataByOperation, addOperation, deleteOperatin} from 
 				});
 				
 			},
-			del(){
+			del(formName){
 				this.$confirm('是否删除该条记录?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -186,10 +186,14 @@ import {getAllOperation, getDataByOperation, addOperation, deleteOperatin} from 
 				}
 				deleteOperatin(params).then(data=>{
 					console.log(data,'adddata')
-					this.$message({
+					if(data.data.message == 'success'){
+						this.$refs[formName].resetFields();
+						this.searchForm.operation = ''
+						this.$message({
             type: 'success',
             message: '删除成功!'
           });
+					}
 				})
           
         }).catch(() => {
