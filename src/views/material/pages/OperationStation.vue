@@ -11,7 +11,6 @@
 						v-model="searchForm.operation"
 						:fetch-suggestions="querySearch"
 						placeholder="请输入内容"
-						@select="pickTenantSiteCode"
 					></el-autocomplete>
 				</el-form-item>
 			</el-form>
@@ -22,11 +21,11 @@
 		</div>
 		<div class="content">
 			<el-transfer
+			class="transfer"
 				filterable
-				:filter-method="filterMethod"
 				:titles="['未分配站位', '已分配站位']"
 				v-model="value"
-				:data="data">
+				:data="undistributedArr">
 			</el-transfer>
 		</div>
 	</div>
@@ -37,21 +36,10 @@ import {getAllOperation, getDataByStation} from '../../../api/material/operation
 	export default {
 		name:'operation-station',
 		data() {
-			const generateData = () => {
-				const data = [];
-				const cities = ['上海', '北京', '广州', '深圳', '南京', '西安', '成都'];
-				const pinyin = ['上海', '北京', '广州', '深圳', '南京', '西安', '成都'];
-				cities.forEach((city, index) => {
-					data.push({
-						label: city+' -- '+city,
-						key: index,
-						pinyin: pinyin[index]
-					});
-				});
-				return data;
-			};
 			return {
-				data: generateData(),
+				undistributed:[],
+				allocate:[],
+				undistributedArr: [],
 				value: [2],
 				filterMethod(query, item) {
 					return item.pinyin.indexOf(query) > -1;
@@ -106,7 +94,17 @@ import {getAllOperation, getDataByStation} from '../../../api/material/operation
 			},
 			search(){
 				getDataByStation(this.searchForm).then(data => {
-					console.log(data,'da')
+					let arr = []
+					console.log(data.data.data.undistributed,'da')
+					this.undistributed = data.data.data.undistributed
+					this.undistributed.forEach((item, index) => {
+						arr.push({
+							label: item.workCenter+' -- '+item.station+' -- '+item.stationDes,
+							key: index,
+						});
+					});
+					this.undistributedArr = arr
+					console.log(this.undistributedArr,'dafads')
 				})
 			},
 			submitForm(formName) {
@@ -146,4 +144,6 @@ import {getAllOperation, getDataByStation} from '../../../api/material/operation
 		background: #FFFFFF;
 		padding: 10px;
 	}
+	.el-transfer /deep/ .el-transfer-panel { width: 300px !important; }
+	
 </style>
