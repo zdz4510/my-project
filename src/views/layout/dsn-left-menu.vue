@@ -21,7 +21,19 @@
       @close="handleClose"
       :collapse="!isCollapse"
     >
-      <el-submenu index="base">
+			<el-submenu index="material">
+				<template slot="title">
+					<i class="el-icon-location"></i>
+					<span slot="title">操作</span>
+				</template>
+				<el-menu-item index="/material/material-info">物料维护</el-menu-item>
+				<el-menu-item index="/material/operation-maintain">工序维护</el-menu-item>
+				<el-menu-item index="/material/operation-station">工序与站位关系维护</el-menu-item>
+				<el-menu-item index="/material/work-center">工作中心</el-menu-item>
+				<el-menu-item index="/material/next-number">编码规则</el-menu-item>
+			</el-submenu>
+			
+      <!-- <el-submenu index="base">
         <template slot="title">
           <i class="el-icon-location"></i>
           <span slot="title">基础库</span>
@@ -62,7 +74,7 @@
         </template>
         <el-menu-item index="/common/set">常用设置</el-menu-item>
         <el-menu-item index="/common/other">其他...</el-menu-item>
-      </el-submenu>
+      </el-submenu> -->
     </el-menu>
   </div>
 </template>

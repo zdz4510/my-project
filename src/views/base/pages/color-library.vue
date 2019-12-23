@@ -44,6 +44,13 @@
 </template>
 
 <script>
+	import {
+		getSalaryLevelPage,
+		// addSalaryLevel,
+		// updateSalaryLevel,
+		// deleteSalaryLevel
+	} from "../../../api/base/color.library.api.js";
+
 export default {
   data() {
     return {
@@ -74,7 +81,30 @@ export default {
   methods: {
     onSubmit() {},
     handleSelectionChange() {}
-  }
+  },
+	created() {
+		const data = {
+			currentPage: 1,
+			pageSize: 10,
+			salaryLevelName: '中文'
+		};
+		// this.$http.get('http://192.168.2.81:20001/sps/salaryLevelPage')
+		// .then(function (response) {
+		// 	// handle success
+		// 	console.log(response);
+		// })
+		// .catch(function (error) {
+		// 	// handle error
+		// 	console.log(error);
+		// })
+		// getSalaryLevelPage(data);
+		getSalaryLevelPage(data).then(data => {
+			// this.tableData = data.data.data;
+			// this.formInline.user = "";
+			console.log(data);
+		});
+
+	},
 };
 </script>
 <style>

@@ -10,7 +10,7 @@
                 <router-view></router-view>
            </div>
         </div>
-        <DsnFooter />
+        <DsnFooter v-if="false" />
     </div>
 </template>
 
@@ -45,9 +45,10 @@ export default {
       height: 100%;
       overflow: hidden;
        .content{
-           padding: 60px 0 10px 60px;
+           padding: 70px 0 0px 60px;
            background: yellowgreen;
            display: flex;
+           box-sizing:border-box;
            flex-direction: column;
            height: 100%;
            overflow: hidden;
@@ -55,16 +56,16 @@ export default {
                padding-left: 200px;
            }
            .routerHistory{
-               height: 40px;
+               height: 46px;
                width: 100%;
-               background: black;
+               background: #006600;
            }
 
            .pageContent{
                flex: 1; 
                overflow: hidden;
                overflow-y: scroll;
-               background: white;
+               background: #F7F7F7;
            }
 
     }

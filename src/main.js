@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
+import './config'
 import ElementUI from 'element-ui';
 import './assets/css/element-variables.scss';
 import './assets/css/base.css'

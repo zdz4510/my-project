@@ -1,11 +1,12 @@
-import Vue from "vue";
+// import Vue from "vue";
 import axios from "axios";
-import qs from "qs";
+// import qs from "qs";
 axios.defaults.timeout = 60000;
 axios.interceptors.request.use(
     config => {
-        config.data = qs.stringify(config.data);
-        config.headers["Content-Type"] = "application/x-www-form-urlencoded";
+        // config.data = qs.stringify(config.data);
+        // config.headers["Content-Type"] = "application/x-www-form-urlencoded";
+				config.headers["Content-Type"] = "application/json;charset=UTF-8";
         // config.headers.Ticket = sessionStorage.getItem('Ticket');
         // config.headers["X-Auth-Token"] = `token ${a}`;
         // console.log(config)
@@ -84,4 +85,5 @@ axios.interceptors.response.use(
 /**
  * 上面是axios的默认配置
  */
-Vue.prototype.$http = axios;
+// Vue.prototype.$http = axios;
+export default axios;
