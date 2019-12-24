@@ -4,7 +4,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/css/add-material.d6f2073e.css"
   },
   {
-    "revision": "bb02ebee3cc9a4ec80c5",
+    "revision": "a60210cc5d29d2bfe302",
     "url": "/css/app.ceb22d33.css"
   },
   {
@@ -24,8 +24,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/css/operation-maintain.253ddebb.css"
   },
   {
-    "revision": "ba0b29738a0f2e49efaa",
-    "url": "/css/operation-station.082231e8.css"
+    "revision": "b5436f1df17320d3ef91",
+    "url": "/css/operation-station.ba04fe43.css"
   },
   {
     "revision": "dfcb9121f6972a8f1b01",
@@ -40,7 +40,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/fonts/element-icons.732389de.ttf"
   },
   {
-    "revision": "bd598e8d78ff7fa399eb70934853f93f",
+    "revision": "849de1b2b5eb94a9428bb9bc791d48fb",
     "url": "/index.html"
   },
   {
@@ -52,8 +52,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/js/add-material~material-info~next-number~operation-maintain~operation-station~work-center.eda75514.js"
   },
   {
-    "revision": "bb02ebee3cc9a4ec80c5",
-    "url": "/js/app.7dde4fca.js"
+    "revision": "a60210cc5d29d2bfe302",
+    "url": "/js/app.db524d9a.js"
   },
   {
     "revision": "5e7871a23fa61c10bf51",
@@ -80,8 +80,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/js/operation-maintain.d119bb1e.js"
   },
   {
-    "revision": "ba0b29738a0f2e49efaa",
-    "url": "/js/operation-station.3d9d7882.js"
+    "revision": "b5436f1df17320d3ef91",
+    "url": "/js/operation-station.431b193d.js"
   },
   {
     "revision": "dfcb9121f6972a8f1b01",
