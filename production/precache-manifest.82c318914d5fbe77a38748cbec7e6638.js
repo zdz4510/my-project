@@ -4,7 +4,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/css/add-material.d6f2073e.css"
   },
   {
-    "revision": "a60210cc5d29d2bfe302",
+    "revision": "f3efc095ee8938946cfc",
     "url": "/css/app.ceb22d33.css"
   },
   {
@@ -40,7 +40,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/fonts/element-icons.732389de.ttf"
   },
   {
-    "revision": "849de1b2b5eb94a9428bb9bc791d48fb",
+    "revision": "4db81f0940c3b4b6e48182bd6ffbd27a",
     "url": "/index.html"
   },
   {
@@ -52,8 +52,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/js/add-material~material-info~next-number~operation-maintain~operation-station~work-center.eda75514.js"
   },
   {
-    "revision": "a60210cc5d29d2bfe302",
-    "url": "/js/app.db524d9a.js"
+    "revision": "f3efc095ee8938946cfc",
+    "url": "/js/app.de0725cc.js"
   },
   {
     "revision": "5e7871a23fa61c10bf51",

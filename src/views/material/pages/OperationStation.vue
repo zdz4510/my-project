@@ -106,7 +106,16 @@ import {getAllOperation, getDataByStation, addStation} from '../../../api/materi
 						});
 					});
 					this.undistributedArr = arr
-					console.log(this.undistributedArr,'dafads')
+					this.allocate = JSON.stringify(data.data.data.allocate)
+					let allocateData = data.data.data.allocated
+					console.log(allocateData)
+					let newAllocate = []
+					for(let i = 0; i < allocateData.length; i++){
+						let str = JSON.stringify(allocateData[i])
+						newAllocate.push(str)
+					}
+					this.allocate = newAllocate
+					console.log(this.undistributedArr,this.allocate,'dafads')
 				})
 			},
 			submitForm(formName) {
@@ -126,14 +135,29 @@ import {getAllOperation, getDataByStation, addStation} from '../../../api/materi
 				this.$router.push({path:'/addMaterial'})
 			},
 			save(){
-				let params = this.allocateArr
-				addStation(params).then(data => {
-					console.log(data)
+				let params = this.allocate
+				let arr = []
+				for(let i = 0; i < params.length; i++){
+					let obj = {}
+					obj.operation = this.searchForm.operation
+					obj.station = JSON.parse(params[i])['station']
+					obj.tenantSiteCode = JSON.parse(params[i])['tenantSiteCode']
+					obj.workCenterRelation = JSON.parse(params[i])['workCenterRelation']
+					arr.push(obj)
+				}
+				console.log(arr,'par')
+				addStation(arr).then(data => {
+					if(data.data.message == 'success'){
+						this.$message({
+							type: 'success',
+							message: '保存成功!'
+						});
+					}
 				})
 			},
 			handleChange(value, direction, movedKeys) {
-				console.log(value, direction, movedKeys);
-				this.allocateArr = JSON.parse(value)
+				console.log(value, direction, movedKeys)
+				this.allocate = value
       }
 		}
 	}

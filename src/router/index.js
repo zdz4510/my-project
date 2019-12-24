@@ -240,6 +240,13 @@ const routes = [
 					import(
 						/* webpackChunkName: "next-number" */ "../views/material/pages/NextNumber.vue"
 					)
+			},{
+				path: "dc-search",
+				name: "dc-search",
+				component: () =>
+					import(
+						/* webpackChunkName: "dc-search" */ "../views/dc/pages/DCSearch.vue"
+					)
 			},
 		]
 	},

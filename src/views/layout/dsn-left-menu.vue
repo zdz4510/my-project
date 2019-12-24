@@ -31,6 +31,7 @@
 				<el-menu-item index="/material/operation-station">工序与站位关系维护</el-menu-item>
 				<el-menu-item index="/material/work-center">工作中心</el-menu-item>
 				<el-menu-item index="/material/next-number">编码规则</el-menu-item>
+				<el-menu-item index="/material/dc-search">独立数据收集查询报表</el-menu-item>
 			</el-submenu>
 			
       <!-- <el-submenu index="base">
