@@ -23,8 +23,9 @@
 			<el-transfer
 			class="transfer"
 				filterable
+				@change="handleChange"
 				:titles="['未分配站位', '已分配站位']"
-				v-model="value"
+				v-model="allocate"
 				:data="undistributedArr">
 			</el-transfer>
 		</div>
@@ -32,17 +33,18 @@
 </template>
 
 <script>
-import {getAllOperation, getDataByStation} from '../../../api/material/operation.station.api'
+import {getAllOperation, getDataByStation, addStation} from '../../../api/material/operation.station.api'
 	export default {
 		name:'operation-station',
 		data() {
 			return {
 				undistributed:[],
 				allocate:[],
+				allocateArr:[],
 				undistributedArr: [],
-				value: [2],
+				// value: [],
 				filterMethod(query, item) {
-					return item.pinyin.indexOf(query) > -1;
+					return item.workCenter.indexOf(query) > -1;
 				},
 				searchForm: {
 					operation: '',
@@ -97,10 +99,10 @@ import {getAllOperation, getDataByStation} from '../../../api/material/operation
 					let arr = []
 					console.log(data.data.data.undistributed,'da')
 					this.undistributed = data.data.data.undistributed
-					this.undistributed.forEach((item, index) => {
+					this.undistributed.forEach((item) => {
 						arr.push({
-							label: item.workCenter+' -- '+item.station+' -- '+item.stationDes,
-							key: index,
+							label: item.workCenterRelation+' -- '+item.station+' -- '+item.stationDes,
+							key: JSON.stringify(item),
 						});
 					});
 					this.undistributedArr = arr
@@ -122,7 +124,17 @@ import {getAllOperation, getDataByStation} from '../../../api/material/operation
 			},
 			add() {
 				this.$router.push({path:'/addMaterial'})
-			}
+			},
+			save(){
+				let params = this.allocateArr
+				addStation(params).then(data => {
+					console.log(data)
+				})
+			},
+			handleChange(value, direction, movedKeys) {
+				console.log(value, direction, movedKeys);
+				this.allocateArr = JSON.parse(value)
+      }
 		}
 	}
 </script>
