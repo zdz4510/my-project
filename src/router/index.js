@@ -6,10 +6,10 @@ import VueRouter from "vue-router";
 Vue.use(VueRouter);
 
 const routes = [
-	{
-		path: "/",
-		redirect: "/material/material-info"
-	},
+  {
+    path: "/",
+    redirect: "/material/material-info"
+  },
   // {
   //   path: "/",
   //   redirect: "/base/collection"
@@ -188,68 +188,117 @@ const routes = [
   //     }
   //   ]
   // },
-	
-	/**
-	 * 物料维护模块
-	 */
-	{
-		path: "/material",
-		name: "material",
-		component: () =>
-			import(/* webpackChunkName: "layout" */ "../views/layout/"),
-		children: [
-			{
-				path: "material-info",
-				name: "material-info",
-				component: () =>
-					import(
-						/* webpackChunkName: "material-info" */ "../views/material/pages/MaterialInfo.vue"
-					)
-			},{
-				path: "add-material",
-				name: "add-material",
-				component: () =>
-					import(
-						/* webpackChunkName: "add-material" */ "../views/material/pages/AddMaterial.vue"
-					)
-			},{
-				path: "operation-maintain",
-				name: "operation-maintain",
-				component: () =>
-					import(
-						/* webpackChunkName: "operation-maintain" */ "../views/material/pages/OperationMaintain.vue"
-					)
-			},{
-				path: "operation-station",
-				name: "operation-station",
-				component: () =>
-					import(
-						/* webpackChunkName: "operation-station" */ "../views/material/pages/OperationStation.vue"
-					)
-			},{
-				path: "work-center",
-				name: "work-center",
-				component: () =>
-					import(
-						/* webpackChunkName: "work-center" */ "../views/material/pages/WorkCenter.vue"
-					)
-			},{
-				path: "next-number",
-				name: "next-number",
-				component: () =>
-					import(
-						/* webpackChunkName: "next-number" */ "../views/material/pages/NextNumber.vue"
-					)
-			},{
-				path: "dc-search",
-				name: "dc-search",
-				component: () =>
-					import(
-						/* webpackChunkName: "dc-search" */ "../views/dc/pages/DCSearch.vue"
-					)
-			},
-		]
-	},
+  /**
+   * 物料维护模块
+   */
+  {
+    path: "/material",
+    name: "material",
+    component: () =>
+      import(/* webpackChunkName: "layout" */ "../views/layout/"),
+    children: [
+      {
+        path: "material-info",
+        name: "material-info",
+        component: () =>
+          import(
+            /* webpackChunkName: "material-info" */ "../views/material/pages/MaterialInfo.vue"
+          )
+      },
+      {
+        path: "add-material",
+        name: "add-material",
+        component: () =>
+          import(
+            /* webpackChunkName: "add-material" */ "../views/material/pages/AddMaterial.vue"
+          )
+      },
+      {
+        path: "operation-maintain",
+        name: "operation-maintain",
+        component: () =>
+          import(
+            /* webpackChunkName: "operation-maintain" */ "../views/material/pages/OperationMaintain.vue"
+          )
+      },
+      {
+        path: "operation-station",
+        name: "operation-station",
+        component: () =>
+          import(
+            /* webpackChunkName: "operation-station" */ "../views/material/pages/OperationStation.vue"
+          )
+      },
+      {
+        path: "work-center",
+        name: "work-center",
+        component: () =>
+          import(
+            /* webpackChunkName: "work-center" */ "../views/material/pages/WorkCenter.vue"
+          )
+      },
+      {
+        path: "next-number",
+        name: "next-number",
+        component: () =>
+          import(
+            /* webpackChunkName: "next-number" */ "../views/material/pages/NextNumber.vue"
+          )
+      }
+    ]
+  },
+  /**
+   * 设备维护模块
+   */
+  {
+    path: "/device",
+    name: "device",
+    component: () =>
+      import(/* webpackChunkName: "layout" */ "../views/layout/"),
+    children: [
+      {
+        path: "deviceType",
+        name: "deviceType",
+        component: () =>
+          import(
+            /* webpackChunkName: "deviceType" */ "../views/device/pages/device-type.vue"
+          )
+      },
+      {
+        path: "deviceMaintenance",
+        name: "deviceMaintenance",
+        component: () =>
+          import(
+            /* webpackChunkName: "deviceMaintenance" */ "../views/device/pages/device-maintenance.vue"
+          )
+      },
+      {
+        path: "deviceUpkeep",
+        name: "deviceUpkeep",
+        component: () =>
+          import(
+            /* webpackChunkName: "deviceUpkeep" */ "../views/device/pages/device-upkeep.vue"
+          )
+      },
+      //新增和编辑页面
+      {
+        path: "deviceTypeEdit",
+        name: "deviceTypeEdit",
+        component: () =>
+          import(
+            /* webpackChunkName: "deviceTypeEdit" */ "../views/device/pages/device-type-edit.vue"
+          )
+      },
+      {
+        path: "deviceMaintenanceEdit",
+        name: "deviceMaintenanceEdit",
+        component: () =>
+          import(
+            /* webpackChunkName: "deviceMaintenanceEdit" */ "../views/device/pages/device-maintenance-edit.vue"
+          )
+      }
+    ]
+  },
 
   /**
    *  常用设置

@@ -21,61 +21,49 @@
       @close="handleClose"
       :collapse="!isCollapse"
     >
-			<el-submenu index="material">
-				<template slot="title">
-					<i class="el-icon-location"></i>
-					<span slot="title">操作</span>
-				</template>
-				<el-menu-item index="/material/material-info">物料维护</el-menu-item>
-				<el-menu-item index="/material/operation-maintain">工序维护</el-menu-item>
-				<el-menu-item index="/material/operation-station">工序与站位关系维护</el-menu-item>
-				<el-menu-item index="/material/work-center">工作中心</el-menu-item>
-				<el-menu-item index="/material/next-number">编码规则</el-menu-item>
-				<el-menu-item index="/material/dc-search">独立数据收集查询报表</el-menu-item>
-			</el-submenu>
-			
+      <el-submenu index="material">
+        <template slot="title">
+          <i class="el-icon-location"></i>
+          <span slot="title">操作</span>
+        </template>
+        <el-menu-item index="/material/material-info">物料维护</el-menu-item>
+        <el-menu-item index="/material/operation-maintain"
+          >工序维护</el-menu-item
+        >
+        <el-menu-item index="/material/operation-station"
+          >工序与站位关系维护</el-menu-item
+        >
+        <el-menu-item index="/material/work-center">工作中心</el-menu-item>
+        <el-menu-item index="/material/next-number">编码规则</el-menu-item>
+        <el-menu-item index="/material/dc-search"
+          >独立数据收集查询报表</el-menu-item
+        >
+      </el-submenu>
+
       <!-- <el-submenu index="base">
         <template slot="title">
           <i class="el-icon-location"></i>
-          <span slot="title">基础库</span>
-        </template>
-        <el-menu-item index="/base/colorLibrary">颜色库</el-menu-item>
-        <el-menu-item index="/base/toolLibrary">工具库</el-menu-item>
-        <el-menu-item index="/base/deviceLibrary">设备库</el-menu-item>
-        <el-menu-item index="/base/salaryLevel">工资级别</el-menu-item>
-      </el-submenu>
-      <el-submenu index="set">
-        <template slot="title">
-          <i class="el-icon-menu"></i>
-          <span slot="title">设置</span>
-        </template>
-        <el-menu-item index="/set/authority">权限管理</el-menu-item>
-        <el-menu-item index="/set/message">信息管理</el-menu-item>
-      </el-submenu>
-      <el-submenu index="operation">
-        <template slot="title">
-          <i class="el-icon-document"></i>
           <span slot="title">操作</span>
         </template>
-        <el-menu-item index="/operation/control">在制管控</el-menu-item>
-        <el-menu-item index="/operation/data">基础数据管理</el-menu-item>
-      </el-submenu>
-      <el-submenu index="query">
-        <template slot="title">
-          <i class="el-icon-setting"></i>
-          <span slot="title">查询</span>
-        </template>
-        <el-menu-item index="/query/materiel">物料管理</el-menu-item>
-        <el-menu-item index="/query/warning">预警管理</el-menu-item>
-      </el-submenu>
-      <el-submenu index="common">
-        <template slot="title">
-          <i class="el-icon-eleme"></i>
-          <span slot="title">常用</span>
-        </template>
-        <el-menu-item index="/common/set">常用设置</el-menu-item>
-        <el-menu-item index="/common/other">其他...</el-menu-item>
+        <el-menu-item index="/material/material-info">物料维护</el-menu-item>
+        <el-menu-item index="/material/operation-maintain"
+          >工序维护</el-menu-item
+        >
+        <el-menu-item index="/material/operation-station"
+          >工序与站位关系维护</el-menu-item
+        >
+        <el-menu-item index="/material/work-center">工作中心</el-menu-item>
+        <el-menu-item index="/material/next-number">编码规则</el-menu-item>
       </el-submenu> -->
+      <el-submenu index="device">
+        <template slot="title">
+          <i class="el-icon-location"></i>
+          <span slot="title">设备管理</span>
+        </template>
+        <el-menu-item index="/device/deviceType">设备类型</el-menu-item>
+        <el-menu-item index="/device/deviceMaintenance">设备维修</el-menu-item>
+        <el-menu-item index="/device/deviceUpkeep">设备保养</el-menu-item>
+      </el-submenu>
     </el-menu>
   </div>
 </template>
@@ -112,14 +100,14 @@ export default {
   left: 0;
   top: 0;
   padding: 70px 0px 10px 0px;
+  overflow-y: auto;
   &.active {
     width: 200px;
   }
   .header {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     .el-input {
-      // margin: 0 -10px 0 10px;
       padding: 3px 8px;
       .el-input__inner {
         width: 100%;
@@ -130,7 +118,9 @@ export default {
       font-size: 40px;
     }
   }
-
+  .el-menu {
+    border-right: 0px;
+  }
   .el-menu--collapse {
     width: 60px;
   }
