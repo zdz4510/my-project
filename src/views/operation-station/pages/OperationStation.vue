@@ -2,21 +2,21 @@
 	<div>
 		<div class="search-bar">
 			<el-form :inline="true" :model="searchForm" ref="searchForm" :rules="rules" class="form-style">
-				<el-form-item label="站点:" prop="station">
-					<el-input v-model="searchForm.station" disabled=""></el-input>
-				</el-form-item>
-				<el-form-item label="工序:" prop="operation">
-					<el-autocomplete
+				<el-form-item label="工序:" prop="operation" required>
+					<!-- <el-autocomplete
 						class="inline-input"
 						v-model="searchForm.operation"
 						:fetch-suggestions="querySearch"
 						placeholder="请输入内容"
-					></el-autocomplete>
+					></el-autocomplete> -->
+					<el-input v-model="searchForm.operation"></el-input>
+				</el-form-item>
+				<el-form-item label="" prop="">
+					<el-button class="ml15 mr25 pad1025" size="small" type="success" @click="search('searchForm')">查询</el-button>
 				</el-form-item>
 			</el-form>
 		</div>
 		<div class="operate ml30 mtb10">
-			<el-button class="mr25 pad1025" size="small" type="primary" @click="search">查询</el-button>
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="save">保存</el-button>
 		</div>
 		<div class="content">
@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import {getAllOperation, getDataByStation, addStation} from '../../../api/material/operation.station.api'
+import {getData, saveData} from '../../../api/operation-station/operation.station.api.js'
 	export default {
 		name:'operation-station',
 		data() {
@@ -48,11 +48,9 @@ import {getAllOperation, getDataByStation, addStation} from '../../../api/materi
 				},
 				searchForm: {
 					operation: '',
-					tenantSiteCode: 'test',
-					station: '',
 				},
 				rules: {
-					process: [
+					operation: [
 						{ required: false, message: '请输入工序名称', trigger: 'blur' },
 					],
 				},
@@ -73,13 +71,17 @@ import {getAllOperation, getDataByStation, addStation} from '../../../api/materi
 			}
 		},
 		created(){
-			//获取所有工序
-			getAllOperation().then(data => {
+			// 获取所有工序
+			let params = {
+				operation:'',
+			}
+			getData(params).then(data => {
 				let res = data.data.data
 				res.forEach(item => {
 					item.value = item.operation;
 				})
 				this.options = res
+				console.log(data,'da')
 			})
 		},
 		methods: {
@@ -94,29 +96,37 @@ import {getAllOperation, getDataByStation, addStation} from '../../../api/materi
           return (options.operation.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
         };
 			},
-			search(){
-				getDataByStation(this.searchForm).then(data => {
-					let arr = []
-					console.log(data.data.data.undistributed,'da')
-					this.undistributed = data.data.data.undistributed
-					this.undistributed.forEach((item) => {
-						arr.push({
-							label: item.workCenterRelation+' -- '+item.station+' -- '+item.stationDes,
-							key: JSON.stringify(item),
-						});
-					});
-					this.undistributedArr = arr
-					this.allocate = JSON.stringify(data.data.data.allocate)
-					let allocateData = data.data.data.allocated
-					console.log(allocateData)
-					let newAllocate = []
-					for(let i = 0; i < allocateData.length; i++){
-						let str = JSON.stringify(allocateData[i])
-						newAllocate.push(str)
+			search(formName){
+				this.$refs[formName].validate((valid) => {
+					if (valid) {
+						getData(this.searchForm).then(data => {
+							let arr = []
+							console.log(data.data.data.undistributed,'da')
+							this.undistributed = data.data.data.undistributed
+							this.undistributed.forEach((item) => {
+								arr.push({
+									label: item.workCenterRelation+' -- '+item.station+' -- '+item.stationDes,
+									key: JSON.stringify(item),
+								});
+							});
+							this.undistributedArr = arr
+							this.allocate = JSON.stringify(data.data.data.allocate)
+							let allocateData = data.data.data.allocated
+							console.log(allocateData)
+							let newAllocate = []
+							for(let i = 0; i < allocateData.length; i++){
+								let str = JSON.stringify(allocateData[i])
+								newAllocate.push(str)
+							}
+							this.allocate = newAllocate
+							console.log(this.undistributedArr,this.allocate,'dafads')
+						})
+					} else {
+						console.log('error submit!!');
+						return false;
 					}
-					this.allocate = newAllocate
-					console.log(this.undistributedArr,this.allocate,'dafads')
-				})
+				});
+				
 			},
 			submitForm(formName) {
 				this.$refs[formName].validate((valid) => {
@@ -146,7 +156,7 @@ import {getAllOperation, getDataByStation, addStation} from '../../../api/materi
 					arr.push(obj)
 				}
 				console.log(arr,'par')
-				addStation(arr).then(data => {
+				saveData(arr).then(data => {
 					if(data.data.message == 'success'){
 						this.$message({
 							type: 'success',

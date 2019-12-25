@@ -2,8 +2,7 @@
 	<div>
 		<div class="operate mtb10">
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="goBack">返回</el-button>
-			<el-button class="mr25 pad1025" size="small" type="primary" @click="save('editForm')">保存</el-button>
-			<el-button class="mr25 pad1025" size="small" type="warning" @click="resetForm('editForm')">重置</el-button>
+			<el-button class="mr25 pad1025" size="small" type="warning" @click="save('editForm')">保存</el-button>
 		</div>
 		<el-row :gutter="20">
 			<el-col :span="6">
@@ -11,13 +10,13 @@
 					<el-select v-model="search" clearable class="mtb20" >
 						<el-option
 							v-for="item in this.editList"
-							:key="item.workCenterDes"
-							:label="item.workCenterDes"
-							:value="item.workCenterDes">
+							:key="item.workCenter"
+							:label="item.workCenter"
+							:value="item.workCenter">
 						</el-option>
 					</el-select>
-					<el-table @row-click="handleClick" :row-class-name="tableRowClassName" border :data="this.editList.filter(data => !search || data.mat.toLowerCase().includes(search.toLowerCase()))" style="width: 100%">
-						<el-table-column label="工作中心" prop="workCenterDes"> </el-table-column>
+					<el-table @row-click="handleClick" :row-class-name="tableRowClassName" border :data="this.editList.filter(data => !search || data.workCenter.toLowerCase().includes(search.toLowerCase()))" style="width: 100%">
+						<el-table-column label="工作中心" prop="workCenter"> </el-table-column>
 						<el-table-column label="描述" prop="workCenterDes"> </el-table-column>
 					</el-table>
 				</div>
@@ -28,7 +27,7 @@
 						<el-form-item label="工作中心:" prop="workCenter">
 							<el-input v-model="editForm.workCenter" ></el-input>
 						</el-form-item>
-						<el-form-item label="描述:" prop="workCenterDes">
+						<el-form-item label="描述:" prop="workCenter">
 							<el-input v-model="editForm.workCenterDes" ></el-input>
 						</el-form-item>
 						<el-tabs v-model="activeName" type="card" @tab-click="handleClick">
@@ -94,10 +93,10 @@
 </template>
 
 <script>
-	import {saveWorkCenter} from '../../../api/material/work.center.api.js'
+	import {updateData} from '../../../api/base/base.api.js'
 	import { mapGetters } from "vuex";
 	export default {
-		name:'edit-work-center',
+		name:'',
 		computed: {
 			...mapGetters(["editList"])
 		},
@@ -110,35 +109,10 @@
 				callback()
 			};
 			return {
+				activeName:'first',
+				search:'',
 				currentEditItem:{},
 				formLabelWidth:'120px',
-				activeName:'first',
-				units:[{
-					value: 'CELL',
-				},{
-					value: 'DIE',
-				},{
-					value: 'GLASS',
-				},{
-					value: 'PCS',
-				},{
-					value: 'WAFER',
-				}],
-				status: [{
-					value: '1',
-					label: '已启用'
-				}, {
-					value: '2',
-					label: '未启用'
-				}],
-				type: [{
-					value: '1',
-					label: '车间'
-				}, {
-					value: '2',
-					label: '产线'
-				}],
-				
 				rules: {
 					qtyRequired1: [
 						{ validator: qtyRequired, trigger: 'blur' }
@@ -152,87 +126,34 @@
 				},
 				editForm: {
 					mat:'',
-					matRev:'',
-					currentRev:'',
-					matDes:'',
-					unit1:'',
-					unit2:'',
-					unit3:'',
-					qtyRequired1:'',
-					qtyRequired2:'',
-					qtyRequired3:'',
-					matType:'1',
-					client:'',
-					clientMat:'',
-					vebdor:'',
-					vebdorMat:'',
-					matStatus:'',
-					modified_user_id:'',
-					length:'1',
-					lengthErrorRange:'1',
-					lengthUnit:'1',
-					width:'1',
-					widthErrorRange:'1',
-					widthUnit:'1',
-					thickness:'1',
-					thicknessErrorRange:'1',
-					thicknessUnit:'1',
-					weight:'1',
-					weightErrorRange:'1',
-					weightUnit:'1',
 				},
-				options: [{
-					value: '1',
-					label: '辅料'
-				}, {
-					value: '2',
-					label: '原材料'
-				}, {
-					value: '3',
-					label: '半成品'
-				}, {
-					value: '4',
-					label: '成品'
-				}],
-				lengthUnit: [{
-					value: '1',
-					label: 'MM'
-				},{
-					value: '10',
-					label: 'CM'
-				}],
-				weightUnit: [{
-					value: '1',
-					label: 'g'
-				},{
-					value: '1000',
-					label: 'Kg'
-				}],
 			}
 		},
 		created() {
-			console.log(this.editList,'editlist')
 			this.currentEditItem = this.editList[0]
 			this.editForm = this.editList[0]
 		},
 		methods: {
+			goBack() {
+				this.$router.push({path:'/work-center/work-center'})
+			},
+			tableRowClassName({row}) {
+				if (row.workCenter == this.currentEditItem.workCenter && row.workCenterDes == this.currentEditItem.workCenterDes) {
+					return 'success-row';
+				} else {
+					return '';
+				}
+			},
 			save(formName){
 				this.$refs[formName].validate((valid) => {
 					if (valid) {
-						console.log(this.editForm);
 						let params = this.editForm
-						console.log(params,'p')
-						// work-center: JSON.stringify(this.editForm)
-						saveWorkCenter(params).then(data => {
+						updateData(params).then(data => {
 							if(data.data.message == 'success'){
 								this.$message({
 									type: 'success',
 									message: '保存成功!'
 								});
-								setTimeout(()=>{
-									this.$router.push({path:'/work-center/work-center'})
-								},1000)
-								
 							}
 						})
 					} else {
@@ -241,12 +162,32 @@
 					}
 				});
 			},
-			resetForm(formName) {
-				this.$refs[formName].resetFields();
+			handleClick(row){
+				this.currentEditItem = row
+				this.editForm = row
 			},
-			goBack() {
-				this.$router.push({path:'/work-center/work-center'})
-			},
+			isObjectValueEqual(a, b) {
+				var aProps = Object.getOwnPropertyNames(a);
+				var bProps = Object.getOwnPropertyNames(b);
+				if (aProps.length != bProps.length) {
+					return false;
+				}
+				for (var i = 0; i < aProps.length; i++) {
+					var propName = aProps[i]
+					var propA = a[propName]
+					var propB = b[propName]
+					if ((typeof (propA) === 'object')) {
+						if (this.isObjectValueEqual(propA, propB)) {
+								return true
+							} else {
+								return false
+							}
+					} else if (propA !== propB) {
+						return false
+					}
+				}
+				return true
+			}
 		}
 	}
 </script>
@@ -262,5 +203,8 @@
 		.dec {
 			width: 756px !important;
 		}
+	}
+	.el-table /deep/ .success-row {
+		background: #f0f9eb ;
 	}
 </style>
