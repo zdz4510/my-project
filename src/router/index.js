@@ -1,7 +1,5 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-//const Home = import(/* webpackChunkName: "home" */ "../views/home/");
-// import Home  from "../views/home/"
 
 Vue.use(VueRouter);
 
@@ -43,9 +41,9 @@ const routes = [
 			}
 		]
 	},
-	
-	
-	
+	/**
+	 * 工作中心
+	 */
 	{
 		path: "/work-center",
 		name: "work-center",
@@ -76,6 +74,9 @@ const routes = [
 			},
 		]
 	},
+	/**
+	 * 工序维护
+	 */
 	{
 		path: "/operation-maintain",
 		name: "operation-maintain",
@@ -106,6 +107,9 @@ const routes = [
 			},
 		]
 	},
+	/**
+	 * 工序站位
+	 */
 	{
 		path: "/operation-station",
 		name: "operation-station",
@@ -137,6 +141,9 @@ const routes = [
 			// },
 		]
 	},
+	/**
+	 * 编码规则
+	 */
 	{
 		path: "/next-number",
 		name: "next-number",
@@ -155,7 +162,7 @@ const routes = [
 	},
 	
 	/**
-	 * 物料维护模块
+	 * 物料维护
 	 */
 	{
 		path: "/material",
@@ -187,7 +194,9 @@ const routes = [
 			}
 		]
 	},
-
+	/**
+	 * 独立数据
+	 */
 	{
 		path: "/dc",
 		name: "dc-search",
@@ -204,6 +213,58 @@ const routes = [
 			},
 		]
 	},
+  /**
+   * 设备维护模块
+   */
+  {
+    path: "/device",
+    name: "device",
+    component: () =>
+      import(/* webpackChunkName: "layout" */ "../views/layout/"),
+    children: [
+      {
+        path: "deviceType",
+        name: "deviceType",
+        component: () =>
+          import(
+            /* webpackChunkName: "deviceType" */ "../views/device/pages/device-type.vue"
+          )
+      },
+      {
+        path: "deviceMaintenance",
+        name: "deviceMaintenance",
+        component: () =>
+          import(
+            /* webpackChunkName: "deviceMaintenance" */ "../views/device/pages/device-maintenance.vue"
+          )
+      },
+      {
+        path: "deviceUpkeep",
+        name: "deviceUpkeep",
+        component: () =>
+          import(
+            /* webpackChunkName: "deviceUpkeep" */ "../views/device/pages/device-upkeep.vue"
+          )
+      },
+      //新增和编辑页面
+      {
+        path: "deviceTypeEdit",
+        name: "deviceTypeEdit",
+        component: () =>
+          import(
+            /* webpackChunkName: "deviceTypeEdit" */ "../views/device/pages/device-type-edit.vue"
+          )
+      },
+      {
+        path: "deviceMaintenanceEdit",
+        name: "deviceMaintenanceEdit",
+        component: () =>
+          import(
+            /* webpackChunkName: "deviceMaintenanceEdit" */ "../views/device/pages/device-maintenance-edit.vue"
+          )
+      }
+    ]
+  },
   /**
    *  常用设置
    */
