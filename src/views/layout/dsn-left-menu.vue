@@ -10,6 +10,7 @@
       <i class="el-icon-s-fold" @click="handleMenuCollapse"></i>
     </div>
     <el-menu
+			unique-opened
       :collapse-transition="false"
       :router="true"
       background-color="rgb(39, 106, 179)"
@@ -21,61 +22,49 @@
       @close="handleClose"
       :collapse="!isCollapse"
     >
+			<el-submenu index="base">
+				<template slot="title">
+					<i class="el-icon-location"></i>
+					<span slot="title">基础库</span>
+				</template>
+				<el-menu-item index="/base/base">基础</el-menu-item>
+			</el-submenu>
+			
 			<el-submenu index="material">
 				<template slot="title">
 					<i class="el-icon-location"></i>
-					<span slot="title">操作</span>
+					<span slot="title">产品配置</span>
 				</template>
 				<el-menu-item index="/material/material-info">物料维护</el-menu-item>
-				<el-menu-item index="/material/operation-maintain">工序维护</el-menu-item>
+				<!-- <el-menu-item index="/material/operation-maintain">工序维护</el-menu-item>
 				<el-menu-item index="/material/operation-station">工序与站位关系维护</el-menu-item>
 				<el-menu-item index="/material/work-center">工作中心</el-menu-item>
 				<el-menu-item index="/material/next-number">编码规则</el-menu-item>
-				<el-menu-item index="/material/dc-search">独立数据收集查询报表</el-menu-item>
+				<el-menu-item index="/material/dc-search">独立数据收集查询报表</el-menu-item> -->
 			</el-submenu>
-			
-      <!-- <el-submenu index="base">
-        <template slot="title">
-          <i class="el-icon-location"></i>
-          <span slot="title">基础库</span>
-        </template>
-        <el-menu-item index="/base/colorLibrary">颜色库</el-menu-item>
-        <el-menu-item index="/base/toolLibrary">工具库</el-menu-item>
-        <el-menu-item index="/base/deviceLibrary">设备库</el-menu-item>
-        <el-menu-item index="/base/salaryLevel">工资级别</el-menu-item>
-      </el-submenu>
-      <el-submenu index="set">
-        <template slot="title">
-          <i class="el-icon-menu"></i>
-          <span slot="title">设置</span>
-        </template>
-        <el-menu-item index="/set/authority">权限管理</el-menu-item>
-        <el-menu-item index="/set/message">信息管理</el-menu-item>
-      </el-submenu>
-      <el-submenu index="operation">
-        <template slot="title">
-          <i class="el-icon-document"></i>
-          <span slot="title">操作</span>
-        </template>
-        <el-menu-item index="/operation/control">在制管控</el-menu-item>
-        <el-menu-item index="/operation/data">基础数据管理</el-menu-item>
-      </el-submenu>
-      <el-submenu index="query">
-        <template slot="title">
-          <i class="el-icon-setting"></i>
-          <span slot="title">查询</span>
-        </template>
-        <el-menu-item index="/query/materiel">物料管理</el-menu-item>
-        <el-menu-item index="/query/warning">预警管理</el-menu-item>
-      </el-submenu>
-      <el-submenu index="common">
-        <template slot="title">
-          <i class="el-icon-eleme"></i>
-          <span slot="title">常用</span>
-        </template>
-        <el-menu-item index="/common/set">常用设置</el-menu-item>
-        <el-menu-item index="/common/other">其他...</el-menu-item>
-      </el-submenu> -->
+			<el-submenu index="factory-model">
+				<template slot="title">
+					<i class="el-icon-location"></i>
+					<span slot="title">工厂建模</span>
+				</template>
+				<el-menu-item index="/operation-maintain/operation-maintain">工序维护</el-menu-item>
+				<el-menu-item index="/operation-station/operation-station">工序与站位关系维护</el-menu-item>
+				<el-menu-item index="/work-center/work-center">工作中心</el-menu-item>
+			</el-submenu>
+			<el-submenu index="system-config">
+				<template slot="title">
+					<i class="el-icon-location"></i>
+					<span slot="title">系统配置</span>
+				</template>
+				<el-menu-item index="/next-number/next-number">编码规则</el-menu-item>
+			</el-submenu>
+			<el-submenu index="produce">
+				<template slot="title">
+					<i class="el-icon-location"></i>
+					<span slot="title">生产</span>
+				</template>
+				<el-menu-item index="/dc/dc-search">独立数据收集查询报表</el-menu-item>
+			</el-submenu>
     </el-menu>
   </div>
 </template>

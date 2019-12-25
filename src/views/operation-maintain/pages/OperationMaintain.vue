@@ -19,15 +19,49 @@
 						@select="pickTenantSiteCode"
 					></el-autocomplete>
 				</el-form-item>
+				<el-form-item label="" prop="">
+					<el-button class="ml15 mr25 pad1025" size="small" type="success" @click="search">查询</el-button>
+					<el-button class="pad1025" size="small" type="warning" @click="resetForm('searchForm')">重置</el-button>
+				</el-form-item>
 			</el-form>
 		</div>
 		<div class="operate ml30 mtb10">
-			<el-button class="mr25 pad1025" size="small" type="primary" @click="search">查询</el-button>
-			<el-button class="mr25 pad1025" size="small" type="primary" @click="save('addForm')">保存</el-button>
-			<el-button class="mr25 pad1025" size="small" type="warning" @click="del('addForm')">删除</el-button>
+			<el-button class="mr25 pad1025" size="small" type="primary" @click="save('addForm')">新增</el-button>
+			<el-button class="mr25 pad1025" size="small" type="warning" @click="save('addForm')">编辑</el-button>
+			<el-button class="mr25 pad1025" size="small" type="danger" @click="del('addForm')">删除</el-button>
 		</div>
 		<div class="content">
-			<el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+			<div class="">
+				<el-table
+				ref="multipleTable"
+				:data="this.tableData.data"
+				tooltip-effect="dark"
+				row-key="workCenter"
+				@selection-change="handleSelectionChange"
+				>
+					<el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
+					<el-table-column type="index" label="序号"></el-table-column>
+					<el-table-column prop="workCenter" label="工作中心"></el-table-column>
+					<el-table-column prop="workCenterDes" label="工作中心描述"></el-table-column>
+					<el-table-column label="类型">
+						<template slot-scope="scope">{{ scope.row.workCenterType == 1 ? '车间' : '产线' }}</template>
+					</el-table-column>
+					<el-table-column label="状态">
+						<template slot-scope="scope">{{ scope.row.status == 1 ? '已启用' : (scope.row.status == 2 ? '未启用' : '--') }}</template>
+					</el-table-column>
+				</el-table>
+				<el-pagination class="mtb20"
+					background
+					@size-change="handleSizeChange"
+					@current-change="handleCurrentChange"
+					:current-page="this.tableData.page.currentPage"
+					:page-sizes="[1, 10, 15, 20, 30, 50]"
+					:page-size="this.tableData.page.pageSize"
+					layout="->, total, prev, pager, next, sizes, jumper"
+					:total="this.tableData.page.total">
+				</el-pagination>
+			</div>
+			<!-- <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
 				<el-tab-pane label="工序维护" name="first">
 					<el-form :inline="true" :model="addForm" ref="addForm" :rules="rules" class="add-form">
 						<el-row>
@@ -54,13 +88,13 @@
 					</el-form>
 				</el-tab-pane>
 				<el-tab-pane label="自定义数据" name="second">数据字段、数据属性</el-tab-pane>
-			</el-tabs>
+			</el-tabs> -->
 		</div>
 	</div>
 </template>
 
 <script>
-import {getAllOperation, getDataByOperation, addOperation, deleteOperatin} from '../../../api/material/operation.maintain.api'
+import {getAllOperation, getOperationList, getOperationByName, getDataByOperation, deleteOperation} from '../../../api/material/operation.maintain.api'
 	export default {
 		name:'operation-maintain',
 		data() {
@@ -79,6 +113,14 @@ import {getAllOperation, getDataByOperation, addOperation, deleteOperatin} from 
 					// 	{ required: true, message: '请输入工序名称', trigger: 'blur' },
 					// ],
 				},
+				tableData: {
+					data:[],
+					page:{
+						currentPage:1,
+						pageSize:10,
+						total:0
+					}
+				},
 				options: [],
 				status: [{
 					value: true,
@@ -91,7 +133,10 @@ import {getAllOperation, getDataByOperation, addOperation, deleteOperatin} from 
 		},
 		created(){
 			//获取所有工序
-			getAllOperation().then(data => {
+			getAllOperation()
+			getOperationByName()
+			deleteOperation()
+			getOperationList().then(data => {
 				let res = data.data.data
 				res.forEach(item => {
 					item.value = item.operation;
@@ -124,6 +169,7 @@ import {getAllOperation, getDataByOperation, addOperation, deleteOperatin} from 
 			},
 			resetForm(formName) {
 				this.$refs[formName].resetFields();
+				this.search()
 			},
 			add() {
 				this.$router.push({path:'/addMaterial'})
@@ -143,31 +189,7 @@ import {getAllOperation, getDataByOperation, addOperation, deleteOperatin} from 
 					this.addForm = data.data.data
 				})
 			},
-			save(formName){
-				this.$refs[formName].validate((valid) => {
-					if (valid) {
-						let operationinfo = {
-						modifyUserId: "string",
-						modifyUserName: "string",
-						operation: this.searchForm.operation,
-						operationDes: this.addForm.operationDes,
-						status: this.addForm.status,
-						tenantSiteCode: this.searchForm.tenantSiteCode
-					}
-					addOperation(operationinfo).then(data=>{
-						console.log(data,'d')
-						if(data.data.message == 'success'){
-							this.$message({
-							type: 'success',
-							message: '保存成功!'
-						});
-						}
-					})
-					} else {
-						console.log('error submit!!');
-						return false;
-					}
-				});
+			save(){
 				
 			},
 			del(formName){
@@ -184,7 +206,7 @@ import {getAllOperation, getDataByOperation, addOperation, deleteOperatin} from 
 					status: this.addForm.status,
 					tenantSiteCode: this.searchForm.tenantSiteCode
 				}
-				deleteOperatin(params).then(data=>{
+				deleteOperation(params).then(data=>{
 					console.log(data,'adddata')
 					if(data.data.message == 'success'){
 						this.$refs[formName].resetFields();

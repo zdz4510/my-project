@@ -2,10 +2,30 @@ import request from  "@/service/"
 
 /**
  * 获取所有工序
- * url /mes/operation/getAll
+ * url /mes/operation/getAllOperation
  */
 export const getAllOperation = data => {
-  return request.get(`${window.VUE_APP_URL}/mes/operation/getAll`, {
+  return request.get(`${window.VUE_APP_URL}/mes/operation/getAllOperation`, {
+    params: data
+  });
+};
+
+/**
+ * 分页查询工序
+ * url /mes/operation/findPage
+ */
+export const getOperationList = data => {
+  return request.get(`${window.VUE_APP_URL}/mes/operation/findPage`, {
+    params: data
+  });
+};
+
+/**
+ * 工序名称查询
+ * url /mes/operation/findOperation
+ */
+export const getOperationByName = data => {
+  return request.get(`${window.VUE_APP_URL}/mes/operation/findOperation`, {
     params: data
   });
 };
@@ -20,18 +40,18 @@ export const getDataByOperation = data => {
 
 /**
  * 对工序进行添加或者更新，存在tenantSiteCode，operation对应的记录则为更新记录否则为添加新记录
- * url /mes/operation/save
+ * url /mes/operation/saveOperation
  */
-export const addOperation = data => {
-	return request.post(`${window.VUE_APP_URL}/mes/operation/save`, data);
+export const saveOperation = data => {
+	return request.post(`${window.VUE_APP_URL}/mes/operation/saveOperation`, data);
 };
 
 /**
- * tenantSiteCode、operation工序字段对工序进行删除
- *  url /mes/operation/delete
+ * 根据operation工序字段对工序进行删除
+ *  url /mes/operation/deleteOperation
  */
-export const deleteOperatin = data => {
-  return request.delete(`${window.VUE_APP_URL}/mes/operation/delete`, {
+export const deleteOperation = data => {
+  return request.delete(`${window.VUE_APP_URL}/mes/operation/deleteOperation`, {
     params: data
   });
 };

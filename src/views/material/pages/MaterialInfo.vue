@@ -8,12 +8,15 @@
 				<el-form-item label="版本号:" prop="matRev">
 					<el-input v-model="searchForm.matRev"></el-input>
 				</el-form-item>
+				<el-form-item label="" prop="">
+					<el-button class="ml15 mr25 pad1025" size="small" type="success" @click="search">查询</el-button>
+					<el-button class="pad1025" size="small" type="warning" @click="resetForm('searchForm')">重置</el-button>
+				</el-form-item>
 			</el-form>
 		</div>
 		<div class="operate ml30 mtb10">
-			<el-button class="mr25 pad1025" size="small" type="success" @click="search">查询</el-button>
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="add" :disabled="this.checkedList.length>0">新增</el-button>
-			<el-button class="mr25 pad1025" size="small" type="warning" @click="edit" :disabled="this.checkedList.length != 1">编辑</el-button>
+			<el-button class="mr25 pad1025" size="small" type="warning" @click="edit" :disabled="this.checkedList.length === 0">编辑</el-button>
 			<el-button class="mr25 pad1025" size="small" type="danger"  @click="del" :disabled="this.checkedList.length === 0">删除</el-button>
 		</div>
 		
@@ -54,6 +57,7 @@
 
 <script>
 import {getMaterialList, deleteMaterial} from '../../../api/material/material.info.api'
+import { mapMutations } from "vuex";
 	export default {
 		name:'material-info',
 		data() {
@@ -85,6 +89,7 @@ import {getMaterialList, deleteMaterial} from '../../../api/material/material.in
 			this.search()
 		},
 		methods: {
+			...mapMutations(["SETEDITLIST"]),
 			search(){
 				let params= {
 					deleteFlag: false,
@@ -128,6 +133,7 @@ import {getMaterialList, deleteMaterial} from '../../../api/material/material.in
             type: 'success',
             message: '删除成功!'
           });
+					this.search()
 				})
           
         }).catch(() => {
@@ -141,7 +147,8 @@ import {getMaterialList, deleteMaterial} from '../../../api/material/material.in
 				this.$router.push({path:'/material/add-material'})
 			},
 			edit(){
-				this.$router.push({path:'/material/add-material'})
+				this.SETEDITLIST(this.checkedList);
+				this.$router.push({path:'/material/edit-material'})
 			},
 			submitForm(formName) {
 				this.$refs[formName].validate((valid) => {
@@ -155,6 +162,7 @@ import {getMaterialList, deleteMaterial} from '../../../api/material/material.in
 			},
 			resetForm(formName) {
 				this.$refs[formName].resetFields();
+				this.search()
 			},
 		}
 	}

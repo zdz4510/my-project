@@ -9,13 +9,6 @@ export const getMaterialList = data => {
 	return request.post(`${window.VUE_APP_URL}/mes/material/findMaterial?currentPage=${data.currentPage}&deleteFlag=${data.deleteFlag}&pageSize=${data.pageSize}&pageSize=${data.pageSize}&tenantSiteCode=${data.tenantSiteCode}&mat=${data.mat}&matRev=${data.matRev}`);
 };
 
-/**
- * 根据版本号和物料号查到该物料
- *  url /mes/material/findMaterial
- */
-export const findMaterial = data => {
-  return request.post(`${window.VUE_APP_URL}/material/findMaterial`, data);
-};
 
 /**
  * 新增物料号
@@ -27,10 +20,10 @@ export const insertMaterial = data => {
 
 /**
  * 修改物料号
- *  url /mes/material/update
+ *  url /mes/material/udpate
  */
 export const modifyMaterial = data => {
-  return request.post(`${window.VUE_APP_URL}/material/update`, data);
+  return request.post(`${window.VUE_APP_URL}/mes/material/udpate`, data);
 };
 
 /**
