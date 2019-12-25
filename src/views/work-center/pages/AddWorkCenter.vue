@@ -76,7 +76,7 @@
 <script>
 	import {saveWorkCenter} from '../../../api/material/work.center.api.js'
 	export default {
-		name:'add-material',
+		name:'add-work-center',
 		data() {
 			var qtyRequired = (rule, value, callback) => {
 				var reg = /^\d{1,5}(?:\.\d{1,3})?$/
@@ -192,7 +192,7 @@
 						console.log(this.addForm);
 						let params = this.addForm
 						console.log(params,'p')
-						// material: JSON.stringify(this.addForm)
+						// work-center: JSON.stringify(this.addForm)
 						saveWorkCenter(params).then(data => {
 							if(data.data.message == 'success'){
 								this.$message({
@@ -200,7 +200,7 @@
 									message: '保存成功!'
 								});
 								setTimeout(()=>{
-									this.$router.push({path:'/material/work-center'})
+									this.$router.push({path:'/work-center/work-center'})
 								},1000)
 								
 							}
@@ -215,7 +215,7 @@
 				this.$refs[formName].resetFields();
 			},
 			goBack() {
-				this.$router.push({path:'/material/material-info'})
+				this.$router.push({path:'/work-center/work-center'})
 			},
 		}
 	}

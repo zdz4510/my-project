@@ -117,7 +117,7 @@
 </template>
 
 <script>
-import {getWorkCenterList, deleteWorkCenter} from '../../../api/material/work.center.api'
+import {getWorkCenterList, deleteWorkCenter} from '../../../api/work-center/work.center.api.js'
 import { mapMutations } from "vuex";
 	export default {
 		name:'work-center',
@@ -222,11 +222,11 @@ import { mapMutations } from "vuex";
 				console.log(val)
 			},
 			add(){
-				this.$router.push({path:'/material/add-work-center'})
+				this.$router.push({path:'/work-center/add-work-center'})
 			},
 			edit(){
 				this.SETEDITLIST(this.checkedList);
-				this.$router.push({path:'/material/edit-work-center'})
+				this.$router.push({path:'/work-center/edit-work-center'})
 			},
 			del(){
 				this.$confirm('是否删除所选数据?', '提示', {

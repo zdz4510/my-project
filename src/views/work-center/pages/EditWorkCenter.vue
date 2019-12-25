@@ -222,7 +222,7 @@
 						console.log(this.editForm);
 						let params = this.editForm
 						console.log(params,'p')
-						// material: JSON.stringify(this.editForm)
+						// work-center: JSON.stringify(this.editForm)
 						saveWorkCenter(params).then(data => {
 							if(data.data.message == 'success'){
 								this.$message({
@@ -230,7 +230,7 @@
 									message: '保存成功!'
 								});
 								setTimeout(()=>{
-									this.$router.push({path:'/material/work-center'})
+									this.$router.push({path:'/work-center/work-center'})
 								},1000)
 								
 							}
@@ -245,7 +245,7 @@
 				this.$refs[formName].resetFields();
 			},
 			goBack() {
-				this.$router.push({path:'/material/work-center'})
+				this.$router.push({path:'/work-center/work-center'})
 			},
 		}
 	}

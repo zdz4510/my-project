@@ -2,105 +2,81 @@
 	<div>
 		<div class="operate mtb10">
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="goBack">返回</el-button>
-			<el-button class="mr25 pad1025" size="small" type="primary" @click="save('editForm')">保存</el-button>
-			<el-button class="mr25 pad1025" size="small" type="warning" @click="resetForm('editForm')">重置</el-button>
+			<el-button class="mr25 pad1025" size="small" type="primary" @click="save('addForm')">保存</el-button>
+			<el-button class="mr25 pad1025" size="small" type="warning" @click="resetForm('addForm')">重置</el-button>
 		</div>
-		<el-row :gutter="20">
-			<el-col :span="6">
-				<div>
-					<el-select v-model="search" clearable class="mtb20" >
-						<el-option
-							v-for="item in this.editList"
-							:key="item.workCenterDes"
-							:label="item.workCenterDes"
-							:value="item.workCenterDes">
-						</el-option>
-					</el-select>
-					<el-table @row-click="handleClick" :row-class-name="tableRowClassName" border :data="this.editList.filter(data => !search || data.mat.toLowerCase().includes(search.toLowerCase()))" style="width: 100%">
-						<el-table-column label="工作中心" prop="workCenterDes"> </el-table-column>
-						<el-table-column label="描述" prop="workCenterDes"> </el-table-column>
-					</el-table>
+		<div class="addForm">
+			<el-form :inline="true" :model="addForm" ref="addForm" :rules="rules" class="add-form" :label-width="formLabelWidth">
+				<el-form-item label="工作中心:" prop="workCenter">
+					<el-input v-model="addForm.workCenter" ></el-input>
+				</el-form-item>
+				<el-form-item label="描述:" prop="workCenter">
+					<el-input v-model="addForm.workCenterDes" ></el-input>
+				</el-form-item>
+				<el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+					<el-tab-pane label="基础信息" name="first">
+						<el-row>
+							<el-col :span="24">
+								<el-form-item label="状态:" prop="status" required>
+									<el-select v-model="addForm.status" filterable placeholder="请选择">
+										<el-option
+											v-for="item in status"
+											:key="item.value"
+											:label="item.label"
+											:value="item.value">
+										</el-option>
+									</el-select>
+								</el-form-item>
+							</el-col>
+						</el-row>
+						<el-row>
+							<el-col :span="24">
+								<el-form-item label="类别:" prop="type" required>
+									<el-select v-model="addForm.type" filterable placeholder="请选择">
+										<el-option
+											v-for="item in type"
+											:key="item.value"
+											:label="item.label"
+											:value="item.value">
+										</el-option>
+									</el-select>
+								</el-form-item>
+							</el-col>
+						</el-row>
+					</el-tab-pane>
+					<el-tab-pane label="工作中心维护" name="second">
+						<el-transfer
+							filterable
+							:filter-method="filterMethod"
+							:titles="['未分配工作中心', '已分配工作中心']"
+							v-model="value"
+							:data="data">
+						</el-transfer>
+					</el-tab-pane>
+					<el-tab-pane label="用户" name="third">
+						<el-transfer
+							filterable
+							:filter-method="filterMethod"
+							:titles="['未分配用户', '已分配用户']"
+							v-model="value"
+							:data="data">
+						</el-transfer>
+					</el-tab-pane>
+				</el-tabs>
+				<div slot="footer" class="dialog-footer">
+					<!-- <el-button @click="handleReset(workCenterForm)">重 置</el-button> -->
+					<el-button >重 置</el-button>
+					<el-button type="primary" @click="dialog = false">确 定</el-button>
 				</div>
-			</el-col>
-			<el-col :span="18">
-				<div class="editForm">
-					<el-form :inline="true" :model="editForm" ref="editForm" :rules="rules" class="add-form" :label-width="formLabelWidth">
-						<el-form-item label="工作中心:" prop="workCenter">
-							<el-input v-model="editForm.workCenter" ></el-input>
-						</el-form-item>
-						<el-form-item label="描述:" prop="workCenterDes">
-							<el-input v-model="editForm.workCenterDes" ></el-input>
-						</el-form-item>
-						<el-tabs v-model="activeName" type="card" @tab-click="handleClick">
-							<el-tab-pane label="基础信息" name="first">
-								<el-row>
-									<el-col :span="24">
-										<el-form-item label="状态:" prop="status" required>
-											<el-select v-model="editForm.status" filterable placeholder="请选择">
-												<el-option
-													v-for="item in status"
-													:key="item.value"
-													:label="item.label"
-													:value="item.value">
-												</el-option>
-											</el-select>
-										</el-form-item>
-									</el-col>
-								</el-row>
-								<el-row>
-									<el-col :span="24">
-										<el-form-item label="类别:" prop="type" required>
-											<el-select v-model="editForm.type" filterable placeholder="请选择">
-												<el-option
-													v-for="item in type"
-													:key="item.value"
-													:label="item.label"
-													:value="item.value">
-												</el-option>
-											</el-select>
-										</el-form-item>
-									</el-col>
-								</el-row>
-							</el-tab-pane>
-							<el-tab-pane label="工作中心维护" name="second">
-								<el-transfer
-									filterable
-									:filter-method="filterMethod"
-									:titles="['未分配工作中心', '已分配工作中心']"
-									v-model="value"
-									:data="data">
-								</el-transfer>
-							</el-tab-pane>
-							<el-tab-pane label="用户" name="third">
-								<el-transfer
-									filterable
-									:filter-method="filterMethod"
-									:titles="['未分配用户', '已分配用户']"
-									v-model="value"
-									:data="data">
-								</el-transfer>
-							</el-tab-pane>
-						</el-tabs>
-						<div slot="footer" class="dialog-footer">
-							<!-- <el-button @click="handleReset(workCenterForm)">重 置</el-button> -->
-							<el-button >重 置</el-button>
-							<el-button type="primary" @click="dialog = false">确 定</el-button>
-						</div>
-					</el-form>
-				</div>
-			</el-col>
-		</el-row>
+			</el-form>
+		</div>
 	</div>
 </template>
 
 <script>
 	import {saveWorkCenter} from '../../../api/material/work.center.api.js'
-	import { mapGetters } from "vuex";
 	export default {
-		name:'edit-operation-maintain',
-		computed: {
-			...mapGetters(["editList"])
-		},
+		name:'add-operation-maintain',
 		data() {
 			var qtyRequired = (rule, value, callback) => {
 				var reg = /^\d{1,5}(?:\.\d{1,3})?$/
@@ -110,7 +86,6 @@
 				callback()
 			};
 			return {
-				currentEditItem:{},
 				formLabelWidth:'120px',
 				activeName:'first',
 				units:[{
@@ -150,7 +125,7 @@
 						{ validator: qtyRequired, trigger: 'blur' }
 					]
 				},
-				editForm: {
+				addForm: {
 					mat:'',
 					matRev:'',
 					currentRev:'',
@@ -210,19 +185,14 @@
 				}],
 			}
 		},
-		created() {
-			console.log(this.editList,'editlist')
-			this.currentEditItem = this.editList[0]
-			this.editForm = this.editList[0]
-		},
 		methods: {
 			save(formName){
 				this.$refs[formName].validate((valid) => {
 					if (valid) {
-						console.log(this.editForm);
-						let params = this.editForm
+						console.log(this.addForm);
+						let params = this.addForm
 						console.log(params,'p')
-						// material: JSON.stringify(this.editForm)
+						// material: JSON.stringify(this.addForm)
 						saveWorkCenter(params).then(data => {
 							if(data.data.message == 'success'){
 								this.$message({
@@ -245,7 +215,7 @@
 				this.$refs[formName].resetFields();
 			},
 			goBack() {
-				this.$router.push({path:'/material/work-center'})
+				this.$router.push({path:'/material/material-info'})
 			},
 		}
 	}
@@ -256,7 +226,7 @@
 		background: #FFFFFF;
 		padding: 10px;
 	}
-	.editForm {
+	.addForm {
 		background: #FFFFFF;
 		padding: 10px;
 		.dec {
