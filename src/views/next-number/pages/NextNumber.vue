@@ -189,7 +189,7 @@
 </template>
 
 <script>
-	import {saveNextNumber, getNextNumber} from '../../../api/material/next.number.api.js'
+	import {saveNextNumber, getNextNumber} from '../../../api/next.number.api.js'
 	export default {
 		name:'next-number',
 		data() {

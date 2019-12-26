@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import {getData, saveData} from '../../../api/operation-station/operation.station.api.js'
+import {getData, saveData} from '../../../api/operation.station.api.js'
 	export default {
 		name:'operation-station',
 		data() {

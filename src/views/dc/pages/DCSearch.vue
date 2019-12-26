@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import {getMaterialList, deleteMaterial} from '../../../api/material/material.info.api'
+import {getMaterialList, deleteMaterial} from '../../../api/material.info.api'
 	export default {
 		name:'dc-search',
 		data() {

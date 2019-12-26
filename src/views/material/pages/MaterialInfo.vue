@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import {getMaterialList, deleteMaterial} from '../../../api/material/material.info.api'
+import {getMaterialList, deleteMaterial} from '../../../api/material.info.api'
 import { mapMutations } from "vuex";
 	export default {
 		name:'material-info',

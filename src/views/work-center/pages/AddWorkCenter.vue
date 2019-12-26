@@ -74,7 +74,7 @@
 </template>
 
 <script>
-	import {saveWorkCenter} from '../../../api/material/work.center.api.js'
+	import {saveWorkCenter} from '../../../api/work.center.api.js'
 	export default {
 		name:'add-work-center',
 		data() {
