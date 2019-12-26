@@ -9,19 +9,24 @@
           label-width="100px"
           class="typeForm"
         >
-          <el-form-item label="设备类型" prop="deviceType">
+          <el-form-item label="设备类型" prop="resourceGroup">
             <el-input
-              v-model="typeForm.deviceType"
+              v-model.trim="typeForm.resourceGroup"
               placeholder="请输入设备类型"
             ></el-input>
           </el-form-item>
         </el-form>
       </div>
       <div class="right">
-        <el-button size="small" type="warning" @click="handleQuery">
+        <el-button size="small" type="warning" @click="handleQuery" disabled>
           查询
         </el-button>
-        <el-button size="small" type="info" @click="handleReset">
+        <el-button
+          size="small"
+          type="info"
+          @click="handleReset"
+          :disabled="isReset"
+        >
           重置
         </el-button>
       </div>
@@ -30,84 +35,224 @@
       <el-button size="small" type="success">
         新增
       </el-button>
-      <el-button size="small" type="primary">保存</el-button>
-      <el-button size="small" type="success">
+      <el-button size="small" type="primary" @click="saveDialog = true"
+        >保存</el-button
+      >
+      <el-button size="small" type="success" disabled>
         修改
       </el-button>
-      <el-button size="small" type="danger">
+      <el-button size="small" type="danger" disabled>
         删除
       </el-button>
-      <el-button size="small" type="primary">导出</el-button>
+      <el-button size="small" type="primary" disabled>导出</el-button>
     </div>
     <div class="showInfo">
-      <el-form ref="typeGroupForm" :model="typeGroupForm" label-width="80px">
+      <el-form ref="typeForm" :model="typeForm" label-width="80px">
         <el-form-item label="组别描述">
-          <el-input
-            type="textarea"
-            v-model="typeGroupForm.groupDiscribe"
-          ></el-input>
+          <el-input type="textarea" v-model.trim="typeForm.groupDes"></el-input>
         </el-form-item>
       </el-form>
       <el-transfer
+        ref="transfer"
         filterable
-        :filter-method="filterMethod"
-        filter-placeholder="请输入城市拼音"
+        filter-placeholder="请输入设备编号"
         v-model="value"
-        :data="data"
+        :data="transferData"
+        :titles="titles"
+        :props="{
+          key: 'resource',
+          label: 'resource',
+          resourceDes: 'resourceDes'
+        }"
       >
+        <span slot-scope="{ option }"
+          >{{ option.resource }} - {{ option.resourceDes }}</span
+        >
       </el-transfer>
     </div>
+    <el-dialog title="删除" :visible.sync="saveDialog" width="30%">
+      <span>是否确认保存该条数据？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleReset">取 消</el-button>
+        <el-button type="primary" @click="handleSave">
+          确 定
+        </el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import { mapGetters, mapMutations } from "vuex";
+// import { getInformationHttp } from "../../../api/device/type.api";
+import {
+  getInformationHttp,
+  updateResourceGroupHttp,
+  insertResourceGroupHttp
+} from "@/api/device/type.api.js";
+
 export default {
   data() {
-    const generateData = () => {
-      const data = [];
-      const cities = ["上海", "北京", "广州", "深圳", "南京", "西安", "成都"];
-      const pinyin = [
-        "shanghai",
-        "beijing",
-        "guangzhou",
-        "shenzhen",
-        "nanjing",
-        "xian",
-        "chengdu"
-      ];
-      cities.forEach((city, index) => {
-        data.push({
-          label: city,
-          key: index,
-          pinyin: pinyin[index]
-        });
-      });
-      return data;
-    };
     return {
+      operateType: "",
       typeForm: {
-        deviceType: ""
+        //设备类型
+        resourceGroup: "",
+        //组别描述
+        groupDes: ""
       },
       rules: {
-        deviceType: [
+        resourceGroup: [
           { required: true, message: "请输入设备类型", trigger: "blur" }
           //   { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" }
         ]
       },
-      //组别描述
-      typeGroupForm: {
-        groupDiscribe: ""
-      },
-      data: generateData(),
+      //穿梭框
+      titles: ["已绑定设备编号", "未绑定设备编号"],
+      transferData: [],
       value: [],
-      filterMethod(query, item) {
-        return item.pinyin.indexOf(query) > -1;
-      }
+      cloneForm: [],
+      allocated: [],
+      undistributed: [],
+      //是否可点击查询按钮
+      isReset: true,
+      saveDialog: false
     };
   },
+  computed: {
+    ...mapGetters(["typeList"])
+  },
+  created() {
+    this.operateType = this.$route.query.operateType;
+    console.log(this.operateType);
+    this.cloneList = JSON.parse(JSON.stringify(this.typeList));
+    this.typeForm = this.cloneList[0];
+    this.init();
+    if (this.operateType === "edit") {
+      this.isReset = false;
+    }
+  },
   methods: {
+    ...mapMutations(["SETTYPELIST"]),
+    init() {
+      const data = {
+        resourceGroup: this.typeForm.resourceGroup
+      };
+      if (this.operateType === "add") {
+        getInformationHttp().then(data => {
+          const res = data.data;
+          console.log(res);
+          if (res.code === 200) {
+            const list = res.data;
+            this.allocated = list.allocated;
+            this.undistributed = list.undistributed;
+            //合并数组
+            this.transferData = [...this.allocated, ...this.undistributed];
+            this.undistributed.forEach(element => {
+              this.value.push(element.resource);
+            });
+            console.log(this.transferData);
+            return;
+          }
+          this.$message({
+            message: res.message,
+            type: "warning"
+          });
+        });
+        return;
+      }
+      getInformationHttp(data).then(data => {
+        const res = data.data;
+        console.log(res);
+        if (res.code === 200) {
+          const list = res.data;
+          this.allocated = list.allocated;
+          this.undistributed = list.undistributed;
+          //合并数组
+          this.transferData = [...this.allocated, ...this.undistributed];
+          this.undistributed.forEach(element => {
+            this.value.push(element.resource);
+          });
+          console.log(this.transferData);
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
+    },
     handleQuery() {},
-    handleReset() {}
+    //重置
+    handleReset() {
+      this.saveDialog = false;
+      this.value = [];
+      this.undistributed.forEach(element => {
+        this.value.push(element.resource);
+      });
+    },
+    handleSave() {
+      //穿梭框左侧数据
+      const allocated = this.$refs["transfer"].sourceData;
+      const resourceList = [];
+      allocated.forEach(element => {
+        resourceList.push(element.resource);
+      });
+      console.log(this.typeForm.resourceGroup);
+      //工资级别代码未输入
+      if (this.typeForm.resourceGroup === "") {
+        this.$message({
+          message: "设备类型不能为空",
+          type: "warning"
+        });
+        return;
+      }
+      const data = {
+        groupDes: this.typeForm.groupDes,
+        resourceGroup: this.typeForm.resourceGroup,
+        resourceList: resourceList
+      };
+      if (this.operateType === "edit") {
+        updateResourceGroupHttp(data).then(data => {
+          const res = data.data;
+          console.log(res);
+          if (res.code === 200) {
+            this.$message({
+              message: res.message,
+              type: "success"
+            });
+            this.SETTYPELIST([]);
+            this.$router.push({ path: "/device/deviceType" });
+            return;
+          }
+          this.$message({
+            message: res.message,
+            type: "warning"
+          });
+        });
+        return;
+      }
+      if (this.operateType === "add") {
+        insertResourceGroupHttp(data).then(data => {
+          const res = data.data;
+          console.log(res);
+          if (res.code === 200) {
+            this.$message({
+              message: res.message,
+              type: "success"
+            });
+            this.SETTYPELIST([]);
+            this.$router.push({ path: "/device/deviceType" });
+            return;
+          }
+          this.$message({
+            message: res.message,
+            type: "warning"
+          });
+        });
+        return;
+      }
+    }
   }
 };
 </script>

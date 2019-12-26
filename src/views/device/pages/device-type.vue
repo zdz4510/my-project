@@ -9,9 +9,9 @@
           label-width="100px"
           class="typeForm"
         >
-          <el-form-item label="设备类型" prop="deviceType">
+          <el-form-item label="设备类型" prop="resourceGroup">
             <el-input
-              v-model="typeForm.deviceType"
+              v-model.trim="typeForm.resourceGroup"
               placeholder="请输入设备类型"
             ></el-input>
           </el-form-item>
@@ -27,11 +27,7 @@
       </div>
     </div>
     <div class="operate">
-      <el-button
-        size="small"
-        type="success"
-        @click="checkSelectionLength(handleAdd)"
-      >
+      <el-button size="small" type="success" @click="handleAdd">
         新增
       </el-button>
       <el-button size="small" type="primary">保存</el-button>
@@ -42,7 +38,7 @@
       >
         修改
       </el-button>
-      <el-button size="small" type="danger" @click="handleDelete">
+      <el-button size="small" type="danger" @click="checkDeleteSelection">
         删除
       </el-button>
       <el-button size="small" type="primary">导出</el-button>
@@ -57,72 +53,109 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55"> </el-table-column>
-        <el-table-column label="日期" width="120">
-          <template slot-scope="scope">{{ scope.row.date }}</template>
+        <el-table-column prop="resourceGroup" label="设备类型" width="120">
         </el-table-column>
-        <el-table-column prop="name" label="姓名" width="120">
+        <el-table-column prop="resourceCount" label="设备数量" width="120">
         </el-table-column>
-        <el-table-column prop="address" label="地址" show-overflow-tooltip>
+        <el-table-column prop="groupDes" label="设备类型描述" width="170">
+        </el-table-column>
+
+        <el-table-column prop="createUserName" label="创建人" width="120">
+        </el-table-column>
+        <el-table-column prop="createTime" label="创建时间" width="170">
+        </el-table-column>
+        <el-table-column prop="modifyUserName" label="修改人" width="120">
+        </el-table-column>
+        <el-table-column
+          prop="modifyTime"
+          label="修改时间"
+          width="170"
+          show-overflow-tooltip
+        >
         </el-table-column>
       </el-table>
     </div>
+    <div class="pagination">
+      <el-pagination
+        background
+        layout="->,total,prev,pager,next,sizes"
+        :total="total"
+        :page-size="pagesize"
+        :current-page="currentPage"
+        @size-change="handlePagesize"
+        @current-change="handleCurrentChange"
+      >
+      </el-pagination>
+    </div>
+    <el-dialog title="删除" :visible.sync="deleteDialog" width="30%">
+      <span>是否确认删除{{ selectionList.length }}条数据？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="deleteDialog = false">取 消</el-button>
+        <el-button type="primary" @click="handleDelete">
+          确 定
+        </el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+// import { findResourceGroupListHttp } from "../../../api/device/type.api";
+import {
+  findResourceGroupListHttp,
+  deleteResourceGroupHttp
+} from "@/api/device/type.api.js";
+import { mapMutations } from "vuex";
+
 export default {
   data() {
     return {
       typeForm: {
-        deviceType: ""
+        resourceGroup: ""
       },
       rules: {
-        deviceType: [
+        resourceGroup: [
           { required: true, message: "请输入设备类型", trigger: "blur" }
           //   { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" }
         ]
       },
-      tableData: [
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-08",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-06",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-07",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        }
-      ],
-      selectionList: []
+      tableData: [],
+      selectionList: [],
+      //分页
+      currentPage: 1,
+      pagesize: 10,
+      total: 0,
+      deleteDialog: false
     };
   },
+  created() {
+    this.init();
+  },
   methods: {
+    ...mapMutations(["SETTYPELIST"]),
+    init() {
+      const data = {
+        currentPage: this.currentPage,
+        pageSize: this.pagesize,
+        resourceGroup: this.typeForm.resourceGroup
+      };
+      findResourceGroupListHttp(data).then(data => {
+        const res = data.data;
+        console.log(res);
+        const list = res.data.data;
+        if (res.code === 200) {
+          // this.pageShow = true;
+          this.total = res.data.total;
+          this.tableData = list;
+          this.typeForm.resourceGroup = "";
+        } else {
+          this.$message({
+            message: res.message,
+            type: "warning"
+          });
+        }
+      });
+    },
     toggleSelection(rows) {
       if (rows) {
         rows.forEach(row => {
@@ -132,13 +165,23 @@ export default {
         this.$refs.multipleTable.clearSelection();
       }
     },
+    //当前选中行
     handleSelectionChange(val) {
       this.selectionList = val;
       console.log(this.selectionList);
     },
+    //更改当前页码,再次请求数据
+    handleCurrentChange(currentChange) {
+      this.currentPage = currentChange;
+      this.init();
+    },
+    //更改页码大小
+    handlePagesize(pagesize) {
+      this.pagesize = pagesize;
+      this.currentPage = 1;
+    },
     //点击新增和编辑前验证所选项的长度
     checkSelectionLength(handle) {
-      console.log(handle);
       if (this.selectionList.length === 0) {
         this.$message({
           message: "还没有选择哦",
@@ -159,12 +202,25 @@ export default {
       }
     },
     handleAdd() {
-      this.$router.push({ path: "/device/deviceTypeEdit" });
+      this.selectionList = [];
+      const emptyObj = { resourceGroup: "", groupDes: "" };
+      this.selectionList.push(emptyObj);
+      this.SETTYPELIST(this.selectionList);
+      this.$router.push({
+        path: "/device/deviceTypeEdit",
+        // name: "deviceTypeEdit",
+        query: { operateType: "add" }
+      });
     },
     handleEdit() {
-      this.$router.push({ path: "/device/deviceTypeEdit" });
+      this.SETTYPELIST(this.selectionList);
+      this.$router.push({
+        path: "/device/deviceTypeEdit",
+        // name: "deviceTypeEdit",
+        query: { operateType: "edit" }
+      });
     },
-    handleDelete() {
+    checkDeleteSelection() {
       if (this.selectionList.length === 0) {
         this.$message({
           message: "还没有选择哦",
@@ -172,10 +228,43 @@ export default {
         });
         return;
       }
-      console.log("删除了" + this.selectionList.length + "项");
+      this.deleteDialog = true;
     },
-    handleQuery() {},
-    handleReset() {}
+    handleDelete() {
+      console.log(this.selectionList);
+      const data = [];
+      this.selectionList.forEach(element => {
+        const obj = {
+          resourceGroup: element.resourceGroup
+        };
+        data.push(obj);
+      });
+      console.log(data);
+      deleteResourceGroupHttp(data).then(data => {
+        const res = data.data;
+        console.log(res);
+        if (res.code === 200) {
+          this.$message({
+            message: res.message,
+            type: "success"
+          });
+          this.deleteDialog = false;
+          this.init();
+          return;
+        }
+        this.deleteDialog = false;
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
+    },
+    handleQuery() {
+      this.init();
+    },
+    handleReset() {
+      this.typeForm.resourceGroup = "";
+    }
   }
 };
 </script>

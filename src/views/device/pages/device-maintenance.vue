@@ -9,9 +9,9 @@
           label-width="100px"
           class="maintenanceForm"
         >
-          <el-form-item label="设备编号" prop="deviceNumber">
+          <el-form-item label="设备编号" prop="resource">
             <el-input
-              v-model="maintenanceForm.deviceNumber"
+              v-model="maintenanceForm.resource"
               placeholder="请输入设备设备编号"
             ></el-input>
           </el-form-item>
@@ -57,72 +57,77 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55"> </el-table-column>
-        <el-table-column label="日期" width="120">
-          <template slot-scope="scope">{{ scope.row.date }}</template>
+        <el-table-column prop="resource" label="设备编号" width="140">
         </el-table-column>
-        <el-table-column prop="name" label="姓名" width="120">
+        <el-table-column prop="resourceDes" label="设备名称" width="140">
         </el-table-column>
-        <el-table-column prop="address" label="地址" show-overflow-tooltip>
+        <el-table-column prop="workCenterRelation" label="线体" width="140">
         </el-table-column>
+        <el-table-column prop="station" label="工站" width="140">
+        </el-table-column>
+        <el-table-column prop="workCenter" label="工作中心" width="140">
+        </el-table-column>
+        <el-table-column
+          prop="resourceStatus"
+          label="状态"
+          width="140"
+        ></el-table-column>
       </el-table>
+      <el-pagination
+        background
+        layout="->,total,prev,pager,next,sizes"
+        :total="total"
+        :page-size="pageSize"
+        :current-page="currentPage"
+        @size-change="handlePagesize"
+        @current-change="handleCurrentChange"
+      >
+      </el-pagination>
     </div>
   </div>
 </template>
 
 <script>
+import { findResourceGroupListHttp } from "@/api/device/maintenance.api.js";
+
 export default {
   data() {
     return {
       maintenanceForm: {
-        deviceNumber: ""
+        resource: ""
       },
       rules: {
-        deviceNumber: [
+        resource: [
           { required: true, message: "请输入设备编号", trigger: "blur" }
-          //   { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" }
         ]
       },
-      tableData: [
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-08",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-06",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-07",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        }
-      ],
-      selectionList: []
+      tableData: [],
+      selectionList: [],
+      currentPage: 1,
+      pageSize: 10,
+      total: 0
     };
   },
+  created() {
+    this.init();
+  },
   methods: {
+    init() {
+      const data = {
+        currentPage: this.currentPage,
+        pageSize: this.pageSize,
+        resource: this.maintenanceForm.resource
+      };
+      findResourceGroupListHttp(data).then(data => {
+        const res = data.data;
+        const list = res.data.data;
+        console.log(list);
+        if (res.code === 200) {
+          this.total = res.total;
+          this.tableData = list;
+        }
+      });
+    },
     toggleSelection(rows) {
       if (rows) {
         rows.forEach(row => {
@@ -134,7 +139,17 @@ export default {
     },
     handleSelectionChange(val) {
       this.selectionList = val;
-      console.log(this.selectionList);
+    },
+    //更改当前页码,再次请求数据
+    handleCurrentChange(currentChange) {
+      this.currentPage = currentChange;
+      this.init();
+    },
+    //更改页码大小
+    handlePagesize(pagesize) {
+      this.pagesize = pagesize;
+      this.currentPage = 1;
+      this.init();
     },
     //点击新增和编辑前验证所选项的长度
     checkSelectionLength(handle) {
