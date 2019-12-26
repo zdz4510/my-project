@@ -96,30 +96,30 @@
 											<el-select v-model="addForm.matType">
 												<el-option
 													v-for="item in options"
-													:key="item.value"
+													:key="item.label"
 													:label="item.label"
-													:value="item.value">
+													:value="item.label">
 												</el-option>
 											</el-select>
 										</el-form-item>
 									</el-col>
 									<el-col :span="8">
-										<el-form-item label="客户:" prop="client" v-if="addForm.matType==3 || addForm.matType==4">
+										<el-form-item label="客户:" prop="client" v-if="addForm.matType=='成品' || addForm.matType=='半成品'">
 											<el-input v-model="addForm.client"></el-input>
 										</el-form-item>
 									</el-col>
 									<el-col :span="8">
-										<el-form-item label="客户产品代码:" prop="clientMat" v-if="addForm.matType==3 || addForm.matType==4">
+										<el-form-item label="客户产品代码:" prop="clientMat" v-if="addForm.matType=='成品' || addForm.matType=='半成品'">
 											<el-input v-model="addForm.clientMat"></el-input>
 										</el-form-item>
 									</el-col>
 									<el-col :span="8">
-										<el-form-item label="供应商:" prop="vebdor" v-if="addForm.matType==1 || addForm.matType==2">
+										<el-form-item label="供应商:" prop="vebdor" v-if="addForm.matType=='辅料' || addForm.matType=='原材料'">
 											<el-input v-model="addForm.vebdor"></el-input>
 										</el-form-item>
 									</el-col>
 									<el-col :span="8">
-										<el-form-item label="供应商物料号:" prop="vebdorMat" v-if="addForm.matType==1 || addForm.matType==2">
+										<el-form-item label="供应商物料号:" prop="vebdorMat" v-if="addForm.matType=='辅料' || addForm.matType=='原材料'">
 											<el-input v-model="addForm.vebdorMat"></el-input>
 										</el-form-item>
 									</el-col>
@@ -161,9 +161,9 @@
 											<el-select v-model="addForm.lengthUnit">
 												<el-option
 													v-for="item in lengthUnit"
-													:key="item.value"
+													:key="item.label"
 													:label="item.label"
-													:value="item.value">
+													:value="item.label">
 												</el-option>
 											</el-select>
 										</el-form-item>
@@ -185,9 +185,9 @@
 											<el-select v-model="addForm.widthUnit" placeholder="请选择">
 												<el-option
 													v-for="item in lengthUnit"
-													:key="item.value"
+													:key="item.label"
 													:label="item.label"
-													:value="item.value">
+													:value="item.label">
 												</el-option>
 											</el-select>
 										</el-form-item>
@@ -209,9 +209,9 @@
 											<el-select v-model="addForm.thicknessUnit" placeholder="请选择">
 												<el-option
 													v-for="item in lengthUnit"
-													:key="item.value"
+													:key="item.label"
 													:label="item.label"
-													:value="item.value">
+													:value="item.label">
 												</el-option>
 											</el-select>
 										</el-form-item>
@@ -233,9 +233,9 @@
 											<el-select v-model="addForm.weightUnit" placeholder="请选择">
 												<el-option
 													v-for="item in weightUnit"
-													:key="item.value"
+													:key="item.label"
 													:label="item.label"
-													:value="item.value">
+													:value="item.label">
 												</el-option>
 											</el-select>
 										</el-form-item>
@@ -251,9 +251,9 @@
 </template>
 
 <script>
-	import {insertMaterial} from '../../../api/material/material.info.api.js'
+	import {insertMaterial} from '../../../api/material.info.api.js'
 	export default {
-		name:'add-work-center',
+		name:'add-material',
 		data() {
 			var qtyRequired = (rule, value, callback) => {
 				var reg = /^\d{1,5}(?:\.\d{1,3})?$/
@@ -277,10 +277,10 @@
 					value: 'WAFER',
 				}],
 				status: [{
-					value: true,
+					value: 'true',
 					label: '已启用'
 				}, {
-					value: false,
+					value: 'false',
 					label: '未启用'
 				}],
 				rules: {
@@ -305,7 +305,7 @@
 					qtyRequired1:'',
 					qtyRequired2:'',
 					qtyRequired3:'',
-					matType:'1',
+					matType:'辅料',
 					client:'',
 					clientMat:'',
 					vebdor:'',
@@ -314,16 +314,16 @@
 					modified_user_id:'',
 					length:'1',
 					lengthErrorRange:'1',
-					lengthUnit:'1',
+					lengthUnit:'MM',
 					width:'1',
 					widthErrorRange:'1',
-					widthUnit:'1',
+					widthUnit:'MM',
 					thickness:'1',
 					thicknessErrorRange:'1',
-					thicknessUnit:'1',
+					thicknessUnit:'MM',
 					weight:'1',
 					weightErrorRange:'1',
-					weightUnit:'1',
+					weightUnit:'g',
 				},
 				options: [{
 					value: '1',
@@ -359,15 +359,9 @@
 				this.$refs[formName].validate((valid) => {
 					if (valid) {
 						console.log(this.addForm);
-						
-						// let params={
-						// 	material: this.addForm
-						// }
 						let params = this.addForm
 						params.currentRev = this.addForm.currentRev ? 20 : 10
 						params.tenantSiteCode = 'test'
-						console.log(params,'p')
-						// material: JSON.stringify(this.addForm)
 						insertMaterial(params).then(data => {
 							if(data.data.message == 'success'){
 								this.$message({

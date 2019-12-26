@@ -35,7 +35,7 @@
 				<el-table-column prop="matRev" label="版本"></el-table-column>
 				<el-table-column prop="currentRev" label="当前版本"></el-table-column>
 				<el-table-column label="产品状态">
-					<template slot-scope="scope">{{ scope.row.matStatus == 1 ? '已启用' : (scope.row.status == 2 ? '未启用' : '--') }}</template>
+					<template slot-scope="scope">{{ scope.row.matStatus === 'true' ? '已启用' : (scope.row.matStatus === 'false' ? '未启用' : '--') }}</template>
 				</el-table-column>
 				<el-table-column prop="client" label="客户"></el-table-column>
 				<el-table-column prop="vebdor" label="供应商"></el-table-column>
@@ -89,7 +89,7 @@ import { mapMutations } from "vuex";
 			this.search()
 		},
 		methods: {
-			...mapMutations(["SETEDITLIST"]),
+			...mapMutations(["SETMATEDITLIST"]),
 			search(){
 				let params= {
 					deleteFlag: false,
@@ -123,11 +123,11 @@ import { mapMutations } from "vuex";
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-					let params = {
-						mat: this.checkedList[0].mat,
-						matRev: this.checkedList[0].matRev,
-					}
-				deleteMaterial(params).then(data=>{
+					// let params = {
+					// 	mat: this.checkedList[0].mat,
+					// 	matRev: this.checkedList[0].matRev,
+					// }
+				deleteMaterial(this.checkedList).then(data=>{
 					console.log(data,'adddata')
 					this.$message({
             type: 'success',
@@ -147,7 +147,7 @@ import { mapMutations } from "vuex";
 				this.$router.push({path:'/material/add-material'})
 			},
 			edit(){
-				this.SETEDITLIST(this.checkedList);
+				this.SETMATEDITLIST(this.checkedList);
 				this.$router.push({path:'/material/edit-material'})
 			},
 			submitForm(formName) {

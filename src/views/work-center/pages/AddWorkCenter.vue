@@ -13,7 +13,7 @@
 				<el-form-item label="描述:" prop="workCenter">
 					<el-input v-model="addForm.workCenterDes" ></el-input>
 				</el-form-item>
-				<el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+				<el-tabs v-model="activeName" type="card">
 					<el-tab-pane label="基础信息" name="first">
 						<el-row>
 							<el-col :span="24">

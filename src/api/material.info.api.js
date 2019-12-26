@@ -31,5 +31,5 @@ export const modifyMaterial = data => {
  *  url /mes/material/delete
  */
 export const deleteMaterial = data => {
-  return request.delete(`${window.VUE_APP_URL}/mes/material/delete?mat=${data.mat}&matRev=${data.matRev}`);
+  return request.post(`${window.VUE_APP_URL}/mes/material/delete`, data);
 };

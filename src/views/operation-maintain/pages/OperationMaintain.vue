@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import { getOperationList,deleteOperation} from '../../../api/operation-maintain/operation.maintain.api.js'
+import { getOperationList,deleteOperation} from '../../../api/operation.maintain.api.js'
 import { mapMutations } from "vuex";
 	export default {
 		name:'operation-maintain',
@@ -77,7 +77,7 @@ import { mapMutations } from "vuex";
 			this.search()
 		},
 		methods: {
-			...mapMutations(["SETEDITLIST"]),
+			...mapMutations(["SETOPERATIONEDITLIST"]),
 			resetForm(formName) {
 				this.$refs[formName].resetFields();
 				this.search()
@@ -110,10 +110,6 @@ import { mapMutations } from "vuex";
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-					// let params = {
-					// 	mat: this.checkedList[0].mat,
-					// 	matRev: this.checkedList[0].matRev,
-					// }
 					deleteOperation(this.checkedList).then(data=>{
 						if(data.data.message == 'success'){
 							this.$message({
@@ -134,7 +130,7 @@ import { mapMutations } from "vuex";
 				this.$router.push({path:'/operation-maintain/add-operation-maintain'})
 			},
 			edit(){
-				this.SETEDITLIST(this.checkedList);
+				this.SETOPERATIONEDITLIST(this.checkedList);
 				this.$router.push({path:'/operation-maintain/edit-operation-maintain'})
 			},
 		}

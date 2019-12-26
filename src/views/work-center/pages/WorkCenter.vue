@@ -47,77 +47,11 @@
 				:total="this.tableData.page.total">
 			</el-pagination>
 		</div>
-		<!-- 模态框 -->
-		<el-dialog title="新增" :visible.sync="dialog">
-			<el-form :inline="true" :model="addForm" ref="addForm" :rules="rules" class="add-form" :label-width="formLabelWidth">
-				<el-form-item label="工作中心:" prop="workCenter">
-					<el-input v-model="addForm.workCenter" ></el-input>
-				</el-form-item>
-				<el-form-item label="描述:" prop="workCenter">
-					<el-input v-model="addForm.workCenterDes" ></el-input>
-				</el-form-item>
-				<el-tabs v-model="activeName" type="card" >
-					<el-tab-pane label="基础信息" name="first">
-						<el-row>
-							<el-col :span="24">
-								<el-form-item label="状态:" prop="status" required>
-									<el-select v-model="addForm.status" filterable placeholder="请选择">
-										<el-option
-											v-for="item in status"
-											:key="item.value"
-											:label="item.label"
-											:value="item.value">
-										</el-option>
-									</el-select>
-								</el-form-item>
-							</el-col>
-						</el-row>
-						<el-row>
-							<el-col :span="24">
-								<el-form-item label="类别:" prop="type" required>
-									<el-select v-model="addForm.type" filterable placeholder="请选择">
-										<el-option
-											v-for="item in type"
-											:key="item.value"
-											:label="item.label"
-											:value="item.value">
-										</el-option>
-									</el-select>
-								</el-form-item>
-							</el-col>
-						</el-row>
-					</el-tab-pane>
-					<el-tab-pane label="工作中心维护" name="second">
-						<el-transfer
-							filterable
-							:filter-method="filterMethod"
-							:titles="['未分配工作中心', '已分配工作中心']"
-							v-model="value"
-							:data="data">
-						</el-transfer>
-					</el-tab-pane>
-					<el-tab-pane label="用户" name="third">
-						<el-transfer
-							filterable
-							:filter-method="filterMethod"
-							:titles="['未分配用户', '已分配用户']"
-							v-model="value"
-							:data="data">
-						</el-transfer>
-					</el-tab-pane>
-				</el-tabs>
-				<div slot="footer" class="dialog-footer">
-					<!-- <el-button @click="handleReset(workCenterForm)">重 置</el-button> -->
-					<el-button >重 置</el-button>
-					<el-button type="primary" @click="dialog = false">确 定</el-button>
-				</div>
-			</el-form>
-    </el-dialog>
 	</div>
 </template>
 
 <script>
-import {getWorkCenterList, deleteWorkCenter} from '../../../api/work-center/work.center.api.js'
+import {getWorkCenterList, deleteWorkCenter} from '../../../api/work.center.api.js'
 import { mapMutations } from "vuex";
 	export default {
 		name:'work-center',
@@ -171,27 +105,13 @@ import { mapMutations } from "vuex";
 						total:0
 					}
 				},
-				status: [{
-					value: '1',
-					label: '已启用'
-				}, {
-					value: '2',
-					label: '未启用'
-				}],
-				type: [{
-					value: '1',
-					label: '车间'
-				}, {
-					value: '2',
-					label: '产线'
-				}],
 			}
 		},
 		created(){
 			this.search()
 		},
 		methods: {
-			...mapMutations(["SETEDITLIST"]),
+			...mapMutations(["SETWORKCENTEREDITLIST"]),
 			onEnterSearch(){
 				return false
 			},
@@ -225,7 +145,7 @@ import { mapMutations } from "vuex";
 				this.$router.push({path:'/work-center/add-work-center'})
 			},
 			edit(){
-				this.SETEDITLIST(this.checkedList);
+				this.SETWORKCENTEREDITLIST(this.checkedList);
 				this.$router.push({path:'/work-center/edit-work-center'})
 			},
 			del(){
@@ -234,16 +154,7 @@ import { mapMutations } from "vuex";
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-					// let params = {
-					// modifyUserId: "string",
-					// modifyUserName: "string",
-					// operation: this.searchForm.operation,
-					// operationDes: this.addForm.operationDes,
-					// status: this.addForm.status,
-					// tenantSiteCode: this.searchForm.tenantSiteCode
-				// }
-					let params = this.checkedList[0]
-					console.log(params,'oar')
+					let params = this.checkedList
 					deleteWorkCenter(params).then(data=>{
 						console.log(data,'adddata')
 						this.$message({

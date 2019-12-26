@@ -13,7 +13,7 @@ export const getWorkCenterList = data => {
  *  url /mes/workCenter/save
  */
 export const saveWorkCenter = data => {
-	return request.post(`${window.VUE_APP_URL}/mes/workCenter/save?workCenter=${data.workCenter}&workCenterDes=${data.workCenterDes}&workCenterRelation=${data.workCenterRelation}`);
+	return request.post(`${window.VUE_APP_URL}/mes/workCenter/save?workCenter=${data.workCenter}&workCenterDes=${data.workCenterDes}&workCenterRelation=${data.workCenterRelation}&status=${data.status}&workCenterType=${data.workCenterType}`);
 };
 
 /**

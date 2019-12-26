@@ -23,7 +23,7 @@
 				</el-row>
 				<el-row>
 					<el-col :span="24">
-						<el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+						<el-tabs v-model="activeName" type="card">
 							<el-tab-pane label="基础信息" name="first">
 								<el-row>
 									<el-col :span="24">
@@ -87,33 +87,22 @@
 </template>
 
 <script>
-	import {saveOperation, getAllResourceGroup} from '../../../api/operation-maintain/operation.maintain.api.js'
+	import {saveOperation, getAllResourceGroup} from '../../../api/operation.maintain.api.js'
 	export default {
-		name:'',
+		name:'add-operation-maintain',
 		data() {
-			var qtyRequired = (rule, value, callback) => {
-				var reg = /^\d{1,5}(?:\.\d{1,3})?$/
-				if (!reg.test(value)) {
-					return callback(new Error('小数点前5位后3位数字;正数'));
-				}
-				callback()
-			};
 			return {
 				activeName:'first',
 				formLabelWidth:'120px',
 				rules: {
-					qtyRequired1: [
-						{ validator: qtyRequired, trigger: 'blur' }
-					],
-					qtyRequired2: [
-						{ validator: qtyRequired, trigger: 'blur' }
-					],
-					qtyRequired3: [
-						{ validator: qtyRequired, trigger: 'blur' }
-					]
 				},
 				addForm: {
-					mat:'',
+					operation:'',
+					operationDes:'',
+					status:'',
+					certOperation:'',
+					reportingStep:'',
+					resourceGroup:'',
 				},
 				status:[{
 					label:'已启用',
@@ -123,6 +112,7 @@
 					value:false
 				}],
 				resourceGroup:[],
+				certOperation:[],
 			}
 		},
 		created() {

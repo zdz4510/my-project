@@ -27,7 +27,5 @@ export const saveWorkCenter = data => {
 // };
 
 export const deleteWorkCenter = data => {
-  return request.delete(`${window.VUE_APP_URL}/mes/workCenter/delete`, {
-		params:data
-	});
+  return request.post(`${window.VUE_APP_URL}/mes/workCenter/delete`, data);
 };

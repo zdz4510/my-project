@@ -1,28 +1,28 @@
 <template>
-	<div>
+  <div>
 		<div class="operate mtb10">
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="goBack">返回</el-button>
-			<el-button class="mr25 pad1025" size="small" type="warning" @click="save('editForm')">保存</el-button>
+			<el-button class="mr25 pad1025" size="small" type="primary" @click="handleSave('editForm')">保存</el-button>
 		</div>
-		<el-row :gutter="20">
+		<el-row :gutter="20" class="bgw">
 			<el-col :span="6">
 				<div>
-					<el-select v-model="search" clearable class="mtb20" >
+					<el-select v-model="value" clearable placeholder="请选择" :disabled="selectIsDisabled" @clear="handleClearSelect" @change="handleChangeOption" @focus="handleSelectFocus" ref="select" >
 						<el-option
-							v-for="item in this.editList"
+							v-for="item in cloneList"
 							:key="item.workCenter"
 							:label="item.workCenter"
-							:value="item.workCenter">
+							:value="item.workCenter" >
 						</el-option>
 					</el-select>
-					<el-table @row-click="handleClick" :row-class-name="tableRowClassName" border :data="this.editList.filter(data => !search || data.workCenter.toLowerCase().includes(search.toLowerCase()))" style="width: 100%">
+					<el-table ref="editTable" :data="cloneList" border highlight-current-row style="width: 100%" @row-click="handleCurrentChange" >
 						<el-table-column label="工作中心" prop="workCenter"> </el-table-column>
 						<el-table-column label="描述" prop="workCenterDes"> </el-table-column>
 					</el-table>
 				</div>
 			</el-col>
 			<el-col :span="18">
-				<div class="editForm">
+				<div>
 					<el-form :inline="true" :model="editForm" ref="editForm" :rules="rules" class="add-form" :label-width="formLabelWidth">
 						<el-form-item label="工作中心:" prop="workCenter">
 							<el-input v-model="editForm.workCenter" ></el-input>
@@ -30,11 +30,11 @@
 						<el-form-item label="描述:" prop="workCenter">
 							<el-input v-model="editForm.workCenterDes" ></el-input>
 						</el-form-item>
-						<el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+						<el-tabs v-model="activeName" type="card">
 							<el-tab-pane label="基础信息" name="first">
 								<el-row>
 									<el-col :span="24">
-										<el-form-item label="状态:" prop="status" required>
+										<el-form-item label="状态:" prop="status">
 											<el-select v-model="editForm.status" filterable placeholder="请选择">
 												<el-option
 													v-for="item in status"
@@ -48,10 +48,10 @@
 								</el-row>
 								<el-row>
 									<el-col :span="24">
-										<el-form-item label="类别:" prop="type" required>
-											<el-select v-model="editForm.type" filterable placeholder="请选择">
+										<el-form-item label="类别:" prop="workCenterType">
+											<el-select v-model="editForm.workCenterType " filterable placeholder="请选择">
 												<el-option
-													v-for="item in type"
+													v-for="item in workCenterType "
 													:key="item.value"
 													:label="item.label"
 													:value="item.value">
@@ -86,6 +86,16 @@
 							<el-button type="primary" @click="dialog = false">确 定</el-button>
 						</div>
 					</el-form>
+					<!-- 确认模态框 -->
+					<el-dialog title="保存" :visible.sync="saveDialog" width="30%">
+						<span>是否保存数据？</span>
+						<span slot="footer" class="dialog-footer">
+							<el-button @click="handleCancle">取 消</el-button>
+							<el-button type="primary" @click="handleSave('editForm')">
+								确 定
+							</el-button>
+						</span>
+					</el-dialog>
 				</div>
 			</el-col>
 		</el-row>
@@ -93,103 +103,212 @@
 </template>
 
 <script>
-	import {updateData} from '../../../api/base/base.api.js'
-	import { mapGetters } from "vuex";
-	export default {
-		name:'',
-		computed: {
-			...mapGetters(["editList"])
-		},
-		data() {
-			var qtyRequired = (rule, value, callback) => {
-				var reg = /^\d{1,5}(?:\.\d{1,3})?$/
-				if (!reg.test(value)) {
-					return callback(new Error('小数点前5位后3位数字;正数'));
-				}
-				callback()
-			};
-			return {
-				activeName:'first',
-				search:'',
-				currentEditItem:{},
-				formLabelWidth:'120px',
-				rules: {
-					qtyRequired1: [
-						{ validator: qtyRequired, trigger: 'blur' }
-					],
-					qtyRequired2: [
-						{ validator: qtyRequired, trigger: 'blur' }
-					],
-					qtyRequired3: [
-						{ validator: qtyRequired, trigger: 'blur' }
-					]
-				},
-				editForm: {
-					mat:'',
-				},
-			}
-		},
-		created() {
-			this.currentEditItem = this.editList[0]
-			this.editForm = this.editList[0]
-		},
-		methods: {
-			goBack() {
-				this.$router.push({path:'/work-center/work-center'})
+import { mapGetters, mapMutations } from "vuex";
+import {saveWorkCenter} from '../../../api/work.center.api.js'
+export default {
+  name:'edit-work-center',
+  computed: {
+    ...mapGetters(["workCenterEditList"])
+  },
+  data() {
+    return {
+      //表单左边宽度
+      formLabelWidth: "120px",
+			activeName:'first',
+      cloneModify: {}, //  克隆的表单的一份副本
+      editForm: {
+				workCenter:'',
+				workCenterDes:'',
+				status:'',
+				workCenterType:'',
+				workCenterRelation:[],
 			},
-			tableRowClassName({row}) {
-				if (row.workCenter == this.currentEditItem.workCenter && row.workCenterDes == this.currentEditItem.workCenterDes) {
-					return 'success-row';
-				} else {
-					return '';
-				}
+			rules: {
+				
 			},
-			save(formName){
-				this.$refs[formName].validate((valid) => {
-					if (valid) {
-						let params = this.editForm
-						updateData(params).then(data => {
-							if(data.data.message == 'success'){
-								this.$message({
-									type: 'success',
-									message: '保存成功!'
-								});
+			status:[{
+				value:'1',
+				label:'已启用'
+			},{
+				value:'2',
+				label:'未启用'
+			}],
+			workCenterType:[{
+				value:'1',
+				label:'车间'
+			},{
+				value:'2',
+				label:'产线'
+			}],
+      saveDialog: false, //保存弹框的显示和隐藏
+      currentRow: {},
+      oldRow: {}, // 当前选中的行
+      cloneList: [], // 复制所以可以编辑的数据副本
+      value: "",
+      selectIsDisabled: false,
+    };
+  },
+
+  methods: {
+    ...mapMutations(["SETWORKCENTEREDITLIST"]),
+    //初始化的操作
+    init() {
+      if (this.workCenterEditList.length > 0) {
+        this.cloneList = JSON.parse(JSON.stringify(this.workCenterEditList)); //复制一份副本,保证副本和初始列表数据一致性
+        this.editForm = this.cloneList[0]; // 默认选中第一行
+        this.cloneModify = JSON.parse(JSON.stringify(this.editForm)); // modify 的副本
+        this.setCurrent(this.editForm); // 设置选中第一行
+        this.currentRow = this.editForm; // 设置初始currentRow 为第一行
+      }
+    },
+    //清除下拉列表时触发
+    handleClearSelect() {
+      this.init();
+    },
+    //选中下拉列表时触发
+    handleChangeOption(row) {
+      if(row==''){
+        return ;
+      }
+      //过滤数组
+      const tempList = this.cloneList.filter(item => item["workCenter"] == row);
+      console.log(tempList);
+      this.cloneList = tempList;
+      this.editForm = tempList[0];
+      this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
+      this.setCurrent(tempList[0]);
+    },
+    //下拉列表获取到焦点时触发
+    handleSelectFocus() {
+      // this.oldRow = oldRow;
+      //  当前编辑的和之前的数据不一样就显示弹窗
+      if (JSON.stringify(this.editForm) !== JSON.stringify(this.cloneModify)) {
+        console.log('数据不一样禁用下拉框还有弹出保存')
+        this.saveDialog = true; // 保存弹出框出现
+        this.selectIsDisabled = true; // 禁用下拉框
+        this.$refs['select'].blur();
+      } else {
+         console.log('数据一样不禁用下拉框还有不弹出保存')
+        this.saveDialog = false;
+        
+        this.selectIsDisabled = false;
+      }
+    },
+    //设置某一行被选中
+    setCurrent(row) {
+      this.$refs.editTable.setCurrentRow(row);
+    },
+
+    findItemByKey(arr, keyV, kerStr) {
+      let temp = arr.filter(item => item[kerStr] == keyV);
+      if (temp.length > 0) {
+        return temp[0];
+      }
+      return null;
+    },
+    // 点击某一行选中后操作的状态你
+    handleCurrentChange(currentRow) {
+      this.oldRow = this.currentRow;
+      this.currentRow = currentRow;
+      if (
+        JSON.stringify(this.editForm) !== JSON.stringify(this.cloneModify)
+      ) {
+        this.saveDialog = true; // 弹出保存的提示框
+        return;
+      }
+      this.editForm = currentRow;
+      this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
+    },
+    //选中某一行
+    //返回操作
+		goBack() {
+			this.$router.push({path:'/work-center/work-center'})
+		},
+    /**
+     *  通过workCenter
+     *  return >1 就找到了
+     */
+    findIndexByItem(arr, v) {
+      return arr.findIndex(item => item["workCenter"] == v);
+    },
+    // 取消操作  一般是在弹框出现的时候才有取消操作
+    handleCancle() {
+      this.saveDialog = false;
+      this.selectIsDisabled = false;
+      //数据还原
+      if(this.cloneList.length<this.workCenterEditList.length && this.value!=''){
+          this.cloneList = JSON.parse(JSON.stringify([this.cloneModify]));
+          this.editForm = this.cloneList[0];
+          return ;
+      }
+      this.cloneList = JSON.parse(JSON.stringify(this.workCenterEditList));  //取消直接复制一份副本
+      if (this.currentRow) {
+        let code = this.currentRow.workCenter;
+        let item = this.findItemByKey(this.cloneList, code, "workCenter");
+        if (item) {
+          this.setCurrent(item);
+        }
+        this.editForm = item;
+      }
+    },
+    //保存操作
+    handleSave(formName) {
+			this.$refs[formName].validate((valid) => {
+				if (valid) {
+					let params = this.editForm
+					saveWorkCenter(params).then(data => {
+						const res = data.data;
+						this.saveDialog = false; // 保存的提示框消失
+						this.selectIsDisabled = false;
+					
+						// 直接成功
+						if (res.code === 200) {
+							this.saveDialog = false;
+							this.selectIsDisabled = false;
+							this.$message({
+								message: "修改成功",
+								type: "success"
+							});
+							// 直接覆盖
+							if (this.cloneList.length == this.workCenterEditList.length) {
+								//直接覆盖
+								//重新更改初始的副本
+								//设置左边的选中状态
+								this.SETWORKCENTEREDITLIST(JSON.parse(JSON.stringify(this.cloneList)));
+								this.editForm = this.currentRow;
+								this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
 							}
-						})
-					} else {
-						console.log('error submit!!');
-						return false;
-					}
-				});
-			},
-			handleClick(row){
-				this.currentEditItem = row
-				this.editForm = row
-			},
-			isObjectValueEqual(a, b) {
-				var aProps = Object.getOwnPropertyNames(a);
-				var bProps = Object.getOwnPropertyNames(b);
-				if (aProps.length != bProps.length) {
-					return false;
-				}
-				for (var i = 0; i < aProps.length; i++) {
-					var propName = aProps[i]
-					var propA = a[propName]
-					var propB = b[propName]
-					if ((typeof (propA) === 'object')) {
-						if (this.isObjectValueEqual(propA, propB)) {
-								return true
-							} else {
-								return false
+					
+							if (this.cloneList.length == 1) {
+								let index = this.findIndexByItem(
+									this.workCenterEditList,
+									this.editForm.workCenter
+								);
+								if (index > -1) {
+									this.workCenterEditList.splice(index, 1, this.editForm); // 替换
+									this.SETWORKCENTEREDITLIST(JSON.parse(JSON.stringify(this.workCenterEditList)));
+									this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
+								}
 							}
-					} else if (propA !== propB) {
-						return false
-					}
-				}
-				return true
-			}
-		}
-	}
+						} else {
+							this.$message({
+								message: res.data,
+								type: "error"
+							});
+							this.saveDialog = false;
+							this.setCurrent(this.oldRow);
+						}
+					});
+				}	
+			});
+    }
+  },
+  created() {
+    this.$nextTick(() => {
+      this.init();
+    });
+  }
+};
 </script>
 
 <style scoped lang="scss">
@@ -204,7 +323,13 @@
 			width: 756px !important;
 		}
 	}
+	.el-textarea /deep/ .el-textarea__inner{
+		width: 622px;
+	}
 	.el-table /deep/ .success-row {
 		background: #f0f9eb ;
+	}
+	.bgw {
+		background: #FFFFFF;
 	}
 </style>
