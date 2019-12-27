@@ -124,21 +124,21 @@ const routes = [
 						/* webpackChunkName: "operation-station" */ "../views/operation-station/pages/OperationStation.vue"
 					)
 			},
-			// {
-			// 	path: "add-operation-station",
-			// 	name: "add-operation-station",
-			// 	component: () =>
-			// 		import(
-			// 			/* webpackChunkName: "add-operation-station" */ "../views/operation-station/pages/AddOperationStation.vue"
-			// 		)
-			// },{
-			// 	path: "edit-operation-station",
-			// 	name: "edit-operation-station",
-			// 	component: () =>
-			// 		import(
-			// 			/* webpackChunkName: "edit-operation-station" */ "../views/operation-station/pages/EditOperationStation.vue"
-			// 		)
-			// },
+			{
+				path: "add-operation-station",
+				name: "add-operation-station",
+				component: () =>
+					import(
+						/* webpackChunkName: "add-operation-station" */ "../views/operation-station/pages/AddOperationStation.vue"
+					)
+			},{
+				path: "edit-operation-station",
+				name: "edit-operation-station",
+				component: () =>
+					import(
+						/* webpackChunkName: "edit-operation-station" */ "../views/operation-station/pages/EditOperationStation.vue"
+					)
+			},
 		]
 	},
 	/**

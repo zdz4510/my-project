@@ -191,8 +191,6 @@
 					if (valid) {
 						console.log(this.addForm);
 						let params = this.addForm
-						console.log(params,'p')
-						// work-center: JSON.stringify(this.addForm)
 						saveWorkCenter(params).then(data => {
 							if(data.data.message == 'success'){
 								this.$message({

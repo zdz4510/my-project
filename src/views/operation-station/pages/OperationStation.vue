@@ -1,174 +1,110 @@
 <template>
 	<div>
 		<div class="search-bar">
-			<el-form :inline="true" :model="searchForm" ref="searchForm" :rules="rules" class="form-style">
-				<el-form-item label="工序:" prop="operation" required>
-					<!-- <el-autocomplete
-						class="inline-input"
-						v-model="searchForm.operation"
-						:fetch-suggestions="querySearch"
-						placeholder="请输入内容"
-					></el-autocomplete> -->
+			<el-form :inline="true" :model="searchForm" ref="searchForm" :rules="rules" class="form-style" :label-width="formLabelWidth">
+				<el-form-item label="工序:" prop="operation">
 					<el-input v-model="searchForm.operation"></el-input>
 				</el-form-item>
 				<el-form-item label="" prop="">
-					<el-button class="ml15 mr25 pad1025" size="small" type="success" @click="search('searchForm')">查询</el-button>
+					<el-button class="ml15 mr25 pad1025" size="small" type="success" @click="search">查询</el-button>
+					<el-button class="pad1025" size="small" type="warning" @click="resetForm('searchForm')">重置</el-button>
 				</el-form-item>
 			</el-form>
 		</div>
 		<div class="operate ml30 mtb10">
-			<el-button class="mr25 pad1025" size="small" type="primary" @click="save">保存</el-button>
+			<el-button class="mr25 pad1025" size="small" type="primary" @click="add" :disabled="this.checkedList.length>0">新增</el-button>
+			<el-button class="mr25 pad1025" size="small" type="warning" @click="edit" :disabled="this.checkedList.length === 0">编辑</el-button>
 		</div>
-		<div class="content">
-			<el-transfer
-			class="transfer"
-				filterable
-				@change="handleChange"
-				:titles="['未分配站位', '已分配站位']"
-				v-model="allocate"
-				:data="undistributedArr">
-			</el-transfer>
+		
+		<div class="">
+			<el-table
+			ref="multipleTable"
+			:data="this.tableData.data"
+			tooltip-effect="dark"
+			row-key="mat"
+			@selection-change="handleSelectionChange"
+			>
+				<el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
+				<el-table-column type="index" label="序号"></el-table-column>
+				<el-table-column prop="operation" label="工序"></el-table-column>
+				<el-table-column prop="station" label="站位"></el-table-column>
+				<el-table-column prop="workCenterRelation" label="产线"></el-table-column>
+			</el-table>
+			<el-pagination class="mtb20"
+				background
+				@size-change="handleSizeChange"
+				@current-change="handleCurrentChange"
+				:current-page="this.tableData.page.currentPage"
+				:page-sizes="[1, 10, 15, 20, 30, 50]"
+				:page-size="this.tableData.page.pageSize"
+				layout="->, total, prev, pager, next, sizes, jumper"
+				:total="this.tableData.page.total">
+			</el-pagination>
 		</div>
 	</div>
 </template>
 
 <script>
-import {getData, saveData} from '../../../api/operation.station.api.js'
+import { getStationList} from '../../../api/operation.station.api.js'
+import { mapMutations } from "vuex";
 	export default {
 		name:'operation-station',
 		data() {
 			return {
-				undistributed:[],
-				allocate:[],
-				allocateArr:[],
-				undistributedArr: [],
-				// value: [],
-				filterMethod(query, item) {
-					return item.workCenter.indexOf(query) > -1;
-				},
+				checkedList:[],
+				formLabelWidth:'120px',
 				searchForm: {
-					operation: '',
+					operation:'',
 				},
-				rules: {
-					operation: [
-						{ required: false, message: '请输入工序名称', trigger: 'blur' },
-					],
+				rules: {},
+				tableData: {
+					data:[],
+					page:{
+						currentPage:1,
+						pageSize:10,
+						total:0
+					}
 				},
-				options: [{
-					value: '选项1',
-					label: '黄金糕'
-				}, {
-					value: '选项2',
-					label: '双皮奶'
-				}],
-				status: [{
-					value: '1',
-					label: '已启用'
-				}, {
-					value: '2',
-					label: '未启用'
-				}],
 			}
 		},
 		created(){
-			// 获取所有工序
-			let params = {
-				operation:'',
-			}
-			getData(params).then(data => {
-				let res = data.data.data
-				res.forEach(item => {
-					item.value = item.operation;
-				})
-				this.options = res
-				console.log(data,'da')
-			})
+			this.search()
 		},
 		methods: {
-			querySearch(queryString, cb) {
-				var options = this.options;
-        var results = queryString ? options.filter(this.createFilter(queryString)) : options;
-        // 调用 callback 返回建议列表的数据
-        cb(results);
-			},
-			createFilter(queryString) {
-        return (options) => {
-          return (options.operation.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
-        };
-			},
-			search(formName){
-				this.$refs[formName].validate((valid) => {
-					if (valid) {
-						getData(this.searchForm).then(data => {
-							let arr = []
-							console.log(data.data.data.undistributed,'da')
-							this.undistributed = data.data.data.undistributed
-							this.undistributed.forEach((item) => {
-								arr.push({
-									label: item.workCenterRelation+' -- '+item.station+' -- '+item.stationDes,
-									key: JSON.stringify(item),
-								});
-							});
-							this.undistributedArr = arr
-							this.allocate = JSON.stringify(data.data.data.allocate)
-							let allocateData = data.data.data.allocated
-							console.log(allocateData)
-							let newAllocate = []
-							for(let i = 0; i < allocateData.length; i++){
-								let str = JSON.stringify(allocateData[i])
-								newAllocate.push(str)
-							}
-							this.allocate = newAllocate
-							console.log(this.undistributedArr,this.allocate,'dafads')
-						})
-					} else {
-						console.log('error submit!!');
-						return false;
-					}
-				});
-				
-			},
-			submitForm(formName) {
-				this.$refs[formName].validate((valid) => {
-					if (valid) {
-						console.log('submit!');
-					} else {
-						console.log('error submit!!');
-						return false;
-					}
-				});
-			},
+			...mapMutations(["SETSTATIONEDITLIST"]),
 			resetForm(formName) {
 				this.$refs[formName].resetFields();
+				this.search()
 			},
-			add() {
-				this.$router.push({path:'/addMaterial'})
-			},
-			save(){
-				let params = this.allocate
-				let arr = []
-				for(let i = 0; i < params.length; i++){
-					let obj = {}
-					obj.operation = this.searchForm.operation
-					obj.station = JSON.parse(params[i])['station']
-					obj.tenantSiteCode = JSON.parse(params[i])['tenantSiteCode']
-					obj.workCenterRelation = JSON.parse(params[i])['workCenterRelation']
-					arr.push(obj)
+			search(){
+				let params= {
+					pageSize: this.tableData.page.pageSize,
+					currentPage: this.tableData.page.currentPage,
+					operation:this.searchForm.operation,
 				}
-				console.log(arr,'par')
-				saveData(arr).then(data => {
-					if(data.data.message == 'success'){
-						this.$message({
-							type: 'success',
-							message: '保存成功!'
-						});
-					}
+				getStationList(params).then(data => {
+					this.tableData.data = data.data.data.data
+					this.tableData.page.total = data.data.data.total
 				})
 			},
-			handleChange(value, direction, movedKeys) {
-				console.log(value, direction, movedKeys)
-				this.allocate = value
-      }
+			handleSizeChange(pageSize){
+				this.tableData.page.pageSize = pageSize
+				this.search()
+			},
+			handleCurrentChange(currentPage){
+				this.tableData.page.currentPage = currentPage
+				this.search()
+			},
+			handleSelectionChange(val) {
+				this.checkedList = val;
+			},
+			add(){
+				this.$router.push({path:'/operation-station/add-operation-station'})
+			},
+			edit(){
+				this.SETSTATIONEDITLIST(this.checkedList);
+				this.$router.push({path:'/operation-station/edit-operation-station'})
+			},
 		}
 	}
 </script>
@@ -188,8 +124,11 @@ import {getData, saveData} from '../../../api/operation.station.api.js'
 	}
 	.content {
 		background: #FFFFFF;
-		padding: 10px;
 	}
-	.el-transfer /deep/ .el-transfer-panel { width: 300px !important; }
-	
+	.add-form {
+		padding-left: 25px;
+	}
+	.dec {
+		width: 400px !important;
+	}
 </style>

@@ -1,5 +1,4 @@
 import request from  "@/service/"
-
 /**
  * 获取所有工序
  * url /mes/operation/getAllOperation
@@ -55,9 +54,7 @@ export const saveOperation = data => {
  *  url /mes/operation/deleteOperation
  */
 export const deleteOperation = data => {
-  return request.delete(`${window.VUE_APP_URL}/mes/operation/deleteOperation`, {
-    params: data
-  });
+  return request.delete(`${window.VUE_APP_URL}/mes/operation/deleteOperation?${data}`,);
 };
 
 

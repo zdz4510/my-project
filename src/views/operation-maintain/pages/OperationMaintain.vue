@@ -53,6 +53,7 @@
 <script>
 import { getOperationList,deleteOperation} from '../../../api/operation.maintain.api.js'
 import { mapMutations } from "vuex";
+import qs from 'qs'
 	export default {
 		name:'operation-maintain',
 		data() {
@@ -110,7 +111,15 @@ import { mapMutations } from "vuex";
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-					deleteOperation(this.checkedList).then(data=>{
+					let arr = []
+					arr = this.checkedList.map((item)=>{
+						return item.operation
+					})
+					let obj = {
+						list:arr
+					}
+					let params = qs.stringify(obj,{indices: false })
+					deleteOperation(params).then(data=>{
 						if(data.data.message == 'success'){
 							this.$message({
 								type: 'success',

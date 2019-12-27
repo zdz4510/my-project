@@ -1,11 +1,10 @@
 import request from  "@/service/"
-
 /**
  * 获取所有工序
- * url /mes/operation/getAll
+ * url /mes/operation/getAllOperation
  */
 export const getAllOperation = data => {
-  return request.get(`${window.VUE_APP_URL}/mes/operation/getAll`, {
+  return request.get(`${window.VUE_APP_URL}/mes/operation/getAllOperation`, {
     params: data
   });
 };
@@ -14,10 +13,18 @@ export const getAllOperation = data => {
  * 根据工厂、工序查询所有站位信息
  * url /mes/operation_station_assign/findPage
  */
-export const getDataByStation = data => {
-	return request.get(`${window.VUE_APP_URL}/mes/operation_station_assign/findPage`,{
-		params:data
-	});
+export const getOperationInfo = data => {
+  return request.get(`${window.VUE_APP_URL}/mes/operation_station_assign/findPage`, {
+    params: data
+  });
+};
+
+/**
+ * 查询工序分页列表
+ * url /mes/operation_station_assign/listOperationStationAssign
+ */
+export const getStationList = data => {
+	return request.get(`${window.VUE_APP_URL}/mes/operation_station_assign/listOperationStationAssign?currentPage=${data.currentPage}&operation=${data.operation}&pageSize=${data.pageSize}`,);
 };
 
 /**

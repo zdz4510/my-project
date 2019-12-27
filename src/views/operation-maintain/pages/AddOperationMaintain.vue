@@ -130,7 +130,10 @@
 			save(formName){
 				this.$refs[formName].validate((valid) => {
 					if (valid) {
-						let params = this.addForm
+						// let params = this.addForm
+						let params = {
+							createList:[this.addForm]
+						}
 						saveOperation(params).then(data => {
 							if(data.data.message == 'success'){
 								this.$message({

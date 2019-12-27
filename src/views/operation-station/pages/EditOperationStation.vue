@@ -17,87 +17,32 @@
 					</el-select>
 					<el-table ref="editTable" :data="cloneList" border highlight-current-row style="width: 100%" @row-click="handleCurrentChange" >
 						<el-table-column label="工序" prop="operation"> </el-table-column>
-						<el-table-column label="描述" prop="operationDes"> </el-table-column>
 					</el-table>
 				</div>
 			</el-col>
 			<el-col :span="18">
 				<div>
-					<el-form :inline="true" :model="editForm" ref="editForm" :rules="rules" class="form-style" label-position="right" :label-width="formLabelWidth">
-						<el-row>
-							<el-col :span="8">
-								<el-form-item label="工序:" prop="operation">
-									<el-input v-model="editForm.operation"></el-input>
-								</el-form-item>
-							</el-col>
-						</el-row>
-						<el-row>
-							<el-col :span="24">
-								<el-form-item label="描述:" prop="operationDes">
-									<el-input maxlength="80" show-word-limit type="textarea" :autosize="{ minRows: 2, maxRows: 4}" v-model="editForm.operationDes"> </el-input>
-								</el-form-item>
-							</el-col>
-						</el-row>
-						<el-row>
-							<el-col :span="24">
-								<el-tabs v-model="activeName" type="card">
-									<el-tab-pane label="基础信息" name="first">
-										<el-row>
-											<el-col :span="24">
-												<el-form-item label="状态:" prop="status">
-													<el-select v-model="editForm.status">
-														<el-option
-															v-for="item in status"
-															:key="item.value"
-															:label="item.label"
-															:value="item.value">
-														</el-option>
-													</el-select>
-												</el-form-item>
-											</el-col>
-										</el-row>
-										<el-row>
-											<el-col :span="24">
-												<el-form-item label="报告步骤:" prop="reportingStep">
-													<el-input v-model="editForm.reportingStep"> </el-input>
-												</el-form-item>
-											</el-col>
-										</el-row>
-										<el-row>
-											<el-col :span="24">
-												<el-form-item label="设备组:" prop="resourceGroup" >
-													<el-select v-model="editForm.resourceGroup">
-														<el-option
-															v-for="item in resourceGroup"
-															:key="item.resourceGroup"
-															:label="item.resourceGroup"
-															:value="item.resourceGroup">
-														</el-option>
-													</el-select>
-												</el-form-item>
-											</el-col>
-										</el-row>
-										<el-row>
-											<el-col :span="24">
-												<el-form-item label="上岗证:" prop="certOperation" >
-													<el-select v-model="editForm.certOperation" >
-														<el-option
-															v-for="item in certOperation"
-															:key="item.value"
-															:label="item.label"
-															:value="item.value">
-														</el-option>
-													</el-select>
-												</el-form-item>
-											</el-col>
-										</el-row>
-									</el-tab-pane>
-									<el-tab-pane label="自定义数据" name="second">
-										数据字段，数据属性
-									</el-tab-pane>
-								</el-tabs>
-							</el-col>
-						</el-row>
+					<el-form :inline="true" :model="editForm" ref="editForm" :rules="rules" class="form-style">
+						<el-form-item label="工序:" prop="operation" >
+							<el-select v-model="editForm.operation">
+								<el-option
+									v-for="item in operation"
+									:key="item.operation"
+									:label="item.operation"
+									:value="item.operation">
+								</el-option>
+							</el-select>
+						</el-form-item>
+						<el-form-item label="" prop="operation" >
+							<el-transfer
+							class="transfer"
+								filterable
+								@change="handleChange"
+								:titles="['未分配站位', '已分配站位']"
+								v-model="allocate"
+								:data="undistributedArr">
+							</el-transfer>
+						</el-form-item>
 					</el-form>
 					<!-- 确认模态框 -->
 					<el-dialog title="保存" :visible.sync="saveDialog" width="30%">
@@ -117,11 +62,11 @@
 
 <script>
 import { mapGetters, mapMutations } from "vuex";
-import {saveOperation, getAllResourceGroup} from '../../../api/operation.maintain.api.js'
+import {saveOperation, getAllOperation} from '../../../api/operation.station.api.js'
 export default {
-  name:'edit-operation-maintain',
+  name:'edit-operation-station',
   computed: {
-    ...mapGetters(["operationEditList"])
+    ...mapGetters(["stationEditList"])
   },
   data() {
     return {
@@ -147,8 +92,7 @@ export default {
 				label:'未启用',
 				value:false
 			}],
-			resourceGroup:[],
-			certOperation:[],
+			operation:[],
       saveDialog: false, //保存弹框的显示和隐藏
       currentRow: {},
       oldRow: {}, // 当前选中的行
@@ -159,11 +103,11 @@ export default {
   },
 
   methods: {
-    ...mapMutations(["SETOPERATIONEDITLIST"]),
+    ...mapMutations(["SETSTATIONEDITLIST"]),
     //初始化的操作
     init() {
-      if (this.operationEditList.length > 0) {
-        this.cloneList = JSON.parse(JSON.stringify(this.operationEditList)); //复制一份副本,保证副本和初始列表数据一致性
+      if (this.stationEditList.length > 0) {
+        this.cloneList = JSON.parse(JSON.stringify(this.stationEditList)); //复制一份副本,保证副本和初始列表数据一致性
         this.editForm = this.cloneList[0]; // 默认选中第一行
         this.cloneModify = JSON.parse(JSON.stringify(this.editForm)); // modify 的副本
         this.setCurrent(this.editForm); // 设置选中第一行
@@ -231,7 +175,7 @@ export default {
     //选中某一行
     //返回操作
 		goBack() {
-			this.$router.push({path:'/operation-maintain/operation-maintain'})
+			this.$router.push({path:'/operation-station/operation-station'})
 		},
     /**
      *  通过operation
@@ -245,12 +189,12 @@ export default {
       this.saveDialog = false;
       this.selectIsDisabled = false;
       //数据还原
-      if(this.cloneList.length<this.operationEditList.length && this.value!=''){
+      if(this.cloneList.length<this.stationEditList.length && this.value!=''){
           this.cloneList = JSON.parse(JSON.stringify([this.cloneModify]));
           this.editForm = this.cloneList[0];
           return ;
       }
-      this.cloneList = JSON.parse(JSON.stringify(this.operationEditList));  //取消直接复制一份副本
+      this.cloneList = JSON.parse(JSON.stringify(this.stationEditList));  //取消直接复制一份副本
       if (this.currentRow) {
         let code = this.currentRow.operation;
         let item = this.findItemByKey(this.cloneList, code, "operation");
@@ -282,23 +226,23 @@ export default {
 								type: "success"
 							});
 							// 直接覆盖
-							if (this.cloneList.length == this.operationEditList.length) {
+							if (this.cloneList.length == this.stationEditList.length) {
 								//直接覆盖
 								//重新更改初始的副本
 								//设置左边的选中状态
-								this.SETOPERATIONEDITLIST(JSON.parse(JSON.stringify(this.cloneList)));
+								this.SETSTATIONEDITLIST(JSON.parse(JSON.stringify(this.cloneList)));
 								this.editForm = this.currentRow;
 								this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
 							}
 					
 							if (this.cloneList.length == 1) {
 								let index = this.findIndexByItem(
-									this.operationEditList,
+									this.stationEditList,
 									this.editForm.operation
 								);
 								if (index > -1) {
-									this.operationEditList.splice(index, 1, this.editForm); // 替换
-									this.SETOPERATIONEDITLIST(JSON.parse(JSON.stringify(this.operationEditList)));
+									this.stationEditList.splice(index, 1, this.editForm); // 替换
+									this.SETSTATIONEDITLIST(JSON.parse(JSON.stringify(this.stationEditList)));
 									this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
 								}
 							}
@@ -316,8 +260,8 @@ export default {
     }
   },
   created() {
-		getAllResourceGroup().then(data => {
-			this.resourceGroup = data.data.data
+		getAllOperation().then(data => {
+			this.operation = data.data.data
 		})
     this.$nextTick(() => {
       this.init();
