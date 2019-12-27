@@ -30,7 +30,7 @@
       <el-button size="small" type="success" @click="handleAdd">
         新增
       </el-button>
-      <el-button size="small" type="primary">保存</el-button>
+      <el-button size="small" type="primary" disabled>保存</el-button>
       <el-button
         size="small"
         type="success"
@@ -41,7 +41,9 @@
       <el-button size="small" type="danger" @click="checkDeleteSelection">
         删除
       </el-button>
-      <el-button size="small" type="primary">导出</el-button>
+      <el-button size="small" type="primary" @click="handleExport"
+        >导出</el-button
+      >
     </div>
     <div class="showInfo">
       <el-table
@@ -69,7 +71,6 @@
         <el-table-column
           prop="modifyTime"
           label="修改时间"
-          width="170"
           show-overflow-tooltip
         >
         </el-table-column>
@@ -103,7 +104,8 @@
 // import { findResourceGroupListHttp } from "../../../api/device/type.api";
 import {
   findResourceGroupListHttp,
-  deleteResourceGroupHttp
+  deleteResourceGroupHttp,
+  exportExcelHttp
 } from "@/api/device/type.api.js";
 import { mapMutations } from "vuex";
 
@@ -147,13 +149,13 @@ export default {
           // this.pageShow = true;
           this.total = res.data.total;
           this.tableData = list;
-          this.typeForm.resourceGroup = "";
-        } else {
-          this.$message({
-            message: res.message,
-            type: "warning"
-          });
+          // this.typeForm.resourceGroup = "";
+          return;
         }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
       });
     },
     toggleSelection(rows) {
@@ -264,6 +266,23 @@ export default {
     },
     handleReset() {
       this.typeForm.resourceGroup = "";
+    },
+    handleExport() {
+      const data = { resourceGroup: this.typeForm.resourceGroup };
+      exportExcelHttp(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.$message({
+            message: res.message,
+            type: "success"
+          });
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
     }
   }
 };

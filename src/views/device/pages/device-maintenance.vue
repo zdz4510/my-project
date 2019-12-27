@@ -27,14 +27,10 @@
       </div>
     </div>
     <div class="operate">
-      <el-button
-        size="small"
-        type="success"
-        @click="checkSelectionLength(handleAdd)"
-      >
+      <el-button size="small" type="success" @click="handleAdd">
         新增
       </el-button>
-      <el-button size="small" type="primary">保存</el-button>
+      <el-button size="small" type="primary" disabled>保存</el-button>
       <el-button
         size="small"
         type="success"
@@ -57,20 +53,20 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55"> </el-table-column>
-        <el-table-column prop="resource" label="设备编号" width="140">
+        <el-table-column prop="resource" label="设备编号" width="160">
         </el-table-column>
-        <el-table-column prop="resourceDes" label="设备名称" width="140">
+        <el-table-column prop="resourceDes" label="设备名称" width="160">
         </el-table-column>
-        <el-table-column prop="workCenterRelation" label="线体" width="140">
+        <el-table-column prop="workCenterRelation" label="线体" width="160">
         </el-table-column>
-        <el-table-column prop="station" label="工站" width="140">
+        <el-table-column prop="station" label="工站" width="160">
         </el-table-column>
-        <el-table-column prop="workCenter" label="工作中心" width="140">
+        <el-table-column prop="workCenter" label="工作中心" width="160">
         </el-table-column>
         <el-table-column
           prop="resourceStatus"
           label="状态"
-          width="140"
+          show-overflow-tooltip
         ></el-table-column>
       </el-table>
       <el-pagination
@@ -84,11 +80,24 @@
       >
       </el-pagination>
     </div>
+    <el-dialog title="删除" :visible.sync="deleteDialog" width="30%">
+      <span>是否确认删除{{ selectionList.length }}条数据？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="deleteDialog = false">取 消</el-button>
+        <el-button type="primary" @click="handleDelete">
+          确 定
+        </el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { findResourceGroupListHttp } from "@/api/device/maintenance.api.js";
+import {
+  findResourceGroupListHttp,
+  deleteResourceBatchHttp
+} from "@/api/device/maintenance.api.js";
+import { mapMutations } from "vuex";
 
 export default {
   data() {
@@ -105,13 +114,15 @@ export default {
       selectionList: [],
       currentPage: 1,
       pageSize: 10,
-      total: 0
+      total: 0,
+      deleteDialog: false
     };
   },
   created() {
     this.init();
   },
   methods: {
+    ...mapMutations(["MAINTENANCEPELIST"]),
     init() {
       const data = {
         currentPage: this.currentPage,
@@ -121,11 +132,16 @@ export default {
       findResourceGroupListHttp(data).then(data => {
         const res = data.data;
         const list = res.data.data;
-        console.log(list);
         if (res.code === 200) {
-          this.total = res.total;
+          this.total = res.data.total;
           this.tableData = list;
+          this.maintenanceForm.resource = "";
+          return;
         }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
       });
     },
     toggleSelection(rows) {
@@ -153,7 +169,6 @@ export default {
     },
     //点击新增和编辑前验证所选项的长度
     checkSelectionLength(handle) {
-      console.log(handle);
       if (this.selectionList.length === 0) {
         this.$message({
           message: "还没有选择哦",
@@ -174,12 +189,30 @@ export default {
       }
     },
     handleAdd() {
-      this.$router.push({ path: "/device/deviceMaintenanceEdit" });
+      this.selectionList = [];
+      const emptyObj = {
+        resource: "",
+        groupDes: "",
+        resourceStatus: "",
+        workCenter: ""
+      };
+      this.selectionList.push(emptyObj);
+      this.MAINTENANCEPELIST(this.selectionList);
+      this.$router.push({
+        path: "/device/deviceMaintenanceEdit",
+        // name: "deviceTypeEdit",
+        query: { operateType: "add" }
+      });
     },
     handleEdit() {
-      this.$router.push({ path: "/device/deviceMaintenanceEdit" });
+      this.MAINTENANCEPELIST(this.selectionList);
+      this.$router.push({
+        path: "/device/deviceMaintenanceEdit",
+        // name: "deviceTypeEdit",
+        query: { operateType: "edit" }
+      });
     },
-    handleDelete() {
+    checkDelete() {
       if (this.selectionList.length === 0) {
         this.$message({
           message: "还没有选择哦",
@@ -187,9 +220,45 @@ export default {
         });
         return;
       }
-      console.log("删除了" + this.selectionList.length + "项");
+      this.selectionList.forEach(element => {
+        if (element.resourceStatus === 20) {
+          this.$message({
+            message: element.resource + "已被使用，不能删除",
+            type: "warning"
+          });
+          return;
+        }
+      });
+      this.deleteDialog = true;
     },
-    handleQuery() {},
+    handleDelete() {
+      const data = [];
+      this.selectionList.forEach(element => {
+        const obj = {
+          resource: element.resource,
+          resourceStatus: element.resourceStatus
+        };
+        data.push(obj);
+      });
+      deleteResourceBatchHttp(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.$message({
+            message: "删除成功",
+            type: "success"
+          });
+          this.init();
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
+    },
+    handleQuery() {
+      this.init();
+    },
     handleReset() {}
   }
 };

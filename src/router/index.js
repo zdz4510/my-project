@@ -4,10 +4,10 @@ import VueRouter from "vue-router";
 Vue.use(VueRouter);
 
 const routes = [
-	{
-		path: "/",
-		redirect: "/base/base"
-	},
+  {
+    path: "/",
+    redirect: "/base/base"
+  },
   /**
    *  基础库
    */
@@ -261,6 +261,14 @@ const routes = [
         component: () =>
           import(
             /* webpackChunkName: "deviceMaintenanceEdit" */ "../views/device/pages/device-maintenance-edit.vue"
+          )
+      },
+      {
+        path: "test",
+        name: "test",
+        component: () =>
+          import(
+            /* webpackChunkName: "test" */ "../views/device/pages/test.vue"
           )
       }
     ]
