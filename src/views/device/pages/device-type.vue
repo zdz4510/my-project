@@ -30,7 +30,7 @@
       <el-button size="small" type="success" @click="handleAdd">
         新增
       </el-button>
-      <el-button size="small" type="primary">保存</el-button>
+      <el-button size="small" type="primary" disabled>保存</el-button>
       <el-button
         size="small"
         type="success"
@@ -69,7 +69,6 @@
         <el-table-column
           prop="modifyTime"
           label="修改时间"
-          width="170"
           show-overflow-tooltip
         >
         </el-table-column>
@@ -148,12 +147,12 @@ export default {
           this.total = res.data.total;
           this.tableData = list;
           this.typeForm.resourceGroup = "";
-        } else {
-          this.$message({
-            message: res.message,
-            type: "warning"
-          });
+          return;
         }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
       });
     },
     toggleSelection(rows) {
