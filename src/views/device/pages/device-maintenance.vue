@@ -132,7 +132,6 @@ export default {
       findResourceGroupListHttp(data).then(data => {
         const res = data.data;
         const list = res.data.data;
-        console.log(list);
         if (res.code === 200) {
           this.total = res.data.total;
           this.tableData = list;

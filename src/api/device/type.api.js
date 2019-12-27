@@ -15,6 +15,20 @@ export const findResourceGroupListHttp = data => {
 };
 
 /**
+ * 
+获取所有设备类型信息
+ *  url /mes/resource_group/listAllResourceGroup
+ */
+export const listAllResourceGroupHttp = data => {
+  return request.get(
+    `${window.VUE_APP_URL}/mes/resource_group/listAllResourceGroup`,
+    {
+      params: data
+    }
+  );
+};
+
+/**
  * 新增和修改信息展示
  *  url /resource_group/getInformation
  */
@@ -46,6 +60,20 @@ export const updateResourceGroupHttp = data => {
 export const insertResourceGroupHttp = data => {
   return request.post(
     `${window.VUE_APP_URL}/mes/resource_group/insertResourceGroup
+  `,
+    data
+  );
+};
+
+/**
+ * 
+导出设备类型excel
+ *  url /mes/resource_group/exportExcel
+
+ */
+export const exportExcelHttp = data => {
+  return request.post(
+    `${window.VUE_APP_URL}/mes/resource_group/exportExcel
   `,
     data
   );

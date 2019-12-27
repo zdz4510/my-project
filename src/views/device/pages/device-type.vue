@@ -41,7 +41,9 @@
       <el-button size="small" type="danger" @click="checkDeleteSelection">
         删除
       </el-button>
-      <el-button size="small" type="primary">导出</el-button>
+      <el-button size="small" type="primary" @click="handleExport"
+        >导出</el-button
+      >
     </div>
     <div class="showInfo">
       <el-table
@@ -102,7 +104,8 @@
 // import { findResourceGroupListHttp } from "../../../api/device/type.api";
 import {
   findResourceGroupListHttp,
-  deleteResourceGroupHttp
+  deleteResourceGroupHttp,
+  exportExcelHttp
 } from "@/api/device/type.api.js";
 import { mapMutations } from "vuex";
 
@@ -146,7 +149,7 @@ export default {
           // this.pageShow = true;
           this.total = res.data.total;
           this.tableData = list;
-          this.typeForm.resourceGroup = "";
+          // this.typeForm.resourceGroup = "";
           return;
         }
         this.$message({
@@ -263,6 +266,23 @@ export default {
     },
     handleReset() {
       this.typeForm.resourceGroup = "";
+    },
+    handleExport() {
+      const data = { resourceGroup: this.typeForm.resourceGroup };
+      exportExcelHttp(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.$message({
+            message: res.message,
+            type: "success"
+          });
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
     }
   }
 };

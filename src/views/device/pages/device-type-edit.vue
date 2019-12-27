@@ -132,6 +132,7 @@ export default {
       const data = {
         resourceGroup: this.typeForm.resourceGroup
       };
+      console.log(this.operateType);
       if (this.operateType === "add") {
         getInformationHttp().then(data => {
           const res = data.data;
@@ -155,26 +156,29 @@ export default {
         });
         return;
       }
-      getInformationHttp(data).then(data => {
-        const res = data.data;
-        console.log(res);
-        if (res.code === 200) {
-          const list = res.data;
-          this.allocated = list.allocated;
-          this.undistributed = list.undistributed;
-          //合并数组
-          this.transferData = [...this.allocated, ...this.undistributed];
-          this.undistributed.forEach(element => {
-            this.value.push(element.resource);
+      if (this.operateType === "edit") {
+        getInformationHttp(data).then(data => {
+          const res = data.data;
+          console.log(res);
+          if (res.code === 200) {
+            const list = res.data;
+            this.allocated = list.allocated;
+            this.undistributed = list.undistributed;
+            //合并数组
+            this.transferData = [...this.allocated, ...this.undistributed];
+            this.undistributed.forEach(element => {
+              this.value.push(element.resource);
+            });
+            console.log(this.transferData);
+            return;
+          }
+          this.$message({
+            message: res.message,
+            type: "warning"
           });
-          console.log(this.transferData);
-          return;
-        }
-        this.$message({
-          message: res.message,
-          type: "warning"
         });
-      });
+        return;
+      }
     },
     handleQuery() {},
     //重置

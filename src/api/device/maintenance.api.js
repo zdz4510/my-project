@@ -44,58 +44,59 @@ export const deleteResourceBatchHttp = data => {
   );
 };
 
-//不用的
 /**
- * 新增和修改信息展示
- *  url /resource_group/getInformation
+ * 
+根据设备编码查询设备保养配置
+ *  url /mes/resourceMaintenance/findResourceMaintenanceList
  */
-export const getInformationHttp = data => {
+export const findResourceMaintenanceListHttp = data => {
   return request.get(
-    `${window.VUE_APP_URL}/mes/resource_group/getInformation`,
+    `${window.VUE_APP_URL}/mes/resourceMaintenance/findResourceMaintenanceList`,
     {
       params: data
     }
   );
 };
+/**
+ * 获取所有待使用的设备
+ *  url /mes/resource/getInactiveResource
+ */
+export const getInactiveResourceHttp = data => {
+  return request.get(`${window.VUE_APP_URL}/mes/resource/getInactiveResource`, {
+    params: data
+  });
+};
 
 /**
- * 修改设备类型信息
- *  url /mes/resource_group/updateResourceGroup
+ * 根据预警事件编号模糊查询
+ *  url /mes/alarmDef/listAlarm
  */
-export const updateResourceGroupHttp = data => {
-  return request.put(
-    `${window.VUE_APP_URL}/mes/resource_group/updateResourceGroup`,
+export const listAlarmHttp = data => {
+  return request.get(`${window.VUE_APP_URL}/mes/alarmDef/listAlarm`, {
+    params: data
+  });
+};
+
+/**
+ * 添加和修改设备保养配置
+ *  url /mes/resourceMaintenance/saveResourceMaintenance
+ */
+export const saveResourceMaintenanceHttp = data => {
+  return request.post(
+    `${window.VUE_APP_URL}/mes/resourceMaintenance/saveResourceMaintenance`,
     data
   );
 };
 
 /**
- * 添加设备类型信息
- *  url /mes/resource_group/insertResourceGroup
+ * 导出设备编码excel
+ *  url /mes/resource/exportExcel
 
  */
-export const insertResourceGroupHttp = data => {
+export const exportExcelHttp = data => {
   return request.post(
-    `${window.VUE_APP_URL}/mes/resource_group/insertResourceGroup
+    `${window.VUE_APP_URL}/mes/resource/exportExcel
   `,
     data
-  );
-};
-
-/**
- * 批量删除设备类型，根据设备类型删除
- *  url /mes/resource_group/deleteResourceGroup
- */
-export const deleteResourceGroupHttp = data => {
-  console.log(data);
-  const aa = [
-    {
-      resourceGroup: "SBLX004"
-    },
-    { resourceGroup: "SBLX006" }
-  ];
-  return request.delete(
-    `${window.VUE_APP_URL}/mes/resource_group/deleteResourceGroup`,
-    aa
   );
 };
