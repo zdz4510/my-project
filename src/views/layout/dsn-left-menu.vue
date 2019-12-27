@@ -10,7 +10,7 @@
       <i class="el-icon-s-fold" @click="handleMenuCollapse"></i>
     </div>
     <el-menu
-			unique-opened
+      unique-opened
       :collapse-transition="false"
       :router="true"
       background-color="rgb(39, 106, 179)"
@@ -22,43 +22,47 @@
       @close="handleClose"
       :collapse="!isCollapse"
     >
-			<el-submenu index="base">
-				<template slot="title">
-					<i class="el-icon-location"></i>
-					<span slot="title">基础库</span>
-				</template>
-				<el-menu-item index="/base/base">基础</el-menu-item>
-			</el-submenu>
-			<el-submenu index="material">
-				<template slot="title">
-					<i class="el-icon-location"></i>
-					<span slot="title">产品配置</span>
-				</template>
-				<el-menu-item index="/material/material-info">物料维护</el-menu-item>
-			</el-submenu>
-			<el-submenu index="factory-model">
-				<template slot="title">
-					<i class="el-icon-location"></i>
-					<span slot="title">工厂建模</span>
-				</template>
-				<el-menu-item index="/operation-maintain/operation-maintain">工序维护</el-menu-item>
-				<el-menu-item index="/operation-station/operation-station">工序与站位关系维护</el-menu-item>
-				<el-menu-item index="/work-center/work-center">工作中心</el-menu-item>
-			</el-submenu>
-			<el-submenu index="system-config">
-				<template slot="title">
-					<i class="el-icon-location"></i>
-					<span slot="title">系统配置</span>
-				</template>
-				<el-menu-item index="/next-number/next-number">编码规则</el-menu-item>
-			</el-submenu>
-			<el-submenu index="produce">
-				<template slot="title">
-					<i class="el-icon-location"></i>
-					<span slot="title">生产</span>
-				</template>
-				<el-menu-item index="/dc/dc-search">独立数据收集查询报表</el-menu-item>
-			</el-submenu>
+      <el-submenu index="base">
+        <template slot="title">
+          <i class="el-icon-location"></i>
+          <span slot="title">基础库</span>
+        </template>
+        <el-menu-item index="/base/base">基础</el-menu-item>
+      </el-submenu>
+      <el-submenu index="material">
+        <template slot="title">
+          <i class="el-icon-location"></i>
+          <span slot="title">产品配置</span>
+        </template>
+        <el-menu-item index="/material/material-info">物料维护</el-menu-item>
+      </el-submenu>
+      <el-submenu index="factory-model">
+        <template slot="title">
+          <i class="el-icon-location"></i>
+          <span slot="title">工厂建模</span>
+        </template>
+        <el-menu-item index="/operation-maintain/operation-maintain"
+          >工序维护</el-menu-item
+        >
+        <el-menu-item index="/operation-station/operation-station"
+          >工序与站位关系维护</el-menu-item
+        >
+        <el-menu-item index="/work-center/work-center">工作中心</el-menu-item>
+      </el-submenu>
+      <el-submenu index="system-config">
+        <template slot="title">
+          <i class="el-icon-location"></i>
+          <span slot="title">系统配置</span>
+        </template>
+        <el-menu-item index="/next-number/next-number">编码规则</el-menu-item>
+      </el-submenu>
+      <el-submenu index="produce">
+        <template slot="title">
+          <i class="el-icon-location"></i>
+          <span slot="title">生产</span>
+        </template>
+        <el-menu-item index="/dc/dc-search">独立数据收集查询报表</el-menu-item>
+      </el-submenu>
       <el-submenu index="device">
         <template slot="title">
           <i class="el-icon-location"></i>
@@ -67,6 +71,7 @@
         <el-menu-item index="/device/deviceType">设备类型</el-menu-item>
         <el-menu-item index="/device/deviceMaintenance">设备维修</el-menu-item>
         <el-menu-item index="/device/deviceUpkeep">设备保养</el-menu-item>
+        <el-menu-item index="/device/test">测试页面</el-menu-item>
       </el-submenu>
     </el-menu>
   </div>

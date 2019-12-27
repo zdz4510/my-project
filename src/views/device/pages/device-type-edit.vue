@@ -13,6 +13,7 @@
             <el-input
               v-model.trim="typeForm.resourceGroup"
               placeholder="请输入设备类型"
+              :disabled="isEditResource"
             ></el-input>
           </el-form-item>
         </el-form>
@@ -21,21 +22,16 @@
         <el-button size="small" type="warning" @click="handleQuery" disabled>
           查询
         </el-button>
-        <el-button
-          size="small"
-          type="info"
-          @click="handleReset"
-          :disabled="isReset"
-        >
+        <el-button size="small" type="info" @click="handleReset">
           重置
         </el-button>
       </div>
     </div>
     <div class="operate">
-      <el-button size="small" type="success">
+      <el-button size="small" type="success" disabled>
         新增
       </el-button>
-      <el-button size="small" type="primary" @click="saveDialog = true"
+      <el-button size="small" type="primary" @click="checkAdd('typeForm')"
         >保存</el-button
       >
       <el-button size="small" type="success" disabled>
@@ -47,7 +43,7 @@
       <el-button size="small" type="primary" disabled>导出</el-button>
     </div>
     <div class="showInfo">
-      <el-form ref="typeForm" :model="typeForm" label-width="80px">
+      <el-form :model="typeForm" label-width="80px">
         <el-form-item label="组别描述">
           <el-input type="textarea" v-model.trim="typeForm.groupDes"></el-input>
         </el-form-item>
@@ -104,7 +100,6 @@ export default {
       rules: {
         resourceGroup: [
           { required: true, message: "请输入设备类型", trigger: "blur" }
-          //   { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" }
         ]
       },
       //穿梭框
@@ -114,9 +109,8 @@ export default {
       cloneForm: [],
       allocated: [],
       undistributed: [],
-      //是否可点击查询按钮
-      isReset: true,
-      saveDialog: false
+      saveDialog: false,
+      isEditResource: false
     };
   },
   computed: {
@@ -129,7 +123,7 @@ export default {
     this.typeForm = this.cloneList[0];
     this.init();
     if (this.operateType === "edit") {
-      this.isReset = false;
+      this.isEditResource = true;
     }
   },
   methods: {
@@ -189,6 +183,20 @@ export default {
       this.value = [];
       this.undistributed.forEach(element => {
         this.value.push(element.resource);
+      });
+    },
+    checkAdd(formName) {
+      console.log(this.typeForm.resourceGroup === "");
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.saveDialog = true;
+        } else {
+          this.$message({
+            message: "设备类型未填写",
+            type: "warning"
+          });
+          return false;
+        }
       });
     },
     handleSave() {

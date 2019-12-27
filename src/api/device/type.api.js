@@ -56,15 +56,8 @@ export const insertResourceGroupHttp = data => {
  *  url /mes/resource_group/deleteResourceGroup
  */
 export const deleteResourceGroupHttp = data => {
-  console.log(data);
-  const aa = [
-    {
-      resourceGroup: "SBLX004"
-    },
-    { resourceGroup: "SBLX006" }
-  ];
-  return request.delete(
+  return request.post(
     `${window.VUE_APP_URL}/mes/resource_group/deleteResourceGroup`,
-    aa
+    data
   );
 };

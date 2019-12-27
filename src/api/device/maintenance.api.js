@@ -12,6 +12,40 @@ export const findResourceGroupListHttp = data => {
 };
 
 /**
+ * 添加设备信息
+ *  url /mes/resource/insertResource
+
+ */
+export const insertResourceHttp = data => {
+  return request.post(
+    `${window.VUE_APP_URL}/mes/resource/insertResource
+  `,
+    data
+  );
+};
+
+/**
+ * 修改设备信息
+ *  url /mes/resource/updateResource
+ */
+export const updateResourceHttp = data => {
+  return request.put(`${window.VUE_APP_URL}/mes/resource/updateResource`, data);
+};
+
+/**
+ * 批量删除设备信息
+ *  url /mes/resource/deleteResourceBatch
+ */
+export const deleteResourceBatchHttp = data => {
+  console.log(data); //[{ resource: "SB005", resourceStatus: 10 }]
+  return request.post(
+    `${window.VUE_APP_URL}/mes/resource/deleteResourceBatch`,
+    data
+  );
+};
+
+//不用的
+/**
  * 新增和修改信息展示
  *  url /resource_group/getInformation
  */
