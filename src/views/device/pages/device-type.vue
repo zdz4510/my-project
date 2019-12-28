@@ -82,6 +82,7 @@
         layout="->,total,prev,pager,next,sizes"
         :total="total"
         :page-size="pagesize"
+        :page-sizes="[5, 10, 15, 20]"
         :current-page="currentPage"
         @size-change="handlePagesize"
         @current-change="handleCurrentChange"
@@ -181,6 +182,7 @@ export default {
     handlePagesize(pagesize) {
       this.pagesize = pagesize;
       this.currentPage = 1;
+      this.init();
     },
     //点击新增和编辑前验证所选项的长度
     checkSelectionLength(handle) {

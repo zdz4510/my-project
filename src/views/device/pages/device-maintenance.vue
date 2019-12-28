@@ -74,6 +74,7 @@
         layout="->,total,prev,pager,next,sizes"
         :total="total"
         :page-size="pageSize"
+        :page-sizes="[5, 10, 15, 20]"
         :current-page="currentPage"
         @size-change="handlePagesize"
         @current-change="handleCurrentChange"
@@ -162,8 +163,8 @@ export default {
       this.init();
     },
     //更改页码大小
-    handlePagesize(pagesize) {
-      this.pagesize = pagesize;
+    handlePagesize(pageSize) {
+      this.pageSize = pageSize;
       this.currentPage = 1;
       this.init();
     },
