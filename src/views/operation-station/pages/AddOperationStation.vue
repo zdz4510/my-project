@@ -2,14 +2,14 @@
 	<div>
 		<div class="operate ml30 mtb10">
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="goBack">返回</el-button>
-			<el-button class="mr25 pad1025" size="small" type="primary" @click="save">保存</el-button>
+			<el-button class="mr25 pad1025" size="small" type="warning" @click="save">保存</el-button>
 		</div>
 		<div class="search-bar">
 			<el-form :inline="true" :model="addForm" ref="addForm" :rules="rules" class="form-style">
 				<el-form-item label="工序:" prop="operation" >
-					<el-select v-model="addForm.operation">
+					<el-select v-model="addForm.operation" @change="onChange">
 						<el-option
-							v-for="item in operation"
+							v-for="item in options"
 							:key="item.operation"
 							:label="item.operation"
 							:value="item.operation">
@@ -20,23 +20,33 @@
 		</div>
 		<div class="content">
 			<el-transfer
-			class="transfer"
-				filterable
-				@change="handleChange"
-				:titles="['未分配站位', '已分配站位']"
-				v-model="allocate"
-				:data="undistributedArr">
-			</el-transfer>
+        ref="transfer"
+        filterable
+        v-model="allocate"
+        :data="transferData"
+        :titles="['未分配站位', '已分配站位']"
+        :props="{
+          key: 'resource',
+          station: 'station',
+          workCenterRelation: 'workCenterRelation',
+          stationDes: 'stationDes',
+        }"
+      >
+        <span slot-scope="{ option }"
+          >{{ option.workCenterRelation }} - {{ option.station }} - {{ option.stationDes }}</span
+        >
+      </el-transfer>
 		</div>
 	</div>
 </template>
 
 <script>
-import {addStation, getAllOperation} from '../../../api/operation.station.api.js'
+import { addStation, getAllOperation, getOperationInfo} from '../../../api/operation.station.api.js'
 	export default {
 		name:'operation-station',
 		data() {
 			return {
+				transferData:[],
 				undistributed:[],
 				allocate:[],
 				allocateArr:[],
@@ -108,34 +118,51 @@ import {addStation, getAllOperation} from '../../../api/operation.station.api.js
 			resetForm(formName) {
 				this.$refs[formName].resetFields();
 			},
-			add() {
-				this.$router.push({path:'/addMaterial'})
-			},
 			save(){
-				let params = this.allocate
+				console.log(this.allocate)
 				let arr = []
-				for(let i = 0; i < params.length; i++){
-					let obj = {}
-					obj.operation = this.addForm.operation
-					obj.station = JSON.parse(params[i])['station']
-					obj.tenantSiteCode = JSON.parse(params[i])['tenantSiteCode']
-					obj.workCenterRelation = JSON.parse(params[i])['workCenterRelation']
-					arr.push(obj)
+				for(let i = 0; i < this.allocate.length; i++){
+					for(let j = 0; j < this.transferData.length; j++){
+						if(this.allocate[i] == this.transferData[j]['resource']){
+							let obj = {}
+							obj.operation = this.addForm.operation
+							obj.workCenterRelation = this.transferData[j]['workCenterRelation']
+							obj.station = this.transferData[j]['station']
+							arr.push(obj)
+						}
+					}
 				}
-				console.log(arr,'par')
+				console.log(arr,'arr')
 				addStation(arr).then(data => {
 					if(data.data.message == 'success'){
 						this.$message({
 							type: 'success',
 							message: '保存成功!'
 						});
+						setTimeout(()=>{
+							this.$router.push({path:'/operation-station/operation-station'})
+						},1000)
 					}
 				})
 			},
 			handleChange(value, direction, movedKeys) {
 				console.log(value, direction, movedKeys)
 				this.allocate = value
-      }
+			},
+			onChange(value){
+				let params = {
+					operation:value
+				}
+				getOperationInfo(params).then(data=>{
+					console.log(data.data.data,'data')
+					let transData = [...data.data.data.allocated.filter(Boolean), ...data.data.data.undistributed.filter(Boolean)]
+					this.transferData = JSON.parse(JSON.stringify(transData)) ;
+
+					data.data.data.allocated.filter(Boolean).forEach(element => {
+						this.allocate.push(element.resource || '');
+					});
+				})
+			},
 		}
 	}
 </script>

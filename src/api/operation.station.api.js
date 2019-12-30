@@ -14,9 +14,7 @@ export const getAllOperation = data => {
  * url /mes/operation_station_assign/findPage
  */
 export const getOperationInfo = data => {
-  return request.get(`${window.VUE_APP_URL}/mes/operation_station_assign/findPage`, {
-    params: data
-  });
+  return request.get(`${window.VUE_APP_URL}/mes/operation_station_assign/findPage?operation=${data.operation}`);
 };
 
 /**
