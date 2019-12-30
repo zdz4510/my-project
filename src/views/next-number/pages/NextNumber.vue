@@ -22,8 +22,17 @@
 						</el-option>
 					</el-select>
 				</el-form-item>
-				<el-form-item label="" prop="value">
-					<el-input v-model="searchForm.value"></el-input>
+				<el-form-item label="" prop="mat">
+					<el-select v-model="searchForm.mat" placeholder="请选择" @change="onChange">
+						<el-option
+							v-for="item in options"
+							:key="item.matRev"
+							:label="item.mat"
+							:value="item.matRev">
+							<span style="float: left">{{ item.mat }}</span>
+							<span style="float: right; color: #8492a6; font-size: 13px">{{ item.matRev }}</span>
+						</el-option>
+					</el-select>
 				</el-form-item>
 				<el-form-item label="版本:" prop="vision" v-if="searchForm.target !== 'matGroup'">
 					<el-input v-model="searchForm.vision"></el-input>
@@ -71,15 +80,15 @@
 					</template>
 				</el-table-column>
 			</el-table>
-			<el-pagination class="tr"
+			<el-pagination class="mtb20"
 				background
 				@size-change="handleSizeChange"
 				@current-change="handleCurrentChange"
-				:current-page="currentPage4"
-				:page-sizes="[100, 200, 300, 400]"
-				:page-size="100"
+				:current-page="this.tableData.page.currentPage"
+				:page-sizes="[1, 10, 15, 20, 30, 50]"
+				:page-size="this.tableData.page.pageSize"
 				layout="->, total, prev, pager, next, sizes, jumper"
-				:total="400">
+				:total="this.tableData.page.total">
 			</el-pagination>
 		</div>
 		<el-dialog title="添加" :visible.sync="addDialog">
@@ -187,7 +196,7 @@
 </template>
 
 <script>
-	import {getNextNumberList} from '../../../api/next.number.api.js'
+	import {getNextNumberList, searchMat} from '../../../api/next.number.api.js'
 	export default {
 		name:'next-number',
 		data() {
@@ -205,6 +214,8 @@
 					type: '',
 					str: '',
 				},
+				checkedList:[],
+				options:[],
 				circle: [{
 					value: '1',
 					label: '从不'
@@ -252,17 +263,14 @@
 				}],
 				
 				rules: {},
-				tableData: [
-				{
-					type: "固定字符串",
-					material: "ABC",
-					operate: "版本",
+				tableData: {
+					data:[],
+					page:{
+						currentPage:1,
+						pageSize:10,
+						total:0
+					}
 				},
-				{
-					type: "可替换参数",
-					material: "item",
-					operate: "版本",
-				}],
 				type: [{
 					value: 'S',
 					label: '工单下达'
@@ -287,28 +295,47 @@
 			}
 		},
 		created(){
+			this.init()
 			this.search()
-			// let params= {
-			// 		next_number_id:'',
-			// 	}
-			// 	getNextNumber(params).then(data => {
-			// 		this.tableData.data = data.data.data.data
-			// 		this.tableData.page.total = data.data.data.total
-			// 	})
 		},
 		methods: {
-			// nextNumberType(S、I)和definedBy(MAT、MAT_GROUP)
+			init(){
+				searchMat().then(data => {
+					this.options =  data.data.data
+				})
+			},
 			search() {
 				let params = this.searchForm
-						getNextNumberList(params).then(data => {
-							this.tableData.data = data.data.data.data
-							this.tableData.page.total = data.data.data.total
-						})
+				getNextNumberList(params).then(data => {
+					this.tableData.data = data.data.data.data
+					this.tableData.page.total = data.data.data.total
+				})
 			},
 			resetForm(formName) {
 				this.$refs[formName].resetFields();
 			},
+			handleSelectionChange(val){
+				this.checkedList = val
+			},
+			handleSizeChange(pageSize){
+				this.tableData.page.pageSize = pageSize
+				this.search()
+			},
+			handleCurrentChange(currentPage){
+				this.tableData.page.currentPage = currentPage
+				this.search()
+			},
+			onChange(val){
+				console.log(val)
+				this.searchForm.vision = val
+			},
 			add() {
+				
+			},
+			save() {
+				
+			},
+			del() {
 				
 			}
 		}

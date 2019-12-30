@@ -233,6 +233,7 @@ import {getDataReportList, deleteDcSearch} from '../../../api/dc.search.api'
 			},
 			resetForm(formName) {
 				this.$refs[formName].resetFields();
+				this.search()
 			},
 			exportExcel(){
 				let data = this.searchForm
