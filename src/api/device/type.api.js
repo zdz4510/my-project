@@ -1,5 +1,5 @@
 import request from "@/service/";
-// import {VUE_APP_URL} from '@/config'
+import qs from 'qs'
 
 /**
  * 根据联合主键、设备类型、设备名称分页查询设备类型信息
@@ -72,11 +72,9 @@ export const insertResourceGroupHttp = data => {
 
  */
 export const exportExcelHttp = data => {
-  return request.post(
-    `${window.VUE_APP_URL}/mes/resource_group/exportExcel
-  `,
-    data
-  );
+   let params =qs.stringify(data);
+   let url = `${window.VUE_APP_URL}/mes/resource_group/exportExcel?${params}`
+   window.open(url)
 };
 
 /**

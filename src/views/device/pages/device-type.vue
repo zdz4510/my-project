@@ -270,21 +270,26 @@ export default {
       this.typeForm.resourceGroup = "";
     },
     handleExport() {
-      const data = { resourceGroup: this.typeForm.resourceGroup };
-      exportExcelHttp(data).then(data => {
-        const res = data.data;
-        if (res.code === 200) {
-          this.$message({
-            message: res.message,
-            type: "success"
-          });
-          return;
-        }
-        this.$message({
-          message: res.message,
-          type: "warning"
-        });
-      });
+      const data = { 
+        resourceGroup: this.typeForm.resourceGroup,
+        groupDes:this.typeForm.groupDes
+       };
+
+       exportExcelHttp(data);
+    //   exportExcelHttp(data).then(data => {
+    //     const res = data.data;
+    //     if (res.code === 200) {
+    //       this.$message({
+    //         message: res.message,
+    //         type: "success"
+    //       });
+    //       return;
+    //     }
+    //     this.$message({
+    //       message: res.message,
+    //       type: "warning"
+    //     });
+    //   });
     }
   }
 };
