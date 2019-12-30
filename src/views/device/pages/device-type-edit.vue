@@ -188,6 +188,10 @@ export default {
       this.undistributed.forEach(element => {
         this.value.push(element.resource);
       });
+      if (this.operateType === "add") {
+        this.typeForm.resourceGroup = "";
+        this.typeForm.groupDes = "";
+      }
     },
     checkAdd(formName) {
       console.log(this.typeForm.resourceGroup === "");
