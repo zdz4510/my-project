@@ -233,10 +233,16 @@ import {
   findResourceMaintenanceListHttp,
   saveResourceMaintenanceHttp
 } from "@/api/device/maintenance.api.js";
+import _ from "lodash";
 
 export default {
   data() {
     return {
+      list:[
+         { "value": "三全鲜食（北新泾店）", "address": "长宁区新渔路144号" },
+          { "value": "Hot honey 首尔炸鸡（仙霞路）", "address": "上海市长宁区淞虹路661号" },
+          { "value": "新旺角茶餐厅", "address": "上海市普陀区真北路988号创邑金沙谷6号楼113" },
+      ],
       maintenanceForm: {
         //设备编号
         resource: "",
@@ -324,13 +330,15 @@ export default {
       saveType: "baseInfo",
       isEditResource: false,
       //预警
-      alarmList: []
+      alarmList: [],
+      fn: null
     };
   },
   computed: {
     ...mapGetters(["maintenanceList"])
   },
   created() {
+    this.deBounceSearch();
     this.operateType = this.$route.query.operateType;
     this.cloneList = JSON.parse(JSON.stringify(this.maintenanceList));
     this.maintenanceForm = this.cloneList[0];
@@ -386,14 +394,36 @@ export default {
       s = s < 10 ? "0" + s : s;
       return `${y}-${MM}-${d} ${h}:${m}:${s}`;
     },
+    deBounceSearch() {
+      this.fn = _.debounce((cb) => {
+        console.log(cb)
+        let data = { alarm: this.upkeepConfigForm.alarm };
+        listAlarmHttp(data).then(data => {
+         
+          const res = data.data;
+          if (res.code === 200) {
+            this.alarmList = res.data;
+           
+            cb(this.list)
+          } else {
+            this.$message({
+              message: res.message,
+              type: "warning"
+            });
+          }
+        });
+      }, 150);
+    },
     //预警事件搜索
     querySearch(queryString, cb) {
-      var alarmList = this.alarmList;
-      var results = queryString
-        ? alarmList.filter(this.createFilter(queryString))
-        : alarmList;
+     
+      this.fn(cb);
+      //  var alarmList = this.alarmList;
+      // var results = queryString
+      //   ? alarmList.filter(this.createFilter(queryString))
+      // : alarmList;
       // 调用 callback 返回建议列表的数据
-      cb(results);
+     // cb([]);
     },
     createFilter(queryString) {
       return restaurant => {
