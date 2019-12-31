@@ -238,10 +238,16 @@ import _ from "lodash";
 export default {
   data() {
     return {
-      list:[
-         { "value": "三全鲜食（北新泾店）", "address": "长宁区新渔路144号" },
-          { "value": "Hot honey 首尔炸鸡（仙霞路）", "address": "上海市长宁区淞虹路661号" },
-          { "value": "新旺角茶餐厅", "address": "上海市普陀区真北路988号创邑金沙谷6号楼113" },
+      list: [
+        { value: "三全鲜食（北新泾店）", address: "长宁区新渔路144号" },
+        {
+          value: "Hot honey 首尔炸鸡（仙霞路）",
+          address: "上海市长宁区淞虹路661号"
+        },
+        {
+          value: "新旺角茶餐厅",
+          address: "上海市普陀区真北路988号创邑金沙谷6号楼113"
+        }
       ],
       maintenanceForm: {
         //设备编号
@@ -294,7 +300,6 @@ export default {
         ],
         startTime: [
           {
-            type: "date",
             required: true,
             message: "请输入保养起始时间",
             trigger: "change"
@@ -352,20 +357,7 @@ export default {
   },
   methods: {
     init() {
-      let data = { alarm: this.upkeepConfigForm.alarm };
-      listAlarmHttp(data).then(data => {
-        const res = data.data;
-        if (res.code === 200) {
-          this.alarmList = res.data;
-          console.log(res.data);
-        } else {
-          this.$message({
-            message: res.message,
-            type: "warning"
-          });
-        }
-      });
-      data = { resource: this.maintenanceForm.resource };
+      const data = { resource: this.maintenanceForm.resource };
       findResourceMaintenanceListHttp(data).then(data => {
         const res = data.data;
         if (res.code === 200) {
@@ -395,16 +387,16 @@ export default {
       return `${y}-${MM}-${d} ${h}:${m}:${s}`;
     },
     deBounceSearch() {
-      this.fn = _.debounce((cb) => {
-        console.log(cb)
+      this.fn = _.debounce(cb => {
         let data = { alarm: this.upkeepConfigForm.alarm };
         listAlarmHttp(data).then(data => {
-         
           const res = data.data;
           if (res.code === 200) {
             this.alarmList = res.data;
-           
-            cb(this.list)
+            this.alarmList.forEach(element => {
+              element.value = element.alarm;
+            });
+            cb(this.alarmList);
           } else {
             this.$message({
               message: res.message,
@@ -416,27 +408,24 @@ export default {
     },
     //预警事件搜索
     querySearch(queryString, cb) {
-     
       this.fn(cb);
       //  var alarmList = this.alarmList;
       // var results = queryString
       //   ? alarmList.filter(this.createFilter(queryString))
       // : alarmList;
       // 调用 callback 返回建议列表的数据
-     // cb([]);
+      // cb([]);
     },
     createFilter(queryString) {
-      return restaurant => {
+      return alarms => {
         return (
-          restaurant.alarm.toLowerCase().indexOf(queryString.toLowerCase()) ===
-          0
+          alarms.alarm.toLowerCase().indexOf(queryString.toLowerCase()) === 0
         );
       };
     },
     //预警事件选择
     handleSelectAlarm(item) {
-      this.upkeepConfigForm.alarm = item;
-      console.log(item);
+      this.upkeepConfigForm.alarm = item.value;
     },
     handleSelectionChange(val) {
       this.selectionList = val;
@@ -445,14 +434,12 @@ export default {
       this.maintenanceForm.resourceStatus = val;
       console.log(val);
     },
-    handleTabClick(val) {
-      console.log(val);
+    handleTabClick() {
       if (this.saveType === "baseInfo") {
         this.saveType = "upkeepConfig";
       } else {
         this.saveType = "baseInfo";
       }
-      console.log(this.saveType);
     },
     handleQuery() {},
     handleReset(formName) {
@@ -488,6 +475,7 @@ export default {
         return;
       }
       if (count >= 2 && this.saveType === "upkeepConfig") {
+        console.log(this.upkeepConfigForm);
         const copyObj = JSON.parse(JSON.stringify(this.upkeepConfigForm));
         copyObj.resource = this.maintenanceForm.resource;
         this.tableData.push(copyObj);

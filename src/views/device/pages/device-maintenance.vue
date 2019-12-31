@@ -41,7 +41,9 @@
       <el-button size="small" type="danger" @click="handleDelete">
         删除
       </el-button>
-      <el-button size="small" type="primary">导出</el-button>
+      <el-button size="small" type="primary" @click="handleExport"
+        >导出</el-button
+      >
     </div>
     <div class="showInfo">
       <el-table
@@ -96,7 +98,8 @@
 <script>
 import {
   findResourceGroupListHttp,
-  deleteResourceBatchHttp
+  deleteResourceBatchHttp,
+  exportExcelHttp
 } from "@/api/device/maintenance.api.js";
 import { mapMutations } from "vuex";
 
@@ -260,7 +263,15 @@ export default {
     handleQuery() {
       this.init();
     },
-    handleReset() {}
+    handleReset() {
+      this.maintenanceForm.resource = "";
+    },
+    handleExport() {
+      const data = {
+        resource: this.maintenanceForm.resource
+      };
+      exportExcelHttp(data);
+    }
   }
 };
 </script>

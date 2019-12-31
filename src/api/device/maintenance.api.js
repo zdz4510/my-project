@@ -1,4 +1,5 @@
 import request from "@/service/";
+import qs from "qs";
 // import {VUE_APP_URL} from '@/config'
 
 /**
@@ -94,9 +95,8 @@ export const saveResourceMaintenanceHttp = data => {
 
  */
 export const exportExcelHttp = data => {
-  return request.post(
-    `${window.VUE_APP_URL}/mes/resource/exportExcel
-  `,
-    data
-  );
+  let params = qs.stringify(data);
+  let url = `${window.VUE_APP_URL}/mes/resource/exportExcel?${params}`;
+  console.log(url);
+  window.open(url);
 };
