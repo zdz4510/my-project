@@ -122,7 +122,8 @@
 <script>
 import {
   listResourceMaintenanceLogHttp,
-  deleteResourceGroupHttp
+  deleteResourceGroupHttp,
+  exportExcelHttp
 } from "@/api/device/upkeep.api.js";
 
 export default {
@@ -256,7 +257,13 @@ export default {
         }
       });
     },
-    handleExport() {}
+    handleExport() {
+      const data = {
+        maintenanceStatus: this.upkeepForm.maintenanceStatus,
+        resource: this.upkeepForm.resource
+      };
+      exportExcelHttp(data);
+    }
   }
 };
 </script>
