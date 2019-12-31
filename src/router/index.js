@@ -211,6 +211,30 @@ const routes = [
 						/* webpackChunkName: "dc-search" */ "../views/dc/pages/DCSearch.vue"
 					)
 			},
+			{
+				path: "data-collection",
+				name: "data-collection",
+				component: () =>
+					import(
+						/* webpackChunkName: "data-collection" */ "../views/dc/pages/DataCollection.vue"
+					)
+			},
+			{
+				path: "add-data-collection",
+				name: "add-data-collection",
+				component: () =>
+					import(
+						/* webpackChunkName: "add-data-collection" */ "../views/dc/pages/AddDataCollection.vue"
+					)
+			},
+			{
+				path: "edit-data-collection",
+				name: "edit-data-collection",
+				component: () =>
+					import(
+						/* webpackChunkName: "edit-data-collection" */ "../views/dc/pages/EditDataCollection.vue"
+					)
+			},
 		]
 	},
   /**

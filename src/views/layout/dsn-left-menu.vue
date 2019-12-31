@@ -41,12 +41,8 @@
           <i class="el-icon-location"></i>
           <span slot="title">工厂建模</span>
         </template>
-        <el-menu-item index="/operation-maintain/operation-maintain"
-          >工序维护</el-menu-item
-        >
-        <el-menu-item index="/operation-station/operation-station"
-          >工序与站位关系维护</el-menu-item
-        >
+        <el-menu-item index="/operation-maintain/operation-maintain">工序维护</el-menu-item>
+        <el-menu-item index="/operation-station/operation-station">工序与站位关系维护</el-menu-item>
         <el-menu-item index="/work-center/work-center">工作中心</el-menu-item>
       </el-submenu>
       <el-submenu index="system-config">
@@ -62,6 +58,7 @@
           <span slot="title">生产</span>
         </template>
         <el-menu-item index="/dc/dc-search">独立数据收集查询报表</el-menu-item>
+        <el-menu-item index="/dc/data-collection">数据收集</el-menu-item>
       </el-submenu>
       <el-submenu index="device">
         <template slot="title">
