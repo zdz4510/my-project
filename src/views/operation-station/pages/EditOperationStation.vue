@@ -17,14 +17,16 @@
 					</el-select>
 					<el-table ref="editTable" :data="cloneList" border highlight-current-row style="width: 100%" @row-click="handleCurrentChange" >
 						<el-table-column label="工序" prop="operation"> </el-table-column>
+						<el-table-column label="产线" prop="workCenterRelation"> </el-table-column>
+						<el-table-column label="站位" prop="station"> </el-table-column>
 					</el-table>
 				</div>
 			</el-col>
 			<el-col :span="18">
 				<div>
-					<el-form :inline="true" :model="editForm" ref="editForm" :rules="rules" class="form-style">
+					<el-form :model="editForm" ref="editForm" :rules="rules" class="form-style">
 						<el-form-item label="工序:" prop="operation" >
-							<el-select v-model="editForm.operation">
+							<el-select v-model="editForm.operation" disabled>
 								<el-option
 									v-for="item in operation"
 									:key="item.operation"
@@ -35,12 +37,21 @@
 						</el-form-item>
 						<el-form-item label="" prop="operation" >
 							<el-transfer
-							class="transfer"
+								ref="transfer"
 								filterable
-								@change="handleChange"
-								:titles="['未分配站位', '已分配站位']"
 								v-model="allocate"
-								:data="undistributedArr">
+								:data="transferData"
+								:titles="['未分配站位', '已分配站位']"
+								:props="{
+									key: 'resource',
+									station: 'station',
+									workCenterRelation: 'workCenterRelation',
+									stationDes: 'stationDes',
+								}"
+							>
+								<span slot-scope="{ option }"
+									>{{ option.workCenterRelation }} - {{ option.station }} - {{ option.stationDes }}</span
+								>
 							</el-transfer>
 						</el-form-item>
 					</el-form>
@@ -62,7 +73,7 @@
 
 <script>
 import { mapGetters, mapMutations } from "vuex";
-import {saveOperation, getAllOperation} from '../../../api/operation.station.api.js'
+import {addStation, getAllOperation, getOperationInfo} from '../../../api/operation.station.api.js'
 export default {
   name:'edit-operation-station',
   computed: {
@@ -73,7 +84,9 @@ export default {
       //表单左边宽度
       formLabelWidth: "120px",
 			activeName:'first',
-      cloneModify: {}, //  克隆的表单的一份副本
+			cloneModify: {}, //  克隆的表单的一份副本
+			transferData:[],
+			allocate:[],
       editForm: {
 				operation:'',
 				operationDes:'',
@@ -111,7 +124,20 @@ export default {
         this.editForm = this.cloneList[0]; // 默认选中第一行
         this.cloneModify = JSON.parse(JSON.stringify(this.editForm)); // modify 的副本
         this.setCurrent(this.editForm); // 设置选中第一行
-        this.currentRow = this.editForm; // 设置初始currentRow 为第一行
+				this.currentRow = this.editForm; // 设置初始currentRow 为第一行
+				let params = {
+					operation:this.currentRow.operation
+				}
+				getOperationInfo(params).then(data=>{
+				console.log(data.data.data,'data')
+				let transData = [...data.data.data.allocated.filter(Boolean), ...data.data.data.undistributed.filter(Boolean)]
+				// this.transferData = JSON.parse(JSON.stringify(transData));
+				this.transferData = Object.assign([], transData)
+				data.data.data.allocated.filter(Boolean).forEach(element => {
+					this.allocate.push(element.resource || '');
+				});
+				console.log(this.transferData,'transferData')
+			})
       }
     },
     //清除下拉列表时触发
@@ -122,7 +148,18 @@ export default {
     handleChangeOption(row) {
       if(row==''){
         return ;
-      }
+			}
+			let params = {
+					operation:row
+				}
+				getOperationInfo(params).then(data=>{
+					console.log(data.data.data,'data')
+					let transData = [...data.data.data.allocated.filter(Boolean), ...data.data.data.undistributed.filter(Boolean)]
+					this.transferData = JSON.parse(JSON.stringify(transData)) ;
+					data.data.data.allocated.filter(Boolean).forEach(element => {
+						this.allocate.push(element.resource || '');
+					});
+				})
       //过滤数组
       const tempList = this.cloneList.filter(item => item["operation"] == row);
       console.log(tempList);
@@ -161,6 +198,19 @@ export default {
     },
     // 点击某一行选中后操作的状态你
     handleCurrentChange(currentRow) {
+			let params = {
+					operation:currentRow.operation
+				}
+			getOperationInfo(params).then(data=>{
+				console.log(data.data.data,'data')
+				let transData = [...data.data.data.allocated.filter(Boolean), ...data.data.data.undistributed.filter(Boolean)]
+				// this.transferData = JSON.parse(JSON.stringify(transData));
+				this.transferData = Object.assign([], transData)
+				data.data.data.allocated.filter(Boolean).forEach(element => {
+					this.allocate.push(element.resource || '');
+				});
+				console.log(this.transferData,'transferData')
+			})
       this.oldRow = this.currentRow;
       this.currentRow = currentRow;
       if (
@@ -209,55 +259,76 @@ export default {
 			this.$refs[formName].validate((valid) => {
 				if (valid) {
 					// let params = this.editForm
-					let params = {
-						updateList:[this.editForm]
-					}
-					saveOperation(params).then(data => {
-						const res = data.data;
-						this.saveDialog = false; // 保存的提示框消失
-						this.selectIsDisabled = false;
+					// let params = {
+					// 	updateList:[this.editForm]
+					// }
+					// addStation(params).then(data => {
+					// 	const res = data.data;
+					// 	this.saveDialog = false; // 保存的提示框消失
+					// 	this.selectIsDisabled = false;
 					
-						// 直接成功
-						if (res.code === 200) {
-							this.saveDialog = false;
-							this.selectIsDisabled = false;
-							this.$message({
-								message: "修改成功",
-								type: "success"
-							});
-							// 直接覆盖
-							if (this.cloneList.length == this.stationEditList.length) {
-								//直接覆盖
-								//重新更改初始的副本
-								//设置左边的选中状态
-								this.SETSTATIONEDITLIST(JSON.parse(JSON.stringify(this.cloneList)));
-								this.editForm = this.currentRow;
-								this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
-							}
+					// 	// 直接成功
+					// 	if (res.code === 200) {
+					// 		this.saveDialog = false;
+					// 		this.selectIsDisabled = false;
+					// 		this.$message({
+					// 			message: "修改成功",
+					// 			type: "success"
+					// 		});
+					// 		// 直接覆盖
+					// 		if (this.cloneList.length == this.stationEditList.length) {
+					// 			//直接覆盖
+					// 			//重新更改初始的副本
+					// 			//设置左边的选中状态
+					// 			this.SETSTATIONEDITLIST(JSON.parse(JSON.stringify(this.cloneList)));
+					// 			this.editForm = this.currentRow;
+					// 			this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
+					// 		}
 					
-							if (this.cloneList.length == 1) {
-								let index = this.findIndexByItem(
-									this.stationEditList,
-									this.editForm.operation
-								);
-								if (index > -1) {
-									this.stationEditList.splice(index, 1, this.editForm); // 替换
-									this.SETSTATIONEDITLIST(JSON.parse(JSON.stringify(this.stationEditList)));
-									this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
-								}
+					// 		if (this.cloneList.length == 1) {
+					// 			let index = this.findIndexByItem(
+					// 				this.stationEditList,
+					// 				this.editForm.operation
+					// 			);
+					// 			if (index > -1) {
+					// 				this.stationEditList.splice(index, 1, this.editForm); // 替换
+					// 				this.SETSTATIONEDITLIST(JSON.parse(JSON.stringify(this.stationEditList)));
+					// 				this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
+					// 			}
+					// 		}
+					// 	} else {
+					// 		this.$message({
+					// 			message: res.data,
+					// 			type: "error"
+					// 		});
+					// 		this.saveDialog = false;
+					// 		this.setCurrent(this.oldRow);
+					// 	}
+					// });
+					let arr = []
+					for(let i = 0; i < this.allocate.length; i++){
+						for(let j = 0; j < this.transferData.length; j++){
+							if(this.allocate[i] == this.transferData[j]['resource']){
+								let obj = {}
+								obj.operation = this.editForm.operation
+								obj.workCenterRelation = this.transferData[j]['workCenterRelation']
+								obj.station = this.transferData[j]['station']
+								arr.push(obj)
 							}
-						} else {
-							this.$message({
-								message: res.data,
-								type: "error"
-							});
-							this.saveDialog = false;
-							this.setCurrent(this.oldRow);
 						}
-					});
+					}
+					console.log(arr,'arr')
+					addStation(arr).then(data => {
+						if(data.data.message == 'success'){
+							this.$message({
+								type: 'success',
+								message: '保存成功!'
+							});
+						}
+					})
 				}	
 			});
-    }
+		},
   },
   created() {
 		getAllOperation().then(data => {
@@ -291,4 +362,5 @@ export default {
 	.bgw {
 		background: #FFFFFF;
 	}
+	.el-transfer /deep/ .el-transfer-panel { width: 300px !important; height: 400px !important;;}
 </style>

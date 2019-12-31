@@ -371,7 +371,6 @@
 								setTimeout(()=>{
 									this.$router.push({path:'/material/material-info'})
 								},1000)
-								
 							}
 						})
 					} else {

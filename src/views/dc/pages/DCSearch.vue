@@ -2,8 +2,8 @@
 	<div>
 		<div class="search-bar">
 			<el-form :inline="true" :model="searchForm" ref="searchForm" :rules="rules" class="form-style" :label-width="formLabelWidth">
-				<el-form-item label="物料号/工单号/工序设备ID:" prop="mat">
-					<el-input v-model="searchForm.mat"></el-input>
+				<el-form-item label="物料号/工单号/工序设备ID:" prop="resource">
+					<el-input v-model="searchForm.resource"></el-input>
 				</el-form-item>
 				<el-form-item label="收集类型:" prop="collectionType" required>
 					<el-select v-model="searchForm.collectionType" filterable placeholder="请选择">
@@ -18,16 +18,18 @@
 				<el-form-item label="数据收集组名称:" prop="dcGroup">
 					<el-input v-model="searchForm.dcGroup"></el-input>
 				</el-form-item>
+				<el-form-item label="" prop="">
+					<el-button class="mr25 pad1025" size="small" type="success" @click="search">查询</el-button>
+					<el-button class="mr25 pad1025" size="small" type="warning" @click="resetForm('searchForm')">重置</el-button>
+				</el-form-item>
 			</el-form>
 		</div>
 		<div class="operate ml30 mtb10">
-			<el-button class="mr25 pad1025" size="small" type="success" @click="search">查询</el-button>
-			<el-button class="mr25 pad1025" size="small" type="warning" @click="resetForm('searchForm')">重置</el-button>
 			<el-button class="mr25 pad1025" size="small" type="danger"  @click="del" :disabled="this.checkedList.length === 0">删除</el-button>
-			<el-button class="mr25 pad1025" size="small" type="danger"  @click="exportExcel" >导出</el-button>
+			<el-button class="mr25 pad1025" size="small" type="danger"  @click="exportExcel" :disabled="!this.show">导出</el-button>
 		</div>
 		
-		<div class="">
+		<div class="" v-if="!this.show">
 			<el-table
 			ref="multipleTable"
 			:data="this.tableData.data"
@@ -37,43 +39,66 @@
 			>
 				<el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
 				<el-table-column type="index" label="序号"></el-table-column>
-				<el-table-column prop="matType" label="物料分类"></el-table-column>
-				<el-table-column prop="mat" label="物料料号"></el-table-column>
-				<el-table-column prop="matRev" label="版本"></el-table-column>
-				<el-table-column prop="currentRev" label="当前版本"></el-table-column>
-				<el-table-column label="产品状态">
-					<template slot-scope="scope">{{ scope.row.matStatus == 1 ? '已启用' : (scope.row.status == 2 ? '未启用' : '--') }}</template>
-				</el-table-column>
-				<el-table-column prop="client" label="客户"></el-table-column>
-				<el-table-column prop="vebdor" label="供应商"></el-table-column>
-				<el-table-column prop="matDes" label="物料描述"></el-table-column>
+				<el-table-column prop="dcGroup" label="数据收集组"></el-table-column>
+				<el-table-column prop="collectionType" label="收集类型"></el-table-column>
+				<el-table-column prop="resourceGroup" label="设备组"></el-table-column>
+				<el-table-column prop="resource" label="设备编号"></el-table-column>
+				<el-table-column prop="mat" label="物料号"></el-table-column>
+				<el-table-column prop="matGroup" label="物料组"></el-table-column>
+				<el-table-column prop="shopOrder" label="工单号"></el-table-column>
+				<el-table-column prop="workCenter" label="工作中心"></el-table-column>
+				<el-table-column prop="operation" label="工序"></el-table-column>
+				<el-table-column prop="testPass" label="校验结果"></el-table-column>
+				<el-table-column prop="createUserName" label="创建人"></el-table-column>
+				<el-table-column prop="createTime" label="创建时间"></el-table-column>
 			</el-table>
 			<el-pagination class="mtb20"
 				background
 				@size-change="handleSizeChange"
 				@current-change="handleCurrentChange"
-				:current-page="this.tableData.page.currentPage"
+				:current-page="this.page.currentPage"
 				:page-sizes="[1, 10, 15, 20, 30, 50]"
-				:page-size="this.tableData.page.pageSize"
+				:page-size="this.page.pageSize"
 				layout="->, total, prev, pager, next, sizes, jumper"
-				:total="this.tableData.page.total">
+				:total="this.page.total">
+			</el-pagination>
+		</div>
+		<div v-if="this.show">
+			<el-table border :data="tableParamsData.data" @selection-change="handleSelectionChange2" row-key="mat">
+				<el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
+				<el-table-column type="index" label="序号"></el-table-column>
+				<template v-for="(item,index) in tableParamsData.tableHead">
+					<el-table-column :prop="item.column_name" :label="item.column_comment" :key="index"></el-table-column>
+				</template>
+			</el-table>
+			<el-pagination class="mtb20"
+				background
+				@size-change="handleSizeChange"
+				@current-change="handleCurrentChange"
+				:current-page="this.page.currentPage"
+				:page-sizes="[1, 10, 15, 20, 30, 50]"
+				:page-size="this.page.pageSize"
+				layout="->, total, prev, pager, next, sizes, jumper"
+				:total="this.page.total">
 			</el-pagination>
 		</div>
 	</div>
 </template>
 
 <script>
-import {getMaterialList, deleteMaterial} from '../../../api/material.info.api'
+import {getDataReportList, deleteDcSearch} from '../../../api/dc.search.api'
 	export default {
 		name:'dc-search',
 		data() {
 			return {
+				show:true,
 				checkedList:[],
 				formLabelWidth:'200px',
 				searchForm: {
-					mat: '',
+					resource: '设备',
 					dcGroup: '',
-					collectionType: '',
+					collectionType: 20,
+					tenantSiteCode:'test'
 				},
 				rules: {
 					// process: [
@@ -81,26 +106,30 @@ import {getMaterialList, deleteMaterial} from '../../../api/material.info.api'
 					// ],
 				},
 				collectionType:[{
-					value: 1,
+					value: 10,
 					label: '工单'
 				}, {
-					value: 2,
+					value: 20,
 					label: '物料'
 				},{
-					value: 3,
+					value: 30,
 					label: '资源'
 				}, {
-					value: 4,
+					value: 40,
 					label: '工序'
 				}],
 				tableData: {
 					data:[],
-					page:{
-						currentPage:1,
-						pageSize:10,
-						total:0
-					}
 				},
+				tableParamsData: {
+					data:[],
+					tableHead:[],
+				},
+				page:{
+					currentPage:1,
+					pageSize:10,
+					total:0
+				}
 			}
 		},
 		created(){
@@ -109,28 +138,53 @@ import {getMaterialList, deleteMaterial} from '../../../api/material.info.api'
 		methods: {
 			search(){
 				let params= {
-					deleteFlag: false,
 					tenantSiteCode: this.searchForm.tenantSiteCode,
-					mat: this.searchForm.mat,
-					matRev: this.searchForm.matRev,
-					pageSize: this.tableData.page.pageSize,
-					currentPage: this.tableData.page.currentPage,
+					resource: this.searchForm.resource,
+					dcGroup: this.searchForm.dcGroup,
+					collectionType: this.searchForm.collectionType,
+					pageSize: this.page.pageSize,
+					currentPage: this.page.currentPage,
 				}
-				getMaterialList(params).then(data => {
-					this.tableData.data = data.data.data.data
-					this.tableData.page.total = data.data.data.total
+				getDataReportList(params).then(data => {
+					this.show = data.data.data.isShowParamPage
+					if(this.show){
+						let tableHead = [{
+							column_name: "collectionType",column_comment:"收集类型"
+						},{
+							column_name: "dcGroup",column_comment:"数据收集名称"
+						}]
+						
+						data.data.data.dcParamColumnHead.forEach(function(val){
+							let obj = {}
+							obj.column_name = val
+							obj.column_comment = val
+							tableHead.push(obj)
+						});
+						console.log(tableHead,'tableHead')
+						this.tableParamsData.data = data.data.data.dcParamPage.data
+						this.tableParamsData.tableHead = tableHead
+						this.page.total = data.data.data.dcParamPage.total
+					}else{
+						this.tableData.data = data.data.data.dcDataPage.data
+						this.page.total = data.data.data.dcDataPage.total
+					}
+					
 				})
 			},
 			handleSizeChange(pageSize){
 				console.log(pageSize)
-				this.tableData.page.pageSize = pageSize
+				this.page.pageSize = pageSize
 				this.search()
 			},
 			handleCurrentChange(currentPage){
-				this.tableData.page.currentPage = currentPage
+				this.page.currentPage = currentPage
 				this.search()
 			},
 			handleSelectionChange(val) {
+				this.checkedList = val;
+				console.log(val)
+			},
+			handleSelectionChange2(val) {
 				this.checkedList = val;
 				console.log(val)
 			},
@@ -140,16 +194,18 @@ import {getMaterialList, deleteMaterial} from '../../../api/material.info.api'
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-					let params = {
-						mat: this.checkedList[0].mat,
-						matRev: this.checkedList[0].matRev,
-					}
-				deleteMaterial(params).then(data=>{
+					// let params = {
+					// 	mat: this.checkedList[0].mat,
+					// 	matRev: this.checkedList[0].matRev,
+					// }
+
+				deleteDcSearch(this.checkedList).then(data=>{
 					console.log(data,'adddata')
 					this.$message({
             type: 'success',
             message: '删除成功!'
-          });
+					});
+					this.search()
 				})
           
         }).catch(() => {
@@ -177,9 +233,15 @@ import {getMaterialList, deleteMaterial} from '../../../api/material.info.api'
 			},
 			resetForm(formName) {
 				this.$refs[formName].resetFields();
+				this.search()
 			},
 			exportExcel(){
-				
+				let data = this.searchForm
+				// exportExcelData(params).then(data => {
+				// 	console.log(data)
+				// })
+				// console.log(`${window.VUE_APP_URL}/mes/dcDataReport/exportExcel?collectionType=${data.collectionType}&dcGroup=${data.dcGroup}&resource=${data.resource}&tenantSiteCode=${data.tenantSiteCode}`)
+				window.location.href=`${window.VUE_APP_URL}/mes/dcDataReport/exportExcel?collectionType=${data.collectionType}&dcGroup=${data.dcGroup}&resource=${data.resource}&tenantSiteCode=${data.tenantSiteCode}`
 			}
 		}
 	}

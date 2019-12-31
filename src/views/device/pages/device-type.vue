@@ -4,7 +4,6 @@
       <div class="left">
         <el-form
           :model="typeForm"
-          :rules="rules"
           ref="typeForm"
           label-width="100px"
           class="typeForm"
@@ -115,12 +114,6 @@ export default {
     return {
       typeForm: {
         resourceGroup: ""
-      },
-      rules: {
-        resourceGroup: [
-          { required: true, message: "请输入设备类型", trigger: "blur" }
-          //   { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" }
-        ]
       },
       tableData: [],
       selectionList: [],
@@ -270,26 +263,26 @@ export default {
       this.typeForm.resourceGroup = "";
     },
     handleExport() {
-      const data = { 
+      const data = {
         resourceGroup: this.typeForm.resourceGroup,
-        groupDes:this.typeForm.groupDes
-       };
+        groupDes: this.typeForm.groupDes
+      };
 
-       exportExcelHttp(data);
-    //   exportExcelHttp(data).then(data => {
-    //     const res = data.data;
-    //     if (res.code === 200) {
-    //       this.$message({
-    //         message: res.message,
-    //         type: "success"
-    //       });
-    //       return;
-    //     }
-    //     this.$message({
-    //       message: res.message,
-    //       type: "warning"
-    //     });
-    //   });
+      exportExcelHttp(data);
+      //   exportExcelHttp(data).then(data => {
+      //     const res = data.data;
+      //     if (res.code === 200) {
+      //       this.$message({
+      //         message: res.message,
+      //         type: "success"
+      //       });
+      //       return;
+      //     }
+      //     this.$message({
+      //       message: res.message,
+      //       type: "warning"
+      //     });
+      //   });
     }
   }
 };
