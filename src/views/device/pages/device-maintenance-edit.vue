@@ -1,7 +1,18 @@
 <template>
   <div class="maintenanceEdit">
-    <div class="query">
-      <div class="left">
+    <div class="operate">
+      <el-button size="small" type="primary" @click="handleBack">
+        返回
+      </el-button>
+      <el-button size="small" type="primary" @click="checkTabCurrentStatus">
+        保存
+      </el-button>
+      <el-button size="small" type="info" @click="handleReset(resetFormInfo)">
+        重置
+      </el-button>
+    </div>
+    <div class="showInfo">
+      <div class="resource">
         <el-form
           :model="maintenanceForm"
           ref="maintenanceFormOne"
@@ -18,33 +29,9 @@
           </el-form-item>
         </el-form>
       </div>
-      <div class="right">
-        <el-button size="small" type="warning" @click="handleQuery" disabled>
-          查询
-        </el-button>
-        <el-button size="small" type="info" @click="handleReset(resetFormInfo)">
-          重置
-        </el-button>
-      </div>
-    </div>
-    <div class="operate">
-      <el-button size="small" type="success" disabled>
-        新增
-      </el-button>
-      <el-button size="small" type="primary" @click="checkTabCurrentStatus"
-        >保存</el-button
-      >
-      <el-button size="small" type="success" disabled>
-        修改
-      </el-button>
-      <el-button size="small" type="danger" disabled>
-        删除
-      </el-button>
-      <el-button size="small" type="primary" disabled>导出</el-button>
-    </div>
-    <div class="showInfo">
+
       <el-tabs type="border-card" @tab-click="handleTabClick">
-        <el-tab-pane>
+        <el-tab-pane class="baseInfo">
           <span slot="label"> 设备基础信息</span>
           <el-form
             :model="maintenanceForm"
@@ -68,7 +55,12 @@
               </el-radio-group>
             </el-form-item>
             <el-form-item label="所在工作中心:" prop="workCenter">
-              <el-input v-model.trim="maintenanceForm.workCenter"></el-input>
+              <el-input
+                v-model.trim="maintenanceForm.workCenter"
+                class="workCenter"
+              ></el-input>
+              <i class="el-icon-document"></i>
+              <!-- <div slot="error" slot-scope="error">{{error}}</div> -->
             </el-form-item>
           </el-form>
         </el-tab-pane>
@@ -79,7 +71,7 @@
             :rules="upkeepConfigRules"
             ref="upkeepConfigForm"
             class="demo-form-inline"
-            label-width="140px"
+            label-width="110px"
           >
             <el-form-item
               label="保养条件名称"
@@ -124,6 +116,7 @@
                 @select="handleSelectAlarm"
                 size="small"
               ></el-autocomplete>
+              <i class="el-icon-document"></i>
             </el-form-item>
             <el-form-item label="保养周期" prop="maintenancePeriod">
               <el-input
@@ -144,13 +137,13 @@
                 <el-option label="年" :value="365">年</el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="是否启用预警功能" prop="warningFunction">
+            <el-form-item label="启用预警功能" prop="warningFunction">
               <el-radio-group v-model="upkeepConfigForm.warningFunction">
                 <el-radio :label="true" :value="true">启用</el-radio>
                 <el-radio :label="false" :value="false">不启用</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item label="保养地址" prop="maintenanceLocation">
+            <el-form-item label="保养地址">
               <el-radio-group v-model="upkeepConfigForm.maintenanceLocation">
                 <el-radio label="在线">在线</el-radio>
                 <el-radio label="任意">任意</el-radio>
@@ -161,7 +154,7 @@
           <div class="upkeep">
             <el-button
               size="small"
-              type="success"
+              type="primary"
               @click="handleLocalAdd(refArrUpkeepConfig)"
             >
               新增
@@ -169,7 +162,7 @@
             <el-button size="small" type="primary" @click="handleLocalSave">
               提交
             </el-button>
-            <el-button size="small" type="danger" @click="handleLocalDelete">
+            <el-button size="small" type="primary" @click="handleLocalDelete">
               删除
             </el-button>
           </div>
@@ -225,7 +218,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 import {
   insertResourceHttp,
   updateResourceHttp,
@@ -238,17 +231,7 @@ import _ from "lodash";
 export default {
   data() {
     return {
-      list: [
-        { value: "三全鲜食（北新泾店）", address: "长宁区新渔路144号" },
-        {
-          value: "Hot honey 首尔炸鸡（仙霞路）",
-          address: "上海市长宁区淞虹路661号"
-        },
-        {
-          value: "新旺角茶餐厅",
-          address: "上海市普陀区真北路988号创邑金沙谷6号楼113"
-        }
-      ],
+      list: [],
       maintenanceForm: {
         //设备编号
         resource: "",
@@ -260,18 +243,10 @@ export default {
         workCenter: ""
       },
       rules: {
-        resource: [
-          { required: true, message: "请输入设备编号", trigger: "blur" }
-        ],
-        resourceDes: [
-          { required: false, message: "请输入设备编号", trigger: "blur" }
-        ],
-        resourceStatus: [
-          { required: true, message: "请选择状态", trigger: "change" }
-        ],
-        workCenter: [
-          { required: true, message: "请输入工作中心", trigger: "blur" }
-        ]
+        resource: [{ required: true, message: "请输入设备编号" }],
+        resourceDes: [{ required: false, message: "请输入设备编号" }],
+        resourceStatus: [{ required: true, message: "请选择状态" }],
+        workCenter: [{ required: true, message: "请输入工作中心" }]
       },
       //验证基础信息表单ref
       refArrBaseInfo: ["maintenanceFormOne", "maintenanceFormTwo"],
@@ -323,9 +298,6 @@ export default {
         ],
         periodUnit: [
           { required: true, message: "请输入周期单位", trigger: "change" }
-        ],
-        maintenanceLocation: [
-          { required: true, message: "请输入保养地址", trigger: "change" }
         ]
       },
       upkeepStartDate: "",
@@ -356,6 +328,7 @@ export default {
     this.init();
   },
   methods: {
+    ...mapMutations(["MAINTENANCEPELIST"]),
     init() {
       const data = { resource: this.maintenanceForm.resource };
       findResourceMaintenanceListHttp(data).then(data => {
@@ -507,6 +480,8 @@ export default {
             type: "success"
           });
           this.handleReset(this.refArrBaseInfo);
+          this.MAINTENANCEPELIST([]);
+          this.$router.push({ path: "/device/deviceMaintenance" });
           return;
         }
         this.$message({
@@ -529,6 +504,8 @@ export default {
             message: "修改成功",
             type: "success"
           });
+          this.MAINTENANCEPELIST([]);
+          this.$router.push({ path: "/device/deviceMaintenance" });
           return;
         }
         this.$message({
@@ -553,6 +530,14 @@ export default {
         this.handleSaveUpkeepConfig();
         return;
       }
+    },
+    handleBack() {
+      console.log(11);
+      this.selectionList = [];
+      this.MAINTENANCEPELIST(this.selectionList);
+      this.$router.push({
+        path: "/device/deviceMaintenance"
+      });
     },
     handleLocalAdd(formName) {
       formName.forEach(element => {
@@ -609,28 +594,38 @@ export default {
   .operate {
     padding: 10px 5px;
   }
-  .query {
-    height: 40px;
-    padding: 10px;
-    display: flex;
-    justify-content: space-between;
-    .left {
-      width: 300px;
-    }
-    .right {
-      width: 680px;
-      padding: 5px 30px;
-    }
-  }
   .showInfo {
+    .resource {
+      width: 25%;
+    }
+    .baseInfo {
+      width: 50%;
+      .el-form {
+        // text-align: center;
+        .el-form-item {
+          .workCenter {
+            width: 96%;
+          }
+        }
+      }
+    }
     .deviceUpkeepSetting {
       .el-form {
         // text-align: center;
         .el-form-item {
-          width: 45%;
-          margin-bottom: 0px;
+          width: 32%;
+          .el-form-item__content {
+            .el-radio-group {
+              .el-radio {
+                width: 30px;
+              }
+            }
+          }
           .upkeepCycle {
             width: 100px;
+          }
+          .el-icon-document {
+            font-size: 20px;
           }
         }
       }
