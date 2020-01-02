@@ -211,14 +211,13 @@ export default {
         });
         return;
       }
-      this.selectionList.forEach(element => {
+      this.selectionList.find(element => {
         if (element.maintenanceStatus === "已保养") {
           this.$message({
             message: "不能保养已保养的设备",
             type: "warning"
           });
-          //满足情况则抛出错误结束
-          throw Error();
+          //满足情况则结束循环，返回
         }
       });
       this.$refs[formName].validate(valid => {
