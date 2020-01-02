@@ -1,51 +1,38 @@
 <template>
   <div class="typeEdit">
-    <div class="query">
-      <div class="left">
-        <el-form
-          :model="typeForm"
-          :rules="rules"
-          ref="typeForm"
-          label-width="100px"
-          class="typeForm"
-        >
-          <el-form-item label="设备类型" prop="resourceGroup">
-            <el-input
-              v-model.trim="typeForm.resourceGroup"
-              placeholder="请输入设备类型"
-              :disabled="isEditResource"
-            ></el-input>
-          </el-form-item>
-        </el-form>
-      </div>
-      <div class="right">
-        <el-button size="small" type="warning" @click="handleQuery" disabled>
-          查询
-        </el-button>
-        <el-button size="small" type="info" @click="handleReset">
-          重置
-        </el-button>
-      </div>
-    </div>
     <div class="operate">
-      <el-button size="small" type="success" disabled>
-        新增
+      <el-button size="small" type="primary" @click="handleBack">
+        返回
       </el-button>
-      <el-button size="small" type="primary" @click="checkAdd('typeForm')"
-        >保存</el-button
-      >
-      <el-button size="small" type="success" disabled>
-        修改
+      <el-button size="small" type="primary" @click="checkAdd('typeForm')">
+        保存
       </el-button>
-      <el-button size="small" type="danger" disabled>
-        删除
+      <el-button size="small" type="info" @click="handleReset">
+        重置
       </el-button>
-      <el-button size="small" type="primary" disabled>导出</el-button>
     </div>
+
     <div class="showInfo">
-      <el-form :model="typeForm" label-width="80px">
+      <el-form
+        :model="typeForm"
+        :rules="rules"
+        ref="typeForm"
+        label-width="100px"
+        class="typeForm"
+      >
+        <el-form-item label="设备类型" prop="resourceGroup">
+          <el-input
+            v-model.trim="typeForm.resourceGroup"
+            placeholder="请输入设备类型"
+            :disabled="isEditResource"
+          ></el-input>
+        </el-form-item>
         <el-form-item label="组别描述">
-          <el-input type="textarea" v-model.trim="typeForm.groupDes"></el-input>
+          <el-input
+            type="textarea"
+            rows="2"
+            v-model.trim="typeForm.groupDes"
+          ></el-input>
         </el-form-item>
       </el-form>
       <el-transfer
@@ -180,7 +167,16 @@ export default {
         return;
       }
     },
-    handleQuery() {},
+    //返回
+    handleBack() {
+      this.selectionList = [];
+      // const emptyObj = { resourceGroup: "", groupDes: "" };
+      // this.selectionList.push(emptyObj);
+      this.SETTYPELIST(this.selectionList);
+      this.$router.push({
+        path: "/device/deviceType"
+      });
+    },
     //重置
     handleReset() {
       this.saveDialog = false;
@@ -279,23 +275,13 @@ export default {
   .operate {
     padding: 10px 5px;
   }
-  .query {
-    height: 40px;
-    padding: 10px;
-    display: flex;
-    justify-content: space-between;
-    .left {
-      width: 300px;
-    }
-    .right {
-      width: 680px;
-      padding: 5px 30px;
-    }
-  }
   .showInfo {
+    .el-form {
+      width: 40%;
+    }
     .el-transfer {
       .el-transfer-panel {
-        width: 35%;
+        width: 25%;
       }
     }
   }

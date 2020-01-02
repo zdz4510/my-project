@@ -17,7 +17,7 @@
         </el-form>
       </div>
       <div class="right">
-        <el-button size="small" type="warning" @click="handleQuery">
+        <el-button size="small" type="primary" @click="handleQuery">
           查询
         </el-button>
         <el-button size="small" type="info" @click="handleReset">
@@ -26,18 +26,17 @@
       </div>
     </div>
     <div class="operate">
-      <el-button size="small" type="success" @click="handleAdd">
+      <el-button size="small" type="primary" @click="handleAdd">
         新增
       </el-button>
-      <el-button size="small" type="primary" disabled>保存</el-button>
       <el-button
         size="small"
-        type="success"
+        type="primary"
         @click="checkSelectionLength(handleEdit)"
       >
         修改
       </el-button>
-      <el-button size="small" type="danger" @click="checkDeleteSelection">
+      <el-button size="small" type="primary" @click="checkDeleteSelection">
         删除
       </el-button>
       <el-button size="small" type="primary" @click="handleExport"
@@ -267,22 +266,7 @@ export default {
         resourceGroup: this.typeForm.resourceGroup,
         groupDes: this.typeForm.groupDes
       };
-
       exportExcelHttp(data);
-      //   exportExcelHttp(data).then(data => {
-      //     const res = data.data;
-      //     if (res.code === 200) {
-      //       this.$message({
-      //         message: res.message,
-      //         type: "success"
-      //       });
-      //       return;
-      //     }
-      //     this.$message({
-      //       message: res.message,
-      //       type: "warning"
-      //     });
-      //   });
     }
   }
 };

@@ -4,12 +4,11 @@
       <div class="left">
         <el-form
           :model="maintenanceForm"
-          :rules="rules"
           ref="maintenanceForm"
           label-width="100px"
           class="maintenanceForm"
         >
-          <el-form-item label="设备编号" prop="resource">
+          <el-form-item label="设备编号">
             <el-input
               v-model="maintenanceForm.resource"
               placeholder="请输入设备设备编号"
@@ -18,7 +17,7 @@
         </el-form>
       </div>
       <div class="right">
-        <el-button size="small" type="warning" @click="handleQuery">
+        <el-button size="small" type="primary" @click="handleQuery">
           查询
         </el-button>
         <el-button size="small" type="info" @click="handleReset">
@@ -27,18 +26,17 @@
       </div>
     </div>
     <div class="operate">
-      <el-button size="small" type="success" @click="handleAdd">
+      <el-button size="small" type="primary" @click="handleAdd">
         新增
       </el-button>
-      <el-button size="small" type="primary" disabled>保存</el-button>
       <el-button
         size="small"
-        type="success"
+        type="primary"
         @click="checkSelectionLength(handleEdit)"
       >
         修改
       </el-button>
-      <el-button size="small" type="danger" @click="handleDelete">
+      <el-button size="small" type="primary" @click="handleDelete">
         删除
       </el-button>
       <el-button size="small" type="primary" @click="handleExport"
@@ -109,11 +107,6 @@ export default {
       maintenanceForm: {
         resource: ""
       },
-      rules: {
-        resource: [
-          { required: true, message: "请输入设备编号", trigger: "blur" }
-        ]
-      },
       tableData: [],
       selectionList: [],
       currentPage: 1,
@@ -139,7 +132,6 @@ export default {
         if (res.code === 200) {
           this.total = res.data.total;
           this.tableData = list;
-          this.maintenanceForm.resource = "";
           return;
         }
         this.$message({
@@ -265,6 +257,7 @@ export default {
     },
     handleReset() {
       this.maintenanceForm.resource = "";
+      this.init();
     },
     handleExport() {
       const data = {

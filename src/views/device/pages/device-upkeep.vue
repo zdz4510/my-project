@@ -27,7 +27,7 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button size="small" type="warning" @click="handleQuery">
+          <el-button size="small" type="primary" @click="handleQuery">
             查询
           </el-button>
           <el-button size="small" type="info" @click="handleReset">
@@ -39,7 +39,7 @@
     <div class="operate">
       <el-button
         size="small"
-        type="success"
+        type="primary"
         @click="handleAffirmUpkeep('additionalDesRules')"
       >
         确认保养
@@ -134,14 +134,6 @@ export default {
         maintenanceStatus: "",
         additionalDes: ""
       },
-      // resourceRules: {
-      //   resource: [
-      //     { required: true, message: "请输入设备编号", trigger: "blur" }
-      //   ]
-      //   // describe: [
-      //   //   { required: true, message: "请输入本次保养附加描述", trigger: "blur" }
-      //   // ]
-      // },
       additionalDesRules: {
         additionalDes: [
           { required: true, message: "请输入本次保养附加描述", trigger: "blur" }
@@ -162,7 +154,8 @@ export default {
       const data = {
         currentPage: this.currentPage,
         pageSize: this.pageSize,
-        resource: this.upkeepForm.resource
+        resource: this.upkeepForm.resource,
+        maintenanceStatus: this.upkeepForm.maintenanceStatus
       };
       listResourceMaintenanceLogHttp(data).then(data => {
         const res = data.data;

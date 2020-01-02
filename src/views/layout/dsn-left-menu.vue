@@ -41,8 +41,12 @@
           <i class="el-icon-location"></i>
           <span slot="title">工厂建模</span>
         </template>
-        <el-menu-item index="/operation-maintain/operation-maintain">工序维护</el-menu-item>
-        <el-menu-item index="/operation-station/operation-station">工序与站位关系维护</el-menu-item>
+        <el-menu-item index="/operation-maintain/operation-maintain"
+          >工序维护</el-menu-item
+        >
+        <el-menu-item index="/operation-station/operation-station"
+          >工序与站位关系维护</el-menu-item
+        >
         <el-menu-item index="/work-center/work-center">工作中心</el-menu-item>
       </el-submenu>
       <el-submenu index="system-config">
@@ -68,6 +72,25 @@
         <el-menu-item index="/device/deviceType">设备类型</el-menu-item>
         <el-menu-item index="/device/deviceMaintenance">设备维修</el-menu-item>
         <el-menu-item index="/device/deviceUpkeep">设备保养</el-menu-item>
+        <el-menu-item index="/device/test">测试页面</el-menu-item>
+      </el-submenu>
+      <el-submenu index="device">
+        <template slot="title">
+          <i class="el-icon-location"></i>
+          <span slot="title">维护管理</span>
+        </template>
+        <el-menu-item index="/maintenance/standingMaintenance">
+          站位维护
+        </el-menu-item>
+        <el-menu-item index="/maintenance/workingCertificateMaintenance">
+          上岗证维护
+        </el-menu-item>
+        <el-menu-item index="/maintenance/genericCodeDefinition">
+          通用代码定义维护
+        </el-menu-item>
+        <el-menu-item index="/maintenance/genericCodeData">
+          通用代码数据维护
+        </el-menu-item>
         <el-menu-item index="/device/test">测试页面</el-menu-item>
       </el-submenu>
     </el-menu>

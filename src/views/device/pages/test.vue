@@ -1,173 +1,618 @@
 <template>
-  <el-autocomplete
-    class="inline-input"
-    v-model="upkeepConfigForm.alarm"
-    :fetch-suggestions="querySearch"
-    placeholder="请输入内容"
-    @select="handleSelect"
-  ></el-autocomplete>
+  <div class="maintenanceEdit">
+    <div class="operate">
+      <el-button size="small" type="info" @click="handleBack">
+        返回
+      </el-button>
+      <el-button size="small" type="primary" @click="checkTabCurrentStatus">
+        保存
+      </el-button>
+      <el-button size="small" type="info" @click="handleReset(resetFormInfo)">
+        重置
+      </el-button>
+    </div>
+    <div class="showInfo">
+      <div class="resource">
+        <el-form
+          :model="maintenanceForm"
+          ref="maintenanceFormOne"
+          :rules="rules"
+          label-width="100px"
+          class="demo-maintenanceForm"
+        >
+          <el-form-item label="设备编号" prop="resource">
+            <el-input
+              v-model.trim="maintenanceForm.resource"
+              placeholder="请输入设备编号"
+              :disabled="isEditResource"
+            ></el-input>
+          </el-form-item>
+        </el-form>
+      </div>
+
+      <el-tabs type="border-card" @tab-click="handleTabClick">
+        <el-tab-pane class="baseInfo">
+          <span slot="label"> 设备基础信息</span>
+          <el-form
+            :model="maintenanceForm"
+            :rules="rules"
+            ref="maintenanceFormTwo"
+            label-width="120px"
+            class="demo-maintenanceForm"
+          >
+            <el-form-item label="设备描述:">
+              <el-input
+                type="textarea"
+                v-model.trim="maintenanceForm.resourceDes"
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="状态:" prop="resourceStatus">
+              <el-radio-group v-model="maintenanceForm.resourceStatus">
+                <el-radio :label="10">待用</el-radio>
+                <el-radio :label="20">作业中</el-radio>
+                <el-radio :label="30">待修</el-radio>
+                <el-radio :label="40">报废</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="所在工作中心:" prop="workCenter">
+              <el-input v-model.trim="maintenanceForm.workCenter"></el-input>
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+        <el-tab-pane label="设备保养配置" class="deviceUpkeepSetting">
+          <el-form
+            :inline="true"
+            :model="upkeepConfigForm"
+            :rules="upkeepConfigRules"
+            ref="upkeepConfigForm"
+            class="demo-form-inline"
+            label-width="110px"
+          >
+            <el-form-item
+              label="保养条件名称"
+              prop="conditionName"
+              inline-message="true"
+            >
+              <el-input
+                v-model.trim="upkeepConfigForm.conditionName"
+                placeholder="请输入保养条件名称"
+                size="small"
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="保养起始时间" prop="startTime">
+              <el-date-picker
+                v-model="upkeepConfigForm.startTime"
+                type="datetime"
+                placeholder="选择日期"
+                size="small"
+                value-format="yyyy-MM-dd HH:mm:ss"
+              >
+              </el-date-picker>
+            </el-form-item>
+            <el-form-item label="保养条件描述" prop="conditionDes">
+              <el-input
+                v-model.trim="upkeepConfigForm.conditionDes"
+                placeholder="请输入保养条件描述"
+                size="small"
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="保养人员" prop="maintenanceUserId">
+              <el-input
+                v-model.trim="upkeepConfigForm.maintenanceUserId"
+                placeholder="请输入保养人员"
+                size="small"
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="预警事件" prop="alarm">
+              <el-autocomplete
+                v-model.trim="upkeepConfigForm.alarm"
+                :fetch-suggestions="querySearch"
+                placeholder="请输入预警事件"
+                @select="handleSelectAlarm"
+                size="small"
+              ></el-autocomplete>
+            </el-form-item>
+            <el-form-item label="保养周期" prop="maintenancePeriod">
+              <el-input
+                v-model.number="upkeepConfigForm.maintenancePeriod"
+                placeholder="保养周期"
+                class="upkeepCycle"
+                size="small"
+              ></el-input>
+              <el-select
+                v-model="upkeepConfigForm.periodUnit"
+                label="upkeepConfigForm.periodUnit"
+                class="upkeepCycle"
+                size="small"
+              >
+                <el-option label="天数" :value="1">天数</el-option>
+                <el-option label="月份" :value="30">月份</el-option>
+                <el-option label="季度" :value="90">季度</el-option>
+                <el-option label="年" :value="365">年</el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="启用预警功能" prop="warningFunction">
+              <el-radio-group v-model="upkeepConfigForm.warningFunction">
+                <el-radio :label="true" :value="true">启用</el-radio>
+                <el-radio :label="false" :value="false">不启用</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="保养地址" prop="maintenanceLocation">
+              <el-radio-group v-model="upkeepConfigForm.maintenanceLocation">
+                <el-radio label="在线">在线</el-radio>
+                <el-radio label="任意">任意</el-radio>
+                <el-radio label="设备店">设备店</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-form>
+          <div class="upkeep">
+            <el-button
+              size="small"
+              type="success"
+              @click="handleLocalAdd(refArrUpkeepConfig)"
+            >
+              新增
+            </el-button>
+            <el-button size="small" type="primary" @click="handleLocalSave">
+              提交
+            </el-button>
+            <el-button size="small" type="danger" @click="handleLocalDelete">
+              删除
+            </el-button>
+          </div>
+          <el-table
+            ref="multipleTable"
+            :data="tableData"
+            tooltip-effect="dark"
+            style="width: 100%;"
+            :header-cell-style="{ 'background-color': '#F5F7FA' }"
+            height="200px"
+            @selection-change="handleSelectionChange"
+          >
+            <el-table-column type="selection" width="55"> </el-table-column>
+            <el-table-column
+              prop="conditionName"
+              label="保养条件名称"
+              width="120"
+            >
+            </el-table-column>
+            <el-table-column
+              prop="maintenancePeriod"
+              label="保养周期"
+              width="120"
+            >
+            </el-table-column>
+            <el-table-column prop="periodUnit" label="保养周期单位" width="120">
+            </el-table-column>
+            <el-table-column prop="startTime" label="保养起始时间" width="180">
+            </el-table-column>
+            <el-table-column
+              prop="maintenanceLocation"
+              label="保养地址"
+              width="120"
+            >
+            </el-table-column>
+            <el-table-column
+              prop="maintenanceUserId"
+              label="保养人员"
+              width="120"
+            >
+            </el-table-column>
+            <el-table-column
+              prop="conditionDes"
+              label="保养条件描述"
+              show-overflow-tooltip
+            >
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
+      </el-tabs>
+    </div>
+  </div>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+import {
+  insertResourceHttp,
+  updateResourceHttp,
+  listAlarmHttp,
+  findResourceMaintenanceListHttp,
+  saveResourceMaintenanceHttp
+} from "@/api/device/maintenance.api.js";
+import _ from "lodash";
+
 export default {
   data() {
     return {
-      restaurants: [],
+      list: [],
+      maintenanceForm: {
+        //设备编号
+        resource: "",
+        //设备名称
+        resourceDes: "",
+        //设备状态
+        resourceStatus: "",
+        //工作中心
+        workCenter: ""
+      },
+      rules: {
+        resource: [{ required: true, message: "请输入设备编号" }],
+        resourceDes: [{ required: false, message: "请输入设备编号" }],
+        resourceStatus: [{ required: true, message: "请选择状态" }],
+        workCenter: [{ required: true, message: "请输入工作中心" }]
+      },
+      //验证基础信息表单ref
+      refArrBaseInfo: ["maintenanceFormOne", "maintenanceFormTwo"],
+      //验证保养配置表单ref
+      refArrUpkeepConfig: ["maintenanceFormOne", "upkeepConfigForm"],
+      //重置表单数组
+      resetFormInfo: [
+        "maintenanceFormOne",
+        "maintenanceFormTwo",
+        "upkeepConfigForm"
+      ],
       upkeepConfigForm: {
-        alarm: ""
-      }
+        conditionName: "",
+        startTime: "",
+        conditionDes: "",
+        maintenanceUserId: "",
+        alarm: "",
+        warningFunction: "",
+        maintenancePeriod: "",
+        periodUnit: "",
+        maintenanceLocation: ""
+      },
+      upkeepConfigRules: {
+        conditionName: [
+          { required: true, message: "请输入保养条件名称", trigger: "blur" }
+        ],
+        startTime: [
+          {
+            required: true,
+            message: "请输入保养起始时间",
+            trigger: "change"
+          }
+        ],
+        conditionDes: [
+          { required: true, message: "请输入保养条件描述", trigger: "blur" }
+        ],
+        maintenanceUserId: [
+          { required: true, message: "请输入保养人员", trigger: "blur" }
+        ],
+        alarm: [
+          { required: true, message: "请输入预警事件", trigger: "change" }
+        ],
+        warningFunction: [
+          { required: true, message: "请输入预警功能", trigger: "change" }
+        ],
+        maintenancePeriod: [
+          { required: true, message: "请输入保养周期", trigger: "blur" },
+          { type: "number", message: "保养周期必须为数字值" }
+        ],
+        periodUnit: [
+          { required: true, message: "请输入周期单位", trigger: "change" }
+        ],
+        maintenanceLocation: [
+          { required: true, message: "请输入保养地址", trigger: "change" }
+        ]
+      },
+      upkeepStartDate: "",
+      tableData: [],
+      selectionList: [],
+      operateType: "",
+      saveType: "baseInfo",
+      isEditResource: false,
+      //预警
+      alarmList: [],
+      fn: null
     };
   },
+  computed: {
+    ...mapGetters(["maintenanceList"])
+  },
   created() {
-    this.init();
+    this.deBounceSearch();
+    this.operateType = this.$route.query.operateType;
+    this.cloneList = JSON.parse(JSON.stringify(this.maintenanceList));
+    this.maintenanceForm = this.cloneList[0];
+    if (this.operateType === "edit") {
+      this.isEditResource = true;
+    }
+    this.upkeepConfigForm.startTime = this.formate(new Date().getTime());
   },
   mounted() {
-    this.restaurants = this.loadAll();
+    this.init();
   },
   methods: {
     init() {
-      
+      const data = { resource: this.maintenanceForm.resource };
+      findResourceMaintenanceListHttp(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.tableData = res.data;
+          console.log(res.data);
+        } else {
+          this.$message({
+            message: res.message,
+            type: "warning"
+          });
+        }
+      });
     },
+    formate(value) {
+      let date = new Date(value);
+      let y = date.getFullYear();
+      let MM = date.getMonth() + 1;
+      MM = MM < 10 ? "0" + MM : MM;
+      let d = date.getDate();
+      d = d < 10 ? "0" + d : d;
+      let h = date.getHours();
+      h = h < 10 ? "0" + h : h;
+      let m = date.getMinutes();
+      m = m < 10 ? "0" + m : m;
+      let s = date.getSeconds();
+      s = s < 10 ? "0" + s : s;
+      return `${y}-${MM}-${d} ${h}:${m}:${s}`;
+    },
+    deBounceSearch() {
+      this.fn = _.debounce(cb => {
+        let data = { alarm: this.upkeepConfigForm.alarm };
+        listAlarmHttp(data).then(data => {
+          const res = data.data;
+          if (res.code === 200) {
+            this.alarmList = res.data;
+            this.alarmList.forEach(element => {
+              element.value = element.alarm;
+            });
+            cb(this.alarmList);
+          } else {
+            this.$message({
+              message: res.message,
+              type: "warning"
+            });
+          }
+        });
+      }, 150);
+    },
+    //预警事件搜索
     querySearch(queryString, cb) {
-      var restaurants = this.restaurants;
-      var results = queryString
-        ? restaurants.filter(this.createFilter(queryString))
-        : restaurants;
+      this.fn(cb);
+      //  var alarmList = this.alarmList;
+      // var results = queryString
+      //   ? alarmList.filter(this.createFilter(queryString))
+      // : alarmList;
       // 调用 callback 返回建议列表的数据
-      cb(results);
+      // cb([]);
     },
     createFilter(queryString) {
-      return restaurant => {
+      return alarms => {
         return (
-          restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
-          0
+          alarms.alarm.toLowerCase().indexOf(queryString.toLowerCase()) === 0
         );
       };
     },
-    loadAll() {
-      return [
-        { value: "三全鲜食（北新泾店）", address: "长宁区新渔路144号" },
-        {
-          value: "Hot honey 首尔炸鸡（仙霞路）",
-          address: "上海市长宁区淞虹路661号"
-        },
-        {
-          value: "新旺角茶餐厅",
-          address: "上海市普陀区真北路988号创邑金沙谷6号楼113"
-        },
-        { value: "泷千家(天山西路店)", address: "天山西路438号" },
-        {
-          value: "胖仙女纸杯蛋糕（上海凌空店）",
-          address: "上海市长宁区金钟路968号1幢18号楼一层商铺18-101"
-        },
-        { value: "贡茶", address: "上海市长宁区金钟路633号" },
-        {
-          value: "豪大大香鸡排超级奶爸",
-          address: "上海市嘉定区曹安公路曹安路1685号"
-        },
-        {
-          value: "茶芝兰（奶茶，手抓饼）",
-          address: "上海市普陀区同普路1435号"
-        },
-        { value: "十二泷町", address: "上海市北翟路1444弄81号B幢-107" },
-        { value: "星移浓缩咖啡", address: "上海市嘉定区新郁路817号" },
-        { value: "阿姨奶茶/豪大大", address: "嘉定区曹安路1611号" },
-        { value: "新麦甜四季甜品炸鸡", address: "嘉定区曹安公路2383弄55号" },
-        {
-          value: "Monica摩托主题咖啡店",
-          address: "嘉定区江桥镇曹安公路2409号1F，2383弄62号1F"
-        },
-        {
-          value: "浮生若茶（凌空soho店）",
-          address: "上海长宁区金钟路968号9号楼地下一层"
-        },
-        { value: "NONO JUICE  鲜榨果汁", address: "上海市长宁区天山西路119号" },
-        { value: "CoCo都可(北新泾店）", address: "上海市长宁区仙霞西路" },
-        {
-          value: "快乐柠檬（神州智慧店）",
-          address: "上海市长宁区天山西路567号1层R117号店铺"
-        },
-        {
-          value: "Merci Paul cafe",
-          address: "上海市普陀区光复西路丹巴路28弄6号楼819"
-        },
-        {
-          value: "猫山王（西郊百联店）",
-          address: "上海市长宁区仙霞西路88号第一层G05-F01-1-306"
-        },
-        { value: "枪会山", address: "上海市普陀区棕榈路" },
-        { value: "纵食", address: "元丰天山花园(东门) 双流路267号" },
-        { value: "钱记", address: "上海市长宁区天山西路" },
-        { value: "壹杯加", address: "上海市长宁区通协路" },
-        {
-          value: "唦哇嘀咖",
-          address: "上海市长宁区新泾镇金钟路999号2幢（B幢）第01层第1-02A单元"
-        },
-        { value: "爱茜茜里(西郊百联)", address: "长宁区仙霞西路88号1305室" },
-        {
-          value: "爱茜茜里(近铁广场)",
-          address:
-            "上海市普陀区真北路818号近铁城市广场北区地下二楼N-B2-O2-C商铺"
-        },
-        {
-          value: "鲜果榨汁（金沙江路和美广店）",
-          address: "普陀区金沙江路2239号金沙和美广场B1-10-6"
-        },
-        {
-          value: "开心丽果（缤谷店）",
-          address: "上海市长宁区威宁路天山路341号"
-        },
-        { value: "超级鸡车（丰庄路店）", address: "上海市嘉定区丰庄路240号" },
-        { value: "妙生活果园（北新泾店）", address: "长宁区新渔路144号" },
-        { value: "香宜度麻辣香锅", address: "长宁区淞虹路148号" },
-        {
-          value: "凡仔汉堡（老真北路店）",
-          address: "上海市普陀区老真北路160号"
-        },
-        { value: "港式小铺", address: "上海市长宁区金钟路968号15楼15-105室" },
-        { value: "蜀香源麻辣香锅（剑河路店）", address: "剑河路443-1" },
-        { value: "北京饺子馆", address: "长宁区北新泾街道天山西路490-1号" },
-        {
-          value: "饭典*新简餐（凌空SOHO店）",
-          address: "上海市长宁区金钟路968号9号楼地下一层9-83室"
-        },
-        {
-          value: "焦耳·川式快餐（金钟路店）",
-          address: "上海市金钟路633号地下一层甲部"
-        },
-        { value: "动力鸡车", address: "长宁区仙霞西路299弄3号101B" },
-        { value: "浏阳蒸菜", address: "天山西路430号" },
-        { value: "四海游龙（天山西路店）", address: "上海市长宁区天山西路" },
-        {
-          value: "樱花食堂（凌空店）",
-          address: "上海市长宁区金钟路968号15楼15-105室"
-        },
-        { value: "壹分米客家传统调制米粉(天山店)", address: "天山西路428号" },
-        {
-          value: "福荣祥烧腊（平溪路店）",
-          address: "上海市长宁区协和路福泉路255弄57-73号"
-        },
-        {
-          value: "速记黄焖鸡米饭",
-          address: "上海市长宁区北新泾街道金钟路180号1层01号摊位"
-        },
-        { value: "红辣椒麻辣烫", address: "上海市长宁区天山西路492号" },
-        {
-          value: "(小杨生煎)西郊百联餐厅",
-          address: "长宁区仙霞西路88号百联2楼"
-        },
-        { value: "阳阳麻辣烫", address: "天山西路389号" },
-        {
-          value: "南拳妈妈龙虾盖浇饭",
-          address: "普陀区金沙江路1699号鑫乐惠美食广场A13"
-        }
-      ];
+    //预警事件选择
+    handleSelectAlarm(item) {
+      this.upkeepConfigForm.alarm = item.value;
     },
-    handleSelect(item) {
-      console.log(item);
+    handleSelectionChange(val) {
+      this.selectionList = val;
+    },
+    handleChangeRadio(val) {
+      this.maintenanceForm.resourceStatus = val;
+      console.log(val);
+    },
+    handleTabClick() {
+      if (this.saveType === "baseInfo") {
+        this.saveType = "upkeepConfig";
+      } else {
+        this.saveType = "baseInfo";
+      }
+    },
+    handleQuery() {},
+    handleReset(formName) {
+      this.maintenanceForm.resourceDes = "";
+      if (this.operateType === "add") {
+        formName.forEach(element => {
+          this.$refs[element].resetFields();
+        });
+        return;
+      }
+      if (this.operateType === "edit") {
+        formName.forEach(element => {
+          if (element !== "maintenanceFormOne") {
+            this.$refs[element].resetFields();
+          }
+        });
+      }
+    },
+    //验证form表单
+    checkFormInfo(formArr, handleType) {
+      let count = 0;
+      formArr.forEach(element => {
+        this.$refs[element].validate(valid => {
+          if (valid) {
+            count++;
+          } else {
+            return false;
+          }
+        });
+      });
+      if (count >= 2 && this.saveType === "baseInfo") {
+        handleType();
+        return;
+      }
+      if (count >= 2 && this.saveType === "upkeepConfig") {
+        console.log(this.upkeepConfigForm);
+        const copyObj = JSON.parse(JSON.stringify(this.upkeepConfigForm));
+        copyObj.resource = this.maintenanceForm.resource;
+        this.tableData.push(copyObj);
+        return;
+      }
+    },
+    handleSaveBaseInfo() {
+      if (this.operateType === "add") {
+        this.addResourceHttp();
+        return;
+      }
+      if (this.operateType === "edit") {
+        this.updateResourceHttp();
+        return;
+      }
+    },
+    addResourceHttp() {
+      const data = {
+        resource: this.maintenanceForm.resource,
+        resourceDes: this.maintenanceForm.resourceDes,
+        resourceStatus: this.maintenanceForm.resourceStatus,
+        workCenter: this.maintenanceForm.workCenter
+      };
+      insertResourceHttp(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.$message({
+            message: "新增成功",
+            type: "success"
+          });
+          this.handleReset(this.refArrBaseInfo);
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
+    },
+    updateResourceHttp() {
+      const data = {
+        resource: this.maintenanceForm.resource,
+        resourceDes: this.maintenanceForm.resourceDes,
+        resourceStatus: this.maintenanceForm.resourceStatus,
+        workCenter: this.maintenanceForm.workCenter
+      };
+      updateResourceHttp(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.$message({
+            message: "修改成功",
+            type: "success"
+          });
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
+    },
+    checkTabCurrentStatus() {
+      if (this.saveType === "baseInfo") {
+        this.checkFormInfo(this.refArrBaseInfo, this.handleSaveBaseInfo);
+        return;
+      }
+      if (this.saveType === "upkeepConfig") {
+        if (this.tableData.length === 0) {
+          this.$message({
+            message: "还没有提交数据哦",
+            type: "warning"
+          });
+          return;
+        }
+        this.handleSaveUpkeepConfig();
+        return;
+      }
+    },
+    handleBack() {
+      this.selectionList = [];
+      this.MAINTENANCEPELIST(this.selectionList);
+      this.$router.push({
+        path: "/device/deviceMaintenance"
+      });
+    },
+    handleLocalAdd(formName) {
+      formName.forEach(element => {
+        if (element === "upkeepConfigForm") {
+          this.$refs[element].resetFields();
+        }
+      });
+    },
+    handleLocalSave() {
+      this.checkFormInfo(this.refArrUpkeepConfig, this.handleSaveUpkeepConfig);
+    },
+    handleLocalDelete() {
+      if (this.selectionList.length === 0) {
+        this.$message({
+          message: "还没有选择项哦",
+          type: "warning"
+        });
+        return;
+      }
+      this.tableData.forEach((element1, index1) => {
+        this.selectionList.forEach(element2 => {
+          if (JSON.stringify(element1) === JSON.stringify(element2)) {
+            this.tableData.splice(index1, 1);
+          }
+        });
+      });
+    },
+    handleSaveUpkeepConfig() {
+      const data = JSON.parse(JSON.stringify(this.tableData));
+      saveResourceMaintenanceHttp(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.$message({
+            message: res.message,
+            type: "success"
+          });
+          this.$router.push({ path: "/device/deviceMaintenance" });
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+        return;
+      });
     }
   }
 };
 </script>
 
-<style></style>
+<style lang="scss">
+.maintenanceEdit {
+  padding: 0 30px;
+  .operate {
+    padding: 10px 5px;
+  }
+  .showInfo {
+    .resource {
+      width: 25%;
+    }
+    .baseInfo {
+      width: 50%;
+    }
+    .deviceUpkeepSetting {
+      .el-form {
+        // text-align: center;
+        .el-form-item {
+          width: 32%;
+          .el-form-item__content {
+            .el-radio-group {
+              .el-radio {
+                width: 30px;
+              }
+            }
+          }
+          .upkeepCycle {
+            width: 100px;
+          }
+        }
+      }
+      .upkeep {
+        text-align: center;
+      }
+    }
+  }
+}
+</style>
