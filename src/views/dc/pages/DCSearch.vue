@@ -19,14 +19,14 @@
 					<el-input v-model="searchForm.dcGroup"></el-input>
 				</el-form-item>
 				<el-form-item label="" prop="">
-					<el-button class="mr25 pad1025" size="small" type="success" @click="search">查询</el-button>
-					<el-button class="mr25 pad1025" size="small" type="warning" @click="resetForm('searchForm')">重置</el-button>
+					<el-button class="mr25 pad1025" size="small" type="primary" @click="search">查询</el-button>
+					<el-button class="mr25 pad1025" size="small" type="primary" @click="resetForm('searchForm')">重置</el-button>
 				</el-form-item>
 			</el-form>
 		</div>
 		<div class="operate ml30 mtb10">
-			<el-button class="mr25 pad1025" size="small" type="danger"  @click="del" :disabled="this.checkedList.length === 0">删除</el-button>
-			<el-button class="mr25 pad1025" size="small" type="danger"  @click="exportExcel" :disabled="!this.show">导出</el-button>
+			<el-button class="mr25 pad1025" size="small" type="warning"  @click="del" :disabled="this.checkedList.length === 0">删除</el-button>
+			<el-button class="mr25 pad1025" size="small" type="warning"  @click="exportExcel" :disabled="!this.show">导出</el-button>
 		</div>
 		
 		<div class="" v-if="!this.show">
@@ -249,15 +249,13 @@ import {getDataReportList, deleteDcSearch} from '../../../api/dc.search.api'
 
 <style scoped lang="scss">
 	.search-bar {
-		height: 80px;
 		background: #FFFFFF;
+		padding-bottom: 20px;
 		.form-style {
 			margin: 0 !important;
 			padding: 0 0 0 30px !important;
-			height: 42px !important;
 			position: relative;
-			top: 50%;
-			transform: translateY(-50%);
+			top: 20px;
 		}
 	}
 	.content {

@@ -48,15 +48,15 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item>
-					<el-button type="primary" @click="search('searchForm')" class="pad1040">查询</el-button>
-					<el-button type="warning" @click="resetForm('searchForm')" class="pad1040">重置</el-button>
+					<el-button class="ml15 mr25 pad1025" size="small" type="primary" @click="search('searchForm')">查询</el-button>
+					<el-button class="mr25 pad1025" size="small" type="primary" @click="resetForm('searchForm')">重置</el-button>
 				</el-form-item>
 			</el-form>
 		</div>
 		<div class="operate ml30 mtb10">
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="add">添加</el-button>
-			<el-button class="mr25 pad1025" size="small" type="warning" @click="save">编辑</el-button>
-			<el-button class="mr25 pad1025" size="small" type="danger" @click="del">删除</el-button>
+			<el-button class="mr25 pad1025" size="small" type="primary" @click="save">编辑</el-button>
+			<el-button class="mr25 pad1025" size="small" type="warning" @click="del">删除</el-button>
 		</div>
 		<div class="">
 			<el-table
@@ -344,15 +344,13 @@
 
 <style scoped lang="scss">
 	.search-bar {
-		height: 80px;
 		background: #FFFFFF;
+		padding-bottom: 20px;
 		.form-style {
 			margin: 0 !important;
 			padding: 0 0 0 30px !important;
-			height: 42px !important;
 			position: relative;
-			top: 50%;
-			transform: translateY(-50%);
+			top: 20px;
 		}
 	}
 </style>

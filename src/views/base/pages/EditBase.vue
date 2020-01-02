@@ -2,7 +2,7 @@
 	<div>
 		<div class="operate mtb10">
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="goBack">返回</el-button>
-			<el-button class="mr25 pad1025" size="small" type="warning" @click="save('editForm')">保存</el-button>
+			<el-button class="mr25 pad1025" size="small" type="primary" @click="save('editForm')">保存</el-button>
 		</div>
 		<el-row :gutter="20">
 			<el-col :span="6">

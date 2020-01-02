@@ -6,15 +6,15 @@
 					<el-input v-model="searchForm.workCenter" placeholder="请输入内容" @keyup.enter.native="onEnterSearch"></el-input>
 				</el-form-item>
 				<el-form-item label="" prop="">
-					<el-button class="ml15 mr25 pad1025" size="small" type="success" @click="search">查询</el-button>
-					<el-button class="mr25 pad1025" size="small" type="warning" @click="resetForm('searchForm')">重置</el-button>
+					<el-button class="ml15 mr25 pad1025" size="small" type="primary" @click="search">查询</el-button>
+					<el-button class="mr25 pad1025" size="small" type="primary" @click="resetForm('searchForm')">重置</el-button>
 				</el-form-item>
 			</el-form>
 		</div>
 		<div class="operate ml30 mtb10">
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="add" :disabled="this.checkedList.length>0">新增</el-button>
-			<el-button class="mr25 pad1025" size="small" type="warning" @click="edit" :disabled="this.checkedList.length === 0">编辑</el-button>
-			<el-button class="mr25 pad1025" size="small" type="danger"  @click="del" :disabled="this.checkedList.length === 0">删除</el-button>
+			<el-button class="mr25 pad1025" size="small" type="primary" @click="edit" :disabled="this.checkedList.length === 0">编辑</el-button>
+			<el-button class="mr25 pad1025" size="small" type="warning"  @click="del" :disabled="this.checkedList.length === 0">删除</el-button>
 		</div>
 		
 		<div class="">
@@ -191,15 +191,13 @@ import { mapMutations } from "vuex";
 
 <style scoped lang="scss">
 	.search-bar {
-		height: 80px;
 		background: #FFFFFF;
+		padding-bottom: 20px;
 		.form-style {
 			margin: 0 !important;
 			padding: 0 0 0 30px !important;
-			height: 42px !important;
 			position: relative;
-			top: 50%;
-			transform: translateY(-50%);
+			top: 20px;
 		}
 	}
 	.content {

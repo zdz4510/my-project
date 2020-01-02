@@ -25,12 +25,57 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item label="" prop="">
-					<el-button class="mr25 pad1025" size="small" type="success" @click="search('searchForm')">查询</el-button>
-					<el-button class="mr25 pad1025" size="small" type="warning" @click="resetForm('searchForm')">重置</el-button>
+					<el-button class="mr25 pad1025" size="small" type="primary" @click="search('searchForm')">查询</el-button>
+					<el-button class="mr25 pad1025" size="small" type="primary" @click="resetForm('searchForm')">重置</el-button>
 				</el-form-item>
 			</el-form>
 		</div>
-		
+		<el-divider></el-divider>
+		<div class="content">
+			<el-row>
+				<el-col :span="2" class="tr"><el-button type="primary">基础信息</el-button></el-col>
+				<el-col :span="6">
+					<el-form :model="baseInfoForm" ref="baseInfoForm"  :label-width="formLabelWidth">
+						<el-form-item label="设备类型:" prop="resourceGroup">
+							<el-input v-model="baseInfoForm.resourceGroup" disabled></el-input>
+						</el-form-item>
+						<el-form-item label="工作中心:" prop="workCenter">
+							<el-input v-model="baseInfoForm.workCenter" disabled></el-input>
+						</el-form-item>
+						<el-form-item label="物料组:" prop="matGroup">
+							<el-input v-model="baseInfoForm.matGroup" disabled></el-input>
+						</el-form-item>
+					</el-form>
+				</el-col>
+			</el-row>
+		</div>
+		<el-divider></el-divider>
+		<!-- parameterValue -->
+		<div class="content">
+			<el-row>
+				<el-col :span="2" class="tr"><el-button type="primary">参数输入</el-button></el-col>
+				<el-col :span="22">
+					<el-table :data="paramsTableData" style="width: 100%" border>
+						<el-table-column label="参数名" width="180">
+							<template slot-scope="scope">
+								<span style="margin-left: 10px">{{ scope.row.parameter }}</span>
+							</template>
+						</el-table-column>
+						<el-table-column label="参数描述" width="180">
+							<template slot-scope="scope">
+								<span style="margin-left: 10px">{{ scope.row.parameterDes }}</span>
+							</template>
+						</el-table-column>
+						<el-table-column label="参数值" width="180">
+							<template slot-scope="scope">
+								<el-input v-model="scope.row.parameterValue" ></el-input>
+							</template>
+						</el-table-column>
+					</el-table>
+						<el-button class="mr25 pad1025" size="small" type="primary" @click="sure">确定</el-button>
+				</el-col>
+			</el-row>
+		</div>
 	</div>
 </template>
 
@@ -40,15 +85,38 @@ import {getCollectionData, getMaterialList} from '../../../api/dc.data.collectio
 		name:'dc-collection',
 		data() {
 			return {
-				formLabelWidth:'200px',
+				tableData: [{
+          date: '2016-05-02',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1518 弄'
+        }, {
+          date: '2016-05-04',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1517 弄'
+        }, {
+          date: '2016-05-01',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1519 弄'
+        }, {
+          date: '2016-05-03',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1516 弄'
+        }],
+				formLabelWidth:'120px',
 				searchForm: {
-					mat: '',
+					mat: 'ASDF',
 					resource: '',
-					shopOrder: '',
-					operation: '',
-					collectionType: '',
+					shopOrder: 'SDF',
+					operation: 'SD',
+					collectionType: '10',
 					tenantSiteCode:'test'
 				},
+				baseInfoForm:{
+					resourceGroup:'',
+					workCenter:'',
+					matGroup:'',
+				},
+				paramsTableData:[],
 				rules: {
 					collectionType: [
 						{ required: true, message: '请选择收集类型', trigger: 'change' },
@@ -90,6 +158,10 @@ import {getCollectionData, getMaterialList} from '../../../api/dc.data.collectio
 						let params = this.searchForm
 						getCollectionData(params).then(data=>{
 							console.log(data.data.data,'dd')
+							this.baseInfoForm = data.data.data
+							if(data.data.data.dcParameterMeasureList){
+								this.paramsTableData = data.data.data.dcParameterMeasureList
+							}
 						})
 					} else {
 						console.log('error submit!!');
@@ -108,6 +180,9 @@ import {getCollectionData, getMaterialList} from '../../../api/dc.data.collectio
 				this.$refs[formName].resetFields();
 				this.search()
 			},
+			sure(){
+				console.log(this.paramsTableData,'tabledata')
+			}
 		}
 	}
 </script>
@@ -127,11 +202,12 @@ import {getCollectionData, getMaterialList} from '../../../api/dc.data.collectio
 	}
 	.content {
 		background: #FFFFFF;
+		padding-top: 20px;
 	}
-	.add-form {
-		padding-left: 25px;
+	.tr {
+		text-align: right;
 	}
-	.dec {
-		width: 400px !important;
+	.el-table{
+		margin-left: 50px;
 	}
 </style>

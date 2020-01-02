@@ -1,7 +1,7 @@
 <template>
   <div>
 		<div class="operate mtb10">
-			<el-button class="mr25 pad1025" size="small" type="primary" @click="goBack">返回</el-button>
+			<el-button class="mr25 ml30 pad1025" size="small" type="primary" @click="goBack">返回</el-button>
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="handleSave('editForm')">保存</el-button>
 		</div>
 		<el-row :gutter="20" class="bgw">
@@ -57,8 +57,8 @@
 										<div class="">
 											<div class="operate ml30 mtb10">
 												<el-button class="mr25 pad1025" size="small" type="primary" @click="add">新增</el-button>
-												<el-button class="mr25 pad1025" size="small" type="warning" @click="edit" :disabled="this.pCheckedList.length != 1">编辑</el-button>
-												<el-button class="mr25 pad1025" size="small" type="danger"  @click="del" :disabled="this.pCheckedList.length === 0">删除</el-button>
+												<el-button class="mr25 pad1025" size="small" type="primary" @click="edit" :disabled="this.pCheckedList.length != 1">编辑</el-button>
+												<el-button class="mr25 pad1025" size="small" type="warning"  @click="del" :disabled="this.pCheckedList.length === 0">删除</el-button>
 											</div>
 											<el-table
 											ref="pTable"
@@ -91,8 +91,8 @@
 									<el-tab-pane label="数据收集配置" name="second">
 										<div class="operate ml30 mtb10">
 											<el-button class="mr25 pad1025" size="small" type="primary" @click="addSet">新增</el-button>
-											<el-button class="mr25 pad1025" size="small" type="warning" @click="editSet" :disabled="this.sCheckedList.length != 1">编辑</el-button>
-											<el-button class="mr25 pad1025" size="small" type="danger"  @click="delSet" :disabled="this.sCheckedList.length === 0">删除</el-button>
+											<el-button class="mr25 pad1025" size="small" type="primary" @click="editSet" :disabled="this.sCheckedList.length != 1">编辑</el-button>
+											<el-button class="mr25 pad1025" size="small" type="warning"  @click="delSet" :disabled="this.sCheckedList.length === 0">删除</el-button>
 										</div>
 										<el-table
 											ref="sTable"

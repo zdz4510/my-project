@@ -1,7 +1,7 @@
 <template>
   <div>
 		<div class="operate mtb10">
-			<el-button class="mr25 pad1025" size="small" type="primary" @click="goBack">返回</el-button>
+			<el-button class="mr25 ml30 pad1025" size="small" type="primary" @click="goBack">返回</el-button>
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="handleSave('editForm')">保存</el-button>
 		</div>
 		<el-row :gutter="20" class="bgw">

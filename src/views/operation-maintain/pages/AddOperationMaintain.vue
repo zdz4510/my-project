@@ -1,9 +1,9 @@
 <template>
 	<div>
 		<div class="operate mtb10">
-			<el-button class="mr25 pad1025" size="small" type="primary" @click="goBack">返回</el-button>
-			<el-button class="mr25 pad1025" size="small" type="warning" @click="save('addForm')">保存</el-button>
-			<el-button class="mr25 pad1025" size="small" type="danger" @click="resetForm('addForm')">重置</el-button>
+			<el-button class="mr25 ml30 pad1025" size="small" type="primary" @click="goBack">返回</el-button>
+			<el-button class="mr25 pad1025" size="small" type="primary" @click="save('addForm')">保存</el-button>
+			<el-button class="mr25 pad1025" size="small" type="primary" @click="resetForm('addForm')">重置</el-button>
 		</div>
 		<div class="addForm">
 			<el-form :inline="true" :model="addForm" ref="addForm" :rules="rules" class="form-style" label-position="right" :label-width="formLabelWidth">

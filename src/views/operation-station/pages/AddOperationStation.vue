@@ -1,8 +1,8 @@
 <template>
 	<div>
 		<div class="operate ml30 mtb10">
-			<el-button class="mr25 pad1025" size="small" type="primary" @click="goBack">返回</el-button>
-			<el-button class="mr25 pad1025" size="small" type="warning" @click="save">保存</el-button>
+			<el-button class="mr25 ml30 pad1025" size="small" type="primary" @click="goBack">返回</el-button>
+			<el-button class="mr25 pad1025" size="small" type="primary" @click="save">保存</el-button>
 		</div>
 		<div class="search-bar">
 			<el-form :inline="true" :model="addForm" ref="addForm" :rules="rules" class="form-style">
