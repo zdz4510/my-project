@@ -235,6 +235,14 @@ const routes = [
 						/* webpackChunkName: "edit-data-collection" */ "../views/dc/pages/EditDataCollection.vue"
 					)
 			},
+			{
+				path: "dc-collection",
+				name: "dc-collection",
+				component: () =>
+					import(
+						/* webpackChunkName: "dc-collection" */ "../views/dc/pages/DCCollection.vue"
+					)
+			},
 		]
 	},
   /**

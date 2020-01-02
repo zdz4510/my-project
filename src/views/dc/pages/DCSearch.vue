@@ -97,7 +97,7 @@ import {getDataReportList, deleteDcSearch} from '../../../api/dc.search.api'
 				searchForm: {
 					resource: '设备',
 					dcGroup: '',
-					collectionType: 20,
+					collectionType: '20',
 					tenantSiteCode:'test'
 				},
 				rules: {
@@ -106,16 +106,16 @@ import {getDataReportList, deleteDcSearch} from '../../../api/dc.search.api'
 					// ],
 				},
 				collectionType:[{
-					value: 10,
+					value: '10',
 					label: '工单'
 				}, {
-					value: 20,
+					value: '20',
 					label: '物料'
 				},{
-					value: 30,
+					value: '30',
 					label: '资源'
 				}, {
-					value: 40,
+					value: '40',
 					label: '工序'
 				}],
 				tableData: {

@@ -619,13 +619,13 @@ export default {
 			});
 		},
 		getFormat(collectionType){
-			if(collectionType == 10) {
+			if(collectionType == '10') {
 				return '物料'
-			}else if(collectionType == 20) {
+			}else if(collectionType == '20') {
 				return '资源'
-			}else if(collectionType == 30) {
+			}else if(collectionType == '30') {
 				return '工序'
-			}else if(collectionType == 40) {
+			}else if(collectionType == '40') {
 				return '工单'
 			}else {
 				return '--'
