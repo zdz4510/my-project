@@ -288,7 +288,7 @@
       };
       var numberRequired = (rule, value, callback) => {
         var reg = /^[0-9]*$/
-          if (!reg.test(value)) {
+          if (!reg.test(value) && !!value) {
             return callback(new Error('只能输入数字'));
           }
 				callback()

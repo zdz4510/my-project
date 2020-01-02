@@ -127,7 +127,7 @@
 							<el-row>
 								<el-col :span="12">
 									<el-form-item label="参数名称:" prop="parameter" required>
-										<el-input v-model="addParamForm.parameter"></el-input>
+										<el-input v-model="addParamForm.parameter" :disabled="this.currentOperation == 'edit'"></el-input>
 									</el-form-item>
 								</el-col>
 								<el-col :span="12" v-if="addParamForm.valueType != '布尔'">
@@ -323,7 +323,7 @@ export default {
       };
       var numberRequired = (rule, value, callback) => {
         var reg = /^[0-9]*$/
-          if (!reg.test(value)) {
+          if (!reg.test(value) && !!value) {
             return callback(new Error('只能输入数字'));
           }
 				callback()
@@ -361,16 +361,16 @@ export default {
 					{ required: true, message: '请选择软检查', trigger: 'change' }
 				],
 				upperSpecLimit: [
-					{ required: false, validator: numberRequired, trigger: 'blur' }
+					{ validator: numberRequired, trigger: 'blur' }
 				],
 				lowerSpecLimit: [
-					{ required: false, validator: numberRequired, trigger: 'blur' }
+					{ validator: numberRequired, trigger: 'blur' }
 				],
 				upperWarnLimit: [
-					{ required: false, validator: numberRequired, trigger: 'blur' }
+					{ validator: numberRequired, trigger: 'blur' }
 				],
 				lowerWarnLimit: [
-					{ required: false, validator: numberRequired, trigger: 'blur' }
+					{ validator: numberRequired, trigger: 'blur' }
 				],
 			},
 			srules:{},
@@ -636,7 +636,7 @@ export default {
 				if (valid) {
 					this.addParamForm.dcGroup = this.editForm.dcGroup
 					let form = JSON.parse(JSON.stringify(this.addParamForm))
-					if(this.currentOperation == 'edit'){
+					if(this.currentOperation == 'add'){
 						if(this.MeasureInfoList.findIndex(item => item.parameter === form.parameter) == -1){
 							this.MeasureInfoList.push(form)
 							this.$message.success('操作成功');
@@ -663,7 +663,7 @@ export default {
 				if (valid) {
 					this.addSetUpForm.dcGroup = this.editForm.dcGroup
 					let form = JSON.parse(JSON.stringify(this.addSetUpForm))
-					if(this.currentOperation == 'edit'){
+					if(this.currentOperation == 'add'){
 						if(this.SetupInfoList.findIndex(item => JSON.parse(JSON.stringify(item)) == JSON.parse(JSON.stringify(form))) == -1){
 							this.SetupInfoList.push(form)
 							this.$message.success('操作成功');
@@ -697,11 +697,11 @@ export default {
 		},
 		add(){
 			this.paramsDialogVisible = true
-			this.currentOperation='edit'
+			this.currentOperation='add'
 		},
 		addSet(){
 			this.setUpDialogVisible = true
-			this.currentOperation='edit'
+			this.currentOperation='add'
 		},
 		edit(){
 			this.paramsDialogVisible = true
