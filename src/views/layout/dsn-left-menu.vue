@@ -65,6 +65,13 @@
         <el-menu-item index="/dc/data-collection">数据收集</el-menu-item>
         <el-menu-item index="/dc/dc-collection">独立数据收集</el-menu-item>
       </el-submenu>
+      <el-submenu index="alarm">
+        <template slot="title">
+          <i class="el-icon-location"></i>
+          <span slot="title">预警管理</span>
+        </template>
+        <el-menu-item index="/alarm/alarm-maintain">预警事件维护</el-menu-item>
+      </el-submenu>
       <el-submenu index="device">
         <template slot="title">
           <i class="el-icon-location"></i>

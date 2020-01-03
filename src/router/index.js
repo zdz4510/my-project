@@ -488,6 +488,43 @@ const routes = [
     ]
   },
   /**
+   * 预警事件
+   */
+  {
+    path: "/alarm",
+    name: "alarm",
+    component: () =>
+      import(/* webpackChunkName: "layout" */ "../views/layout/"),
+    children: [
+      {
+        path: "alarm-maintain",
+        name: "alarm-maintain",
+        component: () =>
+          import(
+            /* webpackChunkName: "alarm-maintain" */ "../views/alarm/pages/AlarmMaintain.vue"
+          )
+      },
+      {
+        path: "add-alarm-maintain",
+        name: "add-alarm-maintain",
+        component: () =>
+          import(
+            /* webpackChunkName: "add-alarm-maintain" */ "../views/alarm/pages/AddAlarmMaintain.vue"
+          )
+      },
+      {
+        path: "edit-alarm-maintain",
+        name: "edit-alarm-maintain",
+        component: () =>
+          import(
+            /* webpackChunkName: "edit-alarm-maintain" */ "../views/alarm/pages/EditAlarmMaintain.vue"
+          )
+      }
+    ]
+  },
+
+
+  /**
    * 设备维护模块
    */
   {
