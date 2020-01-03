@@ -106,7 +106,9 @@
                 v-model.trim="upkeepConfigForm.maintenanceUserId"
                 placeholder="请输入保养人员"
                 size="small"
+                class="maintenanceUserId"
               ></el-input>
+              <i class="el-icon-document"></i>
             </el-form-item>
             <el-form-item label="预警事件" prop="alarm">
               <el-autocomplete
@@ -626,6 +628,9 @@ export default {
           }
           .el-icon-document {
             font-size: 20px;
+          }
+          .maintenanceUserId {
+            width: 80%;
           }
         }
       }
