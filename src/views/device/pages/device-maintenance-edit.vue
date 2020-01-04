@@ -7,214 +7,264 @@
       <el-button size="small" type="primary" @click="checkTabCurrentStatus">
         保存
       </el-button>
-      <el-button size="small" type="primary" @click="handleReset(resetFormInfo)">
+      <el-button
+        size="small"
+        type="primary"
+        @click="handleReset(resetFormInfo)"
+      >
         重置
       </el-button>
     </div>
     <div class="showInfo">
-      <div class="resource">
-        <el-form
-          :model="maintenanceForm"
-          ref="maintenanceFormOne"
-          :rules="rules"
-          label-width="100px"
-          class="demo-maintenanceForm"
+      <div class="left" v-if="operateType === 'edit'">
+        <!-- <el-select
+          v-model="value"
+          clearable
+          placeholder="请选择"
+          :disabled="selectIsDisabled"
+          @clear="handleClearSelect"
+          @change="handleChangeOption"
+          @focus="handleSelectFocus"
+          ref="select"
         >
-          <el-form-item label="设备编号" prop="resource">
-            <el-input
-              v-model.trim="maintenanceForm.resource"
-              placeholder="请输入设备编号"
-              :disabled="isEditResource"
-            ></el-input>
-          </el-form-item>
-        </el-form>
+          <el-option
+            v-for="item in cloneList"
+            :key="item.salaryLevelCode"
+            :label="item.salaryLevelName"
+            :value="item.salaryLevelCode"
+          >
+          </el-option>
+        </el-select> -->
+        <el-table
+          ref="editTable"
+          :data="cloneList"
+          border
+          highlight-current-row
+          style="width: 100%"
+          height="513px"
+          @row-click="handleCurrentChange"
+        >
+          <el-table-column prop="resource" label="设备编号"> </el-table-column>
+          <el-table-column prop="resourceDes" label="设备描述">
+          </el-table-column>
+        </el-table>
       </div>
-
-      <el-tabs type="border-card" @tab-click="handleTabClick">
-        <el-tab-pane class="baseInfo">
-          <span slot="label"> 设备基础信息</span>
+      <div class="right">
+        <div class="resource">
           <el-form
             :model="maintenanceForm"
+            ref="maintenanceFormOne"
             :rules="rules"
-            ref="maintenanceFormTwo"
-            label-width="120px"
+            label-width="100px"
             class="demo-maintenanceForm"
           >
-            <el-form-item label="设备描述:">
+            <el-form-item label="设备编号" prop="resource">
               <el-input
-                type="textarea"
-                v-model.trim="maintenanceForm.resourceDes"
+                v-model.trim="maintenanceForm.resource"
+                placeholder="请输入设备编号"
+                :disabled="isEditResource"
               ></el-input>
-            </el-form-item>
-            <el-form-item label="状态:" prop="resourceStatus">
-              <el-radio-group v-model="maintenanceForm.resourceStatus">
-                <el-radio :label="10">待用</el-radio>
-                <el-radio :label="20">作业中</el-radio>
-                <el-radio :label="30">待修</el-radio>
-                <el-radio :label="40">报废</el-radio>
-              </el-radio-group>
-            </el-form-item>
-            <el-form-item label="所在工作中心:" prop="workCenter">
-              <el-input
-                v-model.trim="maintenanceForm.workCenter"
-                class="workCenter"
-              ></el-input>
-              <i class="el-icon-document"></i>
-              <!-- <div slot="error" slot-scope="error">{{error}}</div> -->
             </el-form-item>
           </el-form>
-        </el-tab-pane>
-        <el-tab-pane label="设备保养配置" class="deviceUpkeepSetting">
-          <el-form
-            :inline="true"
-            :model="upkeepConfigForm"
-            :rules="upkeepConfigRules"
-            ref="upkeepConfigForm"
-            class="demo-form-inline"
-            label-width="110px"
-          >
-            <el-form-item
-              label="保养条件名称"
-              prop="conditionName"
-              inline-message="true"
+        </div>
+
+        <el-tabs type="border-card" @tab-click="handleTabClick">
+          <el-tab-pane class="baseInfo">
+            <span slot="label"> 设备基础信息</span>
+            <el-form
+              :model="maintenanceForm"
+              :rules="rules"
+              ref="maintenanceFormTwo"
+              label-width="120px"
+              class="demo-maintenanceForm"
             >
-              <el-input
-                v-model.trim="upkeepConfigForm.conditionName"
-                placeholder="请输入保养条件名称"
-                size="small"
-              ></el-input>
-            </el-form-item>
-            <el-form-item label="保养起始时间" prop="startTime">
-              <el-date-picker
-                v-model="upkeepConfigForm.startTime"
-                type="datetime"
-                placeholder="选择日期"
-                size="small"
-                value-format="yyyy-MM-dd HH:mm:ss"
+              <el-form-item label="设备描述:">
+                <el-input
+                  type="textarea"
+                  v-model.trim="maintenanceForm.resourceDes"
+                ></el-input>
+              </el-form-item>
+              <el-form-item label="状态:" prop="resourceStatus">
+                <el-radio-group v-model="maintenanceForm.resourceStatus">
+                  <el-radio :label="10">待用</el-radio>
+                  <el-radio :label="20">作业中</el-radio>
+                  <el-radio :label="30">待修</el-radio>
+                  <el-radio :label="40">报废</el-radio>
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item label="所在工作中心:" prop="workCenter">
+                <el-input
+                  v-model.trim="maintenanceForm.workCenter"
+                  class="workCenter"
+                ></el-input>
+                <i class="el-icon-document"></i>
+                <!-- <div slot="error" slot-scope="error">{{error}}</div> -->
+              </el-form-item>
+            </el-form>
+          </el-tab-pane>
+          <el-tab-pane label="设备保养配置" class="deviceUpkeepSetting">
+            <el-form
+              :inline="true"
+              :model="upkeepConfigForm"
+              :rules="upkeepConfigRule"
+              ref="upkeepConfigForm"
+              class="demo-form-inline"
+              label-width="110px"
+            >
+              <el-form-item
+                label="保养条件名称"
+                prop="conditionName"
+                inline-message="true"
               >
-              </el-date-picker>
-            </el-form-item>
-            <el-form-item label="保养条件描述" prop="conditionDes">
-              <el-input
-                v-model.trim="upkeepConfigForm.conditionDes"
-                placeholder="请输入保养条件描述"
+                <el-input
+                  v-model.trim="upkeepConfigForm.conditionName"
+                  placeholder="请输入保养条件名称"
+                  size="small"
+                ></el-input>
+              </el-form-item>
+              <el-form-item label="保养起始时间" prop="startTime">
+                <el-date-picker
+                  v-model="upkeepConfigForm.startTime"
+                  type="datetime"
+                  placeholder="选择日期"
+                  size="small"
+                  value-format="yyyy-MM-dd HH:mm:ss"
+                >
+                </el-date-picker>
+              </el-form-item>
+              <el-form-item label="保养条件描述" prop="conditionDes">
+                <el-input
+                  v-model.trim="upkeepConfigForm.conditionDes"
+                  placeholder="请输入保养条件描述"
+                  size="small"
+                ></el-input>
+              </el-form-item>
+              <el-form-item label="保养人员" prop="maintenanceUserId">
+                <el-input
+                  v-model.trim="upkeepConfigForm.maintenanceUserId"
+                  placeholder="请输入保养人员"
+                  size="small"
+                  class="maintenanceUserId"
+                ></el-input>
+                <i class="el-icon-document"></i>
+              </el-form-item>
+              <el-form-item label="预警事件" prop="alarm">
+                <el-autocomplete
+                  v-model.trim="upkeepConfigForm.alarm"
+                  :fetch-suggestions="querySearch"
+                  placeholder="请输入预警事件"
+                  @select="handleSelectAlarm"
+                  size="small"
+                ></el-autocomplete>
+                <i class="el-icon-document"></i>
+              </el-form-item>
+              <el-form-item label="保养周期" prop="maintenancePeriod">
+                <el-input
+                  v-model.number="upkeepConfigForm.maintenancePeriod"
+                  placeholder="保养周期"
+                  class="upkeepCycle"
+                  size="small"
+                ></el-input>
+                <el-select
+                  v-model="upkeepConfigForm.periodUnit"
+                  label="upkeepConfigForm.periodUnit"
+                  class="upkeepCycle"
+                  size="small"
+                >
+                  <el-option label="天数" :value="1">天数</el-option>
+                  <el-option label="月份" :value="30">月份</el-option>
+                  <el-option label="季度" :value="90">季度</el-option>
+                  <el-option label="年" :value="365">年</el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="启用预警功能" prop="warningFunction">
+                <el-radio-group
+                  v-model="upkeepConfigForm.warningFunction"
+                  @change="selectWarnFunc"
+                >
+                  <el-radio :label="true" :value="true">启用</el-radio>
+                  <el-radio :label="false" :value="false">不启用</el-radio>
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item label="保养地址">
+                <el-radio-group v-model="upkeepConfigForm.maintenanceLocation">
+                  <el-radio label="在线">在线</el-radio>
+                  <el-radio label="任意">任意</el-radio>
+                  <el-radio label="设备店">设备店</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </el-form>
+            <div class="upkeep">
+              <el-button
                 size="small"
-              ></el-input>
-            </el-form-item>
-            <el-form-item label="保养人员" prop="maintenanceUserId">
-              <el-input
-                v-model.trim="upkeepConfigForm.maintenanceUserId"
-                placeholder="请输入保养人员"
-                size="small"
-                class="maintenanceUserId"
-              ></el-input>
-              <i class="el-icon-document"></i>
-            </el-form-item>
-            <el-form-item label="预警事件" prop="alarm">
-              <el-autocomplete
-                v-model.trim="upkeepConfigForm.alarm"
-                :fetch-suggestions="querySearch"
-                placeholder="请输入预警事件"
-                @select="handleSelectAlarm"
-                size="small"
-              ></el-autocomplete>
-              <i class="el-icon-document"></i>
-            </el-form-item>
-            <el-form-item label="保养周期" prop="maintenancePeriod">
-              <el-input
-                v-model.number="upkeepConfigForm.maintenancePeriod"
-                placeholder="保养周期"
-                class="upkeepCycle"
-                size="small"
-              ></el-input>
-              <el-select
-                v-model="upkeepConfigForm.periodUnit"
-                label="upkeepConfigForm.periodUnit"
-                class="upkeepCycle"
-                size="small"
+                type="primary"
+                @click="handleLocalAdd(refArrUpkeepConfig)"
               >
-                <el-option label="天数" :value="1">天数</el-option>
-                <el-option label="月份" :value="30">月份</el-option>
-                <el-option label="季度" :value="90">季度</el-option>
-                <el-option label="年" :value="365">年</el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="启用预警功能" prop="warningFunction">
-              <el-radio-group v-model="upkeepConfigForm.warningFunction">
-                <el-radio :label="true" :value="true">启用</el-radio>
-                <el-radio :label="false" :value="false">不启用</el-radio>
-              </el-radio-group>
-            </el-form-item>
-            <el-form-item label="保养地址">
-              <el-radio-group v-model="upkeepConfigForm.maintenanceLocation">
-                <el-radio label="在线">在线</el-radio>
-                <el-radio label="任意">任意</el-radio>
-                <el-radio label="设备店">设备店</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-form>
-          <div class="upkeep">
-            <el-button
-              size="small"
-              type="primary"
-              @click="handleLocalAdd(refArrUpkeepConfig)"
+                新增
+              </el-button>
+              <el-button size="small" type="primary" @click="handleLocalSave">
+                提交
+              </el-button>
+              <el-button size="small" type="primary" @click="handleLocalDelete">
+                删除
+              </el-button>
+            </div>
+            <el-table
+              ref="multipleTable"
+              :data="tableData"
+              tooltip-effect="dark"
+              style="width: 100%;"
+              :header-cell-style="{ 'background-color': '#F5F7FA' }"
+              height="200px"
+              @selection-change="handleSelectionChange"
             >
-              新增
-            </el-button>
-            <el-button size="small" type="primary" @click="handleLocalSave">
-              提交
-            </el-button>
-            <el-button size="small" type="primary" @click="handleLocalDelete">
-              删除
-            </el-button>
-          </div>
-          <el-table
-            ref="multipleTable"
-            :data="tableData"
-            tooltip-effect="dark"
-            style="width: 100%;"
-            :header-cell-style="{ 'background-color': '#F5F7FA' }"
-            height="200px"
-            @selection-change="handleSelectionChange"
-          >
-            <el-table-column type="selection" width="55"> </el-table-column>
-            <el-table-column
-              prop="conditionName"
-              label="保养条件名称"
-              width="120"
-            >
-            </el-table-column>
-            <el-table-column
-              prop="maintenancePeriod"
-              label="保养周期"
-              width="120"
-            >
-            </el-table-column>
-            <el-table-column prop="periodUnit" label="保养周期单位" width="120">
-            </el-table-column>
-            <el-table-column prop="startTime" label="保养起始时间" width="180">
-            </el-table-column>
-            <el-table-column
-              prop="maintenanceLocation"
-              label="保养地址"
-              width="120"
-            >
-            </el-table-column>
-            <el-table-column
-              prop="maintenanceUserId"
-              label="保养人员"
-              width="120"
-            >
-            </el-table-column>
-            <el-table-column
-              prop="conditionDes"
-              label="保养条件描述"
-              show-overflow-tooltip
-            >
-            </el-table-column>
-          </el-table>
-        </el-tab-pane>
-      </el-tabs>
+              <el-table-column type="selection" width="55"> </el-table-column>
+              <el-table-column
+                prop="conditionName"
+                label="保养条件名称"
+                width="120"
+              >
+              </el-table-column>
+              <el-table-column
+                prop="maintenancePeriod"
+                label="保养周期"
+                width="120"
+              >
+              </el-table-column>
+              <el-table-column
+                prop="periodUnit"
+                label="保养周期单位"
+                width="120"
+              >
+              </el-table-column>
+              <el-table-column
+                prop="startTime"
+                label="保养起始时间"
+                width="180"
+              >
+              </el-table-column>
+              <el-table-column
+                prop="maintenanceLocation"
+                label="保养地址"
+                width="120"
+              >
+              </el-table-column>
+              <el-table-column
+                prop="maintenanceUserId"
+                label="保养人员"
+                width="120"
+              >
+              </el-table-column>
+              <el-table-column
+                prop="conditionDes"
+                label="保养条件描述"
+                show-overflow-tooltip
+              >
+              </el-table-column>
+            </el-table>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
     </div>
   </div>
 </template>
@@ -271,7 +321,24 @@ export default {
         periodUnit: "",
         maintenanceLocation: ""
       },
-      upkeepConfigRules: {
+      upkeepConfigRules: this.upkeepConfigRule,
+      upkeepStartDate: "",
+      tableData: [],
+      selectionList: [],
+      operateType: "",
+      saveType: "baseInfo",
+      isEditResource: false,
+      //预警
+      alarmList: [],
+      fn: null,
+      isRequired: false,
+      currentRow: {}
+    };
+  },
+  computed: {
+    ...mapGetters(["maintenanceList"]),
+    upkeepConfigRule() {
+      return {
         conditionName: [
           { required: true, message: "请输入保养条件名称", trigger: "blur" }
         ],
@@ -289,7 +356,11 @@ export default {
           { required: true, message: "请输入保养人员", trigger: "blur" }
         ],
         alarm: [
-          { required: true, message: "请输入预警事件", trigger: "change" }
+          {
+            required: this.isRequired,
+            message: "请输入预警事件",
+            trigger: "change"
+          }
         ],
         warningFunction: [
           { required: true, message: "请输入预警功能", trigger: "change" }
@@ -301,20 +372,8 @@ export default {
         periodUnit: [
           { required: true, message: "请输入周期单位", trigger: "change" }
         ]
-      },
-      upkeepStartDate: "",
-      tableData: [],
-      selectionList: [],
-      operateType: "",
-      saveType: "baseInfo",
-      isEditResource: false,
-      //预警
-      alarmList: [],
-      fn: null
-    };
-  },
-  computed: {
-    ...mapGetters(["maintenanceList"])
+      };
+    }
   },
   created() {
     this.deBounceSearch();
@@ -389,8 +448,14 @@ export default {
     handleSelectAlarm(item) {
       this.upkeepConfigForm.alarm = item.value;
     },
+    //选择是否启用预警功能
+    selectWarnFunc(val) {
+      console.log(val);
+      this.isRequired = val ? true : false;
+    },
     handleSelectionChange(val) {
       this.selectionList = val;
+      this.upkeepConfigForm = this.selectionList[0];
     },
     handleChangeRadio(val) {
       this.maintenanceForm.resourceStatus = val;
@@ -418,6 +483,10 @@ export default {
           }
         });
       }
+    },
+    //选择设备
+    handleCurrentChange(currentRow) {
+      this.maintenanceForm = JSON.parse(JSON.stringify(currentRow));
     },
     //验证form表单
     checkFormInfo(formArr, handleType) {
@@ -583,45 +652,52 @@ export default {
     padding: 10px 5px;
   }
   .showInfo {
-    .resource {
-      width: 25%;
+    display: flex;
+    .left {
+      width: 200px;
     }
-    .baseInfo {
-      width: 50%;
-      .el-form {
-        // text-align: center;
-        .el-form-item {
-          .workCenter {
-            width: 96%;
-          }
-        }
+    .right {
+      flex: 1;
+      .resource {
+        width: 25%;
       }
-    }
-    .deviceUpkeepSetting {
-      .el-form {
-        // text-align: center;
-        .el-form-item {
-          width: 32%;
-          .el-form-item__content {
-            .el-radio-group {
-              .el-radio {
-                width: 30px;
-              }
+      .baseInfo {
+        width: 50%;
+        .el-form {
+          // text-align: center;
+          .el-form-item {
+            .workCenter {
+              width: 94%;
             }
           }
-          .upkeepCycle {
-            width: 100px;
-          }
-          .el-icon-document {
-            font-size: 20px;
-          }
-          .maintenanceUserId {
-            width: 80%;
-          }
         }
       }
-      .upkeep {
-        text-align: center;
+      .deviceUpkeepSetting {
+        .el-form {
+          // text-align: center;
+          .el-form-item {
+            width: 32%;
+            .el-form-item__content {
+              .el-radio-group {
+                .el-radio {
+                  width: 30px;
+                }
+              }
+            }
+            .upkeepCycle {
+              width: 100px;
+            }
+            .el-icon-document {
+              font-size: 20px;
+            }
+            .maintenanceUserId {
+              width: 80%;
+            }
+          }
+        }
+        .upkeep {
+          text-align: center;
+        }
       }
     }
   }

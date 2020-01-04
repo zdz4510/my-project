@@ -125,7 +125,7 @@
 </template>
 
 <script>
-import { findPageHttp } from "@/api/mantenance/standing.api.js";
+import { findPageHttp } from "@/api/maintenance/standing.api.js";
 import { mapMutations } from "vuex";
 export default {
   data() {
