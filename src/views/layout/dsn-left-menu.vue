@@ -82,7 +82,7 @@
         <el-menu-item index="/device/deviceUpkeep">设备保养</el-menu-item>
         <el-menu-item index="/device/test">测试页面</el-menu-item>
       </el-submenu>
-      <el-submenu index="device">
+      <el-submenu index="maintenance">
         <template slot="title">
           <i class="el-icon-location"></i>
           <span slot="title">维护管理</span>

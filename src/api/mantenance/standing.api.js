@@ -1,5 +1,5 @@
 import request from "@/service/";
-// import qs from "qs";
+import qs from "qs";
 
 /**
  * 站位删除
@@ -17,7 +17,11 @@ export const deleteStationBatchHttp = data => {
  *  url /mes/station/findPage
  */
 export const findPageHttp = data => {
-  return request.post(`${window.VUE_APP_URL}/mes/station/findPage`, data);
+  const params = qs.stringify(data);
+  return request.post(
+    `${window.VUE_APP_URL}/mes/station/findPage?${params}`,
+    params
+  );
 };
 
 /**

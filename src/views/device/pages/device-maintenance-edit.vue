@@ -7,7 +7,7 @@
       <el-button size="small" type="primary" @click="checkTabCurrentStatus">
         保存
       </el-button>
-      <el-button size="small" type="info" @click="handleReset(resetFormInfo)">
+      <el-button size="small" type="primary" @click="handleReset(resetFormInfo)">
         重置
       </el-button>
     </div>
@@ -384,19 +384,6 @@ export default {
     //预警事件搜索
     querySearch(queryString, cb) {
       this.fn(cb);
-      //  var alarmList = this.alarmList;
-      // var results = queryString
-      //   ? alarmList.filter(this.createFilter(queryString))
-      // : alarmList;
-      // 调用 callback 返回建议列表的数据
-      // cb([]);
-    },
-    createFilter(queryString) {
-      return alarms => {
-        return (
-          alarms.alarm.toLowerCase().indexOf(queryString.toLowerCase()) === 0
-        );
-      };
     },
     //预警事件选择
     handleSelectAlarm(item) {
@@ -416,7 +403,6 @@ export default {
         this.saveType = "baseInfo";
       }
     },
-    handleQuery() {},
     handleReset(formName) {
       this.maintenanceForm.resourceDes = "";
       if (this.operateType === "add") {
