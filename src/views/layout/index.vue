@@ -4,7 +4,7 @@
         <DsnLeftMenu @handleCollapse="handleCollapse" />
         <div class="content" :class="isCollapse?'active':''">
             <div class="routerHistory">
-
+                
             </div>
            <div class="pageContent">
                 <router-view></router-view>
@@ -18,6 +18,7 @@
 import  DsnFooter from './dsn-footer'
 import  DsnHeader from './dsn-header'
 import  DsnLeftMenu from './dsn-left-menu'
+import { mapGetters, mapMutations } from "vuex";
 export default {
     name:'Layout',
     components:{
@@ -25,12 +26,19 @@ export default {
         DsnHeader,
         DsnLeftMenu
     },
+    computed: {
+        ...mapGetters(["historyList"])
+    },
     data(){
         return {
             isCollapse:true
         }    
     },
+    created(){
+        console.log(this.historyList,'history')
+    },
     methods:{
+        ...mapMutations(["PUSH","POP"]),
         handleCollapse(status){
             this.isCollapse = (status == 1?true:false)
         }

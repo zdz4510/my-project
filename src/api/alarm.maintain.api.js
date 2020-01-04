@@ -46,7 +46,7 @@ export const deleteData = data => {
 
 /**
  * 查询预警事件关联通知人员信息(复制事件通知人员)
- * url /mes/alarmDefInform/listPage
+ * url /mes/alarmDefInform/list
  */
 export const getWorkerInfo = data => {
   return request.post(`${window.VUE_APP_URL}/mes/alarmDefInform/list`,data);

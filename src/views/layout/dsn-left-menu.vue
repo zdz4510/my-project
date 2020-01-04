@@ -71,6 +71,7 @@
           <span slot="title">预警管理</span>
         </template>
         <el-menu-item index="/alarm/alarm-maintain">预警事件维护</el-menu-item>
+        <el-menu-item index="/alarm/alarm-group">预警事件分组</el-menu-item>
       </el-submenu>
       <el-submenu index="device">
         <template slot="title">

@@ -2,7 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import deviceRouter from "@/views/device/router/index.js";
 import maintenanceRouter from "@/views/maintenance/router/index.js";
-
+import store from "@/store/";
 Vue.use(VueRouter);
 
 const routes = [
@@ -519,6 +519,30 @@ const routes = [
           import(
             /* webpackChunkName: "edit-alarm-maintain" */ "../views/alarm/pages/EditAlarmMaintain.vue"
           )
+      },
+      {
+        path: "alarm-group",
+        name: "alarm-group",
+        component: () =>
+          import(
+            /* webpackChunkName: "alarm-group" */ "../views/alarm/pages/AlarmGroup.vue"
+          )
+      },
+      {
+        path: "add-alarm-group",
+        name: "add-alarm-group",
+        component: () =>
+          import(
+            /* webpackChunkName: "add-alarm-group" */ "../views/alarm/pages/AddAlarmGroup.vue"
+          )
+      },
+      {
+        path: "edit-alarm-group",
+        name: "edit-alarm-group",
+        component: () =>
+          import(
+            /* webpackChunkName: "edit-alarm-group" */ "../views/alarm/pages/EditAlarmGroup.vue"
+          )
       }
     ]
   },
@@ -554,6 +578,18 @@ const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
   routes
+});
+
+router.beforeEach((to, from, next) => {
+  console.log(to);
+  console.log(from);
+  next();
+  document.title = to.meta.title;
+  store.commit("PUSH", {
+    name: to.name,
+    title: to.meta.title || "",
+    path: to.path
+  });
 });
 
 export default router;
