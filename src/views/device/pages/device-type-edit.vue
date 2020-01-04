@@ -7,7 +7,7 @@
       <el-button size="small" type="primary" @click="checkAdd('typeForm')">
         保存
       </el-button>
-      <el-button size="small" type="info" @click="handleReset">
+      <el-button size="small" type="primary" @click="handleReset">
         重置
       </el-button>
     </div>

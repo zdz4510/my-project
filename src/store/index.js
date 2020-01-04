@@ -7,6 +7,8 @@ import operationStationEdit from "./modules/base/operation.station.edit.js"; // 
 import dataCollectionEdit from "./modules/base/data.collection.edit.js"; // 数据收集维护vuex module
 import typeEdit from "./modules/device/type.edit"; //设备类型vuex module
 import maintenanceEdit from "./modules/device/maintenance.edit.js"; //设备维护vuex module
+import standingEdit from "./modules/maintenance/standing.edit.js"; //站位维护vuex module
+import workCert from "./modules/maintenance/working.certificate.edit.js"; //上岗证维护vuex module
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -20,6 +22,8 @@ export default new Vuex.Store({
     operationStationEdit,
     dataCollectionEdit,
     typeEdit,
-    maintenanceEdit
+    maintenanceEdit,
+    standingEdit,
+    workCert
   }
 });

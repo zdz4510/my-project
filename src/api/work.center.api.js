@@ -1,4 +1,5 @@
 import request from "@/service/";
+import qs from "qs";
 
 /* 工作中心*/
 /**
@@ -38,6 +39,18 @@ export const deleteWorkCenter = data => {
  * 查询所有
  * url /mes/workCenter/listAll
  */
-export const listAllHttp = () => {
-  return request.post(`${window.VUE_APP_URL}/mes/workCenter/listAll`);
+export const listAllHttp = data => {
+  const params = qs.stringify(data);
+  return request.post(
+    `${window.VUE_APP_URL}/mes/workCenter/listAll?${params}`,
+    data
+  );
+};
+
+/**
+ * 模糊搜索
+ * url /mes/workCenter/findPage
+ */
+export const findPageHttp = () => {
+  return request.post(`${window.VUE_APP_URL}/mes/workCenter/findPage`);
 };

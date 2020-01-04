@@ -15,6 +15,18 @@ export default {
           /* webpackChunkName: "standingMaintenance" */ "@/views/maintenance/pages/standing-maintenance.vue"
         )
     },
+    //站位维护编辑
+    {
+      path: "standingMaintenanceEdit",
+      name: "standingMaintenanceEdit",
+      meta: {
+        title: "站位维护编辑"
+      },
+      component: () =>
+        import(
+          /* webpackChunkName: "standingMaintenanceEdit" */ "@/views/maintenance/pages/standing-maintenance-edit.vue"
+        )
+    },
     //上岗证维护
     {
       path: "workingCertificateMaintenance",
@@ -25,6 +37,18 @@ export default {
       component: () =>
         import(
           /* webpackChunkName: "workingCertificateMaintenance" */ "@/views/maintenance/pages/working-certificate-maintenance.vue"
+        )
+    },
+    //上岗证维护编辑
+    {
+      path: "workingCertificateMaintenanceEdit",
+      name: "workingCertificateMaintenanceEdit",
+      meta: {
+        title: "上岗证维护编辑"
+      },
+      component: () =>
+        import(
+          /* webpackChunkName: "workingCertificateMaintenanceEdit" */ "@/views/maintenance/pages/working-certificate-maintenance-edit.vue"
         )
     },
     //通用代码定义维护

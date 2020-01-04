@@ -5,27 +5,25 @@
         :inline="true"
         :model="standingForm"
         ref="standingForm"
-        label-width="100px"
+        label-width="70px"
       >
         <el-form-item label="产线">
-          <el-autocomplete
+          <el-input
             v-model="standingForm.workCenterRelation"
-            :fetch-suggestions="querySearch"
-            placeholder="请输入内容"
-            @select="handleSelect"
-          ></el-autocomplete>
+            placeholder="请输入产线"
+          ></el-input>
         </el-form-item>
-        <el-form-item label="站位" prop="station">
+        <el-form-item label="站位">
           <el-input
             v-model="standingForm.station"
             placeholder="请输入站位"
           ></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button size="small" type="warning" @click="handleQuery">
+          <el-button size="small" type="primary" @click="handleQuery">
             查询
           </el-button>
-          <el-button size="small" type="info" @click="handleReset">
+          <el-button size="small" type="primary" @click="handleReset">
             重置
           </el-button>
         </el-form-item>
@@ -35,7 +33,6 @@
       <el-button size="small" type="primary" @click="handleAdd">
         新增
       </el-button>
-      <el-button size="small" type="primary" disabled>保存</el-button>
       <el-button
         size="small"
         type="primary"
@@ -44,9 +41,9 @@
       >
         修改
       </el-button>
-      <!-- <el-button size="small" type="danger" @click="checkDeleteSelection">
+      <el-button size="small" type="primary" @click="checkSelectionLength">
         删除
-      </el-button> -->
+      </el-button>
       <!-- <el-button size="small" type="primary" @click="handleExport"
         >导出</el-button
       > -->
@@ -61,6 +58,7 @@
         tooltip-effect="dark"
         style="width: 100%"
         @selection-change="handleSelectionChange"
+        @cell-dblclick="handleDblClick"
       >
         <el-table-column type="selection" width="55"> </el-table-column>
         <el-table-column prop="station" label="站位" width="60">
@@ -92,7 +90,7 @@
         background
         layout="->,total,prev,pager,next,sizes"
         :total="total"
-        :page-size="pagesize"
+        :page-size="pageSize"
         :page-sizes="[5, 10, 15, 20]"
         :current-page="currentPage"
         @size-change="handlePagesize"
@@ -100,12 +98,24 @@
       >
       </el-pagination>
     </div>
+    <el-dialog title="删除" :visible.sync="deleteDialog" width="30%">
+      <span>是否确认删除{{ selectionList.length }}条数据？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="deleteDialog = false">取 消</el-button>
+        <el-button type="primary" @click="handleDelete">
+          确 定
+        </el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-// import { findPageHttp } from "@/api/maintenance/standing.api.js";
-
+import {
+  findPageHttp,
+  deleteStationBatchHttp
+} from "@/api/mantenance/standing.api.js";
+import { mapMutations } from "vuex";
 export default {
   data() {
     return {
@@ -118,24 +128,37 @@ export default {
       currentPage: 1,
       pageSize: 10,
       total: 0,
-      tableData: [
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        }
-      ],
+      tableData: [],
       selectionList: [],
-      stations: []
+      stations: [],
+      deleteDialog: false
     };
   },
   created() {
     this.init();
   },
   methods: {
+    ...mapMutations(["STANDINGLIST"]),
     //初始化数据
     init() {
-      // findPageHttp().then(() => {});
+      const data = {
+        currentPage: this.currentPage,
+        pageSize: this.pageSize,
+        station: this.standingForm.station,
+        workCenterRelation: this.standingForm.workCenterRelation
+      };
+      findPageHttp(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.total = res.data.total;
+          this.tableData = res.data.data;
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
     },
     //更改当前页码,再次请求数据
     handleCurrentChange(currentChange) {
@@ -143,8 +166,8 @@ export default {
       this.init();
     },
     //更改页码大小
-    handlePagesize(pagesize) {
-      this.pagesize = pagesize;
+    handlePagesize(pageSize) {
+      this.pageSize = pageSize;
       this.currentPage = 1;
       this.init();
     },
@@ -157,13 +180,75 @@ export default {
       this.selectionList = val;
     },
     //查询
-    handleQuery() {},
+    handleQuery() {
+      console.log(11);
+      this.init();
+    },
     //重置
-    handleReset() {},
+    handleReset() {
+      this.standingForm.station = "";
+      this.standingForm.workCenterRelation = "";
+      this.init();
+    },
     //新增
-    handleAdd() {},
+    handleAdd() {
+      this.STANDINGLIST([]);
+      this.$router.push({
+        name: "standingMaintenanceEdit",
+        query: { operateType: "add" }
+      });
+    },
+    handleDblClick(row, column) {
+      if (column.label === "站位") {
+        const tempArr = [];
+        tempArr.push(JSON.parse(JSON.stringify(row)));
+        console.log(tempArr);
+        this.STANDINGLIST(tempArr);
+        this.$router.push({
+          name: "standingMaintenanceEdit",
+          query: { operateType: "edit" }
+        });
+      }
+    },
     //编辑
-    handleEdit() {},
+    handleEdit() {
+      const tempArr = JSON.parse(JSON.stringify(this.selectionList));
+      this.STANDINGLIST(tempArr);
+      this.$router.push({
+        name: "standingMaintenanceEdit",
+        query: { operateType: "edit" }
+      });
+    },
+    checkSelectionLength() {
+      if (this.selectionList.length === 0) {
+        this.$message({
+          message: "还没有选择哦",
+          type: "warning"
+        });
+        return;
+      }
+      this.deleteDialog = true;
+    },
+    handleDelete() {
+      const data = this.selectionList;
+      deleteStationBatchHttp(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.$message({
+            message: "删除成功",
+            type: "success"
+          });
+          this.deleteDialog = false;
+          this.init();
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+        this.deleteDialog = false;
+      });
+    },
     //导入
     handleImport() {}
   }

@@ -30,7 +30,7 @@
           <el-button size="small" type="primary" @click="handleQuery">
             查询
           </el-button>
-          <el-button size="small" type="info" @click="handleReset">
+          <el-button size="small" type="primary" @click="handleReset">
             重置
           </el-button>
         </el-form-item>
