@@ -10,14 +10,14 @@
 					<el-select v-model="value" clearable placeholder="请选择" :disabled="selectIsDisabled" @clear="handleClearSelect" @change="handleChangeOption" @focus="handleSelectFocus" ref="select" >
 						<el-option
 							v-for="item in cloneList"
-							:key="item.mat"
-							:label="item.mat"
-							:value="item.mat" >
+							:key="item.material"
+							:label="item.material"
+							:value="item.material" >
 						</el-option>
 					</el-select>
 					<el-table ref="editTable" :data="cloneList" border highlight-current-row style="width: 100%" height="513" @row-click="handleCurrentChange" >
-						<el-table-column label="物料号" prop="mat"> </el-table-column>
-						<el-table-column label="版本号" prop="matRev"> </el-table-column>
+						<el-table-column label="物料号" prop="material"> </el-table-column>
+						<el-table-column label="版本号" prop="materialRev"> </el-table-column>
 					</el-table>
 				</div>
 			</el-col>
@@ -26,13 +26,13 @@
 					<el-form :inline="true" :model="editForm" ref="editForm" :rules="rules" class="form-style" label-position="right" :label-width="formLabelWidth">
 						<el-row>
 							<el-col :span="8">
-								<el-form-item label="物料号:" prop="mat" >
-									<el-input v-model="editForm.mat" disabled></el-input>
+								<el-form-item label="物料号:" prop="material" >
+									<el-input v-model="editForm.material" disabled></el-input>
 								</el-form-item>
 							</el-col>
 							<el-col :span="8">
-								<el-form-item label="版本号:" prop="matRev" >
-									<el-input v-model="editForm.matRev" disabled></el-input>
+								<el-form-item label="版本号:" prop="materialRev" >
+									<el-input v-model="editForm.materialRev" disabled></el-input>
 								</el-form-item>
 							</el-col>
 							<el-col :span="8">
@@ -43,8 +43,8 @@
 						</el-row>
 						<el-row>
 							<el-col :span="24">
-								<el-form-item label="物料描述:" prop="matDes">
-									<el-input class="dec" type="textarea" :autosize="{ minRows: 2, maxRows: 6}" v-model="editForm.matDes"></el-input>
+								<el-form-item label="物料描述:" prop="materialDes">
+									<el-input class="dec" type="textarea" :autosize="{ minRows: 2, maxRows: 6}" v-model="editForm.materialDes"></el-input>
 								</el-form-item>
 							</el-col>
 						</el-row>
@@ -109,8 +109,8 @@
 										</el-row>
 										<el-row>
 											<el-col :span="8">
-												<el-form-item label="材料分类:" prop="matType" required>
-													<el-select v-model="editForm.matType">
+												<el-form-item label="材料分类:" prop="materialType" required>
+													<el-select v-model="editForm.materialType">
 														<el-option
 															v-for="item in options"
 															:key="item.label"
@@ -121,30 +121,30 @@
 												</el-form-item>
 											</el-col>
 											<el-col :span="8">
-												<el-form-item label="客户:" prop="client" v-if="editForm.matType=='成品' || editForm.matType=='半成品'">
+												<el-form-item label="客户:" prop="client" v-if="editForm.materialType=='成品' || editForm.materialType=='半成品'">
 													<el-input v-model="editForm.client"></el-input>
 												</el-form-item>
 											</el-col>
 											<el-col :span="8">
-												<el-form-item label="客户产品代码:" prop="clientMat" v-if="editForm.matType=='成品' || editForm.matType=='半成品'">
-													<el-input v-model="editForm.clientMat"></el-input>
+												<el-form-item label="客户产品代码:" prop="clientMaterial" v-if="editForm.materialType=='成品' || editForm.materialType=='半成品'">
+													<el-input v-model="editForm.clientMaterial"></el-input>
 												</el-form-item>
 											</el-col>
 											<el-col :span="8">
-												<el-form-item label="供应商:" prop="vebdor" v-if="editForm.matType=='辅料' || editForm.matType=='原材料'">
+												<el-form-item label="供应商:" prop="vebdor" v-if="editForm.materialType=='辅料' || editForm.materialType=='原材料'">
 													<el-input v-model="editForm.vebdor"></el-input>
 												</el-form-item>
 											</el-col>
 											<el-col :span="8">
-												<el-form-item label="供应商物料号:" prop="vebdorMat" v-if="editForm.matType=='辅料' || editForm.matType=='原材料'">
-													<el-input v-model="editForm.vebdorMat"></el-input>
+												<el-form-item label="供应商物料号:" prop="vebdorMaterial" v-if="editForm.materialType=='辅料' || editForm.materialType=='原材料'">
+													<el-input v-model="editForm.vebdorMaterial"></el-input>
 												</el-form-item>
 											</el-col>
 										</el-row>
 										<el-row>
 											<el-col :span="8">
-												<el-form-item label="物料状态:" prop="matStatus" required>
-													<el-select v-model="editForm.matStatus">
+												<el-form-item label="物料状态:" prop="materialStatus" required>
+													<el-select v-model="editForm.materialStatus">
 														<el-option
 															v-for="item in status"
 															:key="item.value"
@@ -301,22 +301,22 @@ export default {
 			activeName:'first',
       cloneModify: {}, //  克隆的表单的一份副本
       editForm: {
-				mat:'',
-				matRev:'',
+				material:'',
+				materialRev:'',
 				currentRev:'',
-				matDes:'',
+				materialDes:'',
 				unit1:'',
 				unit2:'',
 				unit3:'',
 				qtyRequired1:'',
 				qtyRequired2:'',
 				qtyRequired3:'',
-				matType:'',
+				materialType:'',
 				client:'',
-				clientMat:'',
+				clientMaterial:'',
 				vebdor:'',
-				vebdorMat:'',
-				matStatus:'',
+				vebdorMaterial:'',
+				materialStatus:'',
 				modified_user_id:'',
 				length:'',
 				lengthErrorRange:'',
@@ -418,7 +418,7 @@ export default {
         return ;
       }
       //过滤数组
-      const tempList = this.cloneList.filter(item => item["mat"] == row);
+      const tempList = this.cloneList.filter(item => item["material"] == row);
       console.log(tempList);
       this.cloneList = tempList;
       this.editForm = tempList[0];
@@ -476,7 +476,7 @@ export default {
      *  return >1 就找到了
      */
     findIndexByItem(arr, v) {
-      return arr.findIndex(item => item["mat"] == v);
+      return arr.findIndex(item => item["material"] == v);
     },
     // 取消操作  一般是在弹框出现的时候才有取消操作
     handleCancle() {
@@ -491,7 +491,7 @@ export default {
       this.cloneList = JSON.parse(JSON.stringify(this.matEditList));  //取消直接复制一份副本
       if (this.currentRow) {
         let code = this.currentRow.mat;
-        let item = this.findItemByKey(this.cloneList, code, "mat");
+        let item = this.findItemByKey(this.cloneList, code, "material");
         if (item) {
           this.setCurrent(item);
         }
@@ -529,7 +529,7 @@ export default {
 							if (this.cloneList.length == 1) {
 								let index = this.findIndexByItem(
 									this.matEditList,
-									this.editForm.mat
+									this.editForm.material
 								);
 								if (index > -1) {
 									this.matEditList.splice(index, 1, this.editForm); // 替换

@@ -6,7 +6,7 @@ import request from  "@/service/"
  *  url /mes/material/findMaterial
  */
 export const getMaterialList = data => {
-	return request.post(`${window.VUE_APP_URL}/mes/material/findMaterial?currentPage=${data.currentPage}&deleteFlag=${data.deleteFlag}&pageSize=${data.pageSize}&tenantSiteCode=${data.tenantSiteCode}&mat=${data.mat}&matRev=${data.matRev}`);
+	return request.post(`${window.VUE_APP_URL}/mes/material/findMaterial?currentPage=${data.currentPage}&deleteFlag=${data.deleteFlag}&pageSize=${data.pageSize}&tenantSiteCode=${data.tenantSiteCode}&material=${data.material}&materialRev=${data.materialRev}`);
 };
 
 

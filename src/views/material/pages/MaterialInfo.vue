@@ -2,11 +2,11 @@
 	<div>
 		<div class="search-bar">
 			<el-form :inline="true" :model="searchForm" ref="searchForm" :rules="rules" class="form-style" :label-width="formLabelWidth">
-				<el-form-item label="物料号:" prop="mat">
-					<el-input v-model="searchForm.mat"></el-input>
+				<el-form-item label="物料号:" prop="material">
+					<el-input v-model="searchForm.material"></el-input>
 				</el-form-item>
-				<el-form-item label="版本号:" prop="matRev">
-					<el-input v-model="searchForm.matRev"></el-input>
+				<el-form-item label="版本号:" prop="materialRev">
+					<el-input v-model="searchForm.materialRev"></el-input>
 				</el-form-item>
 				<el-form-item label="" prop="">
 					<el-button class="ml15 mr25 pad1025" size="small" type="primary" @click="search">查询</el-button>
@@ -25,21 +25,21 @@
 			ref="multipleTable"
 			:data="this.tableData.data"
 			tooltip-effect="dark"
-			row-key="mat"
+			row-key="material"
 			@selection-change="handleSelectionChange"
 			>
 				<el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
 				<el-table-column type="index" label="序号"></el-table-column>
-				<el-table-column prop="matType" label="物料分类"></el-table-column>
-				<el-table-column prop="mat" label="物料料号"></el-table-column>
-				<el-table-column prop="matRev" label="版本"></el-table-column>
+				<el-table-column prop="materialType" label="物料分类"></el-table-column>
+				<el-table-column prop="material" label="物料料号"></el-table-column>
+				<el-table-column prop="materialRev" label="版本"></el-table-column>
 				<el-table-column prop="currentRev" label="当前版本"></el-table-column>
 				<el-table-column label="产品状态">
-					<template slot-scope="scope">{{ scope.row.matStatus === 'true' ? '已启用' : (scope.row.matStatus === 'false' ? '未启用' : '--') }}</template>
+					<template slot-scope="scope">{{ scope.row.materialStatus === 'true' ? '已启用' : (scope.row.materialStatus === 'false' ? '未启用' : '--') }}</template>
 				</el-table-column>
 				<el-table-column prop="client" label="客户"></el-table-column>
 				<el-table-column prop="vebdor" label="供应商"></el-table-column>
-				<el-table-column prop="matDes" label="物料描述"></el-table-column>
+				<el-table-column prop="materialDes" label="物料描述"></el-table-column>
 			</el-table>
 			<el-pagination class="mtb20"
 				background
@@ -65,8 +65,8 @@ import { mapMutations } from "vuex";
 				checkedList:[],
 				formLabelWidth:'120px',
 				searchForm: {
-					mat: '',
-					matRev: '',
+					material: '',
+					materialRev: '',
 					tenantSiteCode: '',
 					deleteFlag: false,
 				},
@@ -94,8 +94,8 @@ import { mapMutations } from "vuex";
 				let params= {
 					deleteFlag: false,
 					tenantSiteCode: this.searchForm.tenantSiteCode,
-					mat: this.searchForm.mat,
-					matRev: this.searchForm.matRev,
+					material: this.searchForm.material,
+					materialRev: this.searchForm.materialRev,
 					pageSize: this.tableData.page.pageSize,
 					currentPage: this.tableData.page.currentPage,
 				}

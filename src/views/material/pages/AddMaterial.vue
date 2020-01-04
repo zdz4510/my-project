@@ -9,13 +9,13 @@
 			<el-form :inline="true" :model="addForm" ref="addForm" :rules="rules" class="form-style" label-position="right" :label-width="formLabelWidth">
 				<el-row>
 					<el-col :span="8">
-						<el-form-item label="物料号:" prop="mat">
-							<el-input v-model="addForm.mat"></el-input>
+						<el-form-item label="物料号:" prop="material">
+							<el-input v-model="addForm.material"></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="8">
-						<el-form-item label="版本号:" prop="matRev">
-							<el-input v-model="addForm.matRev"></el-input>
+						<el-form-item label="版本号:" prop="materialRev">
+							<el-input v-model="addForm.materialRev"></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="8">
@@ -26,8 +26,8 @@
 				</el-row>
 				<el-row>
 					<el-col :span="24">
-						<el-form-item label="物料描述:" prop="matDes">
-							<el-input class="dec" type="textarea" :autosize="{ minRows: 2, maxRows: 6}" v-model="addForm.matDes"></el-input>
+						<el-form-item label="物料描述:" prop="materialDes">
+							<el-input class="dec" type="textarea" :autosize="{ minRows: 2, maxRows: 6}" v-model="addForm.materialDes"></el-input>
 						</el-form-item>
 					</el-col>
 				</el-row>
@@ -92,8 +92,8 @@
 								</el-row>
 								<el-row>
 									<el-col :span="8">
-										<el-form-item label="材料分类:" prop="matType" required>
-											<el-select v-model="addForm.matType">
+										<el-form-item label="材料分类:" prop="materialType" required>
+											<el-select v-model="addForm.materialType">
 												<el-option
 													v-for="item in options"
 													:key="item.label"
@@ -104,30 +104,30 @@
 										</el-form-item>
 									</el-col>
 									<el-col :span="8">
-										<el-form-item label="客户:" prop="client" v-if="addForm.matType=='成品' || addForm.matType=='半成品'">
+										<el-form-item label="客户:" prop="client" v-if="addForm.materialType=='成品' || addForm.materialType=='半成品'">
 											<el-input v-model="addForm.client"></el-input>
 										</el-form-item>
 									</el-col>
 									<el-col :span="8">
-										<el-form-item label="客户产品代码:" prop="clientMat" v-if="addForm.matType=='成品' || addForm.matType=='半成品'">
-											<el-input v-model="addForm.clientMat"></el-input>
+										<el-form-item label="客户产品代码:" prop="clientmaterial" v-if="addForm.materialType=='成品' || addForm.materialType=='半成品'">
+											<el-input v-model="addForm.clientmaterial"></el-input>
 										</el-form-item>
 									</el-col>
 									<el-col :span="8">
-										<el-form-item label="供应商:" prop="vebdor" v-if="addForm.matType=='辅料' || addForm.matType=='原材料'">
+										<el-form-item label="供应商:" prop="vebdor" v-if="addForm.materialType=='辅料' || addForm.materialType=='原材料'">
 											<el-input v-model="addForm.vebdor"></el-input>
 										</el-form-item>
 									</el-col>
 									<el-col :span="8">
-										<el-form-item label="供应商物料号:" prop="vebdorMat" v-if="addForm.matType=='辅料' || addForm.matType=='原材料'">
-											<el-input v-model="addForm.vebdorMat"></el-input>
+										<el-form-item label="供应商物料号:" prop="vebdormaterial" v-if="addForm.materialType=='辅料' || addForm.materialType=='原材料'">
+											<el-input v-model="addForm.vebdormaterial"></el-input>
 										</el-form-item>
 									</el-col>
 								</el-row>
 								<el-row>
 									<el-col :span="8">
-										<el-form-item label="物料状态:" prop="matStatus" required>
-											<el-select v-model="addForm.matStatus">
+										<el-form-item label="物料状态:" prop="materialStatus" required>
+											<el-select v-model="addForm.materialStatus">
 												<el-option
 													v-for="item in status"
 													:key="item.value"
@@ -295,22 +295,22 @@
 					]
 				},
 				addForm: {
-					mat:'',
-					matRev:'',
+					material:'',
+					materialRev:'',
 					currentRev:'',
-					matDes:'',
+					materialDes:'',
 					unit1:'',
 					unit2:'',
 					unit3:'',
 					qtyRequired1:'',
 					qtyRequired2:'',
 					qtyRequired3:'',
-					matType:'辅料',
+					materialType:'辅料',
 					client:'',
-					clientMat:'',
+					clientMaterial:'',
 					vebdor:'',
-					vebdorMat:'',
-					matStatus:'',
+					vebdorMaterial:'',
+					materialStatus:'',
 					modified_user_id:'',
 					length:'1',
 					lengthErrorRange:'1',
@@ -360,7 +360,7 @@
 					if (valid) {
 						console.log(this.addForm);
 						let params = this.addForm
-						params.currentRev = this.addForm.currentRev ? 20 : 10
+						// params.currentRev = this.addForm.currentRev ? 20 : 10
 						params.tenantSiteCode = 'test'
 						insertMaterial(params).then(data => {
 							if(data.data.message == 'success'){
