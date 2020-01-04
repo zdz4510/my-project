@@ -32,11 +32,17 @@
       <el-button
         size="small"
         type="primary"
-        @click="checkSelectionLength(handleEdit)"
+        :disabled="selectionList.length <= 0"
+        @click="handleEdit"
       >
         修改
       </el-button>
-      <el-button size="small" type="primary" @click="handleDelete">
+      <el-button
+        size="small"
+        type="primary"
+        :disabled="selectionList.length <= 0"
+        @click="handleDelete"
+      >
         删除
       </el-button>
       <el-button size="small" type="primary" @click="handleExport"

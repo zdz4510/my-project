@@ -36,12 +36,17 @@
       <el-button
         size="small"
         type="primary"
-        :disabled="selectionList.length !== 1"
+        :disabled="selectionList.length < 1"
         @click="handleEdit"
       >
         修改
       </el-button>
-      <el-button size="small" type="primary" @click="checkSelectionLength">
+      <el-button
+        size="small"
+        type="primary"
+        :disabled="selectionList.length < 1"
+        @click="handleDelete"
+      >
         删除
       </el-button>
       <!-- <el-button size="small" type="primary" @click="handleExport"
@@ -58,7 +63,6 @@
         tooltip-effect="dark"
         style="width: 100%"
         @selection-change="handleSelectionChange"
-        @cell-dblclick="handleDblClick"
       >
         <el-table-column type="selection" width="55"> </el-table-column>
         <el-table-column prop="station" label="站位" width="60">
@@ -114,7 +118,7 @@
 import {
   findPageHttp,
   deleteStationBatchHttp
-} from "@/api/mantenance/standing.api.js";
+} from "@/api/maintenance/standing.api.js";
 import { mapMutations } from "vuex";
 export default {
   data() {
@@ -198,18 +202,19 @@ export default {
         query: { operateType: "add" }
       });
     },
-    handleDblClick(row, column) {
-      if (column.label === "站位") {
-        const tempArr = [];
-        tempArr.push(JSON.parse(JSON.stringify(row)));
-        console.log(tempArr);
-        this.STANDINGLIST(tempArr);
-        this.$router.push({
-          name: "standingMaintenanceEdit",
-          query: { operateType: "edit" }
-        });
-      }
-    },
+    // //双击站位单元格
+    // handleDblClick(row, column) {
+    //   if (column.label === "站位") {
+    //     const tempArr = [];
+    //     tempArr.push(JSON.parse(JSON.stringify(row)));
+    //     console.log(tempArr);
+    //     this.STANDINGLIST(tempArr);
+    //     this.$router.push({
+    //       name: "standingMaintenanceEdit",
+    //       query: { operateType: "edit" }
+    //     });
+    //   }
+    // },
     //编辑
     handleEdit() {
       const tempArr = JSON.parse(JSON.stringify(this.selectionList));
@@ -219,16 +224,16 @@ export default {
         query: { operateType: "edit" }
       });
     },
-    checkSelectionLength() {
-      if (this.selectionList.length === 0) {
-        this.$message({
-          message: "还没有选择哦",
-          type: "warning"
-        });
-        return;
-      }
-      this.deleteDialog = true;
-    },
+    // checkSelectionLength() {
+    //   if (this.selectionList.length === 0) {
+    //     this.$message({
+    //       message: "还没有选择哦",
+    //       type: "warning"
+    //     });
+    //     return;
+    //   }
+    //   this.deleteDialog = true;
+    // },
     handleDelete() {
       const data = this.selectionList;
       deleteStationBatchHttp(data).then(data => {

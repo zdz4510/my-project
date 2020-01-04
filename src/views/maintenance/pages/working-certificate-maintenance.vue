@@ -30,12 +30,17 @@
       <el-button
         size="small"
         type="primary"
-        :disabled="selectionList.length !== 1"
+        :disabled="selectionList.length <= 0"
         @click="handleEdit"
       >
         修改
       </el-button>
-      <el-button size="small" type="primary" @click="checkSelectionLength">
+      <el-button
+        size="small"
+        type="primary"
+        :disabled="selectionList.length <= 0"
+        @click="deleteDialog = true"
+      >
         删除
       </el-button>
       <!-- <el-button size="small" type="primary" @click="handleExport"
@@ -52,19 +57,18 @@
         tooltip-effect="dark"
         style="width: 100%"
         @selection-change="handleSelectionChange"
-        @cell-dblclick="handleDblClick"
       >
         <el-table-column type="selection" width="55"> </el-table-column>
-        <el-table-column prop="cert" label="上岗证" width="120">
+        <el-table-column prop="cert" label="上岗证" width="140">
         </el-table-column>
-        <el-table-column prop="certDes" label="上岗证描述" width="120">
+        <el-table-column prop="certDes" label="上岗证描述" width="140">
         </el-table-column>
-        <el-table-column prop="status" label="状态" width="120">
+        <el-table-column prop="status" label="状态" width="140">
           <template slot-scope="scope">
             {{ scope.row.status | filterStatus }}
           </template>
         </el-table-column>
-        <el-table-column prop="certType" label="持续时间类型" width="130">
+        <el-table-column prop="certType" label="持续时间类型" width="150">
           <template slot-scope="scope">
             {{ scope.row.certType | filterCertType }}
           </template>
@@ -103,7 +107,10 @@
 </template>
 
 <script>
-import { listCertHttp } from "@/api/mantenance/working.certificate.api.js";
+import {
+  listCertHttp,
+  deleteHttp
+} from "@/api/maintenance/working.certificate.api.js";
 import { mapMutations } from "vuex";
 // import { filter } from "minimatch";
 export default {
@@ -198,18 +205,6 @@ export default {
         query: { operateType: "add" }
       });
     },
-    handleDblClick(row, column) {
-      if (column.label === "站位") {
-        const tempArr = [];
-        tempArr.push(JSON.parse(JSON.stringify(row)));
-        console.log(tempArr);
-        this.WORKINGCERTIFICATELIST(tempArr);
-        this.$router.push({
-          name: "workingCertificateMaintenanceEdit",
-          query: { operateType: "edit" }
-        });
-      }
-    },
     //编辑
     handleEdit() {
       const tempArr = JSON.parse(JSON.stringify(this.selectionList));
@@ -219,18 +214,29 @@ export default {
         query: { operateType: "edit" }
       });
     },
-    checkSelectionLength() {
-      if (this.selectionList.length === 0) {
+    handleDelete() {
+      console.log(11);
+      const data = [];
+      this.selectionList.forEach(element => {
+        data.push(element.cert);
+      });
+      deleteHttp(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.$message({
+            message: "删除成功",
+            type: "success"
+          });
+          this.deleteDialog = false;
+          this.init();
+          return;
+        }
         this.$message({
-          message: "还没有选择哦",
+          message: res.message,
           type: "warning"
         });
-        return;
-      }
-      this.deleteDialog = true;
-    },
-    handleDelete() {
-      // const data = this.selectionList;
+        this.deleteDialog = false;
+      });
     },
     //导入
     handleImport() {}
