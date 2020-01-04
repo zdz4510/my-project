@@ -4,7 +4,7 @@
       <el-button size="small" type="primary" @click="handleBack">
         返回
       </el-button>
-      <el-button size="small" type="primary">
+      <el-button size="small" type="primary" @click="handleSaveButton">
         保存
       </el-button>
       <el-button size="small" type="primary" @click="handleReset">
@@ -21,23 +21,27 @@
       <el-form-item label="产线:">
         <el-input
           v-model="standingBtnDistributeForm.workCenter"
+          disabled
           placeholder="请输入产线"
         ></el-input>
       </el-form-item>
       <el-form-item label="站位:">
         <el-input
+          disabled
           v-model="standingBtnDistributeForm.workCenterDes"
           placeholder="请输入站位"
         ></el-input>
       </el-form-item>
       <el-form-item label="产线描述:">
         <el-input
+         disabled
           v-model="standingBtnDistributeForm.station"
           placeholder="请输入产线描述"
         ></el-input>
       </el-form-item>
       <el-form-item label="站位描述:">
         <el-input
+         disabled
           v-model="standingBtnDistributeForm.stationDes"
           placeholder="请输入站位描述"
         ></el-input>
@@ -59,21 +63,21 @@
               </template>
             </el-input>
             <el-table
-              :selection-change="handleLeftSelect"
+              @selection-change="handleLeftSelect"
               :data="data"
               style="width: 100%"
               border
               height="540px"
             >
               <el-table-column type="selection" width="55" />
-              <el-table-column prop="date" label="已分配按钮">
+              <el-table-column prop="btn" label="已分配按钮">
               </el-table-column>
-              <el-table-column prop="name" label="按钮描述"> </el-table-column>
+              <el-table-column prop="des" label="按钮描述"> </el-table-column>
             </el-table>
           </div>
           <div class="ope">
-            <el-button type="primary" icon="el-icon-arrow-left"></el-button>
-            <el-button type="primary" icon="el-icon-arrow-right"></el-button>
+            <el-button type="primary" icon="el-icon-arrow-left" @click="toLeft"></el-button>
+            <el-button type="primary" icon="el-icon-arrow-right" @click="toRight"></el-button>
           </div>
           <div class="right">
             <el-autocomplete
@@ -89,16 +93,16 @@
               </template>
             </el-autocomplete>
             <el-table
-              :selection-change="handleRightSelect"
-              :data="data"
+               @selection-change="handleRightSelect"
+              :data="data2"
               style="width: 100%"
               border
               height="540px"
             >
               <el-table-column type="selection" width="55" />
-              <el-table-column prop="date" label="已分配按钮">
+              <el-table-column prop="btn" label="已分配按钮">
               </el-table-column>
-              <el-table-column prop="name" label="按钮描述"> </el-table-column>
+              <el-table-column prop="des" label="按钮描述"> </el-table-column>
             </el-table>
           </div>
         </div>
@@ -109,6 +113,11 @@
 
 <script>
 import { mapGetters } from "vuex";
+import {
+  listAssignedButton,
+  listUnassingButton,
+  saveButton
+} from "@/api/base/standing.btn.distribute.js";
 export default {
   data() {
     return {
@@ -121,7 +130,11 @@ export default {
       activeName: "btnDistribute",
       v: "", //穿梭框
       v2: "",
-      data: []
+      data: [],
+      data2:[],
+      debounceFn: null,
+      rightSelectList:[],
+      leftSelectList:[]
     };
   },
   computed: {
@@ -132,6 +145,9 @@ export default {
     this.standingBtnDistributeForm = JSON.parse(
       JSON.stringify(this.standingBtnDistributeEdit)
     );
+
+    this.handleListUnassingButton();
+    this.handleListAssignedButton();
   },
   methods: {
     //返回
@@ -145,10 +161,10 @@ export default {
       console.log(tab, event);
     },
     querySearchAsync(key, cb) {
-      this.debounceFn(cb, 1);
+      this.debounceFn(cb);
     },
     querySearchAsync2(key, cb) {
-      this.debounceFn(cb, 2);
+      this.debounceFn(cb);
     },
     handleSelect(v) {
       this.v = v.linkValue;
@@ -170,19 +186,107 @@ export default {
         2
       );
     },
+      findItemInArr(item, arr) {
+      return arr.filter(subItem => {
+        return (
+          item.btn == subItem.btn &&
+          item.des == subItem.des
+        );
+      });
+    },
     // 选择的数据移动到左边
     toLeft() {
-      this.list = [...this.list, ...this.rightSelectList];
+        const arr = this.rightSelectList.filter(item => {
+        //  console.log(this.findItemInArr(item,this.list))
+        return this.findItemInArr(item, this.data).length == 0;
+        // return this.list.includes(item) == false;
+      });
+      this.data = [...this.data, ...arr];
     },
     //选择到数据移动到右边
     toRight() {
-      this.list2 = [...this.list2, ...this.leftSelectList];
+        const arr = this.rightSelectList.filter(item => {
+        //  console.log(this.findItemInArr(item,this.list))
+        return this.findItemInArr(item, this.data2).length == 0;
+        // return this.list.includes(item) == false;
+      });
+      this.data2 = [...this.data2, ...arr];
     },
     handleLeftSelect(s) {
       this.leftSelectList = s;
     },
     handleRightSelect(s) {
       this.rightSelectList = s;
+    },
+    handleListAssignedButton() {
+      listAssignedButton({
+        station: this.standingBtnDistributeForm.station,
+        workCenter: this.standingBtnDistributeForm.workCenter
+      }).then(data => {
+        const res = data.data;
+        if (res.code == 200) {
+           this.data=res.data.map(item=>{
+             const arr = item.split('-');
+             return {
+               btn:arr[0],
+               des:arr[1]
+             }
+          })
+        } else {
+          this.$message({
+            type: "error",
+            message: res.message
+          });
+        }
+      });
+    },
+    handleListUnassingButton() {
+      listUnassingButton({
+        station: this.standingBtnDistributeForm.station,
+        workCenter: this.standingBtnDistributeForm.workCenter
+      }).then(data => {
+        const res = data.data;
+        if (res.code == 200) {
+           this.data2=res.data.map(item=>{
+             const arr = item.split('-');
+             return {
+               btn:arr[0],
+               des:arr[1]
+             }
+          })
+        } else {
+          this.$message({
+            type: "error",
+            message: res.message
+          });
+        }
+      });
+    },
+    handleSaveButton() {
+      const arr = this.data.map(
+        item=>{
+          return `${item.btn}-${item.des}`
+        }
+      )
+      saveButton({
+        station: this.standingBtnDistributeForm.station,
+        workCenter: this.standingBtnDistributeForm.workCenter,
+        list:arr
+      }).then(data => {
+        const res = data.data;
+        if (res.code == 200) {
+            this.$message(
+             {type:'success',
+              message:"保存成功"
+              }
+            )
+        } else {
+          this.$message({
+            type: "error",
+            message: res.message
+          });
+        }
+      });
     }
   }
 };

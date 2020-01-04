@@ -65,6 +65,7 @@ export const searchByLotNo = data => {
 * @param {*} data 
  */
 export const searchLabelIdListByMat = data => {
-  return request.post(`${window.VUE_APP_URL}/mes/labelPrinting/searchLabelIdListByMat`,data);
+  let params =qs.stringify(data)
+  return request.post(`${window.VUE_APP_URL}/mes/labelPrinting/searchLabelIdListByMat?${params}`);
 };
 

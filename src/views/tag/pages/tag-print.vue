@@ -37,9 +37,17 @@
         <el-tabs v-model="activeName" type="card">
           <el-tab-pane label="基础信息" name="baseInfo">
             <div class="showData">
-              <div><span class="name">物料号：</span><span>{{info.mat}}</span></div>
-              <div><span class="name">物料组:</span><span>{{info.matGroup}}</span></div>
-              <div><span class="name">容器层级:</span><span>{{info.packingClass}}</span></div>
+              <div>
+                <span class="name">物料号：</span><span>{{ info.mat }}</span>
+              </div>
+              <div>
+                <span class="name">物料组:</span
+                ><span>{{ info.matGroup }}</span>
+              </div>
+              <div>
+                <span class="name">容器层级:</span
+                ><span>{{ info.packingClass }}</span>
+              </div>
             </div>
           </el-tab-pane>
         </el-tabs>
@@ -52,7 +60,7 @@
         tooltip-effect="dark"
         style="width: 100%"
         height="350px"
-        @selection-change="handleSelectionChange"
+       
       >
         <el-table-column type="selection" width="55"> </el-table-column>
         <el-table-column prop="resourceGroup" label="接收值" width="100">
@@ -85,24 +93,12 @@
         </el-table-column>
       </el-table>
     </div>
-    <div class="pagination">
-      <el-pagination
-        background
-        layout="->,total,prev,pager,next,sizes"
-        :total="total"
-        :page-size="pageSize"
-        :page-sizes="[5, 10, 15, 20]"
-        :current-page="currentPage"
-        @size-change="handlePagesize"
-        @current-change="handleCurrentChange"
-      >
-      </el-pagination>
-    </div>
+   
     <el-dialog title="删除" :visible.sync="showConfig" width="30%">
       <tag-print-config />
       <span slot="footer" class="dialog-footer">
         <el-button @click="showConfig = false">取 消</el-button>
-        <el-button type="primary" >
+        <el-button type="primary">
           确 定
         </el-button>
       </span>
@@ -111,7 +107,11 @@
 </template>
 
 <script>
-import { searchByLotNo } from "@/api/tag/tag.print.api.js";
+import {
+  searchByLotNo,
+  getPrintDevicesAvailable,
+  searchLabelIdListByMat
+} from "@/api/tag/tag.print.api.js";
 import TagPrintConfig from "./tag-print-config";
 export default {
   data() {
@@ -120,6 +120,7 @@ export default {
         name: "",
         labelUseType: ""
       },
+      list: [], // 可用打印设备数组
       autoPrint: false,
       activeName: "baseInfo",
       tableData: [],
@@ -129,33 +130,17 @@ export default {
       showConfig: true,
       selectionList: [],
       info: {
-        matGroup:'',
-        mat:'',
-        packingClass:''
-      }
+        matGroup: "",
+        mat: "",
+        packingClass: ""
+      },
+      labelList: []
     };
   },
-  components:{
+  components: {
     TagPrintConfig
   },
   methods: {
-    //当前选中行
-    handleSelectionChange(val) {
-      this.selectionList = val;
-      console.log(this.selectionList);
-    },
-    //更改当前页码,再次请求数据
-    handleCurrentChange(currentChange) {
-      this.currentPage = currentChange;
-      this.init();
-    },
-    //更改页码大小
-    handlePagesize(pageSise) {
-      this.pageSise = pageSise;
-      this.currentPage = 1;
-      this.init();
-    },
-    handleDelete() {},
     //  检索
     handleSearchByLotNo() {
       searchByLotNo({
@@ -165,9 +150,41 @@ export default {
         const res = data.data;
         if (res.code == 200) {
           this.info = res.data;
+          this.handleSearchLabelIdListByMat();
+          this.handleGetPrintDevicesAvailable()
         } else {
           this.$message({
-            tyep: "error",
+            type: "error",
+            message: res.message
+          });
+        }
+      });
+    },
+    //  获取可用的打印设备
+    handleGetPrintDevicesAvailable() {
+      getPrintDevicesAvailable().then(data => {
+        const res = data.data;
+        if (res.code == 200) {
+          this.list = res.data;
+        } else {
+          this.$message({
+            type: "error",
+            message: res.message
+          });
+        }
+      });
+    },
+    //  搜索可用的标签id
+    handleSearchLabelIdListByMat() {
+      searchLabelIdListByMat({
+        mat:this.info.mat
+      }).then(data => {
+        const res = data.data;
+        if (res.code == 200) {
+          this.labelList = res.data;
+        } else {
+          this.$message({
+            type: "error",
             message: res.message
           });
         }
