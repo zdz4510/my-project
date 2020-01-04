@@ -32,11 +32,17 @@
       <el-button
         size="small"
         type="primary"
-        @click="checkSelectionLength(handleEdit)"
+        :disabled="selectionList.length <= 0"
+        @click="handleEdit"
       >
         修改
       </el-button>
-      <el-button size="small" type="primary" @click="checkDeleteSelection">
+      <el-button
+        size="small"
+        type="primary"
+        :disabled="selectionList.length <= 0"
+        @click="deleteDialog = true"
+      >
         删除
       </el-button>
       <el-button size="small" type="primary" @click="handleExport"
@@ -176,27 +182,6 @@ export default {
       this.currentPage = 1;
       this.init();
     },
-    //点击新增和编辑前验证所选项的长度
-    checkSelectionLength(handle) {
-      if (this.selectionList.length === 0) {
-        this.$message({
-          message: "还没有选择哦",
-          type: "warning"
-        });
-        return;
-      }
-      if (this.selectionList.length === 1) {
-        handle();
-        return;
-      }
-      if (this.selectionList.length > 1) {
-        this.$message({
-          message: "只能选择一项哦",
-          type: "warning"
-        });
-        return;
-      }
-    },
     handleAdd() {
       this.selectionList = [];
       const emptyObj = { resourceGroup: "", groupDes: "" };
@@ -215,16 +200,6 @@ export default {
         // name: "deviceTypeEdit",
         query: { operateType: "edit" }
       });
-    },
-    checkDeleteSelection() {
-      if (this.selectionList.length === 0) {
-        this.$message({
-          message: "还没有选择哦",
-          type: "warning"
-        });
-        return;
-      }
-      this.deleteDialog = true;
     },
     handleDelete() {
       console.log(this.selectionList);

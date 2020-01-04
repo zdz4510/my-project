@@ -13,45 +13,80 @@
     </div>
 
     <div class="showInfo">
-      <el-form
-        :model="typeForm"
-        :rules="rules"
-        ref="typeForm"
-        label-width="100px"
-        class="typeForm"
-      >
-        <el-form-item label="设备类型" prop="resourceGroup">
-          <el-input
-            v-model.trim="typeForm.resourceGroup"
-            placeholder="请输入设备类型"
-            :disabled="isEditResource"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="组别描述">
-          <el-input
-            type="textarea"
-            rows="2"
-            v-model.trim="typeForm.groupDes"
-          ></el-input>
-        </el-form-item>
-      </el-form>
-      <el-transfer
-        ref="transfer"
-        filterable
-        filter-placeholder="请输入设备编号"
-        v-model="value"
-        :data="transferData"
-        :titles="titles"
-        :props="{
-          key: 'resource',
-          label: 'resource',
-          resourceDes: 'resourceDes'
-        }"
-      >
-        <span slot-scope="{ option }"
-          >{{ option.resource }} - {{ option.resourceDes }}</span
+      <div class="left">
+        <!-- <el-select
+          v-model="value"
+          clearable
+          placeholder="请选择"
+          :disabled="selectIsDisabled"
+          @clear="handleClearSelect"
+          @change="handleChangeOption"
+          @focus="handleSelectFocus"
+          ref="select"
         >
-      </el-transfer>
+          <el-option
+            v-for="item in cloneList"
+            :key="item.salaryLevelCode"
+            :label="item.salaryLevelName"
+            :value="item.salaryLevelCode"
+          >
+          </el-option>
+        </el-select> -->
+        <el-table
+          ref="editTable"
+          :data="cloneList"
+          border
+          highlight-current-row
+          style="width: 100%"
+          height="513px"
+          @row-click="handleCurrentChange"
+        >
+          <el-table-column prop="resourceGroup" label="设备类型">
+          </el-table-column>
+          <el-table-column prop="groupDes" label="组别描述"> </el-table-column>
+        </el-table>
+      </div>
+      <div class="right">
+        <el-form
+          :model="typeForm"
+          :rules="rules"
+          ref="typeForm"
+          label-width="100px"
+          class="typeForm"
+        >
+          <el-form-item label="设备类型" prop="resourceGroup">
+            <el-input
+              v-model.trim="typeForm.resourceGroup"
+              placeholder="请输入设备类型"
+              :disabled="isEditResource"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="组别描述">
+            <el-input
+              type="textarea"
+              rows="2"
+              v-model.trim="typeForm.groupDes"
+            ></el-input>
+          </el-form-item>
+        </el-form>
+        <el-transfer
+          ref="transfer"
+          filterable
+          filter-placeholder="请输入设备编号"
+          v-model="value"
+          :data="transferData"
+          :titles="titles"
+          :props="{
+            key: 'resource',
+            label: 'resource',
+            resourceDes: 'resourceDes'
+          }"
+        >
+          <span slot-scope="{ option }"
+            >{{ option.resource }} - {{ option.resourceDes }}</span
+          >
+        </el-transfer>
+      </div>
     </div>
     <el-dialog title="删除" :visible.sync="saveDialog" width="30%">
       <span>是否确认保存该条数据？</span>
@@ -189,6 +224,11 @@ export default {
         this.typeForm.groupDes = "";
       }
     },
+    //选择设备
+    handleCurrentChange(currentRow) {
+      this.typeForm = JSON.parse(JSON.stringify(currentRow));
+    },
+    //保存前验证表单
     checkAdd(formName) {
       console.log(this.typeForm.resourceGroup === "");
       this.$refs[formName].validate(valid => {
@@ -276,12 +316,19 @@ export default {
     padding: 10px 5px;
   }
   .showInfo {
-    .el-form {
-      width: 40%;
+    display: flex;
+    .left {
+      width: 200px;
     }
-    .el-transfer {
-      .el-transfer-panel {
-        width: 25%;
+    .right {
+      flex: 1;
+      .el-form {
+        width: 40%;
+      }
+      .el-transfer {
+        .el-transfer-panel {
+          width: 25%;
+        }
       }
     }
   }
