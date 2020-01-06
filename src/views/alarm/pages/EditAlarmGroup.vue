@@ -47,7 +47,9 @@
 											<el-table-column label="">
 												<template slot="header">
 													<el-input v-model="alarm1" placeholder="输入事件编号搜索"/></template>
-												<el-table-column prop="alarmLevelFlag" label="事件等级"></el-table-column>
+												<el-table-column label="事件等级">
+													<template slot-scope="scope">{{ scope.row.alarmLevelFlag == 10 ? '提示' : (scope.row.alarmLevelFlag == 20 ? '警告' : '错误') }}</template>
+												</el-table-column>
 												<el-table-column prop="theme" label="事件主题"></el-table-column>
 											</el-table-column>
 										</el-table>
@@ -66,7 +68,9 @@
 												<template slot="header">
 													<el-input v-model="alarm2" placeholder="输入事件编号搜索" />
 												</template>
-												<el-table-column prop="alarmLevelFlag" label="事件等级"></el-table-column>
+												<el-table-column label="事件等级">
+													<template slot-scope="scope">{{ scope.row.alarmLevelFlag == 10 ? '提示' : (scope.row.alarmLevelFlag == 20 ? '警告' : '错误') }}</template>
+												</el-table-column>
 												<el-table-column prop="theme" label="事件主题"></el-table-column>
 											</el-table-column>
 										</el-table>
@@ -273,9 +277,13 @@ export default {
     handleSave(formName) {
 			this.$refs[formName].validate((valid) => {
 				if (valid) {
-					this.editForm.alarmList = this.allocateData
-					console.log(this.editForm);
-					let params = this.editForm
+					let arr = []
+						this.allocateData.map(item=>{
+							arr.push(item.alarm)
+						})
+						this.editForm.alarmList = arr
+						let params = this.editForm
+
 					updateData(params).then(data => {
 						const res = data.data;
 						this.saveDialog = false; // 保存的提示框消失
