@@ -6,3 +6,5 @@
  - operation  操作
  - query  查询模块
  - setting 设置模块
+ - issued 工单下达
+ - work-order 工单维护
