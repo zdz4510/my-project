@@ -63,6 +63,18 @@ export default {
           /* webpackChunkName: "genericCodeDefinition" */ "@/views/maintenance/pages/generic-code-definition.vue"
         )
     },
+    //通用代码定义维护编辑
+    {
+      path: "genericCodeDefinitionEdit",
+      name: "genericCodeDefinitionEdit",
+      meta: {
+        title: "通用代码定义维护编辑"
+      },
+      component: () =>
+        import(
+          /* webpackChunkName: "genericCodeDefinitionEdit" */ "@/views/maintenance/pages/generic-code-definition-edit.vue"
+        )
+    },
     //通用代码数据维护
     {
       path: "genericCodeData",
@@ -73,6 +85,18 @@ export default {
       component: () =>
         import(
           /* webpackChunkName: "genericCodeData" */ "@/views/maintenance/pages/generic-code-data.vue"
+        )
+    },
+    //通用代码数据维护编辑
+    {
+      path: "genericCodeDataEdit",
+      name: "genericCodeDataEdit",
+      meta: {
+        title: "通用代码数据维护编辑"
+      },
+      component: () =>
+        import(
+          /* webpackChunkName: "genericCodeDataEdit" */ "@/views/maintenance/pages/generic-code-data-edit.vue"
         )
     }
   ]
