@@ -377,14 +377,20 @@ export default {
       }
 
       if (this.operateType === "edit") {
-        const object = this.standingForm;
-        for (const key in object) {
-          if (object.hasOwnProperty(key)) {
-            if (key !== "station") {
-              object[key] = "";
-            }
+        // const object = this.standingForm;
+        // for (const key in object) {
+        //   if (object.hasOwnProperty(key)) {
+        //     if (key !== "station") {
+        //       object[key] = "";
+        //     }
+        //   }
+        // }
+        formName.forEach(element => {
+          if (element === "standingFormTwo") {
+            this.$refs[element].resetFields();
           }
-        }
+        });
+        this.standingForm.stationDes = "";
         return;
       }
     },

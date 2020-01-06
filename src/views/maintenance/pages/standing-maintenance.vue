@@ -202,19 +202,6 @@ export default {
         query: { operateType: "add" }
       });
     },
-    // //双击站位单元格
-    // handleDblClick(row, column) {
-    //   if (column.label === "站位") {
-    //     const tempArr = [];
-    //     tempArr.push(JSON.parse(JSON.stringify(row)));
-    //     console.log(tempArr);
-    //     this.STANDINGLIST(tempArr);
-    //     this.$router.push({
-    //       name: "standingMaintenanceEdit",
-    //       query: { operateType: "edit" }
-    //     });
-    //   }
-    // },
     //编辑
     handleEdit() {
       const tempArr = JSON.parse(JSON.stringify(this.selectionList));
@@ -224,16 +211,6 @@ export default {
         query: { operateType: "edit" }
       });
     },
-    // checkSelectionLength() {
-    //   if (this.selectionList.length === 0) {
-    //     this.$message({
-    //       message: "还没有选择哦",
-    //       type: "warning"
-    //     });
-    //     return;
-    //   }
-    //   this.deleteDialog = true;
-    // },
     handleDelete() {
       const data = this.selectionList;
       deleteStationBatchHttp(data).then(data => {

@@ -264,24 +264,27 @@ export default {
     },
     //重置
     handleReset(formName) {
-      console.log(this.operateType);
-      console.log(formName);
       if (this.operateType === "add") {
         formName.forEach(element => {
           this.$refs[element].resetFields();
         });
         return;
       }
-
       if (this.operateType === "edit") {
-        const object = this.workCertificateForm;
-        for (const key in object) {
-          if (object.hasOwnProperty(key)) {
-            if (key !== "cert") {
-              object[key] = "";
-            }
+        // const object = this.workCertificateForm;
+        // for (const key in object) {
+        //   if (object.hasOwnProperty(key)) {
+        //     if (key !== "cert") {
+        //       object[key] = "";
+        //     }
+        //   }
+        // }
+        formName.forEach(element => {
+          if (element === "workCertFormTwo") {
+            this.$refs[element].resetFields();
           }
-        }
+        });
+        this.workCertificateForm.certDes = "";
         return;
       }
     }

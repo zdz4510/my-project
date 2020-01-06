@@ -139,6 +139,7 @@ export default {
   top: 0;
   padding: 70px 0px 10px 0px;
   overflow-y: auto;
+  box-sizing: border-box;
   &.active {
     width: 200px;
   }
