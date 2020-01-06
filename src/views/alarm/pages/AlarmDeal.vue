@@ -30,7 +30,7 @@
 				</div>
 				<div class="operate ml30 mtb10">
 					<el-button class="mr25 pad1025" size="small" type="warning"  @click="exportExcelUndeal" >导出</el-button>
-					<el-button class="mr25 pad1025" size="small" type="primary" @click="ack" :disabled="this.undealCheckedList.length>0">确认标记</el-button>
+					<el-button class="mr25 pad1025" size="small" type="primary" @click="ack" :disabled="this.undealCheckedList.length===0">确认标记</el-button>
 					<el-input placeholder="请输入内容" v-model="ackComment" class="des">
 						<template slot="prepend">确认描述:</template>
 					</el-input>
@@ -103,8 +103,8 @@
 				</div>
 				<div class="operate ml30 mtb10">
 					<el-button class="mr25 pad1025" size="small" type="warning"  @click="exportExcelDeal" >导出</el-button>
-					<el-button class="mr25 pad1025" size="small" type="warning"  @click="del" >删除</el-button>
-					<el-button class="mr25 pad1025" size="small" type="primary" @click="init" :disabled="this.dealCheckedList.length>0">初始化</el-button>
+					<el-button class="mr25 pad1025" size="small" type="warning"  @click="del" :disabled="this.dealCheckedList.length===0">删除</el-button>
+					<el-button class="mr25 pad1025" size="small" type="primary" @click="init" :disabled="this.dealCheckedList.length===0">初始化</el-button>
 					<el-input placeholder="请输入内容" v-model="clearComment" class="des">
 						<template slot="prepend">初始化描述:</template>
 					</el-input>
@@ -173,7 +173,7 @@
 					ref="multipleTable"
 					:data="this.tableData.data"
 					tooltip-effect="dark"
-					row-key="sequence"
+					row-key="sequence+mainNumber+lot+alarm+resource"
 					@selection-change="handleSelectionChange"
 					>
 						<el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
@@ -232,6 +232,7 @@ import {getAlarmGroupList, getSequenceList, updateAckData, updateInitData, delet
 					}
 				},
 				undealSearchForm: {
+					ackFlag:false,
 					sequence: '',
 					triggeringTime: '',
 					alarm: '',
@@ -248,6 +249,7 @@ import {getAlarmGroupList, getSequenceList, updateAckData, updateInitData, delet
 					}
 				},
 				dealSearchForm: {
+					ackFlag:true,
 					sequence: '',
 					triggeringTime: '',
 					alarm: '',
@@ -344,6 +346,10 @@ import {getAlarmGroupList, getSequenceList, updateAckData, updateInitData, delet
 				})
 				updateAckData(arr).then(data=>{
 					console.log(data)
+					if(data.data.code == 200){
+						this.$message.success('操作成功')
+						this.searchUndeal()
+					}
 				})
 			},
 			init(){
@@ -355,6 +361,10 @@ import {getAlarmGroupList, getSequenceList, updateAckData, updateInitData, delet
 				})
 				updateInitData(arr).then(data=>{
 					console.log(data)
+					if(data.data.code == 200){
+						this.$message.success('操作成功')
+						this.searchDeal()
+					}
 				})
 			},
 			del(){
