@@ -286,7 +286,31 @@ const routes = [{
                         /* webpackChunkName: "dc-collection" */
                         "../views/dc/pages/DCCollection.vue"
                     )
-            }
+            },
+            /**
+             * 包装解包配置
+             */
+            {
+                path: "unpack",
+                name: "unpack",
+                component: () =>
+                    import (
+                        /* webpackChunkName: "dc-collection" */
+                        "../views/dc/pages/unpack.vue"
+                    )
+            },
+            /**
+             * 包装解包配置/新增/编辑
+             */
+            {
+                path: "unpackEdit",
+                name: "unpackEdit",
+                component: () =>
+                    import (
+                        /* webpackChunkName: "unpack-edit" */
+                        "../views/dc/pages/unpack-edit.vue"
+                    )
+            },
         ]
     },
     {
