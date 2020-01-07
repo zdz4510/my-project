@@ -24,15 +24,7 @@
             placeholder="请输入代码名"
             class="generalCode"
           ></el-input>
-          <i
-            class="el-icon-document"
-            @click="
-              handleQueryGeneralCode(
-                genericCodeDefineForm.genericCode,
-                'genericCodeDefineForm'
-              )
-            "
-          ></i>
+          <i class="el-icon-document" @click="handleQueryGeneralCode"></i>
         </el-form-item>
         <el-form-item label="描述">
           <el-input
@@ -116,7 +108,7 @@
         </el-table-column>
         <el-table-column prop="fieldSize" label="长度" width="130">
         </el-table-column>
-        <el-table-column prop="limitGeneralCode" label="代码名" width="130">
+        <el-table-column prop="limitGeneralCode" label="代码名" width="180">
         </el-table-column>
         <el-table-column
           prop="limitGeneralField"
@@ -139,7 +131,7 @@
           label-width="80px"
           :rules="addFormRules"
         >
-          <el-form-item label="字段名">
+          <el-form-item label="字段名" prop="fieldName">
             <el-select v-model="addForm.fieldName" placeholder="请选择字段名">
               <el-option
                 v-for="(item, index) in fieldNames"
@@ -149,10 +141,10 @@
               ></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="标签">
+          <el-form-item label="标签" prop="fieldLabel">
             <el-input v-model="addForm.fieldLabel"></el-input>
           </el-form-item>
-          <el-form-item label="格式">
+          <el-form-item label="格式" prop="fieldType">
             <el-select
               v-model="addForm.fieldType"
               placeholder="请选择字段名"
@@ -166,17 +158,30 @@
           <el-form-item
             label="长度"
             v-if="addForm.fieldType === 'A' || addForm.fieldType === 'N'"
+            prop="fieldSize"
           >
-            <el-input v-model="addForm.fieldSize"></el-input>
+            <el-input
+              v-model="addForm.fieldSize"
+              type="number"
+              max="30"
+            ></el-input>
           </el-form-item>
-          <el-form-item label="代码名" v-if="addForm.fieldType === 'C'">
+          <el-form-item
+            label="代码名"
+            v-if="addForm.fieldType === 'C'"
+            prop="limitGeneralCode"
+          >
             <el-input v-model="addForm.limitGeneralCode"></el-input>
             <i
               class="el-icon-document"
-              @click="handleQueryGeneralCode(addForm.generalCode, 'addForm')"
+              @click="handleQueryDialogGeneralCode"
             ></i>
           </el-form-item>
-          <el-form-item label="字段" v-if="addForm.fieldType === 'C'">
+          <el-form-item
+            label="字段"
+            v-if="addForm.fieldType === 'C'"
+            prop="limitGeneralField"
+          >
             <el-input v-model="addForm.limitGeneralField"></el-input>
             <i class="el-icon-document" @click="handleQueryField"></i>
           </el-form-item>
@@ -236,7 +241,7 @@
       </span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="fieldDialog = false">取 消</el-button>
-        <el-button type="primary" @click="handleSelectionGeneralCode">
+        <el-button type="primary" @click="handleSelectionField">
           确 定
         </el-button>
       </span>
@@ -319,11 +324,13 @@ export default {
       }
       callback();
     };
-    //字段长度验证规则
     const valiFieldSize = (rule, value, callback) => {
-      let reg = /^[\u4e00-\u9fa5\w]{1,30}$/;
+      if (value === "") {
+        callback("长度不能为空");
+      }
+      let reg = /^([1-9]|[1-2][0-9]|[3][0])$/;
       if (!reg.test(value)) {
-        callback("描述字数超出50字");
+        callback("长度的格式错误，只能是数字且最大为30");
       }
       callback();
     };
@@ -334,6 +341,8 @@ export default {
       excessFieldNames: [],
       //已使用的字段名
       usedFieldNames: [],
+      //长度验证规则
+      valiFieldSize,
       //查询表单
       genericCodeDefineForm: {
         //代码类型·
@@ -361,7 +370,18 @@ export default {
         limitGeneralCode: "",
         limitGeneralField: ""
       },
-      addFormRules: null,
+      addFormRules: {
+        fieldName: [
+          { required: true, message: "请选择字段名", trigger: "change" }
+        ],
+        fieldLabel: [
+          { required: true, message: "请输入标签", trigger: "blur" }
+        ],
+        fieldType: [
+          { required: true, message: "请选择格式", trigger: "change" }
+        ],
+        fieldSize: [{ validator: valiFieldSize, trigger: "blur" }]
+      },
       addDialog: false,
       tableData: [],
       //表格复选框数据
@@ -374,8 +394,6 @@ export default {
       generalCodeData: [],
       //是否可编辑字段
       editable: false,
-      //验证字段长度
-      valiFieldSize,
       //判断获取字段名的标志
       flag: true,
       //字段名弹出框
@@ -437,22 +455,35 @@ export default {
       });
     },
     //根据代码类型查询代码名
-    handleQueryGeneralCode(generalCode, string) {
-      if (string === "genericCodeDefineForm") {
-        this.flag = true;
-      }
-      if (string === "addForm") {
-        this.flag = false;
-      }
+    handleQueryGeneralCode() {
+      this.flag = true;
       const data = {
-        generalCode: generalCode,
+        generalCode: this.genericCodeDefineForm.generalCode,
         generalCodeGroup: this.genericCodeDefineForm.generalCodeGroup
       };
+      this.GeneralCodeRequest(data);
+    },
+    //弹出框获取代码名
+    handleQueryDialogGeneralCode() {
+      this.flag = false;
+      const data = {
+        generalCode: this.addForm.limitGeneralCode,
+        generalCodeGroup: this.genericCodeDefineForm.generalCodeGroup
+      };
+      this.GeneralCodeRequest(data);
+    },
+    GeneralCodeRequest(data) {
       findRecordHttp(data).then(data => {
         const res = data.data;
         if (res.code === 200) {
-          console.log(res.data);
           this.generalCodeData = res.data;
+          if (!this.flag) {
+            this.generalCodeData = this.generalCodeData.filter(item => {
+              return (
+                item.generalCode !== this.genericCodeDefineForm.generalCode
+              );
+            });
+          }
           this.generalCodeDialog = true;
           return;
         }
@@ -465,8 +496,8 @@ export default {
     //通过代码名查询字段名
     handleQueryField() {
       const data = {
-        generalCode: this.addForm.generalCode,
-        fieldName: this.addForm.fieldName
+        generalCode: this.genericCodeDefineForm.generalCode,
+        fieldName: this.addForm.limitGeneralField
       };
       findFieldHttp(data).then(data => {
         const res = data.data;
@@ -497,9 +528,14 @@ export default {
       if (this.flag) {
         this.genericCodeDefineForm.generalCode = this.currentGeneralCode.generalCode;
       } else {
-        this.addForm.generalCode = this.currentGeneralCode.generalCode;
+        this.addForm.limitGeneralCode = this.currentGeneralCode.generalCode;
       }
       this.generalCodeDialog = false;
+    },
+    //字段名弹出框确认选择
+    handleSelectionField() {
+      this.fieldDialog = false;
+      this.addForm.limitGeneralField = this.currentField.fieldName;
     },
     //查询
     handleQuery(formName) {
@@ -515,12 +551,11 @@ export default {
     handleAddInit() {
       this.operateType = "add";
       this.addDialog = true;
-      this.addForm.fieldName = this.excessFieldNames[0];
+      this.handleResetAddDialog();
     },
     //关闭弹框
     closeAddDialog() {
       this.addDialog = false;
-      this.handleResetAddDialog();
     },
     //重置弹出框
     handleResetAddDialog() {
@@ -544,11 +579,10 @@ export default {
           fieldType: [
             { required: true, message: "请选择格式", trigger: "change" }
           ],
-          fieldSize: [
-            { required: true, message: "请输入长度", trigger: "blur" },
-            { validator: this.valiFieldSize, trigger: "blur" }
-          ]
+          fieldSize: [{ validator: this.valiFieldSize, trigger: "blur" }]
         };
+        this.addForm.limitGeneralCode = "";
+        this.addForm.limitGeneralField = "";
         return;
       }
       if (val === "C") {
@@ -569,6 +603,7 @@ export default {
             { required: true, message: "请输入字段", trigger: "blur" }
           ]
         };
+        this.addForm.fieldSize = "";
         return;
       }
     },
@@ -580,7 +615,7 @@ export default {
       this.tableData = [];
       this.editable = false;
     },
-    checkAddForm(formName){
+    checkAddForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.handleAdd();
@@ -593,10 +628,20 @@ export default {
     handleAdd() {
       this.addDialog = false;
       //过滤掉编辑确认前表格的原数据
-      this.tableData.filter(item => {
-        return item.fieldName !== this.addForm.fieldName;
-      });
+      if (this.operateType === "edit") {
+        this.tableData = this.tableData.filter(item => {
+          return item.fieldName !== this.addForm.fieldName;
+        });
+      }
+      if (this.operateType === "add") {
+        this.usedFieldNames.push(this.addForm.fieldName);
+        this.excessFieldNames = this.excessFieldNames.filter(item => {
+          return item !== this.addForm.fieldName;
+        });
+      }
       this.tableData.push(this.addForm);
+
+      // this.usedFieldNames.push(this.addForm.fieldName);
     },
     //编辑
     handleEdit() {
@@ -604,43 +649,11 @@ export default {
       this.addDialog = true;
       this.addForm = this.selectionList[0];
     },
+    //保存
     handleSave() {
       const data = {
-        definedData: [
-          {
-            field01: "string",
-            field02: "string",
-            field03: "string",
-            field04: "string",
-            field05: "string",
-            field06: "string",
-            field07: "string",
-            field08: "string",
-            field09: "string",
-            field10: "string",
-            field11: "string",
-            field12: "string",
-            field13: "string",
-            field14: "string",
-            field15: "string",
-            field16: "string",
-            field17: "string",
-            field18: "string",
-            field19: "string",
-            field20: "string"
-          }
-        ],
         editable: true,
-        fields: [
-          {
-            fieldLabel: "string",
-            fieldName: "string",
-            fieldSize: "string",
-            fieldType: "string",
-            limitGeneralCode: "string",
-            limitGeneralField: "string"
-          }
-        ],
+        fields: this.tableData,
         generalCode: this.genericCodeDefineForm.generalCode,
         generalCodeDes: this.genericCodeDefineForm.generalCodeDes,
         generalCodeGroup: this.genericCodeDefineForm.generalCodeGroup
@@ -683,6 +696,7 @@ export default {
         return this.selectionList.indexOf(item) === -1;
       });
       this.tableData = tempArr;
+      this.deleteFieldDialog = false;
     }
   }
 };
@@ -712,6 +726,15 @@ export default {
           width: 300px;
         }
       }
+    }
+  }
+  .el-dialog {
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+    }
+    input[type="number"] {
+      -moz-appearance: textfield;
     }
   }
 }
