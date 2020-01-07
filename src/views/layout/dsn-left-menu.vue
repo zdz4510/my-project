@@ -57,6 +57,7 @@
           <span slot="title">系统配置</span>
         </template>
         <el-menu-item index="/next-number/next-number">编码规则</el-menu-item>
+        <el-menu-item index="/cert-user/cert-user">用户证明分配</el-menu-item>
       </el-submenu>
       <el-submenu index="produce">
         <template slot="title">
@@ -76,6 +77,14 @@
         <el-menu-item index="/alarm/alarm-maintain">预警事件维护</el-menu-item>
         <el-menu-item index="/alarm/alarm-group">预警事件分组</el-menu-item>
         <el-menu-item index="/alarm/alarm-deal">预警事件处理</el-menu-item>
+      </el-submenu>
+      <el-submenu index="nc">
+        <template slot="title">
+          <i class="el-icon-location"></i>
+          <span slot="title">不合格管理</span>
+        </template>
+        <el-menu-item index="/nc/nc-group">不合格代码组</el-menu-item>
+        <el-menu-item index="/nc/nc-code">不合格代码</el-menu-item>
       </el-submenu>
       <el-submenu index="device">
         <template slot="title">

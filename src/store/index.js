@@ -12,6 +12,10 @@ import typeEdit from "./modules/device/type.edit"; //设备类型vuex module
 import maintenanceEdit from "./modules/device/maintenance.edit.js"; //设备维护vuex module
 import standingEdit from "./modules/maintenance/standing.edit.js"; //站位维护vuex module
 import workCert from "./modules/maintenance/working.certificate.edit.js"; //上岗证维护vuex module
+import certUserEdit from "./modules/base/cert.user.edit.js"; //用户证明分配vuex module
+import ncGroupEdit from "./modules/base/nc.group.edit.js"; //不合格代码组vuex module
+import ncCodeEdit from "./modules/base/nc.code.edit.js"; //不合格代码vuex module
+
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -30,6 +34,9 @@ export default new Vuex.Store({
     typeEdit,
     maintenanceEdit,
     standingEdit,
-    workCert
+    workCert,
+    certUserEdit,
+    ncGroupEdit,
+    ncCodeEdit
   }
 });

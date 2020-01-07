@@ -2,6 +2,8 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import deviceRouter from "@/views/device/router/index.js";
 import maintenanceRouter from "@/views/maintenance/router/index.js";
+import certRouter from "@/views/cert-user/router/index.js"
+import ncRouter from "@/views/nc/router/index.js"
 import store from "@/store/";
 Vue.use(VueRouter);
 
@@ -389,6 +391,18 @@ const routes = [{
                     import ( /* webpackChunkName: "dc-collection" */ "../views/dc/pages/DCCollection.vue")
             }
         ]
+    },
+    /**
+     * 用户证明分配
+     */
+    {
+        ...certRouter
+    },
+    /**
+     * 不合格代码管理
+     */
+    {
+        ...ncRouter
     },
     /**
      * 设备维护模块
