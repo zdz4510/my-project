@@ -10,7 +10,7 @@
       >
         <el-form-item label="代码类型" prop="generalCodeGroup">
           <el-select
-            v-model="genericCodeDefineForm.generalCodeGroup"
+            v-model.trim="genericCodeDefineForm.generalCodeGroup"
             filterable
             placeholder="请选择代码类型"
           >
@@ -20,7 +20,7 @@
         </el-form-item>
         <el-form-item label="代码名" prop="generalCode">
           <el-input
-            v-model="genericCodeDefineForm.generalCode"
+            v-model.trim="genericCodeDefineForm.generalCode"
             placeholder="请输入代码名"
             class="generalCode"
           ></el-input>
@@ -28,7 +28,7 @@
         </el-form-item>
         <el-form-item label="描述">
           <el-input
-            v-model="genericCodeDefineForm.generalCodeDes"
+            v-model.trim="genericCodeDefineForm.generalCodeDes"
             placeholder="请输入描述"
           ></el-input>
         </el-form-item>
@@ -47,12 +47,7 @@
       </el-form>
     </div>
     <div class="operate">
-      <el-button
-        size="small"
-        type="primary"
-        :disabled="!editable"
-        @click="handleAddInit"
-      >
+      <el-button size="small" type="primary" @click="handleAddInit">
         新增
       </el-button>
       <el-button
@@ -63,12 +58,7 @@
       >
         修改
       </el-button>
-      <el-button
-        size="small"
-        type="primary"
-        :disabled="!editable"
-        @click="handleSave"
-      >
+      <el-button size="small" type="primary" @click="handleSave">
         保存
       </el-button>
       <el-button
@@ -132,7 +122,10 @@
           :rules="addFormRules"
         >
           <el-form-item label="字段名" prop="fieldName">
-            <el-select v-model="addForm.fieldName" placeholder="请选择字段名">
+            <el-select
+              v-model.trim="addForm.fieldName"
+              placeholder="请选择字段名"
+            >
               <el-option
                 v-for="(item, index) in fieldNames"
                 :key="index"
@@ -142,11 +135,11 @@
             </el-select>
           </el-form-item>
           <el-form-item label="标签" prop="fieldLabel">
-            <el-input v-model="addForm.fieldLabel"></el-input>
+            <el-input v-model.trim="addForm.fieldLabel"></el-input>
           </el-form-item>
           <el-form-item label="格式" prop="fieldType">
             <el-select
-              v-model="addForm.fieldType"
+              v-model.trim="addForm.fieldType"
               placeholder="请选择字段名"
               @change="changeFieldType"
             >
@@ -161,7 +154,7 @@
             prop="fieldSize"
           >
             <el-input
-              v-model="addForm.fieldSize"
+              v-model.trim="addForm.fieldSize"
               type="number"
               max="30"
             ></el-input>
@@ -171,7 +164,7 @@
             v-if="addForm.fieldType === 'C'"
             prop="limitGeneralCode"
           >
-            <el-input v-model="addForm.limitGeneralCode"></el-input>
+            <el-input v-model.trim="addForm.limitGeneralCode"></el-input>
             <i
               class="el-icon-document"
               @click="handleQueryDialogGeneralCode"
@@ -182,7 +175,7 @@
             v-if="addForm.fieldType === 'C'"
             prop="limitGeneralField"
           >
-            <el-input v-model="addForm.limitGeneralField"></el-input>
+            <el-input v-model.trim="addForm.limitGeneralField"></el-input>
             <i class="el-icon-document" @click="handleQueryField"></i>
           </el-form-item>
         </el-form>
@@ -274,11 +267,12 @@
 <script>
 import {
   findRecordHttp,
-  findGeneralCodeHttp,
   findFieldHttp,
+  findGeneralCodeHttp,
   deleteGeneralCodeHttp,
   saveGeneralCodeHttp
 } from "@/api/maintenance/code.definition.api.js";
+
 import { mapMutations } from "vuex";
 const fieldNames = [
   "FIELD_01",
@@ -338,7 +332,7 @@ export default {
       //所有字段名
       fieldNames,
       //剩余字段名
-      excessFieldNames: [],
+      excessFieldNames: fieldNames,
       //已使用的字段名
       usedFieldNames: [],
       //长度验证规则
@@ -434,8 +428,10 @@ export default {
       };
       findGeneralCodeHttp(data).then(data => {
         const res = data.data;
+        console.log(res);
         if (res.code === 200) {
           this.tableData = res.data.fields;
+          console.log(this.tableData);
           this.genericCodeDefineForm.generalCodeDes = res.data.generalCodeDes;
           //获取出所有已使用的字段名
           this.tableData.forEach(element => {
@@ -496,7 +492,7 @@ export default {
     //通过代码名查询字段名
     handleQueryField() {
       const data = {
-        generalCode: this.genericCodeDefineForm.generalCode,
+        generalCode: this.addForm.limitGeneralCode,
         fieldName: this.addForm.limitGeneralField
       };
       findFieldHttp(data).then(data => {
@@ -613,6 +609,7 @@ export default {
       this.genericCodeDefineForm.generalCodeGroup = "S";
       this.genericCodeDefineForm.generalCodeDes = "";
       this.tableData = [];
+      this.usedFieldNames = [];
       this.editable = false;
     },
     checkAddForm(formName) {
@@ -639,7 +636,7 @@ export default {
           return item !== this.addForm.fieldName;
         });
       }
-      this.tableData.push(this.addForm);
+      this.tableData.push(JSON.parse(JSON.stringify(this.addForm)));
 
       // this.usedFieldNames.push(this.addForm.fieldName);
     },
