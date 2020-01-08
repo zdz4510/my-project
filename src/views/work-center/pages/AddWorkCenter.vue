@@ -198,7 +198,7 @@
 									message: '保存成功!'
 								});
 								setTimeout(()=>{
-									this.$router.push({path:'/work-center/work-center'})
+									this.$router.push({path:'/workCenter/workCenter'})
 								},1000)
 								
 							}
@@ -213,7 +213,7 @@
 				this.$refs[formName].resetFields();
 			},
 			goBack() {
-				this.$router.push({path:'/work-center/work-center'})
+				this.$router.push({path:'/workCenter/workCenter'})
 			},
 		}
 	}

@@ -244,7 +244,7 @@ export default {
     //选中某一行
     //返回操作
 		goBack() {
-			this.$router.push({path:'/alarm/alarm-group'})
+			this.$router.push({path:'/alarm/alarmGroup'})
 		},
     /**
      *  通过mat

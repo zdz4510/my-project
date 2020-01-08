@@ -135,11 +135,11 @@ import { mapMutations } from "vuex";
 				console.log(val)
 			},
 			add(){
-				this.$router.push({path:'/dc/add-data-collection'})
+				this.$router.push({path:'/dc/addDataCollection'})
 			},
 			edit(){
 				this.SETDATACOLLECTIONEDITLIST(this.checkedList);
-				this.$router.push({path:'/dc/edit-data-collection'})
+				this.$router.push({path:'/dc/editDataCollection'})
 			},
 			del(){
 				this.$confirm('是否删除所选数据?', '提示', {

@@ -122,7 +122,7 @@
 		},
 		methods: {
 			goBack() {
-				this.$router.push({path:'/operation-maintain/operation-maintain'})
+				this.$router.push({path:'/operationMaintain/operationMaintain'})
 			},
 			resetForm(formName) {
 				this.$refs[formName].resetFields();
@@ -141,7 +141,7 @@
 									message: '保存成功!'
 								});
 								setTimeout(()=>{
-									this.$router.push({path:'/operation-maintain/operation-maintain'})
+									this.$router.push({path:'/operationMaintain/operationMaintain'})
 								},1000)
 							}
 						})

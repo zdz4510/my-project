@@ -231,7 +231,7 @@ export default {
     //选中某一行
     //返回操作
 		goBack() {
-			this.$router.push({path:'/operation-maintain/operation-maintain'})
+			this.$router.push({path:'/operationMaintain/operationMaintain'})
 		},
     /**
      *  通过operation

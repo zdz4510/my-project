@@ -125,11 +125,11 @@ import { mapMutations } from "vuex";
 				});
 			},
 			add(){
-				this.$router.push({path:'/alarm/add-alarm-group'})
+				this.$router.push({path:'/alarm/addAlarmGroup'})
 			},
 			edit(){
 				this.SETALARMGROUPEDITLIST(this.checkedList);
-				this.$router.push({path:'/alarm/edit-alarm-group'})
+				this.$router.push({path:'/alarm/editAlarmGroup'})
 			},
 			submitForm(formName) {
 				this.$refs[formName].validate((valid) => {

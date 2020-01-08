@@ -51,7 +51,7 @@
 		},
 		methods: {
 			goBack() {
-				this.$router.push({path:'/base/base'})
+				this.$router.push({path:'/certUser/certUser'})
 			},
 			resetForm(formName) {
 				this.$refs[formName].resetFields();
@@ -67,7 +67,7 @@
 									message: '保存成功!'
 								});
 								setTimeout(()=>{
-									this.$router.push({path:'/base/base'})
+									this.$router.push({path:'/certUser/certUser'})
 								},1000)
 							}
 						})

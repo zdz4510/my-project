@@ -80,7 +80,7 @@
 		},
 		methods: {
 			goBack() {
-				this.$router.push({path:'/base/base'})
+				this.$router.push({path:'/certUser/certUser'})
 			},
 			tableRowClassName({row}) {
 				if (row.mat == this.currentEditItem.mat && row.matRev == this.currentEditItem.matRev) {

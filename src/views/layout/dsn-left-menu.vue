@@ -34,7 +34,7 @@
           <i class="el-icon-location"></i>
           <span slot="title">产品配置</span>
         </template>
-        <el-menu-item index="/material/material-info">物料维护</el-menu-item>
+        <el-menu-item index="/material/materialInfo">物料维护</el-menu-item>
         <el-menu-item index="/material/workOrder">工单维护</el-menu-item>
         <el-menu-item index="/material/issued">工单下达</el-menu-item>
       </el-submenu>
@@ -43,30 +43,30 @@
           <i class="el-icon-location"></i>
           <span slot="title">工厂建模</span>
         </template>
-        <el-menu-item index="/operation-maintain/operation-maintain"
+        <el-menu-item index="/operationMaintain/operationMaintain"
           >工序维护</el-menu-item
         >
-        <el-menu-item index="/operation-station/operation-station"
+        <el-menu-item index="/operationStation/operationStation"
           >工序与站位关系维护</el-menu-item
         >
-        <el-menu-item index="/work-center/work-center">工作中心</el-menu-item>
+        <el-menu-item index="/workCenter/workCenter">工作中心</el-menu-item>
       </el-submenu>
       <el-submenu index="system-config">
         <template slot="title">
           <i class="el-icon-location"></i>
           <span slot="title">系统配置</span>
         </template>
-        <el-menu-item index="/next-number/next-number">编码规则</el-menu-item>
-        <el-menu-item index="/cert-user/cert-user">用户证明分配</el-menu-item>
+        <el-menu-item index="/nextNumber/nextNumber">编码规则</el-menu-item>
+        <el-menu-item index="/certUser/certUser">用户证明分配</el-menu-item>
       </el-submenu>
       <el-submenu index="produce">
         <template slot="title">
           <i class="el-icon-location"></i>
           <span slot="title">生产</span>
         </template>
-        <el-menu-item index="/dc/dc-search">独立数据收集查询报表</el-menu-item>
-        <el-menu-item index="/dc/data-collection">数据收集</el-menu-item>
-        <el-menu-item index="/dc/dc-collection">独立数据收集</el-menu-item>
+        <el-menu-item index="/dc/dcSearch">独立数据收集查询报表</el-menu-item>
+        <el-menu-item index="/dc/dataCollection">数据收集</el-menu-item>
+        <el-menu-item index="/dc/dcCollection">独立数据收集</el-menu-item>
         <el-menu-item index="/dc/unpack">包装解包配置</el-menu-item>
       </el-submenu>
       <el-submenu index="alarm">
@@ -74,17 +74,17 @@
           <i class="el-icon-location"></i>
           <span slot="title">预警管理</span>
         </template>
-        <el-menu-item index="/alarm/alarm-maintain">预警事件维护</el-menu-item>
-        <el-menu-item index="/alarm/alarm-group">预警事件分组</el-menu-item>
-        <el-menu-item index="/alarm/alarm-deal">预警事件处理</el-menu-item>
+        <el-menu-item index="/alarm/alarmMaintain">预警事件维护</el-menu-item>
+        <el-menu-item index="/alarm/alarmGroup">预警事件分组</el-menu-item>
+        <el-menu-item index="/alarm/alarmDeal">预警事件处理</el-menu-item>
       </el-submenu>
       <el-submenu index="nc">
         <template slot="title">
           <i class="el-icon-location"></i>
           <span slot="title">不合格管理</span>
         </template>
-        <el-menu-item index="/nc/nc-group">不合格代码组</el-menu-item>
-        <el-menu-item index="/nc/nc-code">不合格代码</el-menu-item>
+        <el-menu-item index="/nc/ncGroup">不合格代码组</el-menu-item>
+        <el-menu-item index="/nc/ncCode">不合格代码</el-menu-item>
       </el-submenu>
       <el-submenu index="device">
         <template slot="title">

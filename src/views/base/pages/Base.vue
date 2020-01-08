@@ -132,11 +132,11 @@ import { mapMutations } from "vuex";
 				});
 			},
 			add(){
-				this.$router.push({path:'/base/add-base'})
+				this.$router.push({path:'/base/addBase'})
 			},
 			edit(){
 				this.SETEDITLIST(this.checkedList);
-				this.$router.push({path:'/base/edit-base'})
+				this.$router.push({path:'/base/editBase'})
 			},
 		}
 	}

@@ -102,11 +102,11 @@ import { mapMutations } from "vuex";
 				console.log(val)
 			},
 			add(){
-				this.$router.push({path:'/nc/add-nc-code'})
+				this.$router.push({path:'/nc/addNcCode'})
 			},
 			edit(){
 				this.SETNCCODEEDITLIST(this.checkedList);
-				this.$router.push({path:'/nc/edit-nc-code'})
+				this.$router.push({path:'/nc/editNcCode'})
 			},
 			del(){
 				this.$confirm('是否删除所选数据?', '提示', {

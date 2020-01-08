@@ -215,12 +215,6 @@ import {getDataReportList, deleteDcSearch} from '../../../api/dc.search.api'
           });          
 				});
 			},
-			add(){
-				this.$router.push({path:'/material/add-material'})
-			},
-			edit(){
-				this.$router.push({path:'/material/add-material'})
-			},
 			submitForm(formName) {
 				this.$refs[formName].validate((valid) => {
 					if (valid) {

@@ -142,11 +142,11 @@ import { mapMutations } from "vuex";
 				console.log(val)
 			},
 			add(){
-				this.$router.push({path:'/work-center/add-work-center'})
+				this.$router.push({path:'/workCenter/addWorkCenter'})
 			},
 			edit(){
 				this.SETWORKCENTEREDITLIST(this.checkedList);
-				this.$router.push({path:'/work-center/edit-work-center'})
+				this.$router.push({path:'/workCenter/editWorkCenter'})
 			},
 			del(){
 				this.$confirm('是否删除所选数据?', '提示', {

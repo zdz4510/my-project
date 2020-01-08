@@ -245,7 +245,7 @@ export default {
     //选中某一行
     //返回操作
 		goBack() {
-			this.$router.push({path:'/nc/nc-group'})
+			this.$router.push({path:'/nc/ncGroup'})
 		},
     /**
      *  通过ncGroup

@@ -144,11 +144,11 @@ import { mapMutations } from "vuex";
 				});
 			},
 			add(){
-				this.$router.push({path:'/material/add-material'})
+				this.$router.push({path:'/material/addMaterial'})
 			},
 			edit(){
 				this.SETMATEDITLIST(this.checkedList);
-				this.$router.push({path:'/material/edit-material'})
+				this.$router.push({path:'/material/editMaterial'})
 			},
 			submitForm(formName) {
 				this.$refs[formName].validate((valid) => {

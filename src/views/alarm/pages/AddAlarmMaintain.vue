@@ -221,7 +221,7 @@
 									message: '保存成功!'
 								});
 								setTimeout(()=>{
-									this.$router.push({path:'/alarm/alarm-maintain'})
+									this.$router.push({path:'/alarm/alarmMaintain'})
 								},1000)
 							}
 						})
@@ -235,7 +235,7 @@
 				this.$refs[formName].resetFields();
 			},
 			goBack() {
-				this.$router.push({path:'/alarm/alarm-maintain'})
+				this.$router.push({path:'/alarm/alarmMaintain'})
 			},
 			onChange(val){
 				console.log(val)

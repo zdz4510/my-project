@@ -136,11 +136,11 @@ import qs from 'qs'
 				});
 			},
 			add(){
-				this.$router.push({path:'/operation-maintain/add-operation-maintain'})
+				this.$router.push({path:'/operationMaintain/addOperationMaintain'})
 			},
 			edit(){
 				this.SETOPERATIONEDITLIST(this.checkedList);
-				this.$router.push({path:'/operation-maintain/edit-operation-maintain'})
+				this.$router.push({path:'/operationMaintain/editOperationMaintain'})
 			},
 		}
 	}

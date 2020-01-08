@@ -433,7 +433,7 @@
 									message: '保存成功!'
 								});
 								setTimeout(()=>{
-									this.$router.push({path:'/dc/data-collection'})
+									this.$router.push({path:'/dc/dataCollection'})
 								},1000)
 							}
 						})
@@ -447,7 +447,7 @@
 				this.$refs[formName].resetFields();
 			},
 			goBack() {
-				this.$router.push({path:'/dc/data-collection'})
+				this.$router.push({path:'/dc/dataCollection'})
       },
       saveParams(formName){
 				this.$refs[formName].validate((valid) => {

@@ -222,7 +222,7 @@ export default {
     //选中某一行
     //返回操作
 		goBack() {
-			this.$router.push({path:'/work-center/work-center'})
+			this.$router.push({path:'/workCenter/workCenter'})
 		},
     /**
      *  通过workCenter

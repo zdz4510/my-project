@@ -92,7 +92,7 @@ import { addStation, getAllOperation, getOperationInfo} from '../../../api/opera
 		},
 		methods: {
 			goBack(){
-				this.$router.push({path:'/operation-station/operation-station'})
+				this.$router.push({path:'/operationStation/operationStation'})
 			},
 			querySearch(queryString, cb) {
 				var options = this.options;
@@ -140,7 +140,7 @@ import { addStation, getAllOperation, getOperationInfo} from '../../../api/opera
 							message: '保存成功!'
 						});
 						setTimeout(()=>{
-							this.$router.push({path:'/operation-station/operation-station'})
+							this.$router.push({path:'/operationStation/operationStation'})
 						},1000)
 					}
 				})

@@ -7,8 +7,8 @@ export default {
   component: () => import(/* webpackChunkName: "layout" */ "@/views/layout/"),
   children: [
     {
-      path: "material-info",
-      name: "material-info",
+      path: "materialInfo",
+      name: "materialInfo",
       meta: {
         title: "物料维护"
       },
@@ -18,25 +18,25 @@ export default {
         )
     },
     {
-      path: "add-material",
-      name: "add-material",
+      path: "addMaterial",
+      name: "addMaterial",
       meta: {
         title: "物料维护添加"
       },
       component: () =>
         import(
-          /* webpackChunkName: "add-material" */ "@/views/material/pages/AddMaterial.vue"
+          /* webpackChunkName: "addMaterial" */ "@/views/material/pages/AddMaterial.vue"
         )
     },
     {
-      path: "edit-material",
-      name: "edit-material",
+      path: "editMaterial",
+      name: "editMaterial",
       meta: {
         title: "物料维护编辑"
       },
       component: () =>
         import(
-          /* webpackChunkName: "edit-material" */ "@/views/material/pages/EditMaterial.vue"
+          /* webpackChunkName: "editMaterial" */ "@/views/material/pages/EditMaterial.vue"
         )
     },
     //工单维护

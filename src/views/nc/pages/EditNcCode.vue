@@ -252,7 +252,7 @@ export default {
     //选中某一行
     //返回操作
 		goBack() {
-			this.$router.push({path:'/nc/nc-code'})
+			this.$router.push({path:'/nc/ncCode'})
 		},
     /**
      *  通过ncCode

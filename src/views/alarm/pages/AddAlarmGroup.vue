@@ -135,7 +135,7 @@
 											message: '保存成功!'
 										});
 										setTimeout(()=>{
-											this.$router.push({path:'/alarm/alarm-group'})
+											this.$router.push({path:'/alarm/alarmGroup'})
 										},1000)
 									}
 								})
@@ -153,7 +153,7 @@
 				this.$refs[formName].resetFields();
 			},
 			goBack() {
-				this.$router.push({path:'/alarm/alarm-group'})
+				this.$router.push({path:'/alarm/alarmGroup'})
 			},
 			check1(val){
 				this.selectedList = val

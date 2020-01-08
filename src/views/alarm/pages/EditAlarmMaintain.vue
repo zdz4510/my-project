@@ -340,7 +340,7 @@ export default {
     //选中某一行
     //返回操作
 		goBack() {
-			this.$router.push({path:'/alarm/alarm-maintain'})
+			this.$router.push({path:'/alarm/alarmMaintain'})
 		},
     /**
      *  通过mat

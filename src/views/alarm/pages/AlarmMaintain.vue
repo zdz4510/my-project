@@ -131,11 +131,11 @@ import { mapMutations } from "vuex";
 				});
 			},
 			add(){
-				this.$router.push({path:'/alarm/add-alarm-maintain'})
+				this.$router.push({path:'/alarm/addAlarmMaintain'})
 			},
 			edit(){
 				this.SETALARMMAINTAINEDITLIST(this.checkedList);
-				this.$router.push({path:'/alarm/edit-alarm-maintain'})
+				this.$router.push({path:'/alarm/editAlarmMaintain'})
 			},
 			submitForm(formName) {
 				this.$refs[formName].validate((valid) => {

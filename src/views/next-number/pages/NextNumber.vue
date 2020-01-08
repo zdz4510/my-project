@@ -54,7 +54,7 @@
 			</el-form>
 		</div>
 		<div class="operate ml30 mtb10">
-			<el-button class="mr25 pad1025" size="small" type="primary" @click="add">添加</el-button>
+			<el-button class="mr25 pad1025" size="small" type="primary" @click="add">新增</el-button>
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="save">编辑</el-button>
 			<el-button class="mr25 pad1025" size="small" type="warning" @click="del">删除</el-button>
 		</div>

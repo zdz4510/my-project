@@ -152,7 +152,7 @@
 									message: '保存成功!'
 								});
 								setTimeout(()=>{
-									this.$router.push({path:'/nc/nc-code'})
+									this.$router.push({path:'/nc/ncCode'})
 								},1000)
 								
 							}
@@ -167,7 +167,7 @@
 				this.$refs[formName].resetFields();
 			},
 			goBack() {
-				this.$router.push({path:'/nc/nc-code'})
+				this.$router.push({path:'/nc/ncCode'})
 			},
 			check1(val){
 				this.selectedList = val

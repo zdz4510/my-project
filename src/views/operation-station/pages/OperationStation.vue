@@ -99,11 +99,11 @@ import { mapMutations } from "vuex";
 				this.checkedList = val;
 			},
 			add(){
-				this.$router.push({path:'/operation-station/add-operation-station'})
+				this.$router.push({path:'/operationStation/addOperationStation'})
 			},
 			edit(){
 				this.SETSTATIONEDITLIST(this.checkedList);
-				this.$router.push({path:'/operation-station/edit-operation-station'})
+				this.$router.push({path:'/operationStation/editOperationStation'})
 			},
 		}
 	}

@@ -1,39 +1,39 @@
 export default {
-  path: "/cert-user",
-  name: "cert-user",
+  path: "/certUser",
+  name: "certUser",
   component: () => import(/* webpackChunkName: "layout" */ "@/views/layout/"),
   children: [
     {
-      path: "cert-user",
-      name: "cert-user",
+      path: "certUser",
+      name: "certUser",
       meta:{
         title:'用户证明分配'
       },
       component: () =>
         import(
-          /* webpackChunkName: "cert-user" */ "@/views/cert-user/pages/CertUser.vue"
+          /* webpackChunkName: "certUser" */ "@/views/cert-user/pages/CertUser.vue"
         )
     },
     {
-      path: "add-cert-user",
-      name: "add-cert-user",
+      path: "addCertUser",
+      name: "addCertUser",
       meta:{
         title:'用户证明分配新增'
       },
       component: () =>
         import(
-          /* webpackChunkName: "add-cert-user" */ "@/views/cert-user/pages/AddCertUser.vue"
+          /* webpackChunkName: "addCertUser" */ "@/views/cert-user/pages/AddCertUser.vue"
         )
     },
     {
-      path: "edit-cert-user",
-      name: "edit-cert-user",
+      path: "editCertUser",
+      name: "editCertUser",
       meta:{
         title:'用户证明分配编辑'
       },
       component: () =>
         import(
-          /* webpackChunkName: "edit-cert-user" */ "@/views/cert-user/pages/EditCertUser.vue"
+          /* webpackChunkName: "editCertUser" */ "@/views/cert-user/pages/EditCertUser.vue"
         )
     },
   ]

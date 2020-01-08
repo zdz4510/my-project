@@ -369,7 +369,7 @@
 									message: '保存成功!'
 								});
 								setTimeout(()=>{
-									this.$router.push({path:'/material/material-info'})
+									this.$router.push({path:'/material/materialInfo'})
 								},1000)
 							}
 						})
@@ -383,7 +383,7 @@
 				this.$refs[formName].resetFields();
 			},
 			goBack() {
-				this.$router.push({path:'/material/material-info'})
+				this.$router.push({path:'/material/materialInfo'})
 			},
 		}
 	}

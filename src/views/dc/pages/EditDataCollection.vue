@@ -534,7 +534,7 @@ export default {
     //选中某一行
     //返回操作
 		goBack() {
-			this.$router.push({path:'/dc/data-collection'})
+			this.$router.push({path:'/dc/dataCollection'})
 		},
     /**
      *  通过mat

@@ -32,25 +32,25 @@ const routes = [
           import(/* webpackChunkName: "base" */ "../views/base/pages/Base.vue")
       },
       {
-        path: "add-base",
-        name: "add-base",
+        path: "addBase",
+        name: "addBase",
         meta: {
           title: "基础库添加"
         },
         component: () =>
           import(
-            /* webpackChunkName: "add-base" */ "../views/base/pages/AddBase.vue"
+            /* webpackChunkName: "addBase" */ "../views/base/pages/AddBase.vue"
           )
       },
       {
-        path: "edit-base",
-        name: "edit-base",
+        path: "editBase",
+        name: "editBase",
         meta: {
           title: "基础库编辑"
         },
         component: () =>
           import(
-            /* webpackChunkName: "edit-base" */ "../views/base/pages/EditBase.vue"
+            /* webpackChunkName: "editBase" */ "../views/base/pages/EditBase.vue"
           )
       }
     ]
@@ -65,42 +65,42 @@ const routes = [
    * 工序维护
    */
   {
-    path: "/operation-maintain",
-    name: "operation-maintain",
+    path: "/operationMaintain",
+    name: "operationMaintain",
     component: () =>
       import(/* webpackChunkName: "layout" */ "../views/layout/"),
     children: [
       {
-        path: "operation-maintain",
-        name: "operation-maintain",
+        path: "operationMaintain",
+        name: "operationMaintain",
         meta: {
           title: "工序维护"
         },
         component: () =>
           import(
-            /* webpackChunkName: "operation-maintain" */ "../views/operation-maintain/pages/OperationMaintain.vue"
+            /* webpackChunkName: "operationMaintain" */ "../views/operation-maintain/pages/OperationMaintain.vue"
           )
       },
       {
-        path: "add-operation-maintain",
-        name: "add-operation-maintain",
+        path: "addOperationMaintain",
+        name: "addOperationMaintain",
         meta: {
           title: "工序维护添加"
         },
         component: () =>
           import(
-            /* webpackChunkName: "add-operation-maintain" */ "../views/operation-maintain/pages/AddOperationMaintain.vue"
+            /* webpackChunkName: "addOperationMaintain" */ "../views/operation-maintain/pages/AddOperationMaintain.vue"
           )
       },
       {
-        path: "edit-operation-maintain",
-        name: "edit-operation-maintain",
+        path: "editOperationMaintain",
+        name: "editOperationMaintain",
         meta: {
           title: "工序维护编辑"
         },
         component: () =>
           import(
-            /* webpackChunkName: "edit-operation-maintain" */ "../views/operation-maintain/pages/EditOperationMaintain.vue"
+            /* webpackChunkName: "editOperationMaintain" */ "../views/operation-maintain/pages/EditOperationMaintain.vue"
           )
       }
     ]
@@ -109,42 +109,42 @@ const routes = [
    * 工序站位
    */
   {
-    path: "/operation-station",
-    name: "operation-maintain",
+    path: "/operationStation",
+    name: "operationStation",
     component: () =>
       import(/* webpackChunkName: "layout" */ "../views/layout/"),
     children: [
       {
-        path: "operation-station",
-        name: "operation-station",
+        path: "operationStation",
+        name: "operationStation",
         meta: {
           title: "工序站位维护"
         },
         component: () =>
           import(
-            /* webpackChunkName: "operation-station" */ "../views/operation-station/pages/OperationStation.vue"
+            /* webpackChunkName: "operationStation" */ "../views/operation-station/pages/OperationStation.vue"
           )
       },
       {
-        path: "add-operation-station",
-        name: "add-operation-station",
+        path: "addOperationStation",
+        name: "addOperationStation",
         meta: {
           title: "工序站位维护添加"
         },
         component: () =>
           import(
-            /* webpackChunkName: "add-operation-station" */ "../views/operation-station/pages/AddOperationStation.vue"
+            /* webpackChunkName: "addOperationStation" */ "../views/operation-station/pages/AddOperationStation.vue"
           )
       },
       {
-        path: "edit-operation-station",
-        name: "edit-operation-station",
+        path: "editOperationStation",
+        name: "editOperationStation",
         meta: {
           title: "工序站位维护编辑"
         },
         component: () =>
           import(
-            /* webpackChunkName: "edit-operation-station" */ "../views/operation-station/pages/EditOperationStation.vue"
+            /* webpackChunkName: "editOperationStation" */ "../views/operation-station/pages/EditOperationStation.vue"
           )
       },
       /**
@@ -177,42 +177,42 @@ const routes = [
    * 工作中心
    */
   {
-    path: "/work-center",
-    name: "work-center",
+    path: "/workCenter",
+    name: "workCenter",
     component: () =>
       import(/* webpackChunkName: "layout" */ "../views/layout/"),
     children: [
       {
-        path: "work-center",
-        name: "work-center",
+        path: "workCenter",
+        name: "workCenter",
         meta: {
           title: "工作中心"
         },
         component: () =>
           import(
-            /* webpackChunkName: "work-center" */ "../views/work-center/pages/WorkCenter.vue"
+            /* webpackChunkName: "workCenter" */ "../views/work-center/pages/WorkCenter.vue"
           )
       },
       {
-        path: "add-work-center",
-        name: "add-work-center",
+        path: "addWorkCenter",
+        name: "addWorkCenter",
         meta: {
           title: "工作中心添加"
         },
         component: () =>
           import(
-            /* webpackChunkName: "add-work-center" */ "../views/work-center/pages/AddWorkCenter.vue"
+            /* webpackChunkName: "addWorkCenter" */ "../views/work-center/pages/AddWorkCenter.vue"
           )
       },
       {
-        path: "edit-work-center",
-        name: "edit-work-center",
+        path: "editWorkCenter",
+        name: "editWorkCenter",
         meta: {
           title: "工作中心编辑"
         },
         component: () =>
           import(
-            /* webpackChunkName: "edit-work-center" */ "../views/work-center/pages/EditWorkCenter.vue"
+            /* webpackChunkName: "editWorkCenter" */ "../views/work-center/pages/EditWorkCenter.vue"
           )
       }
     ]
@@ -221,20 +221,20 @@ const routes = [
    * 编码规则
    */
   {
-    path: "/next-number",
-    name: "next-number",
+    path: "/nextNumber",
+    name: "nextNumber",
     component: () =>
       import(/* webpackChunkName: "layout" */ "../views/layout/"),
     children: [
       {
-        path: "next-number",
-        name: "next-number",
+        path: "nextNumber",
+        name: "nextNumber",
         meta: {
           title: "编码规则"
         },
         component: () =>
           import(
-            /* webpackChunkName: "next-number" */ "../views/next-number/pages/NextNumber.vue"
+            /* webpackChunkName: "nextNumber" */ "../views/next-number/pages/NextNumber.vue"
           )
       }
     ]
@@ -244,65 +244,65 @@ const routes = [
    */
   {
     path: "/dc",
-    name: "dc-search",
+    name: "dcSearch",
     component: () =>
       import(/* webpackChunkName: "layout" */ "../views/layout/"),
     children: [
       {
-        path: "dc-search",
-        name: "dc-search",
+        path: "dcSearch",
+        name: "dcSearch",
         meta: {
           title: "独立数据报表查询"
         },
         component: () =>
           import(
-            /* webpackChunkName: "dc-search" */ "../views/dc/pages/DCSearch.vue"
+            /* webpackChunkName: "dcSearch" */ "../views/dc/pages/DCSearch.vue"
           )
       },
       //数据收集
       {
-        path: "data-collection",
-        name: "data-collection",
+        path: "dataCollection",
+        name: "dataCollection",
         meta: {
           title: "数据收集"
         },
         component: () =>
           import(
-            /* webpackChunkName: "data-collection" */ "../views/dc/pages/DataCollection.vue"
+            /* webpackChunkName: "dataCollection" */ "../views/dc/pages/DataCollection.vue"
           )
       },
       {
-        path: "add-data-collection",
-        name: "add-data-collection",
+        path: "addDataCollection",
+        name: "addDataCollection",
         meta: {
           title: "数据收集添加"
         },
         component: () =>
           import(
-            /* webpackChunkName: "add-data-collection" */ "../views/dc/pages/AddDataCollection.vue"
+            /* webpackChunkName: "addDataCollection" */ "../views/dc/pages/AddDataCollection.vue"
           )
       },
       {
-        path: "edit-data-collection",
-        name: "edit-data-collection",
+        path: "editDataCollection",
+        name: "editDataCollection",
         meta: {
           title: "数据收集编辑"
         },
         component: () =>
           import(
-            /* webpackChunkName: "edit-data-collection" */ "../views/dc/pages/EditDataCollection.vue"
+            /* webpackChunkName: "editDataCollection" */ "../views/dc/pages/EditDataCollection.vue"
           )
       },
       //独立数据收集
       {
-        path: "dc-collection",
-        name: "dc-collection",
+        path: "dcCollection",
+        name: "dcCollection",
         meta: {
           title: "独立数据收集"
         },
         component: () =>
           import(
-            /* webpackChunkName: "dc-collection" */ "../views/dc/pages/DCCollection.vue"
+            /* webpackChunkName: "dcCollection" */ "../views/dc/pages/DCCollection.vue"
           )
       }
     ]
@@ -317,94 +317,82 @@ const routes = [
       import(/* webpackChunkName: "layout" */ "../views/layout/"),
     children: [
       {
-        path: "alarm-maintain",
-        name: "alarm-maintain",
+        path: "alarmMaintain",
+        name: "alarmMaintain",
         meta: {
           title: "预警事件维护"
         },
         component: () =>
           import(
-            /* webpackChunkName: "alarm-maintain" */ "../views/alarm/pages/AlarmMaintain.vue"
+            /* webpackChunkName: "alarmMaintain" */ "../views/alarm/pages/AlarmMaintain.vue"
           )
       },
       {
-        path: "add-alarm-maintain",
-        name: "add-alarm-maintain",
+        path: "addAlarmMaintain",
+        name: "addAlarmMaintain",
         meta: {
           title: "预警事件维护添加"
         },
         component: () =>
           import(
-            /* webpackChunkName: "add-alarm-maintain" */ "../views/alarm/pages/AddAlarmMaintain.vue"
+            /* webpackChunkName: "addAlarmMaintain" */ "../views/alarm/pages/AddAlarmMaintain.vue"
           )
       },
       {
-        path: "edit-alarm-maintain",
-        name: "edit-alarm-maintain",
+        path: "editAlarmMaintain",
+        name: "editAlarmMaintain",
         meta: {
           title: "预警事件维护编辑"
         },
         component: () =>
           import(
-            /* webpackChunkName: "edit-alarm-maintain" */ "../views/alarm/pages/EditAlarmMaintain.vue"
+            /* webpackChunkName: "editAlarmMaintain" */ "../views/alarm/pages/EditAlarmMaintain.vue"
           )
       },
       {
-        path: "alarm-group",
-        name: "alarm-group",
+        path: "alarmGroup",
+        name: "alarmGroup",
         meta: {
           title: "预警事件分组编辑"
         },
         component: () =>
           import(
-            /* webpackChunkName: "alarm-group" */ "../views/alarm/pages/AlarmGroup.vue"
+            /* webpackChunkName: "alarmGroup" */ "../views/alarm/pages/AlarmGroup.vue"
           )
       },
       {
-        path: "add-alarm-group",
-        name: "add-alarm-group",
+        path: "addAlarmGroup",
+        name: "addAlarmGroup",
         meta: {
           title: "预警事件分组编辑"
         },
         component: () =>
           import(
-            /* webpackChunkName: "add-alarm-group" */ "../views/alarm/pages/AddAlarmGroup.vue"
+            /* webpackChunkName: "addAlarmGroup" */ "../views/alarm/pages/AddAlarmGroup.vue"
           )
       },
       {
-        path: "edit-alarm-group",
-        name: "edit-alarm-group",
+        path: "editAlarmGroup",
+        name: "editAlarmGroup",
         meta: {
           title: "预警事件分组编辑"
         },
         component: () =>
           import(
-            /* webpackChunkName: "edit-alarm-group" */ "../views/alarm/pages/EditAlarmGroup.vue"
+            /* webpackChunkName: "editAlarmGroup" */ "../views/alarm/pages/EditAlarmGroup.vue"
           )
       },
       {
-        path: "alarm-deal",
-        name: "alarm-deal",
+        path: "alarmDeal",
+        name: "alarmDeal",
         meta: {
           title: "预警事件处理"
         },
         component: () =>
           import(
-            /* webpackChunkName: "alarm-deal" */ "../views/alarm/pages/AlarmDeal.vue"
+            /* webpackChunkName: "alarmDeal" */ "../views/alarm/pages/AlarmDeal.vue"
           )
       },
-      //独立数据收集
-      {
-        path: "dc-collection",
-        name: "dc-collection",
-        meta: {
-          title: "独立数据收集"
-        },
-        component: () =>
-          import(
-            /* webpackChunkName: "dc-collection" */ "../views/dc/pages/DCCollection.vue"
-          )
-      }
     ]
   },
   /**

@@ -128,11 +128,11 @@ import { mapMutations } from "vuex";
 				});
 			},
 			add(){
-				this.$router.push({path:'/cert-user/add-cert-user'})
+				this.$router.push({path:'/certUser/addCertUser'})
 			},
 			edit(){
 				this.SETCERTUSEREDITLIST(this.checkedList);
-				this.$router.push({path:'/cert-user/edit-cert-user'})
+				this.$router.push({path:'/certUser/editCertUser'})
 			},
 		}
 	}
