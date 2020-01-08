@@ -35,6 +35,7 @@
           <span slot="title">产品配置</span>
         </template>
         <el-menu-item index="/material/material-info">物料维护</el-menu-item>
+        <el-menu-item index="/material/materialGroup">物料组维护</el-menu-item>
         <el-menu-item index="/material/workOrder">工单维护</el-menu-item>
         <el-menu-item index="/material/issued">工单下达</el-menu-item>
       </el-submenu>

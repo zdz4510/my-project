@@ -1,18 +1,79 @@
+/**
+ * 产品配置
+ */
 export default {
-  path: "/maintenance",
-  name: "maintenance",
+  path: "/material",
+  name: "material",
   component: () => import(/* webpackChunkName: "layout" */ "@/views/layout/"),
   children: [
-    //站位维护
     {
-      path: "standingMaintenance",
-      name: "standingMaintenance",
+      path: "material-info",
+      name: "material-info",
       meta: {
-        title: "站位维护"
+        title: "物料维护"
       },
       component: () =>
         import(
-          /* webpackChunkName: "standingMaintenance" */ "@/views/maintenance/pages/standing-maintenance.vue"
+          /* webpackChunkName: "material-info" */ "@/views/material/pages/MaterialInfo.vue"
+        )
+    },
+    {
+      path: "add-material",
+      name: "add-material",
+      meta: {
+        title: "物料维护添加"
+      },
+      component: () =>
+        import(
+          /* webpackChunkName: "add-material" */ "@/views/material/pages/AddMaterial.vue"
+        )
+    },
+    {
+      path: "edit-material",
+      name: "edit-material",
+      meta: {
+        title: "物料维护编辑"
+      },
+      component: () =>
+        import(
+          /* webpackChunkName: "edit-material" */ "@/views/material/pages/EditMaterial.vue"
+        )
+    },
+
+    //工单维护
+    {
+      path: "workOrder",
+      name: "workOrder",
+      component: () =>
+        import(
+          /* webpackChunkName: "work-order" */ "@/views/work-order/pages/work-order.vue"
+        )
+    },
+    //工单下达
+    {
+      path: "issued",
+      name: "issued",
+      component: () =>
+        import(
+          /* webpackChunkName: "issued" */ "@/views/issued/pages/issued.vue"
+        )
+    },
+    //物料组维护
+    {
+      path: "materialGroup",
+      name: "materialGroup",
+      component: () =>
+        import(
+          /* webpackChunkName: "materialGroup" */ "@/views/material/pages/material-group.vue"
+        )
+    },
+    //物料组维护编辑
+    {
+      path: "materialGroupEdit",
+      name: "materialGroupEdit",
+      component: () =>
+        import(
+          /* webpackChunkName: "materialGroupEdit" */ "@/views/material/pages/material-group-edit.vue"
         )
     }
   ]

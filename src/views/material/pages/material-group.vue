@@ -1,17 +1,17 @@
 <template>
-  <div class="deviceType">
+  <div class="materialGroup">
     <div class="query">
       <div class="left">
         <el-form
-          :model="typeForm"
-          ref="typeForm"
+          :model="materialGroupForm"
+          ref="materialGroupForm"
           label-width="100px"
-          class="typeForm"
+          class="materialGroupForm"
         >
-          <el-form-item label="设备类型" prop="resourceGroup">
+          <el-form-item label="物料组" prop="materialGroup">
             <el-input
-              v-model.trim="typeForm.resourceGroup"
-              placeholder="请输入设备类型"
+              v-model.trim="materialGroupForm.materialGroup"
+              placeholder="请输入物料组"
             ></el-input>
           </el-form-item>
         </el-form>
@@ -59,13 +59,18 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55"> </el-table-column>
-        <el-table-column prop="resourceGroup" label="设备类型" width="120">
+        <el-table-column type="index" label="序号" width="50">
         </el-table-column>
-        <el-table-column prop="resourceCount" label="设备数量" width="120">
+        <el-table-column prop="materialGroup" label="物料组" width="120">
         </el-table-column>
-        <el-table-column prop="groupDes" label="设备类型描述" width="170">
+        <el-table-column
+          prop="materialList.length"
+          label="总物料数"
+          width="120"
+        >
         </el-table-column>
-
+        <el-table-column prop="groupDes" label="物料组描述" width="170">
+        </el-table-column>
         <el-table-column prop="createUserName" label="创建人" width="120">
         </el-table-column>
         <el-table-column prop="createTime" label="创建时间" width="170">
@@ -106,18 +111,19 @@
 </template>
 
 <script>
-import {
-  findResourceGroupListHttp,
-  deleteResourceGroupHttp,
-  exportExcelHttp
-} from "@/api/device/type.api.js";
+// import {
+//   findResourceGroupListHttp,
+//   deleteResourceGroupHttp,
+//   exportExcelHttp
+// } from "@/api/device/type.api.js";
+import { findPageHttp, deleteHttp } from "@/api/material/material.group.api.js";
 import { mapMutations } from "vuex";
 
 export default {
   data() {
     return {
-      typeForm: {
-        resourceGroup: ""
+      materialGroupForm: {
+        materialGroup: ""
       },
       tableData: [],
       selectionList: [],
@@ -132,14 +138,14 @@ export default {
     this.init();
   },
   methods: {
-    ...mapMutations(["SETTYPELIST"]),
+    ...mapMutations(["MATERIALGROUPLIST"]),
     init() {
       const data = {
         currentPage: this.currentPage,
         pageSize: this.pagesize,
-        resourceGroup: this.typeForm.resourceGroup
+        materialGroup: this.materialGroupForm.materialGroup
       };
-      findResourceGroupListHttp(data).then(data => {
+      findPageHttp(data).then(data => {
         const res = data.data;
         console.log(res);
         const list = res.data.data;
@@ -147,7 +153,7 @@ export default {
           // this.pageShow = true;
           this.total = res.data.total;
           this.tableData = list;
-          // this.typeForm.resourceGroup = "";
+          // this.materialGroupForm.materialGroup = "";
           return;
         }
         this.$message({
@@ -183,34 +189,25 @@ export default {
     },
     handleAdd() {
       this.selectionList = [];
-      const emptyObj = { resourceGroup: "", groupDes: "" };
+      const emptyObj = { materialGroup: "", groupDes: "" };
       this.selectionList.push(emptyObj);
-      this.SETTYPELIST(this.selectionList);
+      this.MATERIALGROUPLIST(this.selectionList);
       this.$router.push({
-        path: "/device/deviceTypeEdit",
-        // name: "deviceTypeEdit",
+        // path: "/device/materialGroupEdit",
+        name: "materialGroupEdit",
         query: { operateType: "add" }
       });
     },
     handleEdit() {
-      this.SETTYPELIST(this.selectionList);
+      this.MATERIALGROUPLIST(this.selectionList.materialList);
       this.$router.push({
-        path: "/device/deviceTypeEdit",
-        // name: "deviceTypeEdit",
+        // path: "/device/materialGroupEdit",
+        name: "materialGroupEdit",
         query: { operateType: "edit" }
       });
     },
     handleDelete() {
-      console.log(this.selectionList);
-      const data = [];
-      this.selectionList.forEach(element => {
-        const obj = {
-          resourceGroup: element.resourceGroup
-        };
-        data.push(obj);
-      });
-      console.log(data);
-      deleteResourceGroupHttp(data).then(data => {
+      deleteHttp(this.selectionList).then(data => {
         const res = data.data;
         console.log(res);
         if (res.code === 200) {
@@ -233,21 +230,22 @@ export default {
       this.init();
     },
     handleReset() {
-      this.typeForm.resourceGroup = "";
+      this.materialGroupForm.materialGroup = "";
+      this.init();
     },
     handleExport() {
-      const data = {
-        resourceGroup: this.typeForm.resourceGroup,
-        groupDes: this.typeForm.groupDes
-      };
-      exportExcelHttp(data);
+      //   const data = {
+      //     materialGroup: this.materialGroupForm.materialGroup,
+      //     groupDes: this.materialGroupForm.groupDes
+      //   };
+      //   exportExcelHttp(data);
     }
   }
 };
 </script>
 
 <style lang="scss">
-.deviceType {
+.materialGroup {
   padding: 0 30px;
   .operate {
     padding: 10px 5px;
