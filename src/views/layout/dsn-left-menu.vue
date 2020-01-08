@@ -69,6 +69,9 @@
         <el-menu-item index="/dc/data-collection">数据收集</el-menu-item>
         <el-menu-item index="/dc/dc-collection">独立数据收集</el-menu-item>
         <el-menu-item index="/dc/unpack">包装解包配置</el-menu-item>
+        <el-menu-item index="/dc/lotStep">LOT步骤状态变更</el-menu-item>
+        <el-menu-item index="/dc/lotDivestiture">LOT拆分</el-menu-item>
+        <el-menu-item index="/dc/lotMerge">LOT合并</el-menu-item>
       </el-submenu>
       <el-submenu index="alarm">
         <template slot="title">

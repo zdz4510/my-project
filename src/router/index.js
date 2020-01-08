@@ -4,6 +4,7 @@ import deviceRouter from "@/views/device/router/index.js";
 import maintenanceRouter from "@/views/maintenance/router/index.js";
 import certRouter from "@/views/cert-user/router/index.js";
 import materialRouter from "@/views/material/router/index.js";
+import productRouter from "@/views/dc/router/index.js";
 import ncRouter from "@/views/nc/router/index.js";
 import store from "@/store/";
 Vue.use(VueRouter);
@@ -240,72 +241,10 @@ const routes = [
     ]
   },
   /**
-   * 独立数据
+   * 生产
    */
   {
-    path: "/dc",
-    name: "dc-search",
-    component: () =>
-      import(/* webpackChunkName: "layout" */ "../views/layout/"),
-    children: [
-      {
-        path: "dc-search",
-        name: "dc-search",
-        meta: {
-          title: "独立数据报表查询"
-        },
-        component: () =>
-          import(
-            /* webpackChunkName: "dc-search" */ "../views/dc/pages/DCSearch.vue"
-          )
-      },
-      //数据收集
-      {
-        path: "data-collection",
-        name: "data-collection",
-        meta: {
-          title: "数据收集"
-        },
-        component: () =>
-          import(
-            /* webpackChunkName: "data-collection" */ "../views/dc/pages/DataCollection.vue"
-          )
-      },
-      {
-        path: "add-data-collection",
-        name: "add-data-collection",
-        meta: {
-          title: "数据收集添加"
-        },
-        component: () =>
-          import(
-            /* webpackChunkName: "add-data-collection" */ "../views/dc/pages/AddDataCollection.vue"
-          )
-      },
-      {
-        path: "edit-data-collection",
-        name: "edit-data-collection",
-        meta: {
-          title: "数据收集编辑"
-        },
-        component: () =>
-          import(
-            /* webpackChunkName: "edit-data-collection" */ "../views/dc/pages/EditDataCollection.vue"
-          )
-      },
-      //独立数据收集
-      {
-        path: "dc-collection",
-        name: "dc-collection",
-        meta: {
-          title: "独立数据收集"
-        },
-        component: () =>
-          import(
-            /* webpackChunkName: "dc-collection" */ "../views/dc/pages/DCCollection.vue"
-          )
-      }
-    ]
+    ...productRouter
   },
   /**
    * 预警管理
