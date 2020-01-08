@@ -37,7 +37,7 @@
 				</div>
 				<div class="">
 					<el-table
-					ref="multipleTable"
+					ref="undealTable"
 					:data="this.undealTableData.data"
 					tooltip-effect="dark"
 					row-key="sequence"
@@ -111,7 +111,7 @@
 				</div>
 				<div class="">
 					<el-table
-					ref="multipleTable"
+					ref="dealTable"
 					:data="this.dealTableData.data"
 					tooltip-effect="dark"
 					row-key="sequence"
@@ -379,6 +379,7 @@ import {getAlarmGroupList, getSequenceList, updateAckData, updateInitData, delet
 						this.$message.success('删除成功')
 					}
 					this.searchDeal()
+					this.$refs.dealTable.clearSelection()
 				})
         }).catch(() => {
           this.$message({
