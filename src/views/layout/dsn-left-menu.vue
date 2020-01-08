@@ -59,6 +59,7 @@
         </template>
         <el-menu-item index="/nextNumber/nextNumber">编码规则</el-menu-item>
         <el-menu-item index="/certUser/certUser">用户证明分配</el-menu-item>
+        <el-menu-item index="/customize/customize">自定义字段维护</el-menu-item>
       </el-submenu>
       <el-submenu index="produce">
         <template slot="title">
