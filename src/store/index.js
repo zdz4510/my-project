@@ -1,7 +1,8 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import routerHistory from './modules/common/router.history'
+import routerHistory from "./modules/common/router.history";
 import materialEdit from "./modules/base/material.edit"; // 物料维护vuex module
+import materialGroupEdit from "@/store/modules/material/material.group.edit.js";
 import workCenterEdit from "./modules/base/work.center.edit.js"; // 工作中心vuex module
 import operationMaintainEdit from "./modules/base/operation.maintain.edit.js"; // 工序维护vuex module
 import operationStationEdit from "./modules/base/operation.station.edit.js"; // 工序站位维护vuex module
@@ -23,8 +24,9 @@ export default new Vuex.Store({
   mutations: {},
   actions: {},
   modules: {
-		routerHistory,
+    routerHistory,
     materialEdit,
+    materialGroupEdit,
     workCenterEdit,
     operationMaintainEdit,
     operationStationEdit,

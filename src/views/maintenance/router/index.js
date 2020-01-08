@@ -1,60 +1,78 @@
-/**
- * 产品配置
- */
 export default {
-  path: "/material",
-  name: "material",
+  path: "/maintenance",
+  name: "maintenance",
   component: () => import(/* webpackChunkName: "layout" */ "@/views/layout/"),
   children: [
+    //站位维护
     {
-      path: "materialInfo",
-      name: "materialInfo",
+      path: "standingMaintenance",
+      name: "standingMaintenance",
       meta: {
-        title: "物料维护"
+        title: "站位维护"
       },
       component: () =>
         import(
-          /* webpackChunkName: "material-info" */ "@/views/material/pages/MaterialInfo.vue"
+          /* webpackChunkName: "standingMaintenance" */ "@/views/maintenance/pages/standing-maintenance.vue"
         )
     },
+    //站位维护编辑
     {
-      path: "addMaterial",
-      name: "addMaterial",
+      path: "standingMaintenanceEdit",
+      name: "standingMaintenanceEdit",
       meta: {
-        title: "物料维护添加"
+        title: "站位维护编辑"
       },
       component: () =>
         import(
-          /* webpackChunkName: "addMaterial" */ "@/views/material/pages/AddMaterial.vue"
+          /* webpackChunkName: "standingMaintenanceEdit" */ "@/views/maintenance/pages/standing-maintenance-edit.vue"
         )
     },
+    //上岗证维护
     {
-      path: "editMaterial",
-      name: "editMaterial",
+      path: "workingCertificateMaintenance",
+      name: "workingCertificateMaintenance",
       meta: {
-        title: "物料维护编辑"
+        title: "上岗证维护"
       },
       component: () =>
         import(
-          /* webpackChunkName: "editMaterial" */ "@/views/material/pages/EditMaterial.vue"
+          /* webpackChunkName: "workingCertificateMaintenance" */ "@/views/maintenance/pages/working-certificate-maintenance.vue"
         )
     },
-    //工单维护
+    //上岗证维护编辑
     {
-      path: "workOrder",
-      name: "workOrder",
+      path: "workingCertificateMaintenanceEdit",
+      name: "workingCertificateMaintenanceEdit",
+      meta: {
+        title: "上岗证维护编辑"
+      },
       component: () =>
         import(
-          /* webpackChunkName: "work-order" */ "@/views/work-order/pages/work-order.vue"
+          /* webpackChunkName: "workingCertificateMaintenanceEdit" */ "@/views/maintenance/pages/working-certificate-maintenance-edit.vue"
         )
     },
-    //工单下达
+    //通用代码定义维护
     {
-      path: "issued",
-      name: "issued",
+      path: "genericCodeDefinition",
+      name: "genericCodeDefinition",
+      meta: {
+        title: "通用代码定义维护"
+      },
       component: () =>
         import(
-          /* webpackChunkName: "issued" */ "@/views/issued/pages/issued.vue"
+          /* webpackChunkName: "genericCodeDefinition" */ "@/views/maintenance/pages/generic-code-definition.vue"
+        )
+    },
+    //通用代码数据维护
+    {
+      path: "genericCodeData",
+      name: "genericCodeData",
+      meta: {
+        title: "通用代码数据维护"
+      },
+      component: () =>
+        import(
+          /* webpackChunkName: "genericCodeData" */ "@/views/maintenance/pages/generic-code-data.vue"
         )
     }
   ]

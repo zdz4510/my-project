@@ -35,6 +35,7 @@
           <span slot="title">产品配置</span>
         </template>
         <el-menu-item index="/material/materialInfo">物料维护</el-menu-item>
+        <el-menu-item index="/material/materialGroup">物料组维护</el-menu-item>
         <el-menu-item index="/material/workOrder">工单维护</el-menu-item>
         <el-menu-item index="/material/issued">工单下达</el-menu-item>
       </el-submenu>
@@ -68,6 +69,9 @@
         <el-menu-item index="/dc/dataCollection">数据收集</el-menu-item>
         <el-menu-item index="/dc/dcCollection">独立数据收集</el-menu-item>
         <el-menu-item index="/dc/unpack">包装解包配置</el-menu-item>
+        <el-menu-item index="/dc/lotStep">LOT步骤状态变更</el-menu-item>
+        <el-menu-item index="/dc/lotDivestiture">LOT拆分</el-menu-item>
+        <el-menu-item index="/dc/lotMerge">LOT合并</el-menu-item>
       </el-submenu>
       <el-submenu index="alarm">
         <template slot="title">

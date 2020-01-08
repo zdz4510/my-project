@@ -4,6 +4,7 @@ import deviceRouter from "@/views/device/router/index.js";
 import maintenanceRouter from "@/views/maintenance/router/index.js";
 import certRouter from "@/views/cert-user/router/index.js";
 import materialRouter from "@/views/material/router/index.js";
+import productRouter from "@/views/dc/router/index.js";
 import ncRouter from "@/views/nc/router/index.js";
 import store from "@/store/";
 Vue.use(VueRouter);
@@ -240,7 +241,7 @@ const routes = [
     ]
   },
   /**
-   * 独立数据
+   * 生产
    */
   {
     path: "/dc",
@@ -306,6 +307,10 @@ const routes = [
           )
       }
     ]
+    
+  },
+  {
+    ...productRouter
   },
   /**
    * 预警管理
