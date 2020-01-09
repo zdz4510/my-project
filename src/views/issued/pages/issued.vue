@@ -4,7 +4,7 @@
         <div class="issudTop">
             <!--顶部左边-->
             <div class="topLeft">
-                <el-form :model="workOrderIssued" ref="workOrderIssued" label-width="100px" class="demo-ruleForm">
+                <el-form  ref="workOrderIssued" label-width="100px" class="demo-ruleForm">
                     <el-form-item
                         label="工单:"
                         prop="workOrder"
@@ -12,13 +12,13 @@
                         { required: true, message: '工单不能为空'}
                         ]"
                     >
-                        <el-col :span="12">
-                            <el-input  autocomplete="off" v-model='workOrderIssued.workOrder'></el-input>
+                        <el-col :span="9">
+                            <el-input  autocomplete="off" v-model='shopOrder'></el-input>
                         </el-col>
                         
                         <div class="choiceBox">
                             <i class="el-icon-document-copy choice"></i>                        
-                            <el-button size="small" type="primary">获取</el-button>
+                            <el-button size="small" type="primary" @click="handleGet">获取</el-button>
                             <el-button size="small" type="primary">清除</el-button>
                         </div>
 
@@ -30,7 +30,7 @@
                         { required: true, message: '下达数量不能为空'}
                         ]"
                     >
-                        <el-col :span="12">
+                        <el-col :span="9">
                             <el-input  autocomplete="off" v-model='workOrderIssued.numIssued'></el-input>
                         </el-col>
                         <el-button size="small" type="primary" style="margin-left:26px;">下达</el-button>
@@ -39,16 +39,16 @@
             </div>
             <div class="topRigt">
                 <div class="showData">
-                    <div><i>*</i><span>状态：</span></div>
-                    <div><i>*</i><span>生产数量:</span></div>
+                    <div><i>*</i><span>状态：{{shopOrderInfo.status}}</span></div>
+                    <div><i>*</i><span>生产数量:{{shopOrderInfo.productQty}}</span></div>
                 </div>
                 <div class="showData">
-                    <div><i>*</i><span>物料(版本):</span></div>
-                    <div><i>*</i><span>已下达数量:</span></div>
+                    <div><i>*</i><span>物料(版本):{{shopOrderInfo.plannedMaterialRev}}</span></div>
+                    <div><i>*</i><span>已下达数量:{{shopOrderInfo.releasedQuantity}}</span></div>
                 </div>
                 <div class="showData">
-                    <div><i>*</i><span>工艺路线(版本)：</span></div>
-                    <div><i>*</i><span>可下达数量:</span></div>
+                    <div><i>*</i><span>工艺路线(版本)：{{shopOrderInfo.plannedRouterRev}}</span></div>
+                    <div><i>*</i><span>可下达数量:{{shopOrderInfo.availableQuantity}}</span></div>
                 </div>
             </div>
         </div>
@@ -108,9 +108,15 @@
     </div>
 </template>
 <script>
+import {
+    findShopOrderListRequest
+} from '@/api/issued/issued.api.js' 
 export default {
     data(){
         return{
+            shopOrder:'',//工单
+            tenantSiteCode:'',
+            shopOrderInfo:'',//工单信息
             workOrderIssued: {
                 workOrder: '',
                 numIssued:'',
@@ -146,7 +152,29 @@ export default {
             }],
             multipleSelection: []
         }
+    },
+    methods:{
+        //获取工单信息
+        handleGet(){
+            const params = {
+                shopOrder:this.shopOrder,
+                tenantSiteCode:this.tenantSiteCode
+            }
+            if(params.shopOrder !== ""){
+                findShopOrderListRequest(params).then(data =>{
+                    
+                    const res = data.data
+                    if(res.code == 200){
+                        this.shopOrderInfo = res.data
+                        console.log('获取工单信息'+JSON.stringify(this.shopOrderInfo))
+                    }
+                    
+                })
+            }
+            
+        }
     }
+
 }
 </script>
 <style lang="scss" scoped>
