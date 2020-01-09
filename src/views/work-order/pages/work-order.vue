@@ -13,11 +13,11 @@
       </div>
       <div class="right">
         <el-button size="small" type="primary" @click="getOrder">查询</el-button>
-        <el-button size="small" type="primary">重置</el-button>
+        <el-button size="small" type="primary" @click='reset'>重置</el-button>
       </div>
     </div>
     <div class="operate">
-      <el-button size="small" type="primary">保存</el-button>
+      <el-button size="small" type="primary" @click="handleSave">保存</el-button>
       <el-button size="small" type="danger">删除</el-button>
     </div>
 
@@ -35,13 +35,13 @@
             class="demo-ruleForm"
           >
             <el-form-item label="类型：" prop="style">
-              <el-select v-model="ruleForm.style" placeholder="生产">
+              <el-select v-model="ruleForm.shopOrderType" placeholder="生产">
                 <el-option label="生产" value="PRODUCTION"></el-option>
                 <el-option label="返工" value="REWORK"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="状态：" prop="state">
-              <el-select v-model="ruleForm.state" placeholder="可下达/完成/关闭">
+              <el-select v-model="ruleForm.status" placeholder="可下达/完成/关闭">
                 <el-option label="可下达" value="RELEASABLE"></el-option>
                 <el-option label="完成" value="DONE"></el-option>
                 <el-option label="关闭" value="CLOSE"></el-option>
@@ -49,7 +49,7 @@
             </el-form-item>
             <el-form-item label="计划物料:" prop="material">
               <el-col :span="9" style="margin-right:7px;">
-                <el-input placeholder="请输入计划物料" v-model="ruleForm.material"></el-input>
+                <el-input placeholder="请输入计划物料" v-model="ruleForm.plannedMaterial"></el-input>
               </el-col>
               <div class="choiceBox">
                 <i class="el-icon-document-copy"></i>
@@ -59,7 +59,7 @@
                 <el-form>
                   <el-form-item label="版本：">
                     <el-col :span="12">
-                      <el-input v-model="ruleForm.materialVer"></el-input>
+                      <el-input v-model="ruleForm.plannedMaterialRev"></el-input>
                     </el-col>
                   </el-form-item>
                 </el-form>
@@ -67,7 +67,7 @@
             </el-form-item>
             <el-form-item label="计划工艺路线:" label-width="150">
               <el-col :span="9" style="margin-right:7px;">
-                <el-input placeholder="计划工艺路线" v-model="ruleForm.technologyLine"></el-input>
+                <el-input placeholder="计划工艺路线" v-model="ruleForm.plannedRouter"></el-input>
               </el-col>
               <div class="choiceBox">
                 <i class="el-icon-document-copy"></i>
@@ -77,7 +77,7 @@
                 <el-form>
                   <el-form-item label="版本：">
                     <el-col :span="12">
-                      <el-input v-model="ruleForm.technologyLineVer"></el-input>
+                      <el-input v-model="ruleForm.plannedRouterRev"></el-input>
                     </el-col>
                   </el-form-item>
                 </el-form>
@@ -85,14 +85,14 @@
             </el-form-item>
             <el-form-item label="生产数量:" prop="number">
               <el-col :span="9" style="margin-right:31px;">
-                <el-input placeholder="请输入生产数量" v-model="ruleForm.number"></el-input>
+                <el-input placeholder="请输入生产数量" v-model="ruleForm.productQty"></el-input>
               </el-col>
               <!--已下达数量-->
               <div>
                 <el-form>
                   <el-form-item label="已下达数量：">
                     <el-col :span="14">
-                      <el-input v-model="ruleForm.issuedNum" :disabled="true"></el-input>
+                      <el-input v-model="ruleForm.releasedQuantity" :disabled="true"></el-input>
                     </el-col>
                   </el-form-item>
                 </el-form>
@@ -102,19 +102,14 @@
         </el-tab-pane>
         <el-tab-pane label="自定义字段">
           <el-form>
-            <el-form-item label="Kay_自定义字段1：">
+            <el-form-item :label="item.fieldName" v-for="(item,index) in customizedFieldDefInfoList" :key="index">
               <el-col :span="14">
-                <el-input v-model="kays.kays_1"></el-input>
-              </el-col>
-            </el-form-item>
-            <el-form-item label="Kay_自定义字段2：">
-              <el-col :span="14">
-                <el-input v-model="kays.kays_2"></el-input>
+                <el-input v-model="item.fieldLabel"></el-input>
               </el-col>
             </el-form-item>
             <el-form-item label="Kay_自定义字段3：">
               <el-col :span="14" style="margin-right:7px;">
-                <el-input v-model="kays.kays_3" :disabled="true"></el-input>
+                <el-input v-model="ruleForm.kays_3" :disabled="true"></el-input>
               </el-col>
               <div class="choiceBox">
                 <i class="el-icon-document-copy"></i>
@@ -129,22 +124,24 @@
 
 <script>
 import{
-    findShopOrderRequest
+    findShopOrderRequest,
+    updateShopOrderRequest,
+    saveDcGroupRequest,
+    findFieldRequest
 } from '@/api/work-order/work-order.api.js' 
 export default {
   data() {
     return {
+      //工单表信息
         ruleForm: {
-            style: "", //类型
-            state: "", //状态
-            material: "", //物料
-            materialVer: "", //物料版本
-            technologyLine: "", //计划工艺路线
-            number: "", //生产数量
-            technologyLineVer: "", //计划工艺路线版本
-            issuedNum: "" //已下达数量
-        },
-        kays: {
+            shopOrderType: "", //类型
+            status: "", //状态
+            plannedMaterial: "", //计划物料
+            plannedMaterialRev: "", //计划物料版本
+            plannedRouter: "", //计划工艺路线
+            plannedRouterRev: "", //计划工艺路线版本
+            productQty: "", //生产数量
+            releasedQuantity: "" ,//已下达数量
             kay_1: "",
             kay_2: "",
             kay_3: ""
@@ -157,30 +154,154 @@ export default {
             ],
             number: [{ required: true, message: "请输入数量", trigger: "change" }]
         },
-        shopOrder:'',//工单号
+        shopOrder:'',//最新工单
+        oldShopOrder:'',//旧工单(也就是搜索的工单)
         tenantSiteCode:'',
         allOrders:[],//获取到的所有工单
         getSearchData:'',//查询获取的工单数据
+        customizedFieldDefInfoList:[],//自定义字段信息
     };
   },
   methods:{
-      //查询工单
-      getOrder(){
-          const params ={
-              shopOrder:this.shopOrder,
-              tenantSiteCode:this.tenantSiteCode
-          }
-          findShopOrderRequest(params).then(data =>{
-              const res = data.data
-            //   console.log('获取工单'+JSON.stringify(data))
-              if(res.code == 200){
-                  this.getSearchData = res.data.shopOrder
-                  console.log('获取工单所有信息'+JSON.stringify(res.data.shopOrder))
-              }
-          })
+    //初始化获取自定义字段
+    getCustom(){
+        const params ={
+          customizedItem:'永恒之歌'
+        }
+        findFieldRequest(params).then(data=>{
+          console.log("初始化自定义字段"+JSON.stringify(data))
+        })
+      },
+    //重置
+    reset(){
+      //把绑定ruleForm的数据清空
+      for(let key in this.ruleForm){
+         this.ruleForm[key]  = ''
       }
+      //shopOrder
+      this.shopOrder = ''
+      //重置oldShopOrder
+      this.oldShopOrder = ''
+
+    },
+      //查询指定工单
+    getOrder(){
+        const params ={
+            shopOrder:this.shopOrder,
+            tenantSiteCode:this.tenantSiteCode
+        }
+        findShopOrderRequest(params).then(data =>{
+          console.log('获取工单所有信息'+JSON.stringify(data))
+            const res = data.data
+            console.log('获取工单'+JSON.stringify(data))
+            if(res.code == 200){
+                this.getSearchData = res.data.shopOrder//工单信息
+                this.oldShopOrder = this.getSearchData.shopOrder
+                this.ruleForm.shopOrderType = this.getSearchData.shopOrderType
+                this.ruleForm.plannedMaterial = this.getSearchData.plannedMaterial
+                this.ruleForm.status = this.getSearchData.status
+                this.ruleForm.plannedMaterialRev = this.getSearchData.plannedMaterialRev
+                this.ruleForm.plannedRouter = this.getSearchData.plannedRouter
+                this.ruleForm.plannedRouterRev = this.getSearchData.plannedRouterRev
+                this.ruleForm.productQty = this.getSearchData.productQty
+                this.ruleForm.releasedQuantity = this.getSearchData.releasedQuantity
+                this.customizedFieldDefInfoList = res.data.customizedFieldDefInfoList//工单的自定义字段信息
+            }
+        })
+    },
+    //保存
+    handleSave(){
+      if(this.ruleForm.style ==''){
+        this.$message({
+          message:'类型未填写,提交失败',
+          type:'warning'
+        })
+      }else if(this.ruleForm.state ==''){
+        this.$message({
+          message:'状态未填写,提交失败',
+          type:'warning'
+        }) 
+      }else if(this.ruleForm.material ==''){
+        this.$message({
+          message:'计划物料未填写,提交失败',
+          type:'warning'
+        })
+      }else if(this.ruleForm.number == ''){
+        this.$message({
+          message:'生产数量未填写,提交失败',
+          type:'warning'
+        })
+      }else{
+        const params = {
+          customizedFieldDefInfoList: [
+          {
+              createTime: "2019-12-20 09:00:00",
+              createUserId: "string",
+              createUserName: "string",
+              deleteFlag: false,
+              fieldLabel: "string",
+              fieldName: "field01",
+              fieldSize: 0,
+              fieldType: "string",
+              fieldValue: "001",
+              limitGeneralCode: "string",
+              limitGeneralField: "string",
+              modifyTime: "2019-12-20 09:00:00",
+              modifyUserId: "string",
+              modifyUserName: "string",
+              required: true,
+              sequence: 0,
+              tenantSiteCode: "test"
+            },
+          {
+                createTime: "2019-12-20 09:00:00",
+                createUserId: "string",
+                createUserName: "string",
+                deleteFlag: false,
+                fieldLabel: "string",
+                fieldName: "field02",
+                fieldSize: 0,
+                fieldType: "string",
+                fieldValue: "001",
+                limitGeneralCode: "string",
+                limitGeneralField: "string",
+                modifyTime: "2019-12-20 09:00:00",
+                modifyUserId: "string",
+                modifyUserName: "string",
+                required: true,
+                sequence: 0,
+                tenantSiteCode: "test"
+              }
+            ],
+            shopOrder: {
+              shopOrder:this.shopOrder,
+              shopOrderType: this.ruleForm.shopOrderType, //类型
+              status: this.ruleForm.status,  //状态
+              plannedMaterial: this.ruleForm.plannedMaterial,  //计划物料
+              plannedMaterialRev: this.ruleForm.plannedMaterialRev,  //计划物料版本
+              plannedRouter: this.ruleForm.plannedRouter,  //计划工艺路线
+              plannedRouterRev: this.ruleForm.plannedRouterRev,  //计划工艺路线版本
+              productQty: this.ruleForm.productQty, //生产数量
+              releasedQuantity: this.ruleForm.releasedQuantity, //已下达数量
+              tenantSiteCode: "test"
+            }
+        }
+        if(this.oldShopOrder == this.shopOrder){
+          //oldShopOrder和shopOrder相同则调用更新接口
+          updateShopOrderRequest(params).then(data =>{
+            console.log('oldShopOrder和shopOrder相同则调用更新接口'+JSON.stringify(data))
+          })
+        }else{
+          //oldShopOrder和shopOrder不相同则调用新增接口
+          saveDcGroupRequest(params).then(data =>{
+            console.log('oldShopOrder和shopOrder不同则调用更新接口'+JSON.stringify(data))
+          })
+        }
+      }
+    },
   },
   created(){
+    this.getCustom()
   }
 };
 </script>
