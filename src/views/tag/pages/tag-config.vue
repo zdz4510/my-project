@@ -1,17 +1,17 @@
 <template>
-  <div class="lotStep">
+  <div class="tagConfig">
     <div class="query">
       <div class="left">
         <el-form
-          :model="lotStepForm"
-          ref="lotStepForm"
+          :model="tagConfigForm"
+          ref="tagConfigForm"
           label-width="100px"
-          class="lotStepForm"
+          class="tagConfigForm"
         >
-          <el-form-item label="LOT" prop="lot">
+          <el-form-item label="标签ID" prop="tagID">
             <el-input
-              v-model.trim="lotStepForm.lot"
-              placeholder="请输入LOT"
+              v-model.trim="tagConfigForm.tagID"
+              placeholder="请输入标签ID"
             ></el-input>
           </el-form-item>
         </el-form>
@@ -59,17 +59,20 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55"> </el-table-column>
-        <el-table-column prop="lot" label="LOT" width="120"> </el-table-column>
-        <el-table-column prop="resourceCount" label="设备数量" width="120">
+        <el-table-column prop="tagID" label="标签ID" width="120">
         </el-table-column>
-        <el-table-column prop="groupDes" label="LOT描述" width="170">
+        <el-table-column prop="resourceCount" label="标签描述" width="120">
+        </el-table-column>
+        <el-table-column prop="groupDes" label="标签内存大小" width="170">
         </el-table-column>
 
-        <el-table-column prop="createUserName" label="创建人" width="120">
+        <el-table-column prop="createUserName" label="命令行打印" width="120">
         </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" width="170">
+        <el-table-column prop="createTime" label="创建人" width="170">
         </el-table-column>
-        <el-table-column prop="modifyUserName" label="修改人" width="120">
+        <el-table-column prop="modifyUserName" label="创建时间" width="120">
+        </el-table-column>
+        <el-table-column prop="createTime" label="修改人" width="170">
         </el-table-column>
         <el-table-column
           prop="modifyTime"
@@ -115,8 +118,8 @@ import { mapMutations } from "vuex";
 export default {
   data() {
     return {
-      lotStepForm: {
-        lot: ""
+      tagConfigForm: {
+        tagID: ""
       },
       tableData: [],
       selectionList: [],
@@ -131,12 +134,12 @@ export default {
     this.init();
   },
   methods: {
-    ...mapMutations(["SETTYPELIST"]),
+    ...mapMutations(["TAGCONFIGLIST"]),
     init() {
       const data = {
         currentPage: this.currentPage,
         pageSize: this.pagesize,
-        lot: this.lotStepForm.lot
+        tagID: this.tagConfigForm.tagID
       };
       findResourceGroupListHttp(data).then(data => {
         const res = data.data;
@@ -146,7 +149,7 @@ export default {
           // this.pageShow = true;
           this.total = res.data.total;
           this.tableData = list;
-          // this.lotStepForm.lot = "";
+          // this.tagConfigForm.tagID = "";
           return;
         }
         this.$message({
@@ -182,20 +185,18 @@ export default {
     },
     handleAdd() {
       this.selectionList = [];
-      const emptyObj = { lot: "", groupDes: "" };
+      const emptyObj = { tagID: "", groupDes: "" };
       this.selectionList.push(emptyObj);
-      this.SETTYPELIST(this.selectionList);
+      this.TAGCONFIGLIST(this.selectionList);
       this.$router.push({
-        path: "/device/deviceTypeEdit",
-        // name: "deviceTypeEdit",
+        name: "tagConfigEdit",
         query: { operateType: "add" }
       });
     },
     handleEdit() {
-      this.SETTYPELIST(this.selectionList);
+      this.TAGCONFIGLIST(this.selectionList);
       this.$router.push({
-        path: "/device/deviceTypeEdit",
-        // name: "deviceTypeEdit",
+        name: "tagConfigEdit",
         query: { operateType: "edit" }
       });
     },
@@ -204,7 +205,7 @@ export default {
       const data = [];
       this.selectionList.forEach(element => {
         const obj = {
-          lot: element.lot
+          tagID: element.tagID
         };
         data.push(obj);
       });
@@ -232,12 +233,12 @@ export default {
       this.init();
     },
     handleReset() {
-      this.lotStepForm.lot = "";
+      this.tagConfigForm.tagID = "";
     },
     handleExport() {
       const data = {
-        lot: this.lotStepForm.lot,
-        groupDes: this.lotStepForm.groupDes
+        tagID: this.tagConfigForm.tagID,
+        groupDes: this.tagConfigForm.groupDes
       };
       exportExcelHttp(data);
     }
@@ -246,7 +247,7 @@ export default {
 </script>
 
 <style lang="scss">
-.lotStep {
+.tagConfig {
   padding: 0 30px;
   .operate {
     padding: 10px 5px;
@@ -258,9 +259,6 @@ export default {
     justify-content: space-between;
     .left {
       width: 300px;
-      .lot {
-        width: 80%;
-      }
     }
     .right {
       width: 680px;

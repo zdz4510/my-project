@@ -111,7 +111,10 @@
 
 <script>
 import { mapGetters, mapMutations } from "vuex";
-import { saveHttp } from "@/api/material/material.group.api.js";
+import {
+  getAllDistinctHttp,
+  saveHttp
+} from "@/api/material/material.group.api.js";
 
 export default {
   data() {
@@ -129,12 +132,12 @@ export default {
         ]
       },
       //穿梭框
-      titles: ["已关联物料", "未关联物料"],
+      titles: ["未关联物料", "已关联物料"],
       transferData: [],
       value: [],
       cloneForm: [],
-      allocated: [],
-      undistributed: [],
+      relatived: [],
+      unrelatived: [],
       saveDialog: false,
       isEditResource: false
     };
@@ -150,11 +153,26 @@ export default {
     this.init();
     if (this.operateType === "edit") {
       this.isEditResource = true;
+      this.materialGroupForm.materialList.forEach(element => {
+        this.value.push(element.material);
+      });
     }
   },
   methods: {
     ...mapMutations(["MATERIALGROUPLIST"]),
     init() {
+      getAllDistinctHttp().then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          console.log(res.data);
+          this.transferData = res.data;
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
       //   const data = {
       //     materialGroup: this.materialGroupForm.materialGroup
       //   };
@@ -165,11 +183,11 @@ export default {
       //       console.log(res);
       //       if (res.code === 200) {
       //         const list = res.data;
-      //         this.allocated = list.allocated;
-      //         this.undistributed = list.undistributed;
+      //         this.relatived = list.relatived;
+      //         this.unrelatived = list.unrelatived;
       //         //合并数组
-      //         this.transferData = [...this.allocated, ...this.undistributed];
-      //         this.undistributed.forEach(element => {
+      //         this.transferData = [...this.relatived, ...this.unrelatived];
+      //         this.unrelatived.forEach(element => {
       //           this.value.push(element.material);
       //         });
       //         console.log(this.transferData);
@@ -188,11 +206,11 @@ export default {
       //       console.log(res);
       //       if (res.code === 200) {
       //         const list = res.data;
-      //         this.allocated = list.allocated;
-      //         this.undistributed = list.undistributed;
+      //         this.relatived = list.relatived;
+      //         this.unrelatived = list.unrelatived;
       //         //合并数组
-      //         this.transferData = [...this.allocated, ...this.undistributed];
-      //         this.undistributed.forEach(element => {
+      //         this.transferData = [...this.relatived, ...this.unrelatived];
+      //         this.unrelatived.forEach(element => {
       //           this.value.push(element.material);
       //         });
       //         console.log(this.transferData);
@@ -220,7 +238,7 @@ export default {
     handleReset() {
       this.saveDialog = false;
       this.value = [];
-      this.undistributed.forEach(element => {
+      this.unrelatived.forEach(element => {
         this.value.push(element.material);
       });
       if (this.operateType === "add") {
@@ -240,7 +258,7 @@ export default {
           this.saveDialog = true;
         } else {
           this.$message({
-            message: "设备类型未填写",
+            message: "物料组未填写",
             type: "warning"
           });
           return false;
@@ -248,66 +266,41 @@ export default {
       });
     },
     handleSave() {
-      //穿梭框左侧数据
-      const allocated = this.$refs["transfer"].sourceData;
-      const resourceList = [];
-      allocated.forEach(element => {
-        resourceList.push(element.material);
-      });
-      console.log(this.materialGroupForm.materialGroup);
-      //工资级别代码未输入
-      if (this.materialGroupForm.materialGroup === "") {
+      //穿梭框右侧数据
+      const relatived = this.$refs["transfer"].targetData;
+      // const resourceList = [];
+      // relatived.forEach(element => {
+      //   resourceList.push(element.material);
+      // });
+      const tempArr = [
+        {
+          groupDes: this.materialGroupForm.groupDes,
+          materialGroup: this.materialGroupForm.materialGroup,
+          materialList: relatived
+        }
+      ];
+      const data =
+        this.operateType === "add"
+          ? { createList: tempArr }
+          : { updateList: tempArr };
+      saveHttp(data).then(data => {
+        const res = data.data;
+        console.log(res);
+        if (res.code === 200) {
+          this.$message({
+            message: res.message,
+            type: "success"
+          });
+          this.MATERIALGROUPLIST([]);
+          this.$router.push({ name: "materialGroup" });
+          return;
+        }
         this.$message({
-          message: "设备类型不能为空",
+          message: res.message,
           type: "warning"
         });
-        return;
-      }
-      const data = {
-        groupDes: this.materialGroupForm.groupDes,
-        materialGroup: this.materialGroupForm.materialGroup,
-        resourceList: resourceList
-      };
-      if (this.operateType === "edit") {
-        saveHttp(data).then(data => {
-          const res = data.data;
-          console.log(res);
-          if (res.code === 200) {
-            this.$message({
-              message: res.message,
-              type: "success"
-            });
-            this.MATERIALGROUPLIST([]);
-            this.$router.push({ name: "materialGroup" });
-            return;
-          }
-          this.$message({
-            message: res.message,
-            type: "warning"
-          });
-        });
-        return;
-      }
-      if (this.operateType === "add") {
-        saveHttp(data).then(data => {
-          const res = data.data;
-          console.log(res);
-          if (res.code === 200) {
-            this.$message({
-              message: res.message,
-              type: "success"
-            });
-            this.MATERIALGROUPLIST([]);
-            this.$router.push({ name: "materialGroup" });
-            return;
-          }
-          this.$message({
-            message: res.message,
-            type: "warning"
-          });
-        });
-        return;
-      }
+        this.saveDialog = false;
+      });
     }
   }
 };
@@ -328,7 +321,7 @@ export default {
       }
       .el-transfer {
         .el-transfer-panel {
-          width: 35%;
+          width: 30%;
         }
       }
     }
