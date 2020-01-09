@@ -5,6 +5,7 @@ import maintenanceRouter from "@/views/maintenance/router/index.js";
 import certRouter from "@/views/cert-user/router/index.js";
 import materialRouter from "@/views/material/router/index.js";
 import productRouter from "@/views/dc/router/index.js";
+import tagRouter from "@/views/tag/router/index.js";
 import ncRouter from "@/views/nc/router/index.js";
 import store from "@/store/";
 Vue.use(VueRouter);
@@ -307,10 +308,14 @@ const routes = [
           )
       }
     ]
-    
   },
+  //生产
   {
     ...productRouter
+  },
+  //标签管理
+  {
+    ...tagRouter
   },
   /**
    * 预警管理
@@ -397,7 +402,7 @@ const routes = [
           import(
             /* webpackChunkName: "alarmDeal" */ "../views/alarm/pages/AlarmDeal.vue"
           )
-      },
+      }
     ]
   },
   /**

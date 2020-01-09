@@ -119,6 +119,14 @@
         </el-menu-item>
         <el-menu-item index="/device/test">测试页面</el-menu-item>
       </el-submenu>
+      <el-submenu index="tag">
+        <template slot="title">
+          <i class="el-icon-location"></i>
+          <span slot="title">标签管理</span>
+        </template>
+        <el-menu-item index="/tag/tagConfig">标签配置</el-menu-item>
+        <el-menu-item index="/tag/tagPrint">标签打印</el-menu-item>
+      </el-submenu>
     </el-menu>
   </div>
 </template>

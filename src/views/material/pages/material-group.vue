@@ -199,7 +199,8 @@ export default {
       });
     },
     handleEdit() {
-      this.MATERIALGROUPLIST(this.selectionList.materialList);
+      console.log(this.selectionList);
+      this.MATERIALGROUPLIST(this.selectionList);
       this.$router.push({
         // path: "/device/materialGroupEdit",
         name: "materialGroupEdit",

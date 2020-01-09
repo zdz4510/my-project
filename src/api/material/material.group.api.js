@@ -14,6 +14,15 @@ export const findPageHttp = data => {
 };
 
 /**
+ * 新增时拿到所有物料信息（去重）
+ *  url /mes/matGroup/getAllDistinct
+ */
+export const getAllDistinctHttp = () => {
+  // const params = qs.stringify(data);
+  return request.post(`${window.VUE_APP_URL}/mes/matGroup/getAllDistinct`);
+};
+
+/**
  * 不分页查询所有信息
  *  url /mes/matGroup/listALL
  */
@@ -26,6 +35,7 @@ export const listALLHttp = data => {
  *  url /mes/matGroup/save
  */
 export const saveHttp = data => {
+  console.log(data);
   return request.post(`${window.VUE_APP_URL}/mes/matGroup/save`, data);
 };
 
