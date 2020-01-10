@@ -16,39 +16,6 @@
       </el-button>
     </div>
     <div class="showInfo">
-      <div class="left" v-if="operateType === 'edit'">
-        <!-- <el-select
-          v-model="value"
-          clearable
-          placeholder="请选择"
-          :disabled="selectIsDisabled"
-          @clear="handleClearSelect"
-          @change="handleChangeOption"
-          @focus="handleSelectFocus"
-          ref="select"
-        >
-          <el-option
-            v-for="item in cloneList"
-            :key="item.salaryLevelCode"
-            :label="item.salaryLevelName"
-            :value="item.salaryLevelCode"
-          >
-          </el-option>
-        </el-select> -->
-        <el-table
-          ref="editTable"
-          :data="cloneList"
-          border
-          highlight-current-row
-          style="width: 100%"
-          height="513px"
-          @row-click="handleCurrentChange"
-        >
-          <el-table-column prop="resource" label="设备编号"> </el-table-column>
-          <el-table-column prop="resourceDes" label="设备描述">
-          </el-table-column>
-        </el-table>
-      </div>
       <div class="right">
         <div class="resource">
           <el-form
@@ -484,10 +451,6 @@ export default {
         });
       }
     },
-    //选择设备
-    handleCurrentChange(currentRow) {
-      this.maintenanceForm = JSON.parse(JSON.stringify(currentRow));
-    },
     //验证form表单
     checkFormInfo(formArr, handleType) {
       let count = 0;
@@ -652,10 +615,6 @@ export default {
     padding: 10px 5px;
   }
   .showInfo {
-    display: flex;
-    .left {
-      width: 200px;
-    }
     .right {
       flex: 1;
       .resource {

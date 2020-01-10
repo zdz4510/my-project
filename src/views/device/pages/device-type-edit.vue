@@ -13,39 +13,6 @@
     </div>
 
     <div class="showInfo">
-      <div class="left">
-        <!-- <el-select
-          v-model="value"
-          clearable
-          placeholder="请选择"
-          :disabled="selectIsDisabled"
-          @clear="handleClearSelect"
-          @change="handleChangeOption"
-          @focus="handleSelectFocus"
-          ref="select"
-        >
-          <el-option
-            v-for="item in cloneList"
-            :key="item.salaryLevelCode"
-            :label="item.salaryLevelName"
-            :value="item.salaryLevelCode"
-          >
-          </el-option>
-        </el-select> -->
-        <el-table
-          ref="editTable"
-          :data="cloneList"
-          border
-          highlight-current-row
-          style="width: 100%"
-          height="513px"
-          @row-click="handleCurrentChange"
-        >
-          <el-table-column prop="resourceGroup" label="设备类型">
-          </el-table-column>
-          <el-table-column prop="groupDes" label="组别描述"> </el-table-column>
-        </el-table>
-      </div>
       <div class="right">
         <el-form
           :model="typeForm"
@@ -205,8 +172,6 @@ export default {
     //返回
     handleBack() {
       this.selectionList = [];
-      // const emptyObj = { resourceGroup: "", groupDes: "" };
-      // this.selectionList.push(emptyObj);
       this.SETTYPELIST(this.selectionList);
       this.$router.push({
         path: "/device/deviceType"
@@ -223,10 +188,6 @@ export default {
         this.typeForm.resourceGroup = "";
         this.typeForm.groupDes = "";
       }
-    },
-    //选择设备
-    handleCurrentChange(currentRow) {
-      this.typeForm = JSON.parse(JSON.stringify(currentRow));
     },
     //保存前验证表单
     checkAdd(formName) {
@@ -316,10 +277,6 @@ export default {
     padding: 10px 5px;
   }
   .showInfo {
-    display: flex;
-    .left {
-      width: 200px;
-    }
     .right {
       flex: 1;
       .el-form {

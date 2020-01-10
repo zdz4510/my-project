@@ -46,8 +46,8 @@
       <!-- <el-button size="small" type="primary" @click="handleExport"
         >导出</el-button
       > -->
-      <el-button size="small" type="primary" @click="handleImport"
-        >导入</el-button
+      <el-button size="small" type="primary" @click="handleExport"
+        >导出</el-button
       >
     </div>
     <div class="showInfo">
@@ -238,8 +238,8 @@ export default {
         this.deleteDialog = false;
       });
     },
-    //导入
-    handleImport() {}
+    //导出
+    handleExport() {}
   }
 };
 </script>
