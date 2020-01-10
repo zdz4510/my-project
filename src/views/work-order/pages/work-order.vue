@@ -18,7 +18,7 @@
     </div>
     <div class="operate">
       <el-button size="small" type="primary" @click="handleSave">保存</el-button>
-      <el-button size="small" type="danger">删除</el-button>
+      <el-button size="small" type="danger" @click="handleDelete">删除</el-button>
     </div>
 
     <div class="showInfo">
@@ -101,10 +101,15 @@
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="自定义字段">
-          <el-form>
-            <el-form-item :label="item.fieldName" v-for="(item,index) in customizedFieldDefInfoList" :key="index">
+          <el-form :rules="rules">
+            <el-form-item :label="item.fieldName" v-for="(item,index) in customizedFieldDefInfoList" :key="index" v-show="item.fieldType =='C'" prop="custom">
               <el-col :span="14">
-                <el-input v-model="item.fieldLabel"></el-input>
+                <el-input v-model="item.fieldValue"></el-input>
+              </el-col>
+            </el-form-item>
+            <el-form-item :label="item.fieldName" v-for="(item,index) in customizedFieldDefInfoList" :key="index+item" v-show="item.fieldType !=='C'">
+              <el-col :span="14">
+                <el-input v-model="item.fieldValue"></el-input>
               </el-col>
             </el-form-item>
             <el-form-item label="Kay_自定义字段3：">
@@ -118,7 +123,18 @@
           </el-form>
         </el-tab-pane>
       </el-tabs>
-    </div>
+    </div>  
+    <!--删除提醒-->
+    <el-dialog
+      title="删除"
+      :visible.sync="dialogVisible"
+      width="30%">
+      <span>确定删除此工单吗？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="sureDelete">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -126,8 +142,9 @@
 import{
     findShopOrderRequest,
     updateShopOrderRequest,
-    saveDcGroupRequest,
-    findFieldRequest
+    saveShopOrderRequest,
+    findFieldRequest,
+    deleteRequest
 } from '@/api/work-order/work-order.api.js' 
 export default {
   data() {
@@ -152,7 +169,9 @@ export default {
             material: [
                 { required: true, message: "请输入计划物料", trigger: "change" }
             ],
-            number: [{ required: true, message: "请输入数量", trigger: "change" }]
+            number: [{ required: true, message: "请输入数量", trigger: "change" }],
+            custom: [{ required: true, message: "请输入自定义字段", trigger: "change" }],
+            
         },
         shopOrder:'',//最新工单
         oldShopOrder:'',//旧工单(也就是搜索的工单)
@@ -160,6 +179,7 @@ export default {
         allOrders:[],//获取到的所有工单
         getSearchData:'',//查询获取的工单数据
         customizedFieldDefInfoList:[],//自定义字段信息
+        dialogVisible:false,//删除工单提示框
     };
   },
   methods:{
@@ -289,16 +309,80 @@ export default {
         if(this.oldShopOrder == this.shopOrder){
           //oldShopOrder和shopOrder相同则调用更新接口
           updateShopOrderRequest(params).then(data =>{
+            const res = data.data
+            if(res.code == 200){
+              this.$message({
+                message:'更新成功',
+                type:'success'
+              })
+            }else{
+              this.$message({
+                message:'更新失败',
+                type:'warning'
+              })
+            }
             console.log('oldShopOrder和shopOrder相同则调用更新接口'+JSON.stringify(data))
           })
         }else{
           //oldShopOrder和shopOrder不相同则调用新增接口
-          saveDcGroupRequest(params).then(data =>{
+          saveShopOrderRequest(params).then(data =>{
+            const res = data.data
+            if(res.code == 200){
+              this.$message({
+                message:'新增成功',
+                type:'success'
+              })
+              this.$router.go(0);
+            }else{
+              this.$message({
+                message:'新增失败',
+                type:'warning'
+              })
+            }
             console.log('oldShopOrder和shopOrder不同则调用更新接口'+JSON.stringify(data))
           })
         }
       }
     },
+    //检测是否点击过查询工单的按钮，点击过查询按钮则可删除此工单，如果输入框中的工单号与查询的工单不相同或者输入框中的工单号为空，则不允许删除
+    handleDelete(){
+      if(this.oldShopOrder == '' || this.oldShopOrder !== this.shopOrder){
+        this.$message({
+          message:'删除失败，请先查询工单!',
+          type:'warning'
+        })
+        return 
+      }else{
+        this.dialogVisible = true
+      }
+    },
+    //确认删除工单
+    sureDelete(){
+      const params = {
+        shopOrder:this.oldShopOrder
+      }
+      console.log(this.oldShopOrder)
+      deleteRequest(params).then(data =>{
+        console.log('删除的返回信息'+JSON.stringify(data))
+        const res = data.data
+        if(res.code == 200){
+          this.dialogVisible = false
+          this.$message({
+            message:'删除成功！',
+            type:'success'
+          })
+          return
+        }else{
+          this.dialogVisible = false
+          this.$message({
+            message:'删除失败！',
+            type:'warning'
+          })
+          return
+        }
+      })
+    }
+
   },
   created(){
     this.getCustom()

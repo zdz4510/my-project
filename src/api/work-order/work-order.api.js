@@ -21,12 +21,12 @@ export const findShopOrderRequest = data => {
 };
 
 /**
- * /mes/shopOrder/saveDcGroup
+ * /mes/shopOrder/saveShopOrder
 工单维护：添加工单表信息
 */
-export const saveDcGroupRequest = data => {
+export const saveShopOrderRequest = data => {
     return request.post(
-        `${window.VUE_APP_URL}/mes/shopOrder/saveDcGroup`, data);
+        `${window.VUE_APP_URL}/mes/shopOrder/saveShopOrder`, data);
 };
 
 /**
@@ -46,4 +46,15 @@ export const updateShopOrderRequest = data => {
 export const findFieldRequest = data => {
     return request.get(
         `${window.VUE_APP_URL}/mes/customizedFieldDef/findCustomizedFieldDefList?customizedItem=${data.customizedItem}`, data);
+};
+
+
+/**
+ * 
+/mes/shopOrder/deleteShopOrderBatch
+工单维护：批量删除工单表信息
+*/
+export const deleteRequest = data => {
+    return request.delete(
+        `${window.VUE_APP_URL}/mes/shopOrder/deleteShopOrderBatch?shopOrder=${data.shopOrder}`, data);
 };
