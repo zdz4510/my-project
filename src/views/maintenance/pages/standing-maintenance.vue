@@ -49,12 +49,12 @@
       >
         删除
       </el-button>
-      <!-- <el-button size="small" type="primary" @click="handleExport"
-        >导出</el-button
-      > -->
-      <el-button size="small" type="primary" @click="handleImport"
-        >导入</el-button
-      >
+      <el-button size="small" type="primary" @click="importDialog = true">
+        导入
+      </el-button>
+      <el-button size="small" type="primary" @click="handleExport">
+        导出
+      </el-button>
     </div>
     <div class="showInfo">
       <el-table
@@ -102,6 +102,26 @@
       >
       </el-pagination>
     </div>
+    <el-dialog title="导入" :visible.sync="importDialog" width="30%">
+      <span>
+        <div class="import">
+          <el-button size="small" type="primary" @click="downLoad">
+            下载导入模板
+          </el-button>
+        </div>
+        <div class="import">
+          <el-button size="small" type="primary" @click="upLoad">
+            上传导入文件
+          </el-button>
+        </div>
+      </span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="importDialog = false">取消上传</el-button>
+        <el-button type="primary" @click="handleImport">
+          确定上传
+        </el-button>
+      </span>
+    </el-dialog>
     <el-dialog title="删除" :visible.sync="deleteDialog" width="30%">
       <span>是否确认删除{{ selectionList.length }}条数据？</span>
       <span slot="footer" class="dialog-footer">
@@ -117,7 +137,8 @@
 <script>
 import {
   findPageHttp,
-  deleteStationBatchHttp
+  deleteStationBatchHttp,
+  findResourceGroupListHttp
 } from "@/api/maintenance/standing.api.js";
 import { mapMutations } from "vuex";
 export default {
@@ -135,7 +156,8 @@ export default {
       tableData: [],
       selectionList: [],
       stations: [],
-      deleteDialog: false
+      deleteDialog: false,
+      importDialog: false
     };
   },
   created() {
@@ -231,8 +253,19 @@ export default {
         this.deleteDialog = false;
       });
     },
-    //导入
-    handleImport() {}
+    //确认上传
+    handleImport() {},
+    //下载模板
+    downLoad() {
+      findResourceGroupListHttp();
+      this.importDialog = false;
+    },
+    //上传文件
+    upLoad() {},
+    //导出
+    handleExport(){
+
+    }
   }
 };
 </script>
@@ -254,6 +287,12 @@ export default {
     .right {
       width: 680px;
       padding: 5px 30px;
+    }
+  }
+  .el-dialog {
+    .import {
+      text-align: center;
+      margin: 20px;
     }
   }
 }

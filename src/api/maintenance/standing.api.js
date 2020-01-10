@@ -45,7 +45,8 @@ export const importHttp = data => {
  *  url /mes/station/station/template
  */
 export const findResourceGroupListHttp = data => {
-  return request.get(`${window.VUE_APP_URL}/mes/station/station/template`, {
-    params: data
-  });
+  let params = qs.stringify(data);
+  let url = `${window.VUE_APP_URL}/mes/station/station/template?${params}`;
+  console.log(url);
+  window.open(url);
 };
