@@ -33,7 +33,7 @@
                         <el-col :span="9">
                             <el-input  autocomplete="off" v-model='workOrderIssued.numIssued'></el-input>
                         </el-col>
-                        <el-button size="small" type="primary" style="margin-left:26px;">下达</el-button>
+                        <el-button size="small" type="primary" style="margin-left:26px;" @click="handleIssued">下达</el-button>
                     </el-form-item>
                 </el-form>
             </div>
@@ -70,16 +70,17 @@
                 </el-table-column>
                 <el-table-column
                 label="工单"
-                width="120">
+                width="120"
+                prop='shopOrder'>
                 <template slot-scope="scope">{{ scope.row.date }}</template>
                 </el-table-column>
                 <el-table-column
-                prop="name"
+                prop="lot"
                 label="LOT"
                 width="120">
                 </el-table-column>
                 <el-table-column
-                prop="address"
+                prop="quantity"
                 label="数量"
                 show-overflow-tooltip>
                 </el-table-column>
@@ -109,7 +110,8 @@
 </template>
 <script>
 import {
-    findShopOrderListRequest
+    findShopOrderListRequest,
+    releaseRequest
 } from '@/api/issued/issued.api.js' 
 export default {
     data(){
@@ -121,35 +123,7 @@ export default {
                 workOrder: '',
                 numIssued:'',
             },
-             tableData: [{
-                date: '2016-05-03',
-                name: '王小虎',
-                address: '上海市普陀区金沙江路 1518 弄'
-                }, {
-                date: '2016-05-02',
-                name: '王小虎',
-                address: '上海市普陀区金沙江路 1518 弄'
-                }, {
-                date: '2016-05-04',
-                name: '王小虎',
-                address: '上海市普陀区金沙江路 1518 弄'
-                }, {
-                date: '2016-05-01',
-                name: '王小虎',
-                address: '上海市普陀区金沙江路 1518 弄'
-                }, {
-                date: '2016-05-08',
-                name: '王小虎',
-                address: '上海市普陀区金沙江路 1518 弄'
-                }, {
-                date: '2016-05-06',
-                name: '王小虎',
-                address: '上海市普陀区金沙江路 1518 弄'
-                }, {
-                date: '2016-05-07',
-                name: '王小虎',
-                address: '上海市普陀区金沙江路 1518 弄'
-            }],
+            tableData:[],//工单下达列表
             multipleSelection: []
         }
     },
@@ -162,16 +136,36 @@ export default {
             }
             if(params.shopOrder !== ""){
                 findShopOrderListRequest(params).then(data =>{
-                    
+                    console.log('获取工单信息'+JSON.stringify(data))
+  
                     const res = data.data
                     if(res.code == 200){
                         this.shopOrderInfo = res.data
-                        console.log('获取工单信息'+JSON.stringify(this.shopOrderInfo))
+                        // console.log('获取工单信息'+JSON.stringify(this.shopOrderInfo))
+                    }else{
+                        this.$message({
+                            message:`${res.message}`,
+                            type:'warning'
+                        })
                     }
                     
                 })
             }
             
+        },
+        //点击下达按钮
+        handleIssued(){
+            const params = {
+                quantity: 2,
+                shopOrder: "S1"
+            }
+            releaseRequest(params).then(data=>{
+                const res = data.data
+                if(res.code == 200){
+                    this.tableData = res.data.releasedLotList
+                }
+                console.log('这是工单下达信息'+JSON.stringify(data))
+            })
         }
     }
 
