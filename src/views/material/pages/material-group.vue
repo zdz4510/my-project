@@ -148,11 +148,10 @@ export default {
       findPageHttp(data).then(data => {
         const res = data.data;
         console.log(res);
-        const list = res.data.data;
         if (res.code === 200) {
           // this.pageShow = true;
           this.total = res.data.total;
-          this.tableData = list;
+          this.tableData = res.data.data;
           // this.materialGroupForm.materialGroup = "";
           return;
         }

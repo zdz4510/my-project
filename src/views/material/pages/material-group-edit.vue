@@ -173,62 +173,10 @@ export default {
           type: "warning"
         });
       });
-      //   const data = {
-      //     materialGroup: this.materialGroupForm.materialGroup
-      //   };
-      //   console.log(this.operateType);
-      //   if (this.operateType === "add") {
-      //     getInformationHttp().then(data => {
-      //       const res = data.data;
-      //       console.log(res);
-      //       if (res.code === 200) {
-      //         const list = res.data;
-      //         this.relatived = list.relatived;
-      //         this.unrelatived = list.unrelatived;
-      //         //合并数组
-      //         this.transferData = [...this.relatived, ...this.unrelatived];
-      //         this.unrelatived.forEach(element => {
-      //           this.value.push(element.material);
-      //         });
-      //         console.log(this.transferData);
-      //         return;
-      //       }
-      //       this.$message({
-      //         message: res.message,
-      //         type: "warning"
-      //       });
-      //     });
-      //     return;
-      //   }
-      //   if (this.operateType === "edit") {
-      //     getInformationHttp(data).then(data => {
-      //       const res = data.data;
-      //       console.log(res);
-      //       if (res.code === 200) {
-      //         const list = res.data;
-      //         this.relatived = list.relatived;
-      //         this.unrelatived = list.unrelatived;
-      //         //合并数组
-      //         this.transferData = [...this.relatived, ...this.unrelatived];
-      //         this.unrelatived.forEach(element => {
-      //           this.value.push(element.material);
-      //         });
-      //         console.log(this.transferData);
-      //         return;
-      //       }
-      //       this.$message({
-      //         message: res.message,
-      //         type: "warning"
-      //       });
-      //     });
-      //     return;
-      //   }
     },
     //返回
     handleBack() {
       this.selectionList = [];
-      // const emptyObj = { materialGroup: "", groupDes: "" };
-      // this.selectionList.push(emptyObj);
       this.MATERIALGROUPLIST(this.selectionList);
       this.$router.push({
         name: "materialGroup"
@@ -246,11 +194,6 @@ export default {
         this.materialGroupForm.groupDes = "";
       }
     },
-    // //选择设备
-    // handleCurrentChange(currentRow) {
-    //   this.materialGroupForm = JSON.parse(JSON.stringify(currentRow));
-    // },
-    //保存前验证表单
     checkAdd(formName) {
       console.log(this.materialGroupForm.materialGroup === "");
       this.$refs[formName].validate(valid => {
@@ -268,10 +211,6 @@ export default {
     handleSave() {
       //穿梭框右侧数据
       const relatived = this.$refs["transfer"].targetData;
-      // const resourceList = [];
-      // relatived.forEach(element => {
-      //   resourceList.push(element.material);
-      // });
       const tempArr = [
         {
           groupDes: this.materialGroupForm.groupDes,
@@ -282,7 +221,7 @@ export default {
       const data =
         this.operateType === "add"
           ? { createList: tempArr }
-          : { updateList: tempArr };
+          : { createList: [], updateList: tempArr };
       saveHttp(data).then(data => {
         const res = data.data;
         console.log(res);

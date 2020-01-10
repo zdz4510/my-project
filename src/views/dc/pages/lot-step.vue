@@ -4,14 +4,24 @@
       <div class="left">
         <el-form
           :model="lotStepForm"
+          :inline="true"
           ref="lotStepForm"
+          :rules="lotStepFormRules"
           label-width="100px"
           class="lotStepForm"
         >
           <el-form-item label="LOT" prop="lot">
             <el-input
+              class="lot"
               v-model.trim="lotStepForm.lot"
               placeholder="请输入LOT"
+            ></el-input>
+            <i class="el-icon-document" @click="goQuery"></i>
+          </el-form-item>
+          <el-form-item label="备注" prop="remark">
+            <el-input
+              v-model.trim="lotStepForm.remark"
+              placeholder="请输入备注"
             ></el-input>
           </el-form-item>
         </el-form>
@@ -26,28 +36,27 @@
       </div>
     </div>
     <div class="operate">
-      <el-button size="small" type="primary" @click="handleAdd">
-        新增
+      <el-button size="small" type="primary">
+        LOT状态置为完成
       </el-button>
-      <el-button
-        size="small"
-        type="primary"
-        :disabled="selectionList.length <= 0"
-        @click="handleEdit"
-      >
-        修改
+      <el-dropdown @command="handleCommand">
+        <el-button type="primary" size="small">
+          步骤操作<i class="el-icon-arrow-down el-icon--right"></i>
+        </el-button>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item command="clear">清除步骤</el-dropdown-item>
+          <el-dropdown-item command="byPass">绕过步骤</el-dropdown-item>
+          <el-dropdown-item command="stepDone">
+            将整个数量置于队列中
+          </el-dropdown-item>
+          <el-dropdown-item command="lotDone">
+            将步骤标记为已完成
+          </el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
+      <el-button size="small" type="primary">
+        保存
       </el-button>
-      <el-button
-        size="small"
-        type="primary"
-        :disabled="selectionList.length <= 0"
-        @click="deleteDialog = true"
-      >
-        删除
-      </el-button>
-      <el-button size="small" type="primary" @click="handleExport"
-        >导出</el-button
-      >
     </div>
     <div class="showInfo">
       <el-table
@@ -57,23 +66,22 @@
         style="width: 100%"
         height="350px"
         @selection-change="handleSelectionChange"
+        @cell-dblclick="cellDblClick"
       >
         <el-table-column type="selection" width="55"> </el-table-column>
-        <el-table-column prop="lot" label="LOT" width="120"> </el-table-column>
-        <el-table-column prop="resourceCount" label="设备数量" width="120">
+        <el-table-column prop="lot" label="步骤" width="120"> </el-table-column>
+        <el-table-column prop="resourceCount" label="工序" width="120">
         </el-table-column>
-        <el-table-column prop="groupDes" label="LOT描述" width="170">
+        <el-table-column prop="groupDes" label="描述" width="170">
         </el-table-column>
 
-        <el-table-column prop="createUserName" label="创建人" width="120">
+        <el-table-column prop="createUserName" label="步骤状态" width="120">
         </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" width="170">
-        </el-table-column>
-        <el-table-column prop="modifyUserName" label="修改人" width="120">
+        <el-table-column prop="createTime" label="排队中数量" width="170">
         </el-table-column>
         <el-table-column
           prop="modifyTime"
-          label="修改时间"
+          label="在制数量"
           show-overflow-tooltip
         >
         </el-table-column>
@@ -116,7 +124,11 @@ export default {
   data() {
     return {
       lotStepForm: {
-        lot: ""
+        lot: "",
+        remark: ""
+      },
+      lotStepFormRules: {
+        lot: [{ required: true, message: "请输入lot", trigger: "blur" }]
       },
       tableData: [],
       selectionList: [],
@@ -169,6 +181,16 @@ export default {
       this.selectionList = val;
       console.log(this.selectionList);
     },
+    //双击单元格
+    cellDblClick(row, column) {
+      if (column.property === "lot") {
+        this.$router.push({ name: "lotStepDetail" });
+      }
+    },
+    //点击步骤操作菜单栏
+    handleCommand(command) {
+      console.log(command);
+    },
     //更改当前页码,再次请求数据
     handleCurrentChange(currentChange) {
       this.currentPage = currentChange;
@@ -180,16 +202,9 @@ export default {
       this.currentPage = 1;
       this.init();
     },
-    handleAdd() {
-      this.selectionList = [];
-      const emptyObj = { lot: "", groupDes: "" };
-      this.selectionList.push(emptyObj);
-      this.SETTYPELIST(this.selectionList);
-      this.$router.push({
-        path: "/device/deviceTypeEdit",
-        // name: "deviceTypeEdit",
-        query: { operateType: "add" }
-      });
+    //跳转到查询LOT界面
+    goQuery() {
+      this.$router.push({ name: "lotQuery" });
     },
     handleEdit() {
       this.SETTYPELIST(this.selectionList);
@@ -250,20 +265,21 @@ export default {
   padding: 0 30px;
   .operate {
     padding: 10px 5px;
+    .el-dropdown {
+      margin: 0 10px;
+    }
   }
   .query {
     height: 40px;
     padding: 10px;
     display: flex;
-    justify-content: space-between;
     .left {
-      width: 300px;
       .lot {
-        width: 80%;
+        width: 90%;
       }
     }
     .right {
-      width: 680px;
+      // width: 680px;
       padding: 5px 30px;
     }
   }
