@@ -94,6 +94,30 @@ export default {
           /* webpackChunkName: "lotStep" */ "@/views/dc/pages/lot-step.vue"
         )
     },
+    //LOT查询
+    {
+      path: "lotQuery",
+      name: "lotQuery",
+      meta: {
+        title: "LOT查询"
+      },
+      component: () =>
+        import(
+          /* webpackChunkName: "lotQuery" */ "@/views/dc/pages/lot-query.vue"
+        )
+    },
+    //LOT步骤状态变更查看详情
+    {
+      path: "lotStepDetail",
+      name: "lotStepDetail",
+      meta: {
+        title: "LOT步骤状态变更查看详情"
+      },
+      component: () =>
+        import(
+          /* webpackChunkName: "lotStepDetail" */ "@/views/dc/pages/lot-step-detail.vue"
+        )
+    },
     //Lot拆分
     {
       path: "lotDivestiture",
