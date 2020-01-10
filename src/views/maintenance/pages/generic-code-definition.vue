@@ -351,10 +351,10 @@ export default {
           { required: true, message: "请选择代码类型", trigger: "change" }
         ],
         generalCode: [
-          { required: true, message: "请输入代码名", trigger: "blur" },
-          { validator: valiGeneralCode, trigger: "blur" }
+          { required: true, message: "请输入代码名", trigger: "change" },
+          { validator: valiGeneralCode, trigger: "change" }
         ],
-        generalCodeDes: [{ validator: valiGeneralCodeDes, trigger: "blur" }]
+        generalCodeDes: [{ validator: valiGeneralCodeDes, trigger: "change" }]
       },
       addForm: {
         fieldName: "",
@@ -369,12 +369,12 @@ export default {
           { required: true, message: "请选择字段名", trigger: "change" }
         ],
         fieldLabel: [
-          { required: true, message: "请输入标签", trigger: "blur" }
+          { required: true, message: "请输入标签", trigger: "change" }
         ],
         fieldType: [
           { required: true, message: "请选择格式", trigger: "change" }
         ],
-        fieldSize: [{ validator: valiFieldSize, trigger: "blur" }]
+        fieldSize: [{ validator: valiFieldSize, trigger: "change" }]
       },
       addDialog: false,
       tableData: [],

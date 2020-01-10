@@ -138,7 +138,7 @@ export default {
     ...mapGetters(["workingCertificateList"]),
     rules() {
       return {
-        cert: [{ required: true, message: "请输入上岗证", trigger: "blur" }],
+        cert: [{ required: true, message: "请输入上岗证", trigger: "change" }],
         status: [{ required: true, message: "请选择状态", trigger: "change" }],
         certType: [
           { required: true, message: "请选择持续时间类型", trigger: "change" }

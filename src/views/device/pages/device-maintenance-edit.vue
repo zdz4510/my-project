@@ -307,7 +307,7 @@ export default {
     upkeepConfigRule() {
       return {
         conditionName: [
-          { required: true, message: "请输入保养条件名称", trigger: "blur" }
+          { required: true, message: "请输入保养条件名称", trigger: "change" }
         ],
         startTime: [
           {
@@ -317,10 +317,10 @@ export default {
           }
         ],
         conditionDes: [
-          { required: true, message: "请输入保养条件描述", trigger: "blur" }
+          { required: true, message: "请输入保养条件描述", trigger: "change" }
         ],
         maintenanceUserId: [
-          { required: true, message: "请输入保养人员", trigger: "blur" }
+          { required: true, message: "请输入保养人员", trigger: "change" }
         ],
         alarm: [
           {
@@ -333,7 +333,7 @@ export default {
           { required: true, message: "请输入预警功能", trigger: "change" }
         ],
         maintenancePeriod: [
-          { required: true, message: "请输入保养周期", trigger: "blur" },
+          { required: true, message: "请输入保养周期", trigger: "change" },
           { type: "number", message: "保养周期必须为数字值" }
         ],
         periodUnit: [

@@ -88,7 +88,7 @@ export default {
       },
       rules: {
         resourceGroup: [
-          { required: true, message: "请输入设备类型", trigger: "blur" }
+          { required: true, message: "请输入设备类型", trigger: "change" }
         ]
       },
       //穿梭框

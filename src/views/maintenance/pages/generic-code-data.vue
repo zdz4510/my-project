@@ -260,10 +260,10 @@ export default {
           { required: true, message: "请选择代码类型", trigger: "change" }
         ],
         generalCode: [
-          { required: true, message: "请输入代码名", trigger: "blur" },
-          { validator: valiGeneralCode, trigger: "blur" }
+          { required: true, message: "请输入代码名", trigger: "change" },
+          { validator: valiGeneralCode, trigger: "change" }
         ],
-        generalCodeDes: [{ validator: valiGeneralCodeDes, trigger: "blur" }]
+        generalCodeDes: [{ validator: valiGeneralCodeDes, trigger: "change" }]
       },
       addForm: {},
       addFormRules: {},

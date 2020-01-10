@@ -223,9 +223,9 @@ export default {
         fullQty: ""
       },
       standingFormRules: {
-        station: [{ required: true, message: "请输入站位", trigger: "blur" }],
+        station: [{ required: true, message: "请输入站位", trigger: "change" }],
         padIp: [
-          { required: true, message: "请输入IP地址", trigger: "blur" },
+          { required: true, message: "请输入IP地址", trigger: "change" },
           { validator: valiIP, trigger: "blur" }
         ],
         workCenter: [

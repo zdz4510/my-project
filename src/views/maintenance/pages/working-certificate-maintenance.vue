@@ -65,12 +65,14 @@
         </el-table-column>
         <el-table-column prop="status" label="状态" width="140">
           <template slot-scope="scope">
-            {{ scope.row.status | filterStatus }}
+            {{ scope.row.status ? "已启用" : "未启用" }}
+            <!-- {{ scope.row.status | filterStatus }} -->
           </template>
         </el-table-column>
         <el-table-column prop="certType" label="持续时间类型" width="150">
           <template slot-scope="scope">
-            {{ scope.row.certType | filterCertType }}
+            <!-- {{ scope.row.certType | filterCertType }} -->
+            {{ scope.row.certType ? "永久" : "临时" }}
           </template>
         </el-table-column>
         <el-table-column
@@ -130,18 +132,18 @@ export default {
     };
   },
   filters: {
-    filterStatus(value) {
-      if (value) {
-        return "已启用";
-      }
-      return "未启用";
-    },
-    filterCertType(value) {
-      if (value) {
-        return "永久";
-      }
-      return "临时";
-    }
+    // filterStatus(value) {
+    //   if (value) {
+    //     return "已启用";
+    //   }
+    //   return "未启用";
+    // },
+    // filterCertType(value) {
+    //   if (value) {
+    //     return "永久";
+    //   }
+    //   return "临时";
+    // }
   },
   created() {
     this.init();
