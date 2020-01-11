@@ -73,6 +73,7 @@
         <el-menu-item index="/dc/lotStep">LOT步骤状态变更*</el-menu-item>
         <el-menu-item index="/dc/lotDivestiture">LOT拆分*</el-menu-item>
         <el-menu-item index="/dc/lotMerge">LOT合并*</el-menu-item>
+        <el-menu-item index="/dc/productionOperate">生产操作*</el-menu-item>
       </el-submenu>
       <el-submenu index="alarm">
         <template slot="title">

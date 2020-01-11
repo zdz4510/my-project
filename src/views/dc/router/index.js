@@ -141,6 +141,18 @@ export default {
         import(
           /* webpackChunkName: "lotMerge" */ "@/views/dc/pages/lot-merge.vue"
         )
+    },
+    //生产操作
+    {
+      path: "productionOperate",
+      name: "productionOperate",
+      meta: {
+        title: "生产操作"
+      },
+      component: () =>
+        import(
+          /* webpackChunkName: "productionOperate" */ "@/views/dc/pages/production-operate.vue"
+        )
     }
   ]
 };
