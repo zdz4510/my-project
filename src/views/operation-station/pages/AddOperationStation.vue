@@ -2,11 +2,11 @@
 	<div>
 		<div class="operate ml30 mtb10">
 			<el-button class="mr25 ml30 pad1025" size="small" type="primary" @click="goBack">返回</el-button>
-			<el-button class="mr25 pad1025" size="small" type="primary" @click="save">保存</el-button>
+			<el-button class="mr25 pad1025" size="small" type="primary" @click="save('addForm')">保存</el-button>
 		</div>
 		<div class="search-bar">
 			<el-form :inline="true" :model="addForm" ref="addForm" :rules="rules" class="form-style">
-				<el-form-item label="工序:" prop="operation" >
+				<el-form-item label="工序:" prop="operation" required>
 					<el-select v-model="addForm.operation" @change="onChange">
 						<el-option
 							v-for="item in options"
@@ -60,7 +60,7 @@ import { addStation, getAllOperation, getOperationInfo} from '../../../api/opera
 				},
 				rules: {
 					operation: [
-						{ required: false, message: '请输入工序名称', trigger: 'blur' },
+						{ required: true, message: '请选择工序名称', trigger: 'change' },
 					],
 				},
 				options: [{
@@ -118,32 +118,39 @@ import { addStation, getAllOperation, getOperationInfo} from '../../../api/opera
 			resetForm(formName) {
 				this.$refs[formName].resetFields();
 			},
-			save(){
-				console.log(this.allocate)
-				let arr = []
-				for(let i = 0; i < this.allocate.length; i++){
-					for(let j = 0; j < this.transferData.length; j++){
-						if(this.allocate[i] == this.transferData[j]['resource']){
-							let obj = {}
-							obj.operation = this.addForm.operation
-							obj.workCenterRelation = this.transferData[j]['workCenterRelation']
-							obj.station = this.transferData[j]['station']
-							arr.push(obj)
+			save(formName){
+				this.$refs[formName].validate((valid) => {
+					if (valid) {
+						console.log(this.allocate)
+						let arr = []
+						for(let i = 0; i < this.allocate.length; i++){
+							for(let j = 0; j < this.transferData.length; j++){
+								if(this.allocate[i] == this.transferData[j]['resource']){
+									let obj = {}
+									obj.operation = this.addForm.operation
+									obj.workCenterRelation = this.transferData[j]['workCenterRelation']
+									obj.station = this.transferData[j]['station']
+									arr.push(obj)
+								}
+							}
 						}
+						console.log(arr,'arr')
+						addStation(arr).then(data => {
+							if(data.data.message == 'success'){
+								this.$message({
+									type: 'success',
+									message: '保存成功!'
+								});
+								setTimeout(()=>{
+									this.$router.push({path:'/operationStation/operationStation'})
+								},1000)
+							}
+						})
+					} else {
+						console.log('error submit!!');
+						return false;
 					}
-				}
-				console.log(arr,'arr')
-				addStation(arr).then(data => {
-					if(data.data.message == 'success'){
-						this.$message({
-							type: 'success',
-							message: '保存成功!'
-						});
-						setTimeout(()=>{
-							this.$router.push({path:'/operationStation/operationStation'})
-						},1000)
-					}
-				})
+				});
 			},
 			handleChange(value, direction, movedKeys) {
 				console.log(value, direction, movedKeys)
@@ -185,5 +192,5 @@ import { addStation, getAllOperation, getOperationInfo} from '../../../api/opera
 		padding: 10px;
 	}
 	.el-transfer /deep/ .el-transfer-panel { width: 300px !important; }
-	
+
 </style>

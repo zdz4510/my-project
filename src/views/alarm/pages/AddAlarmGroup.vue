@@ -14,7 +14,7 @@
 						</el-form-item>
 					</el-col>
 					<el-col :span="8">
-						<el-form-item label="分组描述:" prop="groupDes">
+						<el-form-item label="分组描述:" prop="groupDes" required>
 							<el-input v-model="addForm.groupDes"></el-input>
 						</el-form-item>
 					</el-col>
@@ -80,6 +80,9 @@
 				rules: {
 					alarmGroup: [
 						{ required:true,message:'请填写事件分组', trigger: 'blur' }
+					],
+					groupDes: [
+						{ required:true,message:'请填写事件分组描述', trigger: 'blur' }
 					],
 				},
 				addForm: {
@@ -183,7 +186,7 @@
 						if(this.input2){
 							return item.userType == this.select2 && item.informUserId.indexOf(this.input2) > -1
 						}else{
-							return item.userType == this.select2 
+							return item.userType == this.select2
 						}
 					})
 				}else{
@@ -205,7 +208,7 @@
 						if(this.input1){
 							return item.userType == this.select1 && item.informUserId.indexOf(this.input1) > -1
 						}else{
-							return item.userType == this.select1 
+							return item.userType == this.select1
 						}
 					})
 				}else{
@@ -222,7 +225,7 @@
 			},
 			searchUnallocate(val){
 				console.log(val,this.alarm2,'dd')
-				
+
 			}
 		}
 	}

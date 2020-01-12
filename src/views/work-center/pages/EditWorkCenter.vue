@@ -25,10 +25,10 @@
 				<div>
 					<el-form :inline="true" :model="editForm" ref="editForm" :rules="rules" class="add-form" :label-width="formLabelWidth">
 						<el-form-item label="工作中心:" prop="workCenter">
-							<el-input v-model="editForm.workCenter" ></el-input>
+							<el-input v-model="editForm.workCenter" disabled></el-input>
 						</el-form-item>
 						<el-form-item label="描述:" prop="workCenter">
-							<el-input v-model="editForm.workCenterDes" ></el-input>
+							<el-input v-model="editForm.workCenterDes" disabled></el-input>
 						</el-form-item>
 						<el-tabs v-model="activeName" type="card">
 							<el-tab-pane label="基础信息" name="first">
@@ -61,23 +61,83 @@
 									</el-col>
 								</el-row>
 							</el-tab-pane>
-							<el-tab-pane label="工作中心维护" name="second">
-								<el-transfer
-									filterable
-									:filter-method="filterMethod"
-									:titles="['未分配工作中心', '已分配工作中心']"
-									v-model="value"
-									:data="data">
-								</el-transfer>
+							<el-tab-pane label="工作中心关系维护" name="second">
+                <el-row>
+									<el-col :span="24">
+										<el-row>
+											<el-col :span="8">
+												<el-table :data="allocateData.filter(data => !workCenter1 || data.workCenter.toLowerCase().includes(workCenter1.toLowerCase()))" @select="check1" @select-all="check1">
+													<el-table-column label="工作中心:">
+														<el-table-column type="selection" width="55"></el-table-column>
+														<el-table-column prop="workCenterRelation" label="已分配工作中心"></el-table-column>
+													</el-table-column>
+													<el-table-column label="">
+														<template slot="header">
+															<el-input v-model="workCenter1" placeholder="输入工作中心搜索"/></template>
+														<el-table-column prop="workCenterDes" label="工作中心描述"></el-table-column>
+													</el-table-column>
+												</el-table>
+											</el-col>
+											<el-col :span="2">
+												<div class="direction mt70"><i class="el-icon-caret-right" @click="right"></i></div>
+												<div class="direction"><i class="el-icon-caret-left" @click="left"></i></div>
+											</el-col>
+											<el-col :span="8">
+												<el-table :data="unallocateData.filter(data => !workCenter2 || data.workCenter.toLowerCase().includes(workCenter2.toLowerCase()))" @select="check2" @select-all="check2">
+													<el-table-column label="工作中心:">
+														<el-table-column type="selection" width="55"></el-table-column>
+														<el-table-column prop="workCenter" label="未分配工作中心"></el-table-column>
+													</el-table-column>
+													<el-table-column label="">
+														<template slot="header">
+															<el-input v-model="workCenter2" placeholder="输入工作中心搜索" />
+														</template>
+														<el-table-column prop="workCenterDes" label="工作中心描述"></el-table-column>
+													</el-table-column>
+												</el-table>
+											</el-col>
+										</el-row>
+									</el-col>
+								</el-row>
 							</el-tab-pane>
 							<el-tab-pane label="用户" name="third">
-								<el-transfer
-									filterable
-									:filter-method="filterMethod"
-									:titles="['未分配用户', '已分配用户']"
-									v-model="value"
-									:data="data">
-								</el-transfer>
+                <el-row>
+									<el-col :span="24">
+										<el-row>
+											<el-col :span="8">
+												<el-table :data="allocateUser.filter(data => !workCenter1 || data.workCenter.toLowerCase().includes(workCenter1.toLowerCase()))" @select="check1" @select-all="check1">
+													<el-table-column label="工作中心:">
+														<el-table-column type="selection" width="55"></el-table-column>
+														<el-table-column prop="workCenterRelation" label="已分配工作中心"></el-table-column>
+													</el-table-column>
+													<el-table-column label="">
+														<template slot="header">
+															<el-input v-model="workCenter1" placeholder="输入工作中心搜索"/></template>
+														<el-table-column prop="workCenterDes" label="工作中心描述"></el-table-column>
+													</el-table-column>
+												</el-table>
+											</el-col>
+											<el-col :span="2">
+												<div class="direction mt70"><i class="el-icon-caret-right" @click="right"></i></div>
+												<div class="direction"><i class="el-icon-caret-left" @click="left"></i></div>
+											</el-col>
+											<el-col :span="8">
+												<el-table :data="unallocateUser.filter(data => !workCenter2 || data.workCenter.toLowerCase().includes(workCenter2.toLowerCase()))" @select="check2" @select-all="check2">
+													<el-table-column label="工作中心:">
+														<el-table-column type="selection" width="55"></el-table-column>
+														<el-table-column prop="workCenter" label="未分配工作中心"></el-table-column>
+													</el-table-column>
+													<el-table-column label="">
+														<template slot="header">
+															<el-input v-model="workCenter2" placeholder="输入工作中心搜索" />
+														</template>
+														<el-table-column prop="workCenterDes" label="工作中心描述"></el-table-column>
+													</el-table-column>
+												</el-table>
+											</el-col>
+										</el-row>
+									</el-col>
+								</el-row>
 							</el-tab-pane>
 						</el-tabs>
 						<div slot="footer" class="dialog-footer">
@@ -104,7 +164,8 @@
 
 <script>
 import { mapGetters, mapMutations } from "vuex";
-import {saveWorkCenter} from '../../../api/work.center.api.js'
+import {saveWorkCenter, getRelationData} from '../../../api/work.center.api.js'
+import _ from 'lodash';
 export default {
   name:'edit-work-center',
   computed: {
@@ -124,7 +185,7 @@ export default {
 				workCenterRelation:[],
 			},
 			rules: {
-				
+
 			},
 			status:[{
 				value:'1',
@@ -145,10 +206,24 @@ export default {
       oldRow: {}, // 当前选中的行
       cloneList: [], // 复制所以可以编辑的数据副本
       value: "",
-      selectIsDisabled: false,
+			selectIsDisabled: false,
+			selectedList:[],
+			selectedList2:[],
+			allocateData:[],
+			unallocateData:[],
+			cloneUnallocateData:[],
+			cloneAllocateData:[],
+      workCenter1:'',
+      workCenter2:'',
+      allocateUser:[],
+      unallocateUser:[],
     };
   },
-
+  created() {
+    this.$nextTick(() => {
+      this.init();
+    });
+  },
   methods: {
     ...mapMutations(["SETWORKCENTEREDITLIST"]),
     //初始化的操作
@@ -159,6 +234,13 @@ export default {
         this.cloneModify = JSON.parse(JSON.stringify(this.editForm)); // modify 的副本
         this.setCurrent(this.editForm); // 设置选中第一行
         this.currentRow = this.editForm; // 设置初始currentRow 为第一行
+        let params = {
+          workCenter:this.editForm.workCenter
+        }
+        getRelationData(params).then(data=>{
+          this.unallocateData = data.data.data.outerRelations
+          this.allocateData = data.data.data.relations
+        })
       }
     },
     //清除下拉列表时触发
@@ -173,10 +255,17 @@ export default {
       //过滤数组
       const tempList = this.cloneList.filter(item => item["workCenter"] == row);
       console.log(tempList);
-      this.cloneList = tempList;
+      // this.cloneList = tempList;
       this.editForm = tempList[0];
       this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
       this.setCurrent(tempList[0]);
+      let params = {
+        workCenter:this.editForm.workCenter
+      }
+      getRelationData(params).then(data=>{
+        this.unallocateData = data.data.data.outerRelations
+        this.allocateData = data.data.data.relations
+      })
     },
     //下拉列表获取到焦点时触发
     handleSelectFocus() {
@@ -190,7 +279,6 @@ export default {
       } else {
          console.log('数据一样不禁用下拉框还有不弹出保存')
         this.saveDialog = false;
-        
         this.selectIsDisabled = false;
       }
     },
@@ -218,6 +306,13 @@ export default {
       }
       this.editForm = currentRow;
       this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
+      let params = {
+        workCenter:this.editForm.workCenter
+      }
+      getRelationData(params).then(data=>{
+        this.unallocateData = data.data.data.outerRelations
+        this.allocateData = data.data.data.relations
+      })
     },
     //选中某一行
     //返回操作
@@ -255,12 +350,28 @@ export default {
     handleSave(formName) {
 			this.$refs[formName].validate((valid) => {
 				if (valid) {
-					let params = this.editForm
+          let arr = []
+          this.allocateData.map(item=>{
+            arr.push(item.workCenterRelation)
+          })
+          this.editForm.workCenterRelation = arr
+          let params = {
+            createList:[],
+            deleteList:[],
+            updateList:[{
+              status: this.editForm.status,
+              workCenterType: this.editForm.workCenterType,
+              workCenterDes:this.editForm.workCenterDes,
+              workCenter:this.editForm.workCenter,
+              workCenterRelation: arr
+            }]
+          }
+
 					saveWorkCenter(params).then(data => {
 						const res = data.data;
 						this.saveDialog = false; // 保存的提示框消失
 						this.selectIsDisabled = false;
-					
+
 						// 直接成功
 						if (res.code === 200) {
 							this.saveDialog = false;
@@ -278,7 +389,7 @@ export default {
 								this.editForm = this.currentRow;
 								this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
 							}
-					
+
 							if (this.cloneList.length == 1) {
 								let index = this.findIndexByItem(
 									this.workCenterEditList,
@@ -292,21 +403,36 @@ export default {
 							}
 						} else {
 							this.$message({
-								message: res.data,
+								message: res.message,
 								type: "error"
 							});
 							this.saveDialog = false;
 							this.setCurrent(this.oldRow);
 						}
 					});
-				}	
+				}
 			});
-    }
-  },
-  created() {
-    this.$nextTick(() => {
-      this.init();
-    });
+    },
+    check1(val){
+			this.selectedList = val
+		},
+		check2(val){
+			this.selectedList2 = val
+		},
+		right(){
+			this.unallocateData = _.concat(this.unallocateData,this.selectedList)
+			this.unallocateData = _.uniq(this.unallocateData)
+			this.allocateData = _.difference(this.allocateData,this.selectedList)
+			console.log(this.unallocateData,'un')
+			this.cloneAllocateData = _.cloneDeep(this.allocateData)
+		},
+		left(){
+			this.allocateData = _.concat(this.allocateData,this.selectedList2)
+			this.allocateData = _.uniq(this.allocateData)
+			this.unallocateData = _.difference(this.unallocateData,this.selectedList2)
+			console.log(this.unallocateData,'all')
+			this.cloneAllocateData = _.cloneDeep(this.allocateData)
+		},
   }
 };
 </script>
@@ -332,4 +458,13 @@ export default {
 	.bgw {
 		background: #FFFFFF;
 	}
+  .direction {
+    color: #409eff;
+    font-size: 40px;
+    cursor: pointer;
+    text-align: center;
+  }
+  .mt70 {
+    margin-top: 70px;
+  }
 </style>

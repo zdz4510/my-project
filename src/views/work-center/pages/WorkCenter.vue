@@ -16,7 +16,7 @@
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="edit" :disabled="this.checkedList.length === 0">编辑</el-button>
 			<el-button class="mr25 pad1025" size="small" type="warning"  @click="del" :disabled="this.checkedList.length === 0">删除</el-button>
 		</div>
-		
+
 		<div class="">
 			<el-table
 			ref="multipleTable"
@@ -56,41 +56,15 @@ import { mapMutations } from "vuex";
 	export default {
 		name:'work-center',
 		data() {
-			const generateData = () => {
-				const data = [];
-				const cities = ['上海', '北京', '广州', '深圳', '南京', '西安', '成都'];
-				const pinyin = ['上海', '北京', '广州', '深圳', '南京', '西安', '成都'];
-				cities.forEach((city, index) => {
-					data.push({
-						label: city,
-						key: index,
-						pinyin: pinyin[index]
-					});
-				});
-				return data;
-			};
 			return {
 				checkedList:[],
 				formLabelWidth:'120px',
 				dialog:false,
-				data: generateData(),
-				value: [],
-				filterMethod(query, item) {
-					return item.pinyin.indexOf(query) > -1;
-				},
 				activeName:'first',
 				searchForm: {
 					workCenter: '',
-					tenantSiteCode: '',
+					tenantSiteCode: 'test',
 					deleteFlag: false,
-				},
-				addForm: {
-					workCenter: '',
-					workCenterDes: '',
-				},
-				workCenterForm: {
-					code: '',
-					status: '',
 				},
 				rules: {
 					// process: [
@@ -129,17 +103,17 @@ import { mapMutations } from "vuex";
 				})
 			},
 			handleSizeChange(pageSize){
-				console.log(pageSize)
+				let _this = this
 				this.tableData.page.pageSize = pageSize
-				this.search()
+				_this.search()
 			},
 			handleCurrentChange(currentPage){
+				let _this = this
 				this.tableData.page.currentPage = currentPage
-				this.search()
+				_this.search()
 			},
 			handleSelectionChange(val) {
 				this.checkedList = val;
-				console.log(val)
 			},
 			add(){
 				this.$router.push({path:'/workCenter/addWorkCenter'})
@@ -149,6 +123,7 @@ import { mapMutations } from "vuex";
 				this.$router.push({path:'/workCenter/editWorkCenter'})
 			},
 			del(){
+				let _this = this
 				this.$confirm('是否删除所选数据?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -156,29 +131,17 @@ import { mapMutations } from "vuex";
         }).then(() => {
 					let params = this.checkedList
 					deleteWorkCenter(params).then(data=>{
-						console.log(data,'adddata')
-						this.$message({
-							type: 'success',
-							message: '删除成功!'
-						});
-						this.search()
+						if(data.data.code == 200){
+							this.$message.success('删除成功')
+							_this.search()
+							this.$refs.multipleTable.clearSelection()
+						}
 					})
-          
         }).catch(() => {
           this.$message({
             type: 'info',
             message: '已取消删除'
-          });          
-				});
-			},
-			submitForm(formName) {
-				this.$refs[formName].validate((valid) => {
-					if (valid) {
-						console.log('submit!');
-					} else {
-						console.log('error submit!!');
-						return false;
-					}
+          });
 				});
 			},
 			resetForm(formName) {

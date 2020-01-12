@@ -2,8 +2,8 @@
 	<div>
 		<div class="search-bar">
 			<el-form :inline="true" :model="searchForm" ref="searchForm" :rules="rules" class="form-style" :label-width="formLabelWidth">
-				<el-form-item label="物料号:" prop="mat">
-					<el-input v-model="searchForm.mat"></el-input>
+				<el-form-item label="物料号:" prop="material">
+					<el-input v-model="searchForm.material"></el-input>
 				</el-form-item>
 				<el-form-item label="设备ID:" prop="resource">
 					<el-input v-model="searchForm.resource"></el-input>
@@ -14,8 +14,8 @@
 				<el-form-item label="工序:" prop="operation">
 					<el-input v-model="searchForm.operation"></el-input>
 				</el-form-item>
-				<el-form-item label="收集类型:" prop="collectionType" required>
-					<el-select v-model="searchForm.collectionType" filterable placeholder="请选择">
+				<el-form-item label="收集类型:" prop="collectionType"  required>
+					<el-select v-model="searchForm.collectionType" filterable clearable placeholder="请选择">
 						<el-option
 							v-for="item in collectionType"
 							:key="item.value"
@@ -42,8 +42,8 @@
 						<el-form-item label="工作中心:" prop="workCenter">
 							<el-input v-model="baseInfoForm.workCenter" disabled></el-input>
 						</el-form-item>
-						<el-form-item label="物料组:" prop="matGroup">
-							<el-input v-model="baseInfoForm.matGroup" disabled></el-input>
+						<el-form-item label="物料组:" prop="materialGroup">
+							<el-input v-model="baseInfoForm.materialGroup" disabled></el-input>
 						</el-form-item>
 					</el-form>
 				</el-col>
@@ -115,38 +115,22 @@ import {getCollectionData, checkParamData, getParamsList, saveCollectionData, ge
 		name:'dc-collection',
 		data() {
 			return {
-				tableData: [{
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
-        }, {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
-        }, {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        }],
 				formLabelWidth:'120px',
 				dialog:false,
 				searchForm: {
-					mat: '323',
+					material: '',
 					resource: '',
-					shopOrder: 'S1',
-					operation: 'O1',
-					collectionType: '20',
+					shopOrder: '',
+					operation: '',
+					collectionType: '',
 					tenantSiteCode:'test'
 				},
 				baseInfoForm:{
 					resourceGroup:'',
 					workCenter:'',
-					matGroup:'',
+					materialGroup:'',
 				},
+				tableData:[],
 				paramsTableData:[],
 				logList:[],
 				checkedList:[],
@@ -172,10 +156,10 @@ import {getCollectionData, checkParamData, getParamsList, saveCollectionData, ge
 		},
 		created(){
 			let params = {
-				mat:'',
-				matRev:'',
+				material:'',
+				materialRev:'',
 				currentPage:1,
-				pageSize:99,
+				pageSize:0,
 				tenantSiteCode:'test',
 				deleteFlag:false,
 			}
@@ -189,7 +173,6 @@ import {getCollectionData, checkParamData, getParamsList, saveCollectionData, ge
 					if (valid) {
 						let params = this.searchForm
 						getCollectionData(params).then(data=>{
-							console.log(data.data.data,'dd')
 							this.baseInfoForm = data.data.data
 							if(data.data.data.dcParameterMeasureList){
 								this.paramsTableData = data.data.data.dcParameterMeasureList
@@ -238,7 +221,7 @@ import {getCollectionData, checkParamData, getParamsList, saveCollectionData, ge
 				}else{
 					this.$message.error('请选择一条数据')
 				}
-				
+
 			},
 			selectedList(val){
 				this.checkedList = val
@@ -248,12 +231,12 @@ import {getCollectionData, checkParamData, getParamsList, saveCollectionData, ge
 				params.dcParameterMeasureInfoList = this.paramsTableData
 				params.collectionType = this.searchForm.collectionType
 				params.dcGroup = this.checkedList[0].dcGroup
-				params.mat = this.searchForm.mat
+				params.material = this.searchForm.material
 				params.operation = this.searchForm.operation
 				params.resource = this.searchForm.resource
 				params.tenantSiteCode = this.searchForm.tenantSiteCode
 				params.shopOrder = this.searchForm.shopOrder
-				params.matGroup = this.baseInfoForm.mat
+				params.materialGroup = this.baseInfoForm.material
 				params.resourceGroup = this.baseInfoForm.resourceGroup
 				params.workCenter = this.baseInfoForm.workCenter
 				saveCollectionData(params).then(data=>{
@@ -288,7 +271,7 @@ import {getCollectionData, checkParamData, getParamsList, saveCollectionData, ge
 	.tr {
 		text-align: right;
 	}
-	
+
 	.btn {
 		margin: 20px 0 20px 100px;
 	}

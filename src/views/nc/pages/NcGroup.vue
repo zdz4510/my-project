@@ -16,7 +16,7 @@
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="edit" :disabled="this.checkedList.length === 0">编辑</el-button>
 			<el-button class="mr25 pad1025" size="small" type="warning"  @click="del" :disabled="this.checkedList.length === 0">删除</el-button>
 		</div>
-		
+
 		<div class="">
 			<el-table
 			ref="multipleTable"
@@ -119,19 +119,20 @@ import { mapMutations } from "vuex";
 						arr.push(item.ncGroup)
 					})
 					deleteNcGroup(arr).then(data=>{
-						console.log(data,'adddata')
-						this.$message({
-							type: 'success',
-							message: '删除成功!'
-						});
-						this.search()
+						if(data.data.code == 200){
+							this.$message.success('删除成功')
+							this.search()
+							this.$refs.multipleTable.clearSelection()
+						}else{
+							this.$message.error(data.data.message)
+						}
 					})
           
         }).catch(() => {
           this.$message({
             type: 'info',
             message: '已取消删除'
-          });          
+          });
 				});
 			},
 			submitForm(formName) {

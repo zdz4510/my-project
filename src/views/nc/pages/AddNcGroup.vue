@@ -7,7 +7,7 @@
 		</div>
 		<div class="addForm">
 			<el-form :inline="true" :model="addForm" ref="addForm" :rules="rules" class="add-form" :label-width="formLabelWidth">
-				<el-form-item label="不合格代码组:" prop="ncGroup">
+				<el-form-item label="不合格代码组:" prop="ncGroup" required>
 					<el-input v-model="addForm.ncGroup" ></el-input>
 				</el-form-item>
 				<el-tabs v-model="activeName" type="card">
@@ -101,9 +101,14 @@
 					value: false,
 					label: '未启用'
 				}],
-				
+
 				rules: {
-					
+					ncGroup: [
+            { required: true, message: '请填写不合格代码组名称', trigger: 'blur' }
+          ],
+					status: [
+            { required: true, message: '请选择状态', trigger: 'change' }
+          ],
 				},
 				addForm: {
 					ncGroup:'',
@@ -139,7 +144,7 @@
 						this.addForm.operationList = arr
 						params.createList = [this.addForm]
 						saveNcGroup(params).then(data => {
-							if(data.data.message == 'success'){
+							if(data.data.code == 200){
 								this.$message({
 									type: 'success',
 									message: '保存成功!'
@@ -147,7 +152,8 @@
 								setTimeout(()=>{
 									this.$router.push({path:'/nc/ncGroup'})
 								},1000)
-								
+							}else{
+								this.$message.error(data.data.message)
 							}
 						})
 					} else {
@@ -158,6 +164,7 @@
 			},
 			resetForm(formName) {
 				this.$refs[formName].resetFields();
+				this.allocated = []
 			},
 			goBack() {
 				this.$router.push({path:'/nc/ncGroup'})

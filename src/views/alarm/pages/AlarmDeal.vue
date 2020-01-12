@@ -349,6 +349,8 @@ import {getAlarmGroupList, getSequenceList, updateAckData, updateInitData, delet
 					if(data.data.code == 200){
 						this.$message.success('操作成功')
 						this.searchUndeal()
+					}else{
+						this.$message.error(data.data.message)
 					}
 				})
 			},
@@ -364,6 +366,8 @@ import {getAlarmGroupList, getSequenceList, updateAckData, updateInitData, delet
 					if(data.data.code == 200){
 						this.$message.success('操作成功')
 						this.searchDeal()
+					}else{
+						this.$message.error(data.data.message)
 					}
 				})
 			},
@@ -377,15 +381,18 @@ import {getAlarmGroupList, getSequenceList, updateAckData, updateInitData, delet
 					console.log(data,'adddata')
 					if(data.data.code == 200){
 						this.$message.success('删除成功')
+						this.searchDeal()
+						this.$refs.dealTable.clearSelection()
+					}else{
+						this.$message.error(data.data.message)
 					}
-					this.searchDeal()
-					this.$refs.dealTable.clearSelection()
+
 				})
         }).catch(() => {
           this.$message({
             type: 'info',
             message: '已取消删除'
-          });          
+          });
 				});
 			},
 			resetForm(formName) {

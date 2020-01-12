@@ -111,7 +111,11 @@ export default {
 			alarm1:'',
 			alarm2:'',
 			cloneModify: {}, //  克隆的表单的一份副本
-			rules: {},
+			rules: {
+        groupDes: [
+          { required:true,message:'请填写事件分组描述', trigger: 'blur' }
+        ],
+      },
       editForm: {
 				alarmGroup:'',
 				groupDes:'',
@@ -207,7 +211,7 @@ export default {
       } else {
          console.log('数据一样不禁用下拉框还有不弹出保存')
         this.saveDialog = false;
-        
+
         this.selectIsDisabled = false;
       }
     },
@@ -288,7 +292,7 @@ export default {
 						const res = data.data;
 						this.saveDialog = false; // 保存的提示框消失
 						this.selectIsDisabled = false;
-					
+
 						// 直接成功
 						if (res.code === 200) {
 							this.saveDialog = false;
@@ -306,7 +310,7 @@ export default {
 								this.editForm = this.currentRow;
 								this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
 							}
-					
+
 							if (this.cloneList.length == 1) {
 								let index = this.findIndexByItem(
 									this.alarmGroupEditList,
@@ -327,7 +331,7 @@ export default {
 							this.setCurrent(this.oldRow);
 						}
 					});
-				}	
+				}
 			});
 		},
 		check1(val){
@@ -350,53 +354,7 @@ export default {
 			console.log(this.unallocateData,'all')
 			this.cloneAllocateData = _.cloneDeep(this.allocateData)
 		},
-		getUnallocate(){
-			console.log('ss')
-			if(this.select2){
-				this.unallocateData =this.cloneUnallocateData
-				this.unallocateData = this.unallocateData.filter(item=>{
-					if(this.input2){
-						return item.userType == this.select2 && item.informUserId.indexOf(this.input2) > -1
-					}else{
-						return item.userType == this.select2 
-					}
-				})
-			}else{
-				this.unallocateData =this.cloneUnallocateData
-				this.unallocateData = this.unallocateData.filter(item=>{
-					if(this.input2.length>0){
-						return item.informUserId.indexOf(this.input2) > -1
-					}else{
-						return true
-					}
-				})
-			}
-		},
-		getAllocate(){
-			console.log('ds')
-			if(this.select1){
-				this.allocateData =this.cloneAllocateData
-				this.allocateData = this.allocateData.filter(item=>{
-					if(this.input1){
-						return item.userType == this.select1 && item.informUserId.indexOf(this.input1) > -1
-					}else{
-						return item.userType == this.select1 
-					}
-				})
-			}else{
-				console.log(this.cloneAllocateData,'d')
-				this.allocateData =this.cloneAllocateData
-				this.allocateData = this.allocateData.filter(item=>{
-					if(this.input1.length>0){
-						return item.informUserId.indexOf(this.input1) > -1
-					}else{
-						return true
-					}
-				})
-			}
-		},
   }
-  
 };
 </script>
 
