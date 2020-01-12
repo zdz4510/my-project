@@ -239,6 +239,28 @@ const routes = [
           import(
             /* webpackChunkName: "nextNumber" */ "../views/next-number/pages/NextNumber.vue"
           )
+      },
+      {
+        path: "addNextNumber",
+        name: "addNextNumber",
+        meta: {
+          title: "编码规则添加"
+        },
+        component: () =>
+          import(
+            /* webpackChunkName: "addNextNumber" */ "../views/next-number/pages/AddNextNumber.vue"
+          )
+      },
+      {
+        path: "editNextNumber",
+        name: "editNextNumber",
+        meta: {
+          title: "编码规则编辑"
+        },
+        component: () =>
+          import(
+            /* webpackChunkName: "editNextNumber" */ "../views/next-number/pages/EditNextNumber.vue"
+          )
       }
     ]
   },
