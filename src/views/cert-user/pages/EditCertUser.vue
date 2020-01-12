@@ -1,37 +1,89 @@
 <template>
-	<div>
+  <div>
 		<div class="operate mtb10">
-			<el-button class="mr25 pad1025" size="small" type="primary" @click="goBack">返回</el-button>
-			<el-button class="mr25 pad1025" size="small" type="primary" @click="save('editForm')">保存</el-button>
+			<el-button class="mr25 ml30 pad1025" size="small" type="primary" @click="goBack">返回</el-button>
+			<el-button class="mr25 pad1025" size="small" type="primary" @click="handleSave('editForm')">保存</el-button>
 		</div>
-		<el-row :gutter="20">
+		<el-row :gutter="20" class="bgw">
 			<el-col :span="6">
 				<div>
-					<el-select v-model="search" clearable class="mtb20" >
+					<el-select v-model="value" clearable placeholder="请选择" :disabled="selectIsDisabled" @clear="handleClearSelect" @change="handleChangeOption" @focus="handleSelectFocus" ref="select" >
 						<el-option
-							v-for="item in this.editList"
-							:key="item.mat"
-							:label="item.mat"
-							:value="item.mat">
+							v-for="item in cloneList"
+							:key="item.user"
+							:label="item.user"
+							:value="item.user" >
 						</el-option>
 					</el-select>
-					<el-table @row-click="handleClick" :row-class-name="tableRowClassName" border :data="this.editList.filter(data => !search || data.mat.toLowerCase().includes(search.toLowerCase()))" style="width: 100%">
-						<el-table-column label="mat" prop="mat"> </el-table-column>
-						<el-table-column label="matRev" prop="matRev"> </el-table-column>
+					<el-table ref="editTable" :data="cloneList" border highlight-current-row style="width: 100%" height="513" @row-click="handleCurrentChange" >
+						<el-table-column label="用户" prop="user"> </el-table-column>
+						<el-table-column label="姓名" prop="name"> </el-table-column>
 					</el-table>
 				</div>
 			</el-col>
 			<el-col :span="18">
-				<div class="editForm">
+				<div>
 					<el-form :inline="true" :model="editForm" ref="editForm" :rules="rules" class="form-style" label-position="right" :label-width="formLabelWidth">
 						<el-row>
 							<el-col :span="8">
-								<el-form-item label="物料号:" prop="mat" >
-									<el-input v-model="editForm.mat" ></el-input>
+								<el-form-item label="用户:" prop="user" required>
+									<el-input v-model="editForm.user" disabled></el-input>
+								</el-form-item>
+							</el-col>
+							<el-col :span="8">
+								<el-form-item label="姓名:" prop="name" required>
+									<el-input v-model="editForm.name" disabled></el-input>
 								</el-form-item>
 							</el-col>
 						</el-row>
+						<el-row>
+							<el-col :span="24">
+								<el-row>
+									<el-col :span="8">
+											<el-table :data="allocateData.filter(data => !cert1 || data.cert.toLowerCase().includes(cert1.toLowerCase()))" @select="check1" @select-all="check1">
+												<el-table-column label="上岗证:">
+													<el-table-column type="selection" width="100"></el-table-column>
+													<el-table-column prop="cert" label="上岗证"></el-table-column>
+												</el-table-column>
+												<el-table-column label="">
+													<template slot="header">
+														<el-input v-model="cert1" placeholder="输入上岗证搜索"/></template>
+													<el-table-column prop="certDes" label="上岗证描述"></el-table-column>
+												</el-table-column>
+											</el-table>
+										</el-col>
+										<el-col :span="2">
+											<div class="direction mt70"><i class="el-icon-caret-right" @click="right"></i></div>
+											<div class="direction"><i class="el-icon-caret-left" @click="left"></i></div>
+										</el-col>
+										<el-col :span="8">
+											<el-table :data="unallocateData.filter(data => !cert2 || data.cert.toLowerCase().includes(cert2.toLowerCase()))" @select="check2" @select-all="check2">
+												<el-table-column label="上岗证:">
+													<el-table-column type="selection" width="100"></el-table-column>
+													<el-table-column prop="cert" label="上岗证"></el-table-column>
+												</el-table-column>
+												<el-table-column label="">
+													<template slot="header">
+														<el-input v-model="cert2" placeholder="输入上岗证搜索" />
+													</template>
+													<el-table-column prop="certDes" label="上岗证描述"></el-table-column>
+												</el-table-column>
+											</el-table>
+										</el-col>
+								</el-row>
+							</el-col>
+						</el-row>
 					</el-form>
+					<!-- 确认模态框 -->
+					<el-dialog title="保存" :visible.sync="saveDialog" width="30%">
+						<span>是否保存数据？</span>
+						<span slot="footer" class="dialog-footer">
+							<el-button @click="handleCancle">取 消</el-button>
+							<el-button type="primary" @click="handleSave('editForm')">
+								确 定
+							</el-button>
+						</span>
+					</el-dialog>
 				</div>
 			</el-col>
 		</el-row>
@@ -39,102 +91,265 @@
 </template>
 
 <script>
-	import {updateData} from '../../../api/base/base.api.js'
-	import { mapGetters } from "vuex";
-	export default {
-		name:'',
-		computed: {
-			...mapGetters(["editList"])
-		},
-		data() {
-			var qtyRequired = (rule, value, callback) => {
-				var reg = /^\d{1,5}(?:\.\d{1,3})?$/
-				if (!reg.test(value)) {
-					return callback(new Error('小数点前5位后3位数字;正数'));
-				}
-				callback()
-			};
-			return {
-				search:'',
-				currentEditItem:{},
-				formLabelWidth:'120px',
-				rules: {
-					qtyRequired1: [
-						{ validator: qtyRequired, trigger: 'blur' }
-					],
-					qtyRequired2: [
-						{ validator: qtyRequired, trigger: 'blur' }
-					],
-					qtyRequired3: [
-						{ validator: qtyRequired, trigger: 'blur' }
-					]
-				},
-				editForm: {
-					mat:'',
-				},
-			}
-		},
-		created() {
-			this.currentEditItem = this.editList[0]
-			this.editForm = this.editList[0]
-		},
-		methods: {
-			goBack() {
-				this.$router.push({path:'/certUser/certUser'})
+import { mapGetters, mapMutations } from "vuex";
+import {saveData, findCert} from '../../../api/cert.user.api'
+import _ from 'lodash';
+export default {
+  name:'edit-cert-user',
+  computed: {
+    ...mapGetters(["certUserEditList"])
+  },
+  data() {
+    return {
+      //表单左边宽度
+      formLabelWidth:'150px',
+			cert1:'',
+			cert2:'',
+			cloneModify: {}, //  克隆的表单的一份副本
+			rules: {},
+      editForm: {
+				alarmGroup:'',
+				groupDes:'',
+				alarmList:[],
+				tenantSiteCode: "test",
 			},
-			tableRowClassName({row}) {
-				if (row.mat == this.currentEditItem.mat && row.matRev == this.currentEditItem.matRev) {
-					return 'success-row';
-				} else {
-					return '';
-				}
-			},
-			save(formName){
-				this.$refs[formName].validate((valid) => {
-					if (valid) {
-						let params = this.editForm
-						updateData(params).then(data => {
-							if(data.data.message == 'success'){
-								this.$message({
-									type: 'success',
-									message: '保存成功!'
-								});
-							}
-						})
-					} else {
-						console.log('error submit!!');
-						return false;
-					}
-				});
-			},
-			handleClick(row){
-				this.currentEditItem = row
-				this.editForm = row
-			},
-			isObjectValueEqual(a, b) {
-				var aProps = Object.getOwnPropertyNames(a);
-				var bProps = Object.getOwnPropertyNames(b);
-				if (aProps.length != bProps.length) {
-					return false;
-				}
-				for (var i = 0; i < aProps.length; i++) {
-					var propName = aProps[i]
-					var propA = a[propName]
-					var propB = b[propName]
-					if ((typeof (propA) === 'object')) {
-						if (this.isObjectValueEqual(propA, propB)) {
-								return true
-							} else {
-								return false
-							}
-					} else if (propA !== propB) {
-						return false
-					}
-				}
-				return true
-			}
+      saveDialog: false, //保存弹框的显示和隐藏
+      currentRow: {},
+      oldRow: {}, // 当前选中的行
+      cloneList: [], // 复制所以可以编辑的数据副本
+      value: "",
+			selectIsDisabled: false,
+			selectedList:[],
+			selectedList2:[],
+			allocateData:[],
+			unallocateData:[],
+			alarmLevel: [{
+				value: 10,
+				label: '提示'
+			}, {
+				value: 20,
+				label: '警告'
+			}, {
+				value: 30,
+				label: '错误'
+			}],
+			cloneUnallocateData:[],
+			cloneAllocateData:[],
+    };
+  },
+	created() {
+    this.$nextTick(() => {
+      this.init();
+		});
+		let params = {
+			user:this.certUserEditList[0].user
 		}
-	}
+		findCert(params).then(data=>{
+			console.log(data.data.data,'d')
+			this.allocateData = data.data.data.certUser
+			this.unallocateData = data.data.data.outerCertUser
+		})
+  },
+  methods: {
+    ...mapMutations(["SETCERTUSEREditList"]),
+    //初始化的操作
+    init() {
+      if (this.certUserEditList.length > 0) {
+        this.cloneList = JSON.parse(JSON.stringify(this.certUserEditList)); //复制一份副本,保证副本和初始列表数据一致性
+        this.editForm = this.cloneList[0]; // 默认选中第一行
+        this.cloneModify = JSON.parse(JSON.stringify(this.editForm)); // modify 的副本
+        this.setCurrent(this.editForm); // 设置选中第一行
+        this.currentRow = this.editForm; // 设置初始currentRow 为第一行
+      }
+    },
+    //清除下拉列表时触发
+    handleClearSelect() {
+      this.init();
+    },
+    //选中下拉列表时触发
+    handleChangeOption(row) {
+      if(row==''){
+        return ;
+      }
+      //过滤数组
+      const tempList = this.cloneList.filter(item => item["user"] == row);
+      console.log(tempList);
+      this.cloneList = tempList;
+      this.editForm = tempList[0];
+      this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
+			this.setCurrent(tempList[0]);
+			let params = {
+				user:this.editForm.user
+			}
+			findCert(params).then(data=>{
+				console.log(data.data.data,'d')
+				this.allocateData = data.data.data.certUser
+				this.unallocateData = data.data.data.outerCertUser
+			})
+    },
+    //下拉列表获取到焦点时触发
+    handleSelectFocus() {
+      // this.oldRow = oldRow;
+      //  当前编辑的和之前的数据不一样就显示弹窗
+      if (JSON.stringify(this.editForm) !== JSON.stringify(this.cloneModify)) {
+        console.log('数据不一样禁用下拉框还有弹出保存')
+        this.saveDialog = true; // 保存弹出框出现
+        this.selectIsDisabled = true; // 禁用下拉框
+        this.$refs['select'].blur();
+      } else {
+         console.log('数据一样不禁用下拉框还有不弹出保存')
+        this.saveDialog = false;
+        
+        this.selectIsDisabled = false;
+      }
+    },
+    //设置某一行被选中
+    setCurrent(row) {
+      this.$refs.editTable.setCurrentRow(row);
+    },
+
+    findItemByKey(arr, keyV, kerStr) {
+      let temp = arr.filter(item => item[kerStr] == keyV);
+      if (temp.length > 0) {
+        return temp[0];
+      }
+      return null;
+    },
+    // 点击某一行选中后操作的状态你
+    handleCurrentChange(currentRow) {
+      this.oldRow = this.currentRow;
+      this.currentRow = currentRow;
+      if (
+        JSON.stringify(this.editForm) !== JSON.stringify(this.cloneModify)
+      ) {
+        this.saveDialog = true; // 弹出保存的提示框
+        return;
+      }
+      this.editForm = currentRow;
+			this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
+			let params = {
+				user:this.editForm.user
+			}
+			findCert(params).then(data=>{
+				console.log(data.data.data,'d')
+				this.allocateData = data.data.data.certUser
+				this.unallocateData = data.data.data.outerCertUser
+			})
+    },
+    //选中某一行
+    //返回操作
+		goBack() {
+			this.$router.push({path:'/certUser/certUser'})
+		},
+    /**
+     *  通过mat
+     *  return >1 就找到了
+     */
+    findIndexByItem(arr, v) {
+      return arr.findIndex(item => item["user"] == v);
+    },
+    // 取消操作  一般是在弹框出现的时候才有取消操作
+    handleCancle() {
+      this.saveDialog = false;
+      this.selectIsDisabled = false;
+      //数据还原
+      if(this.cloneList.length<this.certUserEditList.length && this.value!=''){
+          this.cloneList = JSON.parse(JSON.stringify([this.cloneModify]));
+          this.editForm = this.cloneList[0];
+          return ;
+      }
+      this.cloneList = JSON.parse(JSON.stringify(this.certUserEditList));  //取消直接复制一份副本
+      if (this.currentRow) {
+        let code = this.currentRow.alarmGroup;
+        let item = this.findItemByKey(this.cloneList, code, "user");
+        if (item) {
+          this.setCurrent(item);
+        }
+        this.editForm = item;
+      }
+    },
+    //保存操作
+    handleSave(formName) {
+			this.$refs[formName].validate((valid) => {
+				if (valid) {
+					let params = {}
+						let arr = []
+						this.allocateData.map(item=>{
+							arr.push(item.cert)
+						})
+						params.certUserList = arr
+						params.user = this.editForm.user
+						params.name = this.editForm.name
+
+					saveData({updateList:[params]}).then(data => {
+						const res = data.data;
+						this.saveDialog = false; // 保存的提示框消失
+						this.selectIsDisabled = false;
+					
+						// 直接成功
+						if (res.code === 200) {
+							this.saveDialog = false;
+							this.selectIsDisabled = false;
+							this.$message({
+								message: "修改成功",
+								type: "success"
+							});
+							// 直接覆盖
+							if (this.cloneList.length == this.certUserEditList.length) {
+								//直接覆盖
+								//重新更改初始的副本
+								//设置左边的选中状态
+								this.SETCERTUSEREditList(JSON.parse(JSON.stringify(this.cloneList)));
+								this.editForm = this.currentRow;
+								this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
+							}
+					
+							if (this.cloneList.length == 1) {
+								let index = this.findIndexByItem(
+									this.certUserEditList,
+									this.editForm.alarmGroup
+								);
+								if (index > -1) {
+									this.certUserEditList.splice(index, 1, this.editForm); // 替换
+									this.SETCERTUSEREditList(JSON.parse(JSON.stringify(this.certUserEditList)));
+									this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
+								}
+							}
+						} else {
+							this.$message({
+								message: res.data,
+								type: "error"
+							});
+							this.saveDialog = false;
+							this.setCurrent(this.oldRow);
+						}
+					});
+				}	
+			});
+		},
+		check1(val){
+			this.selectedList = val
+		},
+		check2(val){
+			this.selectedList2 = val
+		},
+		right(){
+			this.unallocateData = _.concat(this.unallocateData,this.selectedList)
+			this.unallocateData = _.uniq(this.unallocateData)
+			this.allocateData = _.difference(this.allocateData,this.selectedList)
+			console.log(this.unallocateData,'un')
+			this.cloneAllocateData = _.cloneDeep(this.allocateData)
+		},
+		left(){
+			this.allocateData = _.concat(this.allocateData,this.selectedList2)
+			this.allocateData = _.uniq(this.allocateData)
+			this.unallocateData = _.difference(this.unallocateData,this.selectedList2)
+			console.log(this.unallocateData,'all')
+			this.cloneAllocateData = _.cloneDeep(this.allocateData)
+		},
+  }
+  
+};
 </script>
 
 <style scoped lang="scss">
@@ -149,7 +364,28 @@
 			width: 756px !important;
 		}
 	}
+	.el-textarea /deep/ .el-textarea__inner{
+		width: 622px;
+	}
 	.el-table /deep/ .success-row {
 		background: #f0f9eb ;
+	}
+	.bgw {
+		background: #FFFFFF;
+	}
+	.input-form {
+		margin-left: 20px;
+	}
+	.el-select /deep/ .el-input {
+    width: 200px;
+  }
+	.direction {
+		color: #409eff;
+		font-size: 40px;
+		cursor: pointer;
+		text-align: center;
+	}
+	.mt70 {
+		margin-top: 70px;
 	}
 </style>

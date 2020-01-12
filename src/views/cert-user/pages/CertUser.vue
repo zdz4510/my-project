@@ -15,28 +15,31 @@
 			</el-form>
 		</div>
 		<div class="operate ml30 mtb10">
-			<el-button class="mr25 pad1025" size="small" type="primary" @click="add" :disabled="this.checkedList.length>0">新增</el-button>
+			<!-- <el-button class="mr25 pad1025" size="small" type="primary" @click="add" :disabled="this.checkedList.length>0">新增</el-button> 逻辑变更，此功能去掉，注意后面去掉路由配置信息 -->
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="edit" :disabled="this.checkedList.length === 0">编辑</el-button>
 			<el-button class="mr25 pad1025" size="small" type="warning"  @click="del" :disabled="this.checkedList.length === 0">删除</el-button>
 		</div>
-		
 		<div class="">
 			<el-table
 			ref="multipleTable"
 			:data="this.tableData.data"
 			tooltip-effect="dark"
-			row-key="mat"
+			row-key="user"
 			@selection-change="handleSelectionChange"
 			>
 				<el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
 				<el-table-column type="index" label="序号"></el-table-column>
-				<el-table-column prop="certUser" label="上岗证"></el-table-column>
-				<el-table-column prop="mat" label="上岗证描述"></el-table-column>
+				<el-table-column prop="user" label="用户"></el-table-column>
+				<el-table-column prop="name" label="姓名"></el-table-column>
+				<el-table-column prop="cert" label="上岗证"></el-table-column>
+				<el-table-column prop="certDes" label="上岗证描述"></el-table-column>
 				<el-table-column label="状态">
-					<template slot-scope="scope">{{ scope.row.matStatus == 1 ? '已启用' : (scope.row.status == 2 ? '未启用' : '--') }}</template>
+					<template slot-scope="scope">{{ scope.row.status == true ? '已启用' : (scope.row.status == false ? '未启用' : '--') }}</template>
 				</el-table-column>
-				<el-table-column prop="mat" label="持续时间类型"></el-table-column>
-				<el-table-column prop="mat" label="上岗证截止日期"></el-table-column>
+				<el-table-column label="持续时间类型">
+					<template slot-scope="scope">{{ scope.row.certType == true ? '永久' : (scope.row.certType == false ? '临时' : '--') }}</template>
+				</el-table-column>
+				<el-table-column prop="certTime" label="上岗证截止日期"></el-table-column>
 			</el-table>
 			<el-pagination class="mtb20"
 				background
@@ -111,12 +114,16 @@ import { mapMutations } from "vuex";
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
+					this.checkedList.map(item=>{
+						item.cert = []
+					})
 					deleteData(this.checkedList).then(data=>{
 						if(data.data.message == 'success'){
 							this.$message({
 								type: 'success',
 								message: '删除成功!'
 							});
+							this.$refs.multipleTable.clearSelection()
 							this.search()
 						}
 					})
