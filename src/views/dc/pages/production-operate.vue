@@ -33,32 +33,32 @@
     <div class="tableBox">
       <el-table
         ref="multipleTable"
-        :data="tableData"
+        :data="row"
         tooltip-effect="dark"
         style="width: 100%"
         height="514"
       >
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column label="序号" width="120">
-          <template slot-scope="scope">{{ scope.row.date }}</template>
+          <!-- <template slot-scope="scope">{{ scope.row.date }}</template> -->
         </el-table-column>
-        <el-table-column prop="name" label="LOT编号" width="120"></el-table-column>
+        <el-table-column prop="name"  label="LOT编号" width="120"></el-table-column>
         <el-table-column prop="address" label="LOT状态" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="address" label="工单" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="address" label="物料" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="address"  label="工单" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="address"  label="物料" show-overflow-tooltip></el-table-column>
         <el-table-column prop="address" label="工艺路线" show-overflow-tooltip></el-table-column>
       </el-table>
     </div>
 
     <!-- LOT模态框 -->
-    <el-dialog :visible.sync="popup" style="padding:10px 20px">
-      <div class="popupBox">
-        <el-table :data="popupData" width = "100%" height="400px">
-          <el-table-column prop="date" label="LOT编号" width="180"></el-table-column>
-          <el-table-column prop="name" label="LOT状态" width="180"></el-table-column>
-          <el-table-column prop="date" label="工单" width="180"></el-table-column>
-          <el-table-column prop="name" label="物料" width="180"></el-table-column>
-          <el-table-column prop="address" label="工艺路线"></el-table-column>
+    <el-dialog :visible.sync="popup" style="padding:10px 20px" >
+      <div class="popupBox">  
+        <el-table :data="popupData" width="100%" height="400px" @row-dblclick='handledbClick' ref="multipleTable">
+          <el-table-column prop="date" label="LOT编号" width="150px" height="50px"></el-table-column>
+          <el-table-column prop="name" label="LOT状态" width="150px" height="50px"></el-table-column>
+          <el-table-column prop="date" label="工单" width="150px" height="50px"></el-table-column>
+          <el-table-column prop="name" label="物料" width="150px" height="50px"></el-table-column>
+          <el-table-column prop="address" label="工艺路线" width="150px" height="50px"></el-table-column>
         </el-table>
       </div>
     </el-dialog>
@@ -68,60 +68,56 @@
 export default {
   data() {
     return {
-     
       popup: false,
       formLabelWidth: "50px",
       searchForm: {
         operation: ""
       },
-      popupData:[
-         {
+      popupData: [
+        {
           date: "2016-05-03",
           name: "王小虎",
           address: "上海市普陀区金沙江路 1516 弄"
         },
-          {
+        {
+          date: "2016-05-03",
+          name: "王小虎",
+          address: "上海市普陀区金沙江路 1516 弄"
+        },
+        {
+          date: "2016-05-03",
+          name: "王小虎",
+          address: "上海市普陀区金沙江路 1516 弄"
+        },
+        {
+          date: "2016-05-03",
+          name: "王小虎",
+          address: "上海市普陀区金沙江路 1516 弄"
+        },
+        {
+          date: "2016-05-03",
+          name: "王小虎",
+          address: "上海市普陀区金沙江路 1516 弄"
+        },
+        {
           date: "2016-05-03",
           name: "王小虎",
           address: "上海市普陀区金沙江路 1516 弄"
         }
       ],
-  tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1517 弄"
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1519 弄"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄"
-        },
-          {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄"
-        },
-          {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄"
-        }
-
-      ],
+      tableData: [],
+      row:[],
     };
   },
   methods: {
+    handledbClick(row){
+     
+      this.row.push(row)
+      // this.row = row
+      //  this.$refs.multipleTable.toggleRowSelection(row);
+       this.popup=false
+    },
+    resetForm() {},
     details() {
       this.popup = true;
     },
@@ -145,14 +141,14 @@ export default {
   margin: 0 40px 0 7px;
 }
 .popupBox {
-  overflow-x:hidden;
-  overflow:auto;
+  overflow-x: hidden;
+  overflow: auto;
   display: flex;
-//  width: 600px;
-//  height:300px;
-line-height:100px;
+  //  width: 600px;
+  //  height:300px;
+  line-height: 100px;
 }
-.el-dialog__body{
-  padding:10px 20px!important;
+.el-dialog__body {
+  padding: 10px 20px !important;
 }
 </style>
