@@ -28,6 +28,7 @@
           :x="item.x"
           :y="item.y"
           @click.native="handleClick(item)"
+          @dblclick.native="dbClick(item)"
         >
           <qr-code
             :width="item.width"
@@ -215,6 +216,9 @@ export default {
       console.log("click")
       this.current =item;
       console.log(this.current);
+    },
+    dbClick(){
+      console.log("db")
     },
     init(){
        document.οnkeydοwn=function(event){

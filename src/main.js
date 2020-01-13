@@ -9,7 +9,7 @@ import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
 
 import './assets/css/element-variables.scss';
 import './assets/css/base.css'
-import '@/components'
+import "@/components";
 import './registerServiceWorker'
 import router from './router'
 import store from './store'

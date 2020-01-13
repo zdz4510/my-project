@@ -8,7 +8,7 @@ const requireComponent = require.context(
   // 是否查询其子目录
   true,
   // 匹配基础组件文件名的正则表达式
-  /Base[A-Z]\w+\.(vue|js)$/
+  /Dsn[A-Z]\w+\.(vue|js)$/
 )
 
 console.log(requireComponent.keys())

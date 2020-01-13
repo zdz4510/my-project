@@ -8,9 +8,9 @@
           label-width="100px"
           class="tagConfigForm"
         >
-          <el-form-item label="标签ID" prop="tagID">
+          <el-form-item label="标签ID" prop="label">
             <el-input
-              v-model.trim="tagConfigForm.tagID"
+              v-model.trim="tagConfigForm.label"
               placeholder="请输入标签ID"
             ></el-input>
           </el-form-item>
@@ -50,16 +50,17 @@
       >
     </div>
     <div class="showInfo">
-      <el-table
+      <dsn-advance-table 
         ref="multipleTable"
-        :data="tableData"
+        :paramData="params"
         tooltip-effect="dark"
         style="width: 100%"
+        :httpFn ="httpFn"
         height="350px"
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55"> </el-table-column>
-        <el-table-column prop="tagID" label="标签ID" width="120">
+        <el-table-column prop="label" label="标签ID" width="120">
         </el-table-column>
         <el-table-column prop="resourceCount" label="标签描述" width="120">
         </el-table-column>
@@ -80,20 +81,7 @@
           show-overflow-tooltip
         >
         </el-table-column>
-      </el-table>
-    </div>
-    <div class="pagination">
-      <el-pagination
-        background
-        layout="->,total,prev,pager,next,sizes"
-        :total="total"
-        :page-size="pagesize"
-        :page-sizes="[5, 10, 15, 20]"
-        :current-page="currentPage"
-        @size-change="handlePagesize"
-        @current-change="handleCurrentChange"
-      >
-      </el-pagination>
+      </dsn-advance-table>
     </div>
     <el-dialog title="删除" :visible.sync="deleteDialog" width="30%">
       <span>是否确认删除{{ selectionList.length }}条数据？</span>
@@ -109,17 +97,23 @@
 
 <script>
 import {
-  findResourceGroupListHttp,
   deleteResourceGroupHttp,
   exportExcelHttp
 } from "@/api/device/type.api.js";
+import { getTagConfigList } from "@/api/tag/tag.config.api";
 import { mapMutations } from "vuex";
 
 export default {
+  computed:{
+    params:function(){
+      return this.tagConfigForm;
+    }
+  },
   data() {
     return {
+      httpFn:getTagConfigList,
       tagConfigForm: {
-        tagID: ""
+        label: ""
       },
       tableData: [],
       selectionList: [],
@@ -131,32 +125,13 @@ export default {
     };
   },
   created() {
-    this.init();
+    //this.init();
   },
   methods: {
     ...mapMutations(["TAGCONFIGLIST"]),
     init() {
-      const data = {
-        currentPage: this.currentPage,
-        pageSize: this.pagesize,
-        tagID: this.tagConfigForm.tagID
-      };
-      findResourceGroupListHttp(data).then(data => {
-        const res = data.data;
-        console.log(res);
-        const list = res.data.data;
-        if (res.code === 200) {
-          // this.pageShow = true;
-          this.total = res.data.total;
-          this.tableData = list;
-          // this.tagConfigForm.tagID = "";
-          return;
-        }
-        this.$message({
-          message: res.message,
-          type: "warning"
-        });
-      });
+      console.log( this.$refs['multipleTable'])
+        this.$refs['multipleTable'].search();
     },
     toggleSelection(rows) {
       if (rows) {
@@ -185,7 +160,7 @@ export default {
     },
     handleAdd() {
       this.selectionList = [];
-      const emptyObj = { tagID: "", groupDes: "" };
+      const emptyObj = { label: "", groupDes: "" };
       this.selectionList.push(emptyObj);
       this.TAGCONFIGLIST(this.selectionList);
       this.$router.push({
@@ -205,7 +180,7 @@ export default {
       const data = [];
       this.selectionList.forEach(element => {
         const obj = {
-          tagID: element.tagID
+          label: element.label
         };
         data.push(obj);
       });
@@ -233,11 +208,11 @@ export default {
       this.init();
     },
     handleReset() {
-      this.tagConfigForm.tagID = "";
+      this.tagConfigForm.label = "";
     },
     handleExport() {
       const data = {
-        tagID: this.tagConfigForm.tagID,
+        label: this.tagConfigForm.label,
         groupDes: this.tagConfigForm.groupDes
       };
       exportExcelHttp(data);
