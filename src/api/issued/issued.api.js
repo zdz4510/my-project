@@ -15,5 +15,5 @@ export const findShopOrderListRequest = data => {
 */
 export const releaseRequest = data => {
     return request.post(
-        `${window.VUE_APP_URL}/mes/shopOrder/release?quantity=${data.quantity}&shopOrder=${data.shopOrder}`, data);
+        `${window.VUE_APP_URL}/mes/shopOrder/release`, data);
 };
