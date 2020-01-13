@@ -4,16 +4,16 @@
         <div class="issudTop">
             <!--顶部左边-->
             <div class="topLeft">
-                <el-form  ref="workOrderIssued" label-width="100px" class="demo-ruleForm">
+                <el-form  ref="workOrderIssued" label-width="100px" class="demo-ruleForm" :model="workOrderIssued">
                     <el-form-item
                         label="工单:"
-                        prop="workOrder"
+                        prop="shopOrder"
                         :rules="[
                         { required: true, message: '工单不能为空'}
                         ]"
                     >
                         <el-col :span="9">
-                            <el-input  autocomplete="off" v-model='shopOrder'></el-input>
+                            <el-input  autocomplete="off" v-model='workOrderIssued.shopOrder'></el-input>
                         </el-col>
                         
                         <div class="choiceBox">
@@ -72,7 +72,6 @@
                 label="工单"
                 width="120"
                 prop='shopOrder'>
-                <template slot-scope="scope">{{ scope.row.date }}</template>
                 </el-table-column>
                 <el-table-column
                 prop="lot"
@@ -85,22 +84,22 @@
                 show-overflow-tooltip>
                 </el-table-column>
                 <el-table-column
-                prop="address"
+                prop="material"
                 label="物料"
                 show-overflow-tooltip>
                 </el-table-column>
                 <el-table-column
-                prop="address"
+                prop="materialRev"
                 label="物料版本"
                 show-overflow-tooltip>
                 </el-table-column>
                 <el-table-column
-                prop="address"
+                prop="router"
                 label="工艺路线"
                 show-overflow-tooltip>
                 </el-table-column>
                 <el-table-column
-                prop="address"
+                prop="routerRev"
                 label="工艺路线版本"
                 show-overflow-tooltip>
                 </el-table-column>
@@ -120,7 +119,7 @@ export default {
             tenantSiteCode:'',
             shopOrderInfo:'',//工单信息
             workOrderIssued: {
-                workOrder: '',
+                shopOrder: '',
                 numIssued:'',
             },
             tableData:[],//工单下达列表
@@ -136,7 +135,7 @@ export default {
             }
             if(params.shopOrder !== ""){
                 findShopOrderListRequest(params).then(data =>{
-                    console.log('获取工单信息'+JSON.stringify(data))
+                    // console.log('获取工单信息'+JSON.stringify(data))
   
                     const res = data.data
                     if(res.code == 200){
@@ -157,14 +156,22 @@ export default {
         handleIssued(){
             const params = {
                 quantity: 2,
-                shopOrder: "S1"
+                shopOrder: this.shopOrder
             }
             releaseRequest(params).then(data=>{
                 const res = data.data
                 if(res.code == 200){
                     this.tableData = res.data.releasedLotList
+                    for(let i = 0;i<this.tableData.length;i++){
+                        this.tableData[i].shopOrder = this.shopOrder
+                    }
+                }else{
+                    this.$message({
+                        message:`${res.message}`,
+                        type:'warning'
+                    })
                 }
-                console.log('这是工单下达信息'+JSON.stringify(data))
+                console.log('这是工单下达信息'+JSON.stringify(this.tableData))
             })
         }
     }
