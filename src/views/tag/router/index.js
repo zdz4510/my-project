@@ -42,7 +42,7 @@ export default {
           /* webpackChunkName: "tagPrint" */ "@/views/tag/pages/tag-print.vue"
         )
     },
-     //标签打印
+     //标签编辑
      {
       path: "tagEdit",
       name: "tagEdit",
