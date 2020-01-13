@@ -32,29 +32,38 @@
       <div class="left">
         <el-form :model="showInfo" label-width="140px" class="demo-form-inline">
           <el-form-item label="状态：">
-            <el-input v-model.trim="showInfo.aaa" size="small"></el-input>
+            <el-input v-model.trim="showInfo.status" size="small"></el-input>
           </el-form-item>
           <el-form-item label="操作：">
-            <el-input v-model.trim="showInfo.aaa" size="small"></el-input>
+            <el-input
+              v-model.trim="showInfo.operationList"
+              size="small"
+            ></el-input>
           </el-form-item>
           <el-form-item label="资源：">
-            <el-input v-model.trim="showInfo.aaa" size="small"></el-input>
+            <el-input
+              v-model.trim="showInfo.resourceList"
+              size="small"
+            ></el-input>
           </el-form-item>
           <el-form-item label="数量：">
-            <el-input v-model.trim="showInfo.aaa" size="small"></el-input>
+            <el-input v-model.trim="showInfo.quantity" size="small"></el-input>
           </el-form-item>
         </el-form>
       </div>
       <div class="right">
         <el-form :model="showInfo" label-width="140px" class="demo-form-inline">
           <el-form-item label="工单：">
-            <el-input v-model.trim="showInfo.aaa" size="small"></el-input>
+            <el-input v-model.trim="showInfo.shopOrder" size="small"></el-input>
           </el-form-item>
           <el-form-item label="物料（版本）：">
-            <el-input v-model.trim="showInfo.aaa" size="small"></el-input>
+            <el-input
+              v-model.trim="showInfo.materialRev"
+              size="small"
+            ></el-input>
           </el-form-item>
           <el-form-item label="工艺路线（版本）：">
-            <el-input v-model.trim="showInfo.aaa" size="small"></el-input>
+            <el-input v-model.trim="showInfo.routerRev" size="small"></el-input>
           </el-form-item>
         </el-form>
       </div>
@@ -137,6 +146,7 @@
 </template>
 
 <script>
+import { findLotAtOperationHttp } from "@/api/dc/lot.divestiture.api.js";
 export default {
   data() {
     return {
@@ -144,7 +154,13 @@ export default {
         lot: ""
       },
       showInfo: {
-        aaa: ""
+        status: "",
+        operationList: "",
+        resourceList: "",
+        quantity: "",
+        shopOrder: "",
+        materialRev: "",
+        routerRev: ""
       },
       total: 0,
       pageSize: 10,
@@ -154,7 +170,19 @@ export default {
   },
   methods: {
     //查询LOT状态信息
-    handleQuery() {},
+    handleQuery() {
+      const data = { lot: this.lotMergeForm.lot };
+      findLotAtOperationHttp(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.showInfo = res.data;
+          const operations = res.data.operationList.join(",");
+          this.showInfo.operationList = operations;
+          const resources = res.data.resourceList.join(",");
+          this.showInfo.resourceList = resources;
+        }
+      });
+    },
     //重置
     handleReset() {},
     //查询LOT
