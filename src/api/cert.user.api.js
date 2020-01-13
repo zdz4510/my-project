@@ -8,7 +8,7 @@ import request from "@/service/";
  */
 export const getCertUserList = data => {
   return request.post(
-    `${window.VUE_APP_URL}/mes/certUser/findPage?currentPage=${data.currentPage}&pageSize=${data.pageSize}&user=${data.user}`);
+    `${window.VUE_APP_URL}/mes/certUser/findPage?currentPage=${data.currentPage}&pageSize=${data.pageSize}&user=${data.user}&name=${data.name}`);
 };
 
 
@@ -18,7 +18,7 @@ export const getCertUserList = data => {
  */
 
 export const saveData = data => {
-  return request.put(`${window.VUE_APP_URL}/mes/certUser/save`, data);
+  return request.post(`${window.VUE_APP_URL}/mes/certUser/save`, data);
 };
 
 /**
@@ -27,7 +27,7 @@ export const saveData = data => {
  */
 
 export const findCert = data => {
-  return request.put(`${window.VUE_APP_URL}/mes/certUser/findCert`, data);
+  return request.post(`${window.VUE_APP_URL}/mes/certUser/findCert`, data);
 };
 
 /**
@@ -36,4 +36,14 @@ export const findCert = data => {
  */
 export const deleteData = data => {
   return request.post(`${window.VUE_APP_URL}/mes/certUser/delete`,data);
+};
+
+
+/**
+ * 获取所有上岗证
+ *  url /mes/certUser/getAllCert
+ */
+
+export const getAllCert = () => {
+  return request.post(`${window.VUE_APP_URL}/mes/certUser/getAllCert`);
 };

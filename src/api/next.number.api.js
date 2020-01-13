@@ -6,7 +6,7 @@ import request from  "@/service/"
  *  url /mes/nextNumberService/findNextNumberConfiguration
  */
 export const getNextNumberList = data => {
-	return request.post(`${window.VUE_APP_URL}/mes/nextNumberService/findNextNumberConfiguration`, data);
+	return request.post(`${window.VUE_APP_URL}/mes/nextNumberService/findNextNumberConfiguration?pageSize=${data.pageSize}&currentPage=${data.currentPage}`, data);
 };
 
 /**

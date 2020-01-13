@@ -9,12 +9,12 @@
 			<el-form :inline="true" :model="addForm" ref="addForm" :rules="rules" class="form-style" label-position="right" :label-width="formLabelWidth">
 				<el-row>
 					<el-col :span="8">
-						<el-form-item label="物料号:" prop="material">
+						<el-form-item label="物料号:" prop="material" required>
 							<el-input v-model="addForm.material"></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="8">
-						<el-form-item label="版本号:" prop="materialRev">
+						<el-form-item label="版本号:" prop="materialRev" required>
 							<el-input v-model="addForm.materialRev"></el-input>
 						</el-form-item>
 					</el-col>
@@ -284,6 +284,12 @@
 					label: '未启用'
 				}],
 				rules: {
+					material:[
+						{required: true, message: '物料号必填', trigger:'blur'}
+					],
+					materialRev:[
+						{required: true, message: '版本号必填', trigger:'blur'}
+					],
 					qtyRequired1: [
 						{ validator: qtyRequired, trigger: 'blur' }
 					],
@@ -363,14 +369,16 @@
 						// params.currentRev = this.addForm.currentRev ? 20 : 10
 						params.tenantSiteCode = 'test'
 						insertMaterial(params).then(data => {
-							if(data.data.message == 'success'){
+							if(data.data.code == 200){
 								this.$message({
 									type: 'success',
 									message: '保存成功!'
-								});
+								})
 								setTimeout(()=>{
 									this.$router.push({path:'/material/materialInfo'})
 								},1000)
+							}else{
+								this.$message.error(data.data.message);
 							}
 						})
 					} else {

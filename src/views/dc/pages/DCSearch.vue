@@ -28,7 +28,7 @@
 			<el-button class="mr25 pad1025" size="small" type="warning"  @click="del" :disabled="this.checkedList.length === 0">删除</el-button>
 			<el-button class="mr25 pad1025" size="small" type="warning"  @click="exportExcel" :disabled="!this.show">导出</el-button>
 		</div>
-		
+
 		<div class="" v-if="!this.show">
 			<el-table
 			ref="multipleTable"
@@ -95,9 +95,9 @@ import {getDataReportList, deleteDcSearch} from '../../../api/dc.search.api'
 				checkedList:[],
 				formLabelWidth:'200px',
 				searchForm: {
-					resource: '设备',
+					resource: '',
 					dcGroup: '',
-					collectionType: '20',
+					collectionType: '10',
 					tenantSiteCode:'test'
 				},
 				rules: {
@@ -153,7 +153,7 @@ import {getDataReportList, deleteDcSearch} from '../../../api/dc.search.api'
 						},{
 							column_name: "dcGroup",column_comment:"数据收集名称"
 						}]
-						
+
 						data.data.data.dcParamColumnHead.forEach(function(val){
 							let obj = {}
 							obj.column_name = val
@@ -168,7 +168,7 @@ import {getDataReportList, deleteDcSearch} from '../../../api/dc.search.api'
 						this.tableData.data = data.data.data.dcDataPage.data
 						this.page.total = data.data.data.dcDataPage.total
 					}
-					
+
 				})
 			},
 			handleSizeChange(pageSize){
@@ -194,25 +194,22 @@ import {getDataReportList, deleteDcSearch} from '../../../api/dc.search.api'
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-					// let params = {
-					// 	mat: this.checkedList[0].mat,
-					// 	matRev: this.checkedList[0].matRev,
-					// }
 
 				deleteDcSearch(this.checkedList).then(data=>{
-					console.log(data,'adddata')
-					this.$message({
-            type: 'success',
-            message: '删除成功!'
-					});
-					this.search()
+					if(data.data.code == 200){
+						this.$message.success('删除成功')
+						this.search()
+						this.$refs.multipleTable.clearSelection()
+					}else{
+						this.$message.error(data.data.message)
+					}
 				})
-          
+
         }).catch(() => {
           this.$message({
             type: 'info',
             message: '已取消删除'
-          });          
+          });
 				});
 			},
 			submitForm(formName) {

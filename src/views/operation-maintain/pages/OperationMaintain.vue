@@ -16,7 +16,7 @@
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="edit" :disabled="this.checkedList.length === 0">编辑</el-button>
 			<el-button class="mr25 pad1025" size="small" type="warning"  @click="del" :disabled="this.checkedList.length === 0">删除</el-button>
 		</div>
-		
+
 		<div class="">
 			<el-table
 			ref="multipleTable"
@@ -120,19 +120,22 @@ import qs from 'qs'
 					}
 					let params = qs.stringify(obj,{indices: false })
 					deleteOperation(params).then(data=>{
-						if(data.data.message == 'success'){
+						if(data.data.code == 200){
 							this.$message({
 								type: 'success',
 								message: '删除成功!'
 							});
 							this.search()
+							this.$refs.multipleTable.clearSelection()
+						}else{
+							this.$message.error(data.data.message)
 						}
 					})
         }).catch(() => {
           this.$message({
             type: 'info',
             message: '已取消删除'
-          });          
+          });
 				});
 			},
 			add(){

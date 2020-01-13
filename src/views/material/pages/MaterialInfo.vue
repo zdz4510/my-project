@@ -19,13 +19,13 @@
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="edit" :disabled="this.checkedList.length === 0">编辑</el-button>
 			<el-button class="mr25 pad1025" size="small" type="warning"  @click="del" :disabled="this.checkedList.length === 0">删除</el-button>
 		</div>
-		
+
 		<div class="">
 			<el-table
 			ref="multipleTable"
 			:data="this.tableData.data"
 			tooltip-effect="dark"
-			row-key="material"
+			row-key="material+materialRev"
 			@selection-change="handleSelectionChange"
 			>
 				<el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
@@ -92,14 +92,15 @@ import { mapMutations } from "vuex";
 			...mapMutations(["SETMATEDITLIST"]),
 			search(){
 				let params= {
-					deleteFlag: false,
-					tenantSiteCode: this.searchForm.tenantSiteCode,
+					// deleteFlag: false,
+					// tenantSiteCode: this.searchForm.tenantSiteCode,
 					material: this.searchForm.material,
 					materialRev: this.searchForm.materialRev,
 					pageSize: this.tableData.page.pageSize,
 					currentPage: this.tableData.page.currentPage,
 				}
 				getMaterialList(params).then(data => {
+					console.log(data)
 					this.tableData.data = data.data.data.data
 					this.tableData.page.total = data.data.data.total
 				})
@@ -123,24 +124,20 @@ import { mapMutations } from "vuex";
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-					// let params = {
-					// 	mat: this.checkedList[0].mat,
-					// 	matRev: this.checkedList[0].matRev,
-					// }
 				deleteMaterial(this.checkedList).then(data=>{
-					console.log(data,'adddata')
-					this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
-					this.search()
+					if(data.data.code == 200){
+						this.$message.success('删除成功')
+						this.search()
+						this.$refs.multipleTable.clearSelection()
+					}else{
+						this.$message.error(data.data.message)
+					}
 				})
-          
         }).catch(() => {
           this.$message({
             type: 'info',
             message: '已取消删除'
-          });          
+          });
 				});
 			},
 			add(){
@@ -149,16 +146,6 @@ import { mapMutations } from "vuex";
 			edit(){
 				this.SETMATEDITLIST(this.checkedList);
 				this.$router.push({path:'/material/editMaterial'})
-			},
-			submitForm(formName) {
-				this.$refs[formName].validate((valid) => {
-					if (valid) {
-						console.log('submit!');
-					} else {
-						console.log('error submit!!');
-						return false;
-					}
-				});
 			},
 			resetForm(formName) {
 				this.$refs[formName].resetFields();

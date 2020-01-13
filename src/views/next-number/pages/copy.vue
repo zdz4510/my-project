@@ -13,7 +13,7 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item label="定义目标:" prop="definedBy" required>
-					<el-select v-model="searchForm.definedBy" placeholder="请选择" @change="definedChange">
+					<el-select v-model="searchForm.definedBy" placeholder="请选择">
 						<el-option
 							v-for="item in target"
 							:key="item.value"
@@ -22,31 +22,19 @@
 						</el-option>
 					</el-select>
 				</el-form-item>
-				<el-form-item label="" prop="value" v-if="searchForm.definedBy !== 'MAT_GROUP'">
-					<el-select v-model="searchForm.value" placeholder="请选择" @change="onChange">
+				<el-form-item label="" prop="mat">
+					<el-select v-model="searchForm.mat" placeholder="请选择" @change="onChange">
 						<el-option
 							v-for="item in options"
-							:key="item.material+'&'+item.materialRev"
-							:label="item.material"
-							:value="item.material+'&'+item.materialRev">
-							<span style="float: left">{{ item.material }}</span>
-							<span style="float: right; color: #8492a6; font-size: 13px">{{ item.materialRev }}</span>
+							:key="item.matRev"
+							:label="item.mat"
+							:value="item.matRev">
+							<span style="float: left">{{ item.mat }}</span>
+							<span style="float: right; color: #8492a6; font-size: 13px">{{ item.matRev }}</span>
 						</el-option>
 					</el-select>
 				</el-form-item>
-				<el-form-item label="" prop="value" v-if="searchForm.definedBy == 'MAT_GROUP'">
-					<el-select v-model="searchForm.value" placeholder="请选择" @change="onChange">
-						<el-option
-							v-for="item in options"
-							:key="item.materialGroup"
-							:label="item.materialGroup"
-							:value="item.materialGroup">
-							<!-- <span style="float: left">{{ item.materialGroup }}</span> -->
-							<!-- <span style="float: right; color: #8492a6; font-size: 13px">{{ item.materialRev }}</span> -->
-						</el-option>
-					</el-select>
-				</el-form-item>
-				<el-form-item label="版本:" prop="vision" v-if="searchForm.definedBy !== 'MAT_GROUP'" required>
+				<el-form-item label="版本:" prop="vision" v-if="searchForm.target !== 'matGroup'" required>
 					<el-input v-model="searchForm.vision"></el-input>
 				</el-form-item>
 				<el-form-item label="提交规则:" prop="commitType" required>
@@ -66,15 +54,15 @@
 			</el-form>
 		</div>
 		<div class="operate ml30 mtb10">
-			<el-button class="mr25 pad1025" size="small" type="primary" @click="add" :disabled="this.checkedList.length>0">新增</el-button>
-			<el-button class="mr25 pad1025" size="small" type="primary" @click="save" :disabled="this.checkedList.length===0">编辑</el-button>
-			<el-button class="mr25 pad1025" size="small" type="warning" @click="del" :disabled="this.checkedList.length===0">删除</el-button>
+			<el-button class="mr25 pad1025" size="small" type="primary" @click="add">新增</el-button>
+			<el-button class="mr25 pad1025" size="small" type="primary" @click="save">编辑</el-button>
+			<el-button class="mr25 pad1025" size="small" type="warning" @click="del">删除</el-button>
 		</div>
 		<div class="">
 			<el-table
 			border
 			ref="multipleTable"
-			:data="tableData.data"
+			:data="tableData"
 			tooltip-effect="dark"
 			@selection-change="handleSelectionChange"
 			>
@@ -208,7 +196,7 @@
 </template>
 
 <script>
-	import {getNextNumberList, searchMat, searchMatGroup} from '../../../api/next.number.api.js'
+	import {getNextNumberList, searchMat} from '../../../api/next.number.api.js'
 	export default {
 		name:'next-number',
 		data() {
@@ -274,14 +262,7 @@
 					label: '工厂'
 				}],
 
-				rules: {
-					nextNumberType:[
-						{ required:true,message:'请选择编号类型', trigger: 'change' }
-					],
-					definedBy:[
-						{ required:true,message:'请选择定义目标', trigger: 'change' }
-					],
-				},
+				rules: {},
 				tableData: {
 					data:[],
 					page:{
@@ -314,25 +295,17 @@
 			}
 		},
 		created(){
+			this.init()
 			this.search()
 		},
 		methods: {
-			definedChange(val){
-				console.log(val)
-				if(val == 'MAT'){
-					searchMat().then(data=>{
-						this.options = data.data.data
-					})
-				}else if(val == 'MAT_GROUP'){
-					searchMatGroup().then(data=>{
-						this.options = data.data.data
-					})
-				}
+			init(){
+				searchMat().then(data => {
+					this.options =  data.data.data
+				})
 			},
 			search() {
 				let params = this.searchForm
-				params.pageSize = this.tableData.page.pageSize
-				params.currentPage = this.tableData.page.currentPage
 				getNextNumberList(params).then(data => {
 					this.tableData.data = data.data.data.data
 					this.tableData.page.total = data.data.data.total
@@ -354,10 +327,10 @@
 			},
 			onChange(val){
 				console.log(val)
-				this.searchForm.vision = val.split('&')[1]
+				this.searchForm.vision = val
 			},
 			add() {
-				this.$router.push({path:'/nextNumber/addNextNumber'})
+
 			},
 			save() {
 

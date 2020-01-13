@@ -215,7 +215,7 @@
 						console.log(this.addForm);
 						let params = this.addForm
 						saveData(params).then(data => {
-							if(data.data.message == 'success'){
+							if(data.data.code == 200){
 								this.$message({
 									type: 'success',
 									message: '保存成功!'
@@ -223,6 +223,8 @@
 								setTimeout(()=>{
 									this.$router.push({path:'/alarm/alarmMaintain'})
 								},1000)
+							}else{
+								this.$message.error(data.data.message)
 							}
 						})
 					} else {
@@ -275,7 +277,7 @@
 						if(this.input2){
 							return item.userType == this.select2 && item.informUserId.indexOf(this.input2) > -1
 						}else{
-							return item.userType == this.select2 
+							return item.userType == this.select2
 						}
 					})
 				}else{
@@ -297,7 +299,7 @@
 						if(this.input1){
 							return item.userType == this.select1 && item.informUserId.indexOf(this.input1) > -1
 						}else{
-							return item.userType == this.select1 
+							return item.userType == this.select1
 						}
 					})
 				}else{

@@ -27,7 +27,7 @@
 						<el-row>
 							<el-col :span="8">
 								<el-form-item label="工序:" prop="operation">
-									<el-input v-model="editForm.operation"></el-input>
+									<el-input v-model="editForm.operation" disabled></el-input>
 								</el-form-item>
 							</el-col>
 						</el-row>
@@ -138,7 +138,7 @@ export default {
 				resourceGroup:'',
 			},
 			rules: {
-				
+
 			},
 			status:[{
 				label:'已启用',
@@ -182,7 +182,7 @@ export default {
       //过滤数组
       const tempList = this.cloneList.filter(item => item["operation"] == row);
       console.log(tempList);
-      this.cloneList = tempList;
+      // this.cloneList = tempList;
       this.editForm = tempList[0];
       this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
       this.setCurrent(tempList[0]);
@@ -199,7 +199,7 @@ export default {
       } else {
          console.log('数据一样不禁用下拉框还有不弹出保存')
         this.saveDialog = false;
-        
+
         this.selectIsDisabled = false;
       }
     },
@@ -272,7 +272,7 @@ export default {
 						const res = data.data;
 						this.saveDialog = false; // 保存的提示框消失
 						this.selectIsDisabled = false;
-					
+
 						// 直接成功
 						if (res.code === 200) {
 							this.saveDialog = false;
@@ -290,7 +290,7 @@ export default {
 								this.editForm = this.currentRow;
 								this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
 							}
-					
+
 							if (this.cloneList.length == 1) {
 								let index = this.findIndexByItem(
 									this.operationEditList,
@@ -311,7 +311,7 @@ export default {
 							this.setCurrent(this.oldRow);
 						}
 					});
-				}	
+				}
 			});
     }
   },

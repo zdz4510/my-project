@@ -8,14 +8,16 @@
 			<el-col :span="6">
 				<div>
 					<el-select v-model="value" clearable placeholder="请选择" :disabled="selectIsDisabled" @clear="handleClearSelect" @change="handleChangeOption" @focus="handleSelectFocus" ref="select" >
-						<el-option
+            <el-option
 							v-for="item in cloneList"
-							:key="item.material"
+							:key="item.material+item.materialRev"
 							:label="item.material"
-							:value="item.material" >
+							:value="item.material+'&'+item.materialRev">
+							<span style="float: left">{{ item.material }}</span>
+							<span style="float: right; color: #8492a6; font-size: 13px">{{ item.materialRev }}</span>
 						</el-option>
 					</el-select>
-					<el-table ref="editTable" :data="cloneList" border highlight-current-row style="width: 100%" height="513" @row-click="handleCurrentChange" >
+					<el-table ref="editTable" :data="cloneList" border highlight-current-row row-key="material+materialRev" style="width: 100%" height="513" @row-click="handleCurrentChange" >
 						<el-table-column label="物料号" prop="material"> </el-table-column>
 						<el-table-column label="版本号" prop="materialRev"> </el-table-column>
 					</el-table>
@@ -295,6 +297,13 @@ export default {
 			}
 			callback()
 		};
+    var numbertRequired = (rule, value, callback) => {
+			var reg = /^\d+(\.\d+)?$/
+			if (!reg.test(value)) {
+				return callback(new Error('只能填写非负数'));
+			}
+			callback()
+		};
     return {
       //表单左边宽度
       formLabelWidth: "120px",
@@ -340,7 +349,31 @@ export default {
 				],
 				qtyRequired3: [
 					{ validator: qtyRequired, trigger: 'blur' }
-				]
+				],
+        length: [
+					{ validator: numbertRequired, trigger: 'blur' }
+				],
+        lengthErrorRange: [
+					{ validator: numbertRequired, trigger: 'blur' }
+				],
+        width: [
+					{ validator: numbertRequired, trigger: 'blur' }
+				],
+        widthErrorRange: [
+					{ validator: numbertRequired, trigger: 'blur' }
+				],
+        thickness: [
+					{ validator: numbertRequired, trigger: 'blur' }
+				],
+        thicknessErrorRange: [
+					{ validator: numbertRequired, trigger: 'blur' }
+				],
+        weight: [
+					{ validator: numbertRequired, trigger: 'blur' }
+				],
+        weightErrorRange: [
+					{ validator: numbertRequired, trigger: 'blur' }
+				],
 			},
 			units:[{
 				label: 'CELL',
@@ -395,13 +428,18 @@ export default {
       selectIsDisabled: false,
     };
   },
-
+  created() {
+    this.$nextTick(() => {
+      this.init();
+    });
+  },
   methods: {
     ...mapMutations(["SETMATEDITLIST"]),
     //初始化的操作
     init() {
       if (this.matEditList.length > 0) {
         this.cloneList = JSON.parse(JSON.stringify(this.matEditList)); //复制一份副本,保证副本和初始列表数据一致性
+        console.log(this.cloneList,'cloneList')
         this.editForm = this.cloneList[0]; // 默认选中第一行
         this.cloneModify = JSON.parse(JSON.stringify(this.editForm)); // modify 的副本
         this.setCurrent(this.editForm); // 设置选中第一行
@@ -418,9 +456,9 @@ export default {
         return ;
       }
       //过滤数组
-      const tempList = this.cloneList.filter(item => item["material"] == row);
+      const tempList = this.cloneList.filter(item => item["material"] == row.split('&')[0] && item['materialRev'] == row.split('&')[1] );
       console.log(tempList);
-      this.cloneList = tempList;
+      // this.cloneList = tempList;
       this.editForm = tempList[0];
       this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
       this.setCurrent(tempList[0]);
@@ -437,7 +475,7 @@ export default {
       } else {
          console.log('数据一样不禁用下拉框还有不弹出保存')
         this.saveDialog = false;
-        
+
         this.selectIsDisabled = false;
       }
     },
@@ -489,8 +527,9 @@ export default {
           return ;
       }
       this.cloneList = JSON.parse(JSON.stringify(this.matEditList));  //取消直接复制一份副本
+      console.log(this.currentRow,'currentRow')
       if (this.currentRow) {
-        let code = this.currentRow.mat;
+        let code = this.currentRow.material;
         let item = this.findItemByKey(this.cloneList, code, "material");
         if (item) {
           this.setCurrent(item);
@@ -507,7 +546,7 @@ export default {
 						const res = data.data;
 						this.saveDialog = false; // 保存的提示框消失
 						this.selectIsDisabled = false;
-					
+
 						// 直接成功
 						if (res.code === 200) {
 							this.saveDialog = false;
@@ -525,7 +564,7 @@ export default {
 								this.editForm = this.currentRow;
 								this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
 							}
-					
+
 							if (this.cloneList.length == 1) {
 								let index = this.findIndexByItem(
 									this.matEditList,
@@ -539,22 +578,17 @@ export default {
 							}
 						} else {
 							this.$message({
-								message: res.data,
+								message: res.message,
 								type: "error"
 							});
 							this.saveDialog = false;
 							this.setCurrent(this.oldRow);
 						}
 					});
-				}	
+				}
 			});
     }
   },
-  created() {
-    this.$nextTick(() => {
-      this.init();
-    });
-  }
 };
 </script>
 

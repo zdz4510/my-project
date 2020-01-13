@@ -1,5 +1,5 @@
 import request from "@/service/";
-import qs from "qs";
+// import qs from "qs";
 
 /* 工作中心*/
 /**
@@ -16,9 +16,7 @@ export const getWorkCenterList = data => {
  *  url /mes/workCenter/save
  */
 export const saveWorkCenter = data => {
-  return request.post(
-    `${window.VUE_APP_URL}/mes/workCenter/save?workCenter=${data.workCenter}&workCenterDes=${data.workCenterDes}&workCenterRelation=${data.workCenterRelation}&status=${data.status}&workCenterType=${data.workCenterType}`
-  );
+  return request.post(`${window.VUE_APP_URL}/mes/workCenter/save`, data);
 };
 
 /**
@@ -39,18 +37,21 @@ export const deleteWorkCenter = data => {
  * 查询所有
  * url /mes/workCenter/listAll
  */
-export const listAllHttp = data => {
-  const params = qs.stringify(data);
-  return request.post(
-    `${window.VUE_APP_URL}/mes/workCenter/listAll?${params}`,
-    data
-  );
-};
+ export const getAllList = data => {
+   return request.post(`${window.VUE_APP_URL}/mes/workCenter/listAll?workCenter=${data.workCenter}`);
+ };
+// export const listAllHttp = data => {
+//   const params = qs.stringify(data);
+//   return request.post(
+//     `${window.VUE_APP_URL}/mes/workCenter/listAll?${params}`,
+//     data
+//   );
+// };
 
 /**
- * 模糊搜索
- * url /mes/workCenter/findPage
+ * 工作中心查询
+ * url /mes/workCenter/getRelation
  */
-export const findPageHttp = () => {
-  return request.post(`${window.VUE_APP_URL}/mes/workCenter/findPage`);
+export const getRelationData = data => {
+  return request.post(`${window.VUE_APP_URL}/mes/workCenter/getRelation?workCenter=${data.workCenter}`);
 };

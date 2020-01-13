@@ -6,99 +6,177 @@
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="resetForm('addForm')">重置</el-button>
 		</div>
 		<div class="addForm">
-			<el-form :inline="true" :model="addForm" ref="addForm" :rules="rules" class="add-form" :label-width="formLabelWidth">
-				<el-form-item label="工作中心:" prop="workCenter">
-					<el-input v-model="addForm.workCenter" ></el-input>
-				</el-form-item>
-				<el-form-item label="描述:" prop="workCenter">
-					<el-input v-model="addForm.workCenterDes" ></el-input>
-				</el-form-item>
-				<el-tabs v-model="activeName" type="card">
-					<el-tab-pane label="基础信息" name="first">
-						<el-row>
-							<el-col :span="24">
-								<el-form-item label="状态:" prop="status" required>
-									<el-select v-model="addForm.status" filterable placeholder="请选择">
-										<el-option
-											v-for="item in status"
-											:key="item.value"
-											:label="item.label"
-											:value="item.value">
-										</el-option>
-									</el-select>
-								</el-form-item>
-							</el-col>
-						</el-row>
-						<el-row>
-							<el-col :span="24">
-								<el-form-item label="类别:" prop="type" required>
-									<el-select v-model="addForm.type" filterable placeholder="请选择">
-										<el-option
-											v-for="item in type"
-											:key="item.value"
-											:label="item.label"
-											:value="item.value">
-										</el-option>
-									</el-select>
-								</el-form-item>
-							</el-col>
-						</el-row>
-					</el-tab-pane>
-					<el-tab-pane label="工作中心维护" name="second">
-						<el-transfer
-							filterable
-							:filter-method="filterMethod"
-							:titles="['未分配工作中心', '已分配工作中心']"
-							v-model="value"
-							:data="data">
-						</el-transfer>
-					</el-tab-pane>
-					<el-tab-pane label="用户" name="third">
-						<el-transfer
-							filterable
-							:filter-method="filterMethod"
-							:titles="['未分配用户', '已分配用户']"
-							v-model="value"
-							:data="data">
-						</el-transfer>
-					</el-tab-pane>
-				</el-tabs>
-				<div slot="footer" class="dialog-footer">
-					<!-- <el-button @click="handleReset(workCenterForm)">重 置</el-button> -->
-					<el-button >重 置</el-button>
-					<el-button type="primary" @click="dialog = false">确 定</el-button>
-				</div>
+			<el-form :inline="true" :model="addForm" ref="addForm" :rules="rules" class="form-style" label-position="right" :label-width="formLabelWidth">
+				<el-row>
+					<el-col :span="8">
+						<el-form-item label="工作中心:" prop="workCenter" required>
+							<el-input v-model="addForm.workCenter"></el-input>
+						</el-form-item>
+					</el-col>
+					<el-col :span="8">
+						<el-form-item label="描述:" prop="workCenterDes">
+							<el-input v-model="addForm.workCenterDes"></el-input>
+						</el-form-item>
+					</el-col>
+				</el-row>
+				<el-row>
+					<el-col :span="24">
+						<el-tabs v-model="activeName" type="card">
+							<el-tab-pane label="基础信息" name="first">
+								<el-row>
+									<el-col :span="24">
+										<el-form-item label="状态:" prop="status" required>
+											<el-select v-model="addForm.status">
+												<el-option
+													v-for="item in status"
+													:key="item.value"
+													:label="item.label"
+													:value="item.value">
+												</el-option>
+											</el-select>
+										</el-form-item>
+									</el-col>
+								</el-row>
+								<el-row>
+									<el-col :span="24">
+										<el-form-item label="类别:" prop="workCenterType" required>
+											<el-select v-model="addForm.workCenterType">
+												<el-option
+													v-for="item in workCenterType"
+													:key="item.value"
+													:label="item.label"
+													:value="item.value">
+												</el-option>
+											</el-select>
+										</el-form-item>
+									</el-col>
+								</el-row>
+							</el-tab-pane>
+							<el-tab-pane label="工作中心关系维护" name="second">
+								<el-row>
+									<el-col :span="24">
+										<el-row>
+											<el-col :span="8">
+												<el-table :data="allocateData.filter(data => !workCenter1 || data.workCenter.toLowerCase().includes(workCenter1.toLowerCase()))" @select="check1" @select-all="check1">
+													<el-table-column label="工作中心:">
+														<el-table-column type="selection" width="55"></el-table-column>
+														<el-table-column prop="workCenter" label="已分配工作中心"></el-table-column>
+													</el-table-column>
+													<el-table-column label="">
+														<template slot="header">
+															<el-input v-model="workCenter1" placeholder="输入工作中心搜索"/></template>
+														<el-table-column prop="workCenterDes" label="工作中心描述"></el-table-column>
+													</el-table-column>
+												</el-table>
+											</el-col>
+											<el-col :span="2">
+												<div class="direction mt70"><i class="el-icon-caret-right" @click="right"></i></div>
+												<div class="direction"><i class="el-icon-caret-left" @click="left"></i></div>
+											</el-col>
+											<el-col :span="8">
+												<el-table :data="unallocateData.filter(data => !workCenter2 || data.workCenter.toLowerCase().includes(workCenter2.toLowerCase()))" @select="check2" @select-all="check2">
+													<el-table-column label="工作中心:">
+														<el-table-column type="selection" width="55"></el-table-column>
+														<el-table-column prop="workCenter" label="未分配工作中心"></el-table-column>
+													</el-table-column>
+													<el-table-column label="">
+														<template slot="header">
+															<el-input v-model="workCenter2" placeholder="输入工作中心搜索" />
+														</template>
+														<el-table-column prop="workCenterDes" label="工作中心描述"></el-table-column>
+													</el-table-column>
+												</el-table>
+											</el-col>
+										</el-row>
+									</el-col>
+								</el-row>
+							</el-tab-pane>
+							<el-tab-pane label="用户" name="three">
+								<el-row>
+									<el-col :span="24">
+										<el-row>
+											<el-col :span="8">
+												<el-table :data="allocateUser.filter(data => !workCenter1 || data.workCenter.toLowerCase().includes(workCenter1.toLowerCase()))" @select="check1" @select-all="check1">
+													<el-table-column label="用户:">
+														<el-table-column type="selection" width="55"></el-table-column>
+														<el-table-column prop="workCenterRelation" label="已分配用户"></el-table-column>
+													</el-table-column>
+													<el-table-column label="">
+														<template slot="header">
+															<el-input v-model="workCenter1" placeholder="输入用户搜索"/></template>
+														<el-table-column prop="workCenterDes" label="用户描述"></el-table-column>
+													</el-table-column>
+												</el-table>
+											</el-col>
+											<el-col :span="2">
+												<div class="direction mt70"><i class="el-icon-caret-right" @click="right"></i></div>
+												<div class="direction"><i class="el-icon-caret-left" @click="left"></i></div>
+											</el-col>
+											<el-col :span="8">
+												<el-table :data="unallocateUser.filter(data => !workCenter2 || data.workCenter.toLowerCase().includes(workCenter2.toLowerCase()))" @select="check2" @select-all="check2">
+													<el-table-column label="用户:">
+														<el-table-column type="selection" width="55"></el-table-column>
+														<el-table-column prop="workCenter" label="未分配用户"></el-table-column>
+													</el-table-column>
+													<el-table-column label="">
+														<template slot="header">
+															<el-input v-model="workCenter2" placeholder="输入用户搜索" />
+														</template>
+														<el-table-column prop="workCenterDes" label="用户描述"></el-table-column>
+													</el-table-column>
+												</el-table>
+											</el-col>
+										</el-row>
+									</el-col>
+								</el-row>
+							</el-tab-pane>
+						</el-tabs>
+					</el-col>
+				</el-row>
 			</el-form>
 		</div>
 	</div>
 </template>
 
 <script>
-	import {saveWorkCenter} from '../../../api/work.center.api.js'
+	import {getAllList, saveWorkCenter} from '../../../api/work.center.api'
+	import _ from 'lodash';
 	export default {
 		name:'add-work-center',
 		data() {
-			var qtyRequired = (rule, value, callback) => {
-				var reg = /^\d{1,5}(?:\.\d{1,3})?$/
-				if (!reg.test(value)) {
-					return callback(new Error('小数点前5位后3位数字;正数'));
-				}
-				callback()
-			};
 			return {
-				formLabelWidth:'120px',
 				activeName:'first',
-				units:[{
-					value: 'CELL',
-				},{
-					value: 'DIE',
-				},{
-					value: 'GLASS',
-				},{
-					value: 'PCS',
-				},{
-					value: 'WAFER',
-				}],
+				formLabelWidth:'150px',
+				workCenter1:'',
+				workCenter2:'',
+				rules: {
+					workCenter: [
+						{ required:true,message:'请填写工作中心名称', trigger: 'blur' }
+					],
+					workCenterDes: [
+						{ required:true,message:'请填写工作中心描述', trigger: 'blur' }
+					],
+					status: [
+						{ required:true,message:'请选择状态', trigger: 'change' }
+					],
+					workCenterType: [
+						{ required:true,message:'请选择类别', trigger: 'change' }
+					],
+				},
+				addForm: {
+					workCenter:'',
+					workCenterDes:'',
+					workCenterRelation:[],
+					tenantSiteCode: "test",
+					workCenterType:'',
+					status:'',
+				},
+				selectedList:[],
+				selectedList2:[],
+				allocateData:[],
+				unallocateData:[],
+				allocateUser:[],
+				unallocateUser:[],
 				status: [{
 					value: '1',
 					label: '已启用'
@@ -106,103 +184,50 @@
 					value: '2',
 					label: '未启用'
 				}],
-				type: [{
+				workCenterType: [{
 					value: '1',
 					label: '车间'
 				}, {
 					value: '2',
 					label: '产线'
 				}],
-				
-				rules: {
-					qtyRequired1: [
-						{ validator: qtyRequired, trigger: 'blur' }
-					],
-					qtyRequired2: [
-						{ validator: qtyRequired, trigger: 'blur' }
-					],
-					qtyRequired3: [
-						{ validator: qtyRequired, trigger: 'blur' }
-					]
-				},
-				addForm: {
-					mat:'',
-					matRev:'',
-					currentRev:'',
-					matDes:'',
-					unit1:'',
-					unit2:'',
-					unit3:'',
-					qtyRequired1:'',
-					qtyRequired2:'',
-					qtyRequired3:'',
-					matType:'1',
-					client:'',
-					clientMat:'',
-					vebdor:'',
-					vebdorMat:'',
-					matStatus:'',
-					modified_user_id:'',
-					length:'1',
-					lengthErrorRange:'1',
-					lengthUnit:'1',
-					width:'1',
-					widthErrorRange:'1',
-					widthUnit:'1',
-					thickness:'1',
-					thicknessErrorRange:'1',
-					thicknessUnit:'1',
-					weight:'1',
-					weightErrorRange:'1',
-					weightUnit:'1',
-				},
-				options: [{
-					value: '1',
-					label: '辅料'
-				}, {
-					value: '2',
-					label: '原材料'
-				}, {
-					value: '3',
-					label: '半成品'
-				}, {
-					value: '4',
-					label: '成品'
-				}],
-				lengthUnit: [{
-					value: '1',
-					label: 'MM'
-				},{
-					value: '10',
-					label: 'CM'
-				}],
-				weightUnit: [{
-					value: '1',
-					label: 'g'
-				},{
-					value: '1000',
-					label: 'Kg'
-				}],
+				cloneUnallocateData:[],
+				cloneAllocateData:[],
 			}
+		},
+		created(){
+			getAllList({workCenter:''}).then(data=>{
+				this.unallocateData = data.data.data
+			})
 		},
 		methods: {
 			save(formName){
 				this.$refs[formName].validate((valid) => {
 					if (valid) {
-						console.log(this.addForm);
-						let params = this.addForm
-						saveWorkCenter(params).then(data => {
-							if(data.data.message == 'success'){
-								this.$message({
-									type: 'success',
-									message: '保存成功!'
-								});
-								setTimeout(()=>{
-									this.$router.push({path:'/workCenter/workCenter'})
-								},1000)
-								
+						let arr = []
+						this.allocateData.map(item=>{
+							arr.push(item.workCenter)
+						})
+						this.addForm.workCenterRelation = arr
+						let params = {
+							createList:[{
+								status: this.addForm.status,
+								workCenterType: this.addForm.workCenterType,
+								workCenterDes:this.addForm.workCenterDes,
+								workCenter:this.addForm.workCenter,
+								workCenterRelation: arr
+							}]
+						}
+						console.log(params,'ppp')
+						saveWorkCenter(params).then(data=>{
+							if(data.data.code == 200){
+								this.$message.success('保存成功')
+								this.$router.push({path:'/workCenter/workCenter'})
+							}else{
+								this.$message.error(data.data.message)
 							}
 						})
+
 					} else {
 						console.log('error submit!!');
 						return false;
@@ -211,10 +236,80 @@
 			},
 			resetForm(formName) {
 				this.$refs[formName].resetFields();
+				this.allocateData = []
 			},
 			goBack() {
 				this.$router.push({path:'/workCenter/workCenter'})
 			},
+			check1(val){
+				this.selectedList = val
+			},
+			check2(val){
+				this.selectedList2 = val
+			},
+			right(){
+				this.unallocateData = _.concat(this.unallocateData,this.selectedList)
+				this.unallocateData = _.uniq(this.unallocateData)
+				this.allocateData = _.difference(this.allocateData,this.selectedList)
+				console.log(this.unallocateData,'un')
+				this.cloneAllocateData = _.cloneDeep(this.allocateData)
+			},
+			left(){
+				this.allocateData = _.concat(this.allocateData,this.selectedList2)
+				this.allocateData = _.uniq(this.allocateData)
+				this.unallocateData = _.difference(this.unallocateData,this.selectedList2)
+				console.log(this.unallocateData,'all')
+				this.cloneAllocateData = _.cloneDeep(this.allocateData)
+			},
+			getUnallocate(){
+				console.log('ss')
+				if(this.select2){
+					this.unallocateData =this.cloneUnallocateData
+					this.unallocateData = this.unallocateData.filter(item=>{
+						if(this.input2){
+							return item.userType == this.select2 && item.informUserId.indexOf(this.input2) > -1
+						}else{
+							return item.userType == this.select2
+						}
+					})
+				}else{
+					this.unallocateData =this.cloneUnallocateData
+					this.unallocateData = this.unallocateData.filter(item=>{
+						if(this.input2.length>0){
+							return item.informUserId.indexOf(this.input2) > -1
+						}else{
+							return true
+						}
+					})
+				}
+			},
+			getAllocate(){
+				console.log('ds')
+				if(this.select1){
+					this.allocateData =this.cloneAllocateData
+					this.allocateData = this.allocateData.filter(item=>{
+						if(this.input1){
+							return item.userType == this.select1 && item.informUserId.indexOf(this.input1) > -1
+						}else{
+							return item.userType == this.select1
+						}
+					})
+				}else{
+					console.log(this.cloneAllocateData,'d')
+					this.allocateData =this.cloneAllocateData
+					this.allocateData = this.allocateData.filter(item=>{
+						if(this.input1.length>0){
+							return item.informUserId.indexOf(this.input1) > -1
+						}else{
+							return true
+						}
+					})
+				}
+			},
+			searchUnallocate(val){
+				console.log(val,this.workCenter2,'dd')
+
+			}
 		}
 	}
 </script>
@@ -230,5 +325,20 @@
 		.dec {
 			width: 756px !important;
 		}
+	}
+	.input-form {
+		margin-left: 20px;
+	}
+	.el-select /deep/ .el-input {
+    width: 200px;
+  }
+	.direction {
+		color: #409eff;
+		font-size: 40px;
+		cursor: pointer;
+		text-align: center;
+	}
+	.mt70 {
+		margin-top: 70px;
 	}
 </style>

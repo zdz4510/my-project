@@ -9,7 +9,7 @@
 			<el-form :inline="true" :model="addForm" ref="addForm" :rules="rules" class="form-style" label-position="right" :label-width="formLabelWidth">
 				<el-row>
 					<el-col :span="8">
-						<el-form-item label="工序:" prop="operation">
+						<el-form-item label="工序:" prop="operation" required>
 							<el-input v-model="addForm.operation"></el-input>
 						</el-form-item>
 					</el-col>
@@ -27,7 +27,7 @@
 							<el-tab-pane label="基础信息" name="first">
 								<el-row>
 									<el-col :span="24">
-										<el-form-item label="状态:" prop="status">
+										<el-form-item label="状态:" prop="status" required>
 											<el-select v-model="addForm.status">
 												<el-option
 													v-for="item in status"
@@ -48,7 +48,7 @@
 								</el-row>
 								<el-row>
 									<el-col :span="24">
-										<el-form-item label="设备组:" prop="resourceGroup" >
+										<el-form-item label="设备组:" prop="resourceGroup" required>
 											<el-select v-model="addForm.resourceGroup">
 												<el-option
 													v-for="item in resourceGroup"
@@ -95,6 +95,15 @@
 				activeName:'first',
 				formLabelWidth:'120px',
 				rules: {
+					operation:[
+						{ required:true,message:'请填写工序名称', trigger: 'blur' }
+					],
+					status:[
+						{ required:true,message:'请选择状态', trigger: 'change' }
+					],
+					resourceGroup:[
+						{ required:true,message:'请选择设备组', trigger: 'change' }
+					]
 				},
 				addForm: {
 					operation:'',
@@ -135,7 +144,7 @@
 							createList:[this.addForm]
 						}
 						saveOperation(params).then(data => {
-							if(data.data.message == 'success'){
+							if(data.data.code == 200){
 								this.$message({
 									type: 'success',
 									message: '保存成功!'
@@ -143,6 +152,8 @@
 								setTimeout(()=>{
 									this.$router.push({path:'/operationMaintain/operationMaintain'})
 								},1000)
+							}else{
+								this.$message.error(data.data.message)
 							}
 						})
 					} else {

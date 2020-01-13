@@ -404,8 +404,8 @@
 					value: '布尔',
         }],
         alarmList:[],
-        pCheckedList:[], 
-        sCheckedList:[], 
+        pCheckedList:[],
+        sCheckedList:[],
         currentOperation:''
 			}
     },
@@ -427,7 +427,8 @@
 						params.dcParameterMeasureInfoList = this.MeasureInfoList
 						params.dcSetupInfoList = this.SetupInfoList
 						saveDataCollection(params).then(data => {
-							if(data.data.message == 'success'){
+
+							if(data.data.code == 200){
 								this.$message({
 									type: 'success',
 									message: '保存成功!'
@@ -435,6 +436,8 @@
 								setTimeout(()=>{
 									this.$router.push({path:'/dc/dataCollection'})
 								},1000)
+							}else{
+								this.$message.error(data.data.message)
 							}
 						})
 					} else {
@@ -461,7 +464,7 @@
               }else{
                 this.$message.error('该条数据已存在，添加失败');
               }
-              
+
             }else if(this.currentOperation == 'edit'){
                this.MeasureInfoList.splice(this.MeasureInfoList.findIndex(item => item.parameter === form.parameter), 1, form)
                this.$message.success('操作成功');
@@ -488,7 +491,7 @@
               }else{
                 this.$message.error('该条数据已存在，添加失败');
               }
-              
+
             }else if(this.currentOperation == 'edit'){
                 this.SetupInfoList.splice(this.SetupInfoList.findIndex(item => JSON.parse(JSON.stringify(item)) == JSON.parse(JSON.stringify(form))), 1, form)
                 this.$message.success('操作成功');
@@ -547,7 +550,7 @@
           this.$message({
             type: 'info',
             message: '已取消删除'
-          });          
+          });
         });
 			},
       delSet(){
@@ -564,7 +567,7 @@
           this.$message({
             type: 'info',
             message: '已取消删除'
-          });          
+          });
         });
       },
 		}
