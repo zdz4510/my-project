@@ -189,7 +189,7 @@
 </template>
 
 <script>
-import { listAllHttp } from "@/api/work.center.api.js";
+import { getAllList } from "@/api/work.center.api.js";
 import { getInactiveResourceHttp } from "@/api/device/maintenance.api.js";
 import { saveHttp } from "@/api/maintenance/standing.api.js";
 import { mapGetters, mapMutations } from "vuex";
@@ -269,7 +269,7 @@ export default {
       this.fn = _.debounce(cb => {
         const data = { workCenter: this.standingForm.workCenter };
         //查询所有工作中心
-        listAllHttp(data).then(data => {
+        getAllList(data).then(data => {
           const res = data.data;
           if (res.code === 200) {
             this.workCenters = res.data;
