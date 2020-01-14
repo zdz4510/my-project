@@ -149,12 +149,11 @@ import { mapMutations } from "vuex";
         }).then(() => {
 					let params = this.checkedList
 					deleteDataCollection(params).then(data=>{
-						console.log(data,'adddata')
-						this.$message({
-							type: 'success',
-							message: '删除成功!'
-						});
-						this.search()
+						if(data.data.code == 200){
+							this.$message.success('删除成功')
+							this.$refs.multipleTable.clearSelection()
+							this.search()
+						}
 					})
           
         }).catch(() => {

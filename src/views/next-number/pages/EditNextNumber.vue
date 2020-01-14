@@ -10,141 +10,116 @@
 					<el-select v-model="value" clearable placeholder="请选择" :disabled="selectIsDisabled" @clear="handleClearSelect" @change="handleChangeOption" @focus="handleSelectFocus" ref="select" >
 						<el-option
 							v-for="item in cloneList"
-							:key="item.workCenter"
-							:label="item.workCenter"
-							:value="item.workCenter" >
+							:key="item.sequence"
+							:label="item.sequence"
+							:value="item.sequence" >
 						</el-option>
 					</el-select>
-					<el-table ref="editTable" :data="cloneList" border highlight-current-row style="width: 100%" @row-click="handleCurrentChange" >
-						<el-table-column label="工作中心" prop="workCenter"> </el-table-column>
-						<el-table-column label="描述" prop="workCenterDes"> </el-table-column>
+					<el-table ref="editTable" :data="cloneList" row-key="sequence"  border highlight-current-row style="width: 100%" @row-click="handleCurrentChange" >
+						<el-table-column label="序号" prop="sequence"> </el-table-column>
+						<el-table-column label="类型" prop="sequenceType"> </el-table-column>
 					</el-table>
 				</div>
 			</el-col>
 			<el-col :span="18">
 				<div>
-					<el-form :inline="true" :model="editForm" ref="editForm" :rules="rules" class="add-form" :label-width="formLabelWidth">
-						<el-form-item label="工作中心:" prop="workCenter">
-							<el-input v-model="editForm.workCenter" disabled></el-input>
+					<el-form :model="editForm" :inline="true" ref="editForm" :label-width="formLabelWidth">
+						<el-form-item label="规则类型:" prop="sequenceType" required>
+							<el-select v-model="editForm.sequenceType" placeholder="请选择">
+								<el-option
+									v-for="item in ruleTypes"
+									:key="item.value"
+									:label="item.label"
+									:value="item.value">
+								</el-option>
+							</el-select>
 						</el-form-item>
-						<el-form-item label="描述:" prop="workCenter">
-							<el-input v-model="editForm.workCenterDes" disabled></el-input>
-						</el-form-item>
-						<el-tabs v-model="activeName" type="card">
-							<el-tab-pane label="基础信息" name="first">
-								<el-row>
-									<el-col :span="24">
-										<el-form-item label="状态:" prop="status">
-											<el-select v-model="editForm.status" filterable placeholder="请选择">
-												<el-option
-													v-for="item in status"
-													:key="item.value"
-													:label="item.label"
-													:value="item.value">
-												</el-option>
-											</el-select>
-										</el-form-item>
-									</el-col>
-								</el-row>
-								<el-row>
-									<el-col :span="24">
-										<el-form-item label="类别:" prop="workCenterType">
-											<el-select v-model="editForm.workCenterType " filterable placeholder="请选择">
-												<el-option
-													v-for="item in workCenterType "
-													:key="item.value"
-													:label="item.label"
-													:value="item.value">
-												</el-option>
-											</el-select>
-										</el-form-item>
-									</el-col>
-								</el-row>
-							</el-tab-pane>
-							<el-tab-pane label="工作中心关系维护" name="second">
-                <el-row>
-									<el-col :span="24">
-										<el-row>
-											<el-col :span="8">
-												<el-table :data="allocateData.filter(data => !workCenter1 || data.workCenter.toLowerCase().includes(workCenter1.toLowerCase()))" @select="check1" @select-all="check1">
-													<el-table-column label="工作中心:">
-														<el-table-column type="selection" width="55"></el-table-column>
-														<el-table-column prop="workCenterRelation" label="已分配工作中心"></el-table-column>
-													</el-table-column>
-													<el-table-column label="">
-														<template slot="header">
-															<el-input v-model="workCenter1" placeholder="输入工作中心搜索"/></template>
-														<el-table-column prop="workCenterDes" label="工作中心描述"></el-table-column>
-													</el-table-column>
-												</el-table>
-											</el-col>
-											<el-col :span="2">
-												<div class="direction mt70"><i class="el-icon-caret-right" @click="right"></i></div>
-												<div class="direction"><i class="el-icon-caret-left" @click="left"></i></div>
-											</el-col>
-											<el-col :span="8">
-												<el-table :data="unallocateData.filter(data => !workCenter2 || data.workCenter.toLowerCase().includes(workCenter2.toLowerCase()))" @select="check2" @select-all="check2">
-													<el-table-column label="工作中心:">
-														<el-table-column type="selection" width="55"></el-table-column>
-														<el-table-column prop="workCenter" label="未分配工作中心"></el-table-column>
-													</el-table-column>
-													<el-table-column label="">
-														<template slot="header">
-															<el-input v-model="workCenter2" placeholder="输入工作中心搜索" />
-														</template>
-														<el-table-column prop="workCenterDes" label="工作中心描述"></el-table-column>
-													</el-table-column>
-												</el-table>
-											</el-col>
-										</el-row>
-									</el-col>
-								</el-row>
-							</el-tab-pane>
-							<el-tab-pane label="用户" name="third">
-                <el-row>
-									<el-col :span="24">
-										<el-row>
-											<el-col :span="8">
-												<el-table :data="allocateUser.filter(data => !workCenter1 || data.workCenter.toLowerCase().includes(workCenter1.toLowerCase()))" @select="check1" @select-all="check1">
-													<el-table-column label="工作中心:">
-														<el-table-column type="selection" width="55"></el-table-column>
-														<el-table-column prop="workCenterRelation" label="已分配工作中心"></el-table-column>
-													</el-table-column>
-													<el-table-column label="">
-														<template slot="header">
-															<el-input v-model="workCenter1" placeholder="输入工作中心搜索"/></template>
-														<el-table-column prop="workCenterDes" label="工作中心描述"></el-table-column>
-													</el-table-column>
-												</el-table>
-											</el-col>
-											<el-col :span="2">
-												<div class="direction mt70"><i class="el-icon-caret-right" @click="right"></i></div>
-												<div class="direction"><i class="el-icon-caret-left" @click="left"></i></div>
-											</el-col>
-											<el-col :span="8">
-												<el-table :data="unallocateUser.filter(data => !workCenter2 || data.workCenter.toLowerCase().includes(workCenter2.toLowerCase()))" @select="check2" @select-all="check2">
-													<el-table-column label="工作中心:">
-														<el-table-column type="selection" width="55"></el-table-column>
-														<el-table-column prop="workCenter" label="未分配工作中心"></el-table-column>
-													</el-table-column>
-													<el-table-column label="">
-														<template slot="header">
-															<el-input v-model="workCenter2" placeholder="输入工作中心搜索" />
-														</template>
-														<el-table-column prop="workCenterDes" label="工作中心描述"></el-table-column>
-													</el-table-column>
-												</el-table>
-											</el-col>
-										</el-row>
-									</el-col>
-								</el-row>
-							</el-tab-pane>
-						</el-tabs>
-						<div slot="footer" class="dialog-footer">
-							<!-- <el-button @click="handleReset(workCenterForm)">重 置</el-button> -->
-							<el-button >重 置</el-button>
-							<el-button type="primary" @click="dialog = false">确 定</el-button>
-						</div>
+						<el-row v-if="editForm.sequenceType == 'F'">
+							<el-col :span="24">
+								<el-form-item label="固定字符串:" prop="fixedString" required>
+									<el-input v-model="editForm.fixedString"></el-input>
+								</el-form-item>
+							</el-col>
+						</el-row>
+						<el-row v-if="editForm.sequenceType == 'V'">
+							<el-col :span="24">
+								<el-form-item label="可替换参数:" prop="varType" required>
+									<el-select v-model="editForm.varType" placeholder="请选择">
+										<el-option
+											v-for="item in replaceable"
+											:key="item.value"
+											:label="item.label"
+											:value="item.value">
+										</el-option>
+									</el-select>
+								</el-form-item>
+							</el-col>
+						</el-row>
+						<el-row>
+							<el-col :span="24">
+								<el-form-item label="时间格式化:" prop="dateTimeFormat" v-if="editForm.sequenceType == 'D'" required>
+									<el-date-picker
+										v-model="editForm.dateTimeFormat"
+										type="datetime"
+										value-format="yyyy-MM-dd hh:mm:ss"
+										placeholder="选择日期时间">
+									</el-date-picker>
+								</el-form-item>
+							</el-col>
+						</el-row>
+						<el-row v-if="editForm.sequenceType == 'S'">
+							<el-col :span="12">
+								<el-form-item label="长度:" prop="length" required>
+									<el-input v-model="editForm.length"></el-input>
+								</el-form-item>
+							</el-col>
+							<el-col :span="12">
+								<el-form-item label="进制:" prop="numBase" required>
+									<el-input-number v-model="editForm.numBase" :min="2" :max="36" label=""></el-input-number>
+								</el-form-item>
+							</el-col>
+						</el-row>
+						<el-row v-if="editForm.sequenceType == 'S'">
+							<el-col :span="12">
+								<el-form-item label="增量:" prop="numIncr" required>
+									<el-input v-model="editForm.numIncr"></el-input>
+								</el-form-item>
+							</el-col>
+							<el-col :span="12">
+								<el-form-item label="初始值:" prop="initValue" required>
+									<el-input v-model="editForm.initValue"></el-input>
+								</el-form-item>
+							</el-col>
+						</el-row>
+						<el-row v-if="editForm.sequenceType == 'S'">
+							<el-col :span="12">
+								<el-form-item label="终值:" prop="finalValue" required>
+									<el-input v-model="editForm.finalValue"></el-input>
+								</el-form-item>
+							</el-col>
+							<el-col :span="12">
+								<el-form-item label="循环:" prop="reset" required>
+									<el-select v-model="editForm.reset" placeholder="请选择">
+										<el-option
+											v-for="item in circle"
+											:key="item.value"
+											:label="item.label"
+											:value="item.value">
+										</el-option>
+									</el-select>
+								</el-form-item>
+							</el-col>
+						</el-row>
+						<el-row v-if="editForm.sequenceType == 'S'">
+							<el-col :span="12">
+								<el-form-item label="顺序:" prop="order" >
+									<el-radio-group v-model="editForm.order">
+										<el-radio-button label="顺序"></el-radio-button>
+										<el-radio-button label="反序"></el-radio-button>
+									</el-radio-group>
+								</el-form-item>
+							</el-col>
+						</el-row>
 					</el-form>
 					<!-- 确认模态框 -->
 					<el-dialog title="保存" :visible.sync="saveDialog" width="30%">
@@ -164,83 +139,97 @@
 
 <script>
 import { mapGetters, mapMutations } from "vuex";
-import {saveWorkCenter, getRelationData} from '../../../api/work.center.api.js'
-import _ from 'lodash';
+import {saveNextNumber} from '../../../api/next.number.api.js'
 export default {
-  name:'edit-work-center',
+  name:'edit-next-number',
   computed: {
-    ...mapGetters(["workCenterEditList"])
+    ...mapGetters(["nextNumberEditList"])
   },
   data() {
     return {
       //表单左边宽度
       formLabelWidth: "120px",
-			activeName:'first',
       cloneModify: {}, //  克隆的表单的一份副本
       editForm: {
-				workCenter:'',
-				workCenterDes:'',
-				status:'',
-				workCenterType:'',
-				workCenterRelation:[],
+				
 			},
 			rules: {
 
 			},
-			status:[{
-				value:'1',
-				label:'已启用'
-			},{
-				value:'2',
-				label:'未启用'
-			}],
-			workCenterType:[{
-				value:'1',
-				label:'车间'
-			},{
-				value:'2',
-				label:'产线'
-			}],
+			circle: [{
+					value: 'NEVER',
+					label: '从不'
+				},{
+					value: 'DAY',
+					label: '每天'
+				},{
+					value: 'WEEK',
+					label: '每周'
+				},{
+					value: 'MONTH',
+					label: '每月'
+				},{
+					value: 'YEAR',
+					label: '每年'
+				}],
+				ruleTypes: [{
+					value: 'F',
+					label: '固定字符串'
+				},{
+					value: 'V',
+					label: '可替换参数'
+				},{
+					value: 'D',
+					label: '时间'
+				},{
+					value: 'S',
+					label: '自增长序列'
+				}],
+				replaceable: [{
+					value: 'MAT',
+					label: '物料'
+				},{
+					value: 'MAT_REV',
+					label: '物料版本'
+				},{
+					value: 'MAT_GROUP',
+					label: '物料组'
+				},{
+					value: 'SHOP_ORDER',
+					label: '工单'
+				},{
+					value: 'SITE',
+					label: '工厂'
+				},{
+					value: 'OP_USER',
+					label: '操作执行人员ID'
+				}],
+			
       saveDialog: false, //保存弹框的显示和隐藏
       currentRow: {},
       oldRow: {}, // 当前选中的行
       cloneList: [], // 复制所以可以编辑的数据副本
       value: "",
 			selectIsDisabled: false,
-			selectedList:[],
-			selectedList2:[],
-			allocateData:[],
-			unallocateData:[],
-			cloneUnallocateData:[],
-			cloneAllocateData:[],
-      workCenter1:'',
-      workCenter2:'',
-      allocateUser:[],
-      unallocateUser:[],
+			
     };
   },
   created() {
     this.$nextTick(() => {
       this.init();
-    });
+		});
+		console.log(this.nextNumberEditList,'store')
   },
   methods: {
-    ...mapMutations(["SETWORKCENTEREDITLIST"]),
+    ...mapMutations(["SETNEXTNUMBEREDITLIST"]),
     //初始化的操作
     init() {
-      if (this.workCenterEditList.length > 0) {
-        this.cloneList = JSON.parse(JSON.stringify(this.workCenterEditList)); //复制一份副本,保证副本和初始列表数据一致性
+      if (this.nextNumberEditList.length > 0) {
+        this.cloneList = JSON.parse(JSON.stringify(this.nextNumberEditList)); //复制一份副本,保证副本和初始列表数据一致性
         this.editForm = this.cloneList[0]; // 默认选中第一行
         this.cloneModify = JSON.parse(JSON.stringify(this.editForm)); // modify 的副本
         this.setCurrent(this.editForm); // 设置选中第一行
         this.currentRow = this.editForm; // 设置初始currentRow 为第一行
-        let params = {
-          workCenter:this.editForm.workCenter
-        }
-        getRelationData(params).then(data=>{
-          this.unallocateData = data.data.data.outerRelations
-          this.allocateData = data.data.data.relations
-        })
       }
     },
     //清除下拉列表时触发
@@ -253,19 +242,12 @@ export default {
         return ;
       }
       //过滤数组
-      const tempList = this.cloneList.filter(item => item["workCenter"] == row);
+      const tempList = this.cloneList.filter(item => item["sequence"] == row);
       console.log(tempList);
       // this.cloneList = tempList;
       this.editForm = tempList[0];
       this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
       this.setCurrent(tempList[0]);
-      let params = {
-        workCenter:this.editForm.workCenter
-      }
-      getRelationData(params).then(data=>{
-        this.unallocateData = data.data.data.outerRelations
-        this.allocateData = data.data.data.relations
-      })
     },
     //下拉列表获取到焦点时触发
     handleSelectFocus() {
@@ -306,40 +288,32 @@ export default {
       }
       this.editForm = currentRow;
       this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
-      let params = {
-        workCenter:this.editForm.workCenter
-      }
-      getRelationData(params).then(data=>{
-        this.unallocateData = data.data.data.outerRelations
-        this.allocateData = data.data.data.relations
-      })
     },
     //选中某一行
     //返回操作
 		goBack() {
-			this.$router.push({path:'/workCenter/workCenter'})
+			this.$router.push({path:'/nextNumber/nextNumber'})
 		},
     /**
-     *  通过workCenter
      *  return >1 就找到了
      */
     findIndexByItem(arr, v) {
-      return arr.findIndex(item => item["workCenter"] == v);
+      return arr.findIndex(item => item["sequence"] == v);
     },
     // 取消操作  一般是在弹框出现的时候才有取消操作
     handleCancle() {
       this.saveDialog = false;
       this.selectIsDisabled = false;
       //数据还原
-      if(this.cloneList.length<this.workCenterEditList.length && this.value!=''){
+      if(this.cloneList.length<this.nextNumberEditList.length && this.value!=''){
           this.cloneList = JSON.parse(JSON.stringify([this.cloneModify]));
           this.editForm = this.cloneList[0];
           return ;
       }
-      this.cloneList = JSON.parse(JSON.stringify(this.workCenterEditList));  //取消直接复制一份副本
+      this.cloneList = JSON.parse(JSON.stringify(this.nextNumberEditList));  //取消直接复制一份副本
       if (this.currentRow) {
-        let code = this.currentRow.workCenter;
-        let item = this.findItemByKey(this.cloneList, code, "workCenter");
+        let code = this.currentRow.sequence;
+        let item = this.findItemByKey(this.cloneList, code, "sequence");
         if (item) {
           this.setCurrent(item);
         }
@@ -350,24 +324,22 @@ export default {
     handleSave(formName) {
 			this.$refs[formName].validate((valid) => {
 				if (valid) {
-          let arr = []
-          this.allocateData.map(item=>{
-            arr.push(item.workCenterRelation)
-          })
-          this.editForm.workCenterRelation = arr
-          let params = {
-            createList:[],
-            deleteList:[],
-            updateList:[{
-              status: this.editForm.status,
-              workCenterType: this.editForm.workCenterType,
-              workCenterDes:this.editForm.workCenterDes,
-              workCenter:this.editForm.workCenter,
-              workCenterRelation: arr
-            }]
-          }
+				
+					let params = {}
+					params.createList = []
+					params.deleteList = []
+					params.updateList = [{
+						nextNumberType:this.editForm.nextNumberType,
+						definedBy:this.editForm.definedBy,
+						material:this.editForm.material,
+						materialRev:this.editForm.materialRev,
+						commitType:this.editForm.commitType,
+						sequences:{
+							data:[this.editForm]
+						}
+					}]
 
-					saveWorkCenter(params).then(data => {
+					saveNextNumber(params).then(data => {
 						const res = data.data;
 						this.saveDialog = false; // 保存的提示框消失
 						this.selectIsDisabled = false;
@@ -381,23 +353,23 @@ export default {
 								type: "success"
 							});
 							// 直接覆盖
-							if (this.cloneList.length == this.workCenterEditList.length) {
+							if (this.cloneList.length == this.nextNumberEditList.length) {
 								//直接覆盖
 								//重新更改初始的副本
 								//设置左边的选中状态
-								this.SETWORKCENTEREDITLIST(JSON.parse(JSON.stringify(this.cloneList)));
+								this.SETNEXTNUMBEREDITLIST(JSON.parse(JSON.stringify(this.cloneList)));
 								this.editForm = this.currentRow;
 								this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
 							}
 
 							if (this.cloneList.length == 1) {
 								let index = this.findIndexByItem(
-									this.workCenterEditList,
-									this.editForm.workCenter
+									this.nextNumberEditList,
+									this.editForm.sequence
 								);
 								if (index > -1) {
-									this.workCenterEditList.splice(index, 1, this.editForm); // 替换
-									this.SETWORKCENTEREDITLIST(JSON.parse(JSON.stringify(this.workCenterEditList)));
+									this.nextNumberEditList.splice(index, 1, this.editForm); // 替换
+									this.SETNEXTNUMBEREDITLIST(JSON.parse(JSON.stringify(this.nextNumberEditList)));
 									this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
 								}
 							}
@@ -413,26 +385,7 @@ export default {
 				}
 			});
     },
-    check1(val){
-			this.selectedList = val
-		},
-		check2(val){
-			this.selectedList2 = val
-		},
-		right(){
-			this.unallocateData = _.concat(this.unallocateData,this.selectedList)
-			this.unallocateData = _.uniq(this.unallocateData)
-			this.allocateData = _.difference(this.allocateData,this.selectedList)
-			console.log(this.unallocateData,'un')
-			this.cloneAllocateData = _.cloneDeep(this.allocateData)
-		},
-		left(){
-			this.allocateData = _.concat(this.allocateData,this.selectedList2)
-			this.allocateData = _.uniq(this.allocateData)
-			this.unallocateData = _.difference(this.unallocateData,this.selectedList2)
-			console.log(this.unallocateData,'all')
-			this.cloneAllocateData = _.cloneDeep(this.allocateData)
-		},
+    
   }
 };
 </script>

@@ -65,10 +65,10 @@
 										<el-form-item label="上岗证:" prop="certOperation" >
 											<el-select v-model="addForm.certOperation" >
 												<el-option
-													v-for="item in certOperation"
-													:key="item.value"
-													:label="item.label"
-													:value="item.value">
+													v-for="item in certList"
+													:key="item.cert"
+													:label="item.cert"
+													:value="item.cert">
 												</el-option>
 											</el-select>
 										</el-form-item>
@@ -87,7 +87,7 @@
 </template>
 
 <script>
-	import {saveOperation, getAllResourceGroup} from '../../../api/operation.maintain.api.js'
+	import {saveOperation, getAllResourceGroup, getAllCert} from '../../../api/operation.maintain.api.js'
 	export default {
 		name:'add-operation-maintain',
 		data() {
@@ -122,11 +122,19 @@
 				}],
 				resourceGroup:[],
 				certOperation:[],
+				certList:[],
 			}
 		},
 		created() {
 			getAllResourceGroup().then(data => {
 				this.resourceGroup = data.data.data
+			})
+			getAllCert().then(data=>{
+				if(data.data.code == 200){
+					this.certList = data.data.data
+				}else{
+					this.$message.error(data.data.message)
+				}
 			})
 		},
 		methods: {

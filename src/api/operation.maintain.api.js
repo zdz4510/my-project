@@ -57,4 +57,12 @@ export const deleteOperation = data => {
   return request.delete(`${window.VUE_APP_URL}/mes/operation/deleteOperation?${data}`,);
 };
 
-
+/**
+ * 获取所有上岗证
+ * url /mes/cert/listAllCert
+ */
+export const getAllCert = data => {
+  return request.get(`${window.VUE_APP_URL}/mes/cert/listAllCert`, {
+    params: data
+  });
+};

@@ -75,17 +75,17 @@
 								</el-row>
 								<el-row>
 									<el-col :span="8">
-										<el-form-item label="投放数量1:" prop="qtyRequired1" required>
+										<el-form-item label="投放数量1:" prop="qtyRequired1">
 											<el-input v-model="addForm.qtyRequired1"></el-input>
 										</el-form-item>
 									</el-col>
 									<el-col :span="8">
-										<el-form-item label="投放数量2:" prop="qtyRequired2" required>
+										<el-form-item label="投放数量2:" prop="qtyRequired2" >
 											<el-input v-model="addForm.qtyRequired2"></el-input>
 										</el-form-item>
 									</el-col>
 									<el-col :span="8">
-										<el-form-item label="投放数量3:" prop="qtyRequired3" required>
+										<el-form-item label="投放数量3:" prop="qtyRequired3" >
 											<el-input v-model="addForm.qtyRequired3"></el-input>
 										</el-form-item>
 									</el-col>
@@ -257,8 +257,11 @@
 		data() {
 			var qtyRequired = (rule, value, callback) => {
 				var reg = /^\d{1,5}(?:\.\d{1,3})?$/
+				if(!value){
+					callback()
+				}
 				if (!reg.test(value)) {
-					return callback(new Error('小数点前5位后3位数字;正数'));
+					return callback(new Error('小数点前5位后3位正数'));
 				}
 				callback()
 			};
@@ -291,13 +294,13 @@
 						{required: true, message: '版本号必填', trigger:'blur'}
 					],
 					qtyRequired1: [
-						{ validator: qtyRequired, trigger: 'blur' }
+						{ required:false, validator: qtyRequired, trigger: 'blur' }
 					],
 					qtyRequired2: [
-						{ validator: qtyRequired, trigger: 'blur' }
+						{ required:false, validator: qtyRequired, trigger: 'blur' }
 					],
 					qtyRequired3: [
-						{ validator: qtyRequired, trigger: 'blur' }
+						{ required:false, validator: qtyRequired, trigger: 'blur' }
 					]
 				},
 				addForm: {

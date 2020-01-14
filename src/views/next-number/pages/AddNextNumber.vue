@@ -17,14 +17,14 @@
 						</el-option>
 					</el-select>
 				</el-form-item>
-				<el-row v-if="addForm.sequenceType == 'FIXED'">
+				<el-row v-if="addForm.sequenceType == 'F'">
 					<el-col :span="24">
 						<el-form-item label="固定字符串:" prop="fixedString" required>
 							<el-input v-model="addForm.fixedString"></el-input>
 						</el-form-item>
 					</el-col>
 				</el-row>
-				<el-row v-if="addForm.sequenceType == 'VAR'">
+				<el-row v-if="addForm.sequenceType == 'V'">
 					<el-col :span="24">
 						<el-form-item label="可替换参数:" prop="varType" required>
 							<el-select v-model="addForm.varType" placeholder="请选择">
@@ -40,16 +40,17 @@
 				</el-row>
 				<el-row>
 					<el-col :span="24">
-						<el-form-item label="时间格式化:" prop="dateTimeFormat" v-if="addForm.sequenceType == 'TIME'" required>
+						<el-form-item label="时间格式化:" prop="dateTimeFormat" v-if="addForm.sequenceType == 'D'" required>
 							<el-date-picker
 								v-model="addForm.dateTimeFormat"
 								type="datetime"
+								value-format="yyyy-MM-dd hh:mm:ss"
 								placeholder="选择日期时间">
 							</el-date-picker>
 						</el-form-item>
 					</el-col>
 				</el-row>
-				<el-row v-if="addForm.sequenceType == 'NUMBER'">
+				<el-row v-if="addForm.sequenceType == 'S'">
 					<el-col :span="12">
 						<el-form-item label="长度:" prop="length" required>
 							<el-input v-model="addForm.length"></el-input>
@@ -61,7 +62,7 @@
 						</el-form-item>
 					</el-col>
 				</el-row>
-				<el-row v-if="addForm.sequenceType == 'NUMBER'">
+				<el-row v-if="addForm.sequenceType == 'S'">
 					<el-col :span="12">
 						<el-form-item label="增量:" prop="numIncr" required>
 							<el-input v-model="addForm.numIncr"></el-input>
@@ -73,7 +74,7 @@
 						</el-form-item>
 					</el-col>
 				</el-row>
-				<el-row v-if="addForm.sequenceType == 'NUMBER'">
+				<el-row v-if="addForm.sequenceType == 'S'">
 					<el-col :span="12">
 						<el-form-item label="终值:" prop="finalValue" required>
 							<el-input v-model="addForm.finalValue"></el-input>
@@ -92,7 +93,7 @@
 						</el-form-item>
 					</el-col>
 				</el-row>
-				<el-row v-if="addForm.sequenceType == 'NUMBER'">
+				<el-row v-if="addForm.sequenceType == 'S'">
 					<el-col :span="12">
 						<el-form-item label="顺序:" prop="order" >
 							<el-radio-group v-model="addForm.order">
@@ -166,16 +167,16 @@
 					label: '每年'
 				}],
 				ruleTypes: [{
-					value: 'FIXED',
+					value: 'F',
 					label: '固定字符串'
 				},{
-					value: 'VAR',
+					value: 'V',
 					label: '可替换参数'
 				},{
-					value: 'TIME',
+					value: 'D',
 					label: '时间'
 				},{
-					value: 'NUMBER',
+					value: 'S',
 					label: '自增长序列'
 				}],
 				replaceable: [{

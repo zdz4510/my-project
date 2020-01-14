@@ -94,17 +94,17 @@
 										</el-row>
 										<el-row>
 											<el-col :span="8">
-												<el-form-item label="投放数量1:" prop="qtyRequired1" required>
+												<el-form-item label="投放数量1:" prop="qtyRequired1" >
 													<el-input v-model="editForm.qtyRequired1"></el-input>
 												</el-form-item>
 											</el-col>
 											<el-col :span="8">
-												<el-form-item label="投放数量2:" prop="qtyRequired2" required>
+												<el-form-item label="投放数量2:" prop="qtyRequired2" >
 													<el-input v-model="editForm.qtyRequired2"></el-input>
 												</el-form-item>
 											</el-col>
 											<el-col :span="8">
-												<el-form-item label="投放数量3:" prop="qtyRequired3" required>
+												<el-form-item label="投放数量3:" prop="qtyRequired3" >
 													<el-input v-model="editForm.qtyRequired3"></el-input>
 												</el-form-item>
 											</el-col>
@@ -292,6 +292,9 @@ export default {
   data() {
 		var qtyRequired = (rule, value, callback) => {
 			var reg = /^\d{1,5}(?:\.\d{1,3})?$/
+			if(!value){
+				callback()
+			}
 			if (!reg.test(value)) {
 				return callback(new Error('小数点前5位后3位数字;正数'));
 			}

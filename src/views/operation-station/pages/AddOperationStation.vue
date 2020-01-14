@@ -3,6 +3,7 @@
 		<div class="operate ml30 mtb10">
 			<el-button class="mr25 ml30 pad1025" size="small" type="primary" @click="goBack">返回</el-button>
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="save('addForm')">保存</el-button>
+			<el-button class="mr25 pad1025" size="small" type="primary" @click="resetForm('addForm')">重置</el-button>
 		</div>
 		<div class="search-bar">
 			<el-form :inline="true" :model="addForm" ref="addForm" :rules="rules" class="form-style">
@@ -15,6 +16,9 @@
 							:value="item.operation">
 						</el-option>
 					</el-select>
+				</el-form-item>
+				<el-form-item label="描述:" prop="operationDes" required>
+					<el-input v-model="addForm.operationDes"></el-input>
 				</el-form-item>
 			</el-form>
 		</div>
@@ -57,6 +61,7 @@ import { addStation, getAllOperation, getOperationInfo} from '../../../api/opera
 				},
 				addForm: {
 					operation: '',
+					operationDes:''
 				},
 				rules: {
 					operation: [
@@ -128,6 +133,7 @@ import { addStation, getAllOperation, getOperationInfo} from '../../../api/opera
 								if(this.allocate[i] == this.transferData[j]['resource']){
 									let obj = {}
 									obj.operation = this.addForm.operation
+									obj.operationDes = this.addForm.operationDes
 									obj.workCenterRelation = this.transferData[j]['workCenterRelation']
 									obj.station = this.transferData[j]['station']
 									arr.push(obj)

@@ -189,7 +189,6 @@ import {getCollectionData, checkParamData, getParamsList, saveCollectionData, ge
 			},
 			resetForm(formName) {
 				this.$refs[formName].resetFields();
-				this.search()
 			},
 			check(){
 				console.log(this.paramsTableData,'tabledata')
@@ -202,7 +201,7 @@ import {getCollectionData, checkParamData, getParamsList, saveCollectionData, ge
 			reset(){
 				let arr = this.paramsTableData
 				arr.forEach(function (value) {
-					value.paramsValue = ''
+					value.parameterValue = ''
 					console.log(value)
 				});
 				this.paramsTableData = JSON.parse(JSON.stringify(arr))

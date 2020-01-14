@@ -81,7 +81,7 @@
 							<el-input v-model="dealSearchForm.sequence"></el-input>
 						</el-form-item>
 						<el-form-item label="触发时间:" prop="triggeringTime">
-							<el-date-picker v-model="dealSearchForm.triggeringTime" type="date" placeholder="选择日期"></el-date-picker>
+							<el-date-picker v-model="dealSearchForm.triggeringTime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd hh:mm:ss"></el-date-picker>
 						</el-form-item>
 						<el-form-item label="事件编号:" prop="alarm">
 							<el-input v-model="dealSearchForm.alarm"></el-input>
@@ -280,8 +280,13 @@ import {getAlarmGroupList, getSequenceList, updateAckData, updateInitData, delet
 				params.pageSize = this.tableData.page.pageSize
 				params.currentPage = this.tableData.page.currentPage
 				getSequenceList(params).then(data => {
-					this.tableData.data = data.data.data.data
-					this.tableData.page.total = data.data.data.total
+					if(data.data.code == 200){
+						this.tableData.data = data.data.data.data
+						this.tableData.page.total = data.data.data.total
+					}else{
+						this.$message.error(data.data.message)
+					}
+					
 				})
 			},
 			handleSizeChange(pageSize){
@@ -301,8 +306,13 @@ import {getAlarmGroupList, getSequenceList, updateAckData, updateInitData, delet
 				params.pageSize = this.undealTableData.page.pageSize
 				params.currentPage = this.undealTableData.page.currentPage
 				getAlarmGroupList(params).then(data => {
-					this.undealTableData.data = data.data.data.data
-					this.undealTableData.page.total = data.data.data.total
+					if(data.data.code == 200){
+						this.undealTableData.data = data.data.data.data
+						this.undealTableData.page.total = data.data.data.total
+					}else{
+						this.$message.error(data.data.message)
+					}
+					
 				})
 			},
 			handleSizeChangeUndeal(pageSize){
@@ -322,8 +332,13 @@ import {getAlarmGroupList, getSequenceList, updateAckData, updateInitData, delet
 				params.pageSize = this.dealTableData.page.pageSize
 				params.currentPage = this.dealTableData.page.currentPage
 				getAlarmGroupList(params).then(data => {
-					this.dealTableData.data = data.data.data.data
-					this.dealTableData.page.total = data.data.data.total
+					if(data.data.code == 200){
+						this.dealTableData.data = data.data.data.data
+						this.dealTableData.page.total = data.data.data.total
+					}else{
+						this.$message.error(data.data.message)
+					}
+					
 				})
 			},
 			handleSizeChangeDeal(pageSize){

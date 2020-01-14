@@ -35,6 +35,9 @@
 								</el-option>
 							</el-select>
 						</el-form-item>
+						<el-form-item label="描述:" prop="operationDes" required>
+							<el-input v-model="editForm.operationDes"></el-input>
+						</el-form-item>
 						<el-form-item label="" prop="operation" >
 							<el-transfer
 								ref="transfer"
@@ -311,6 +314,7 @@ export default {
 							if(this.allocate[i] == this.transferData[j]['resource']){
 								let obj = {}
 								obj.operation = this.editForm.operation
+								obj.operationDes = this.editForm.operationDes
 								obj.workCenterRelation = this.transferData[j]['workCenterRelation']
 								obj.station = this.transferData[j]['station']
 								arr.push(obj)

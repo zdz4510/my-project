@@ -114,6 +114,7 @@
 			getDataByAlarm(params).then(data=>{
 				console.log(data)
 				this.unallocateData = data.data.data
+				this.cloneUnallocateData = data.data.data
 			})
 		},
 		methods: {
@@ -154,6 +155,9 @@
 			},
 			resetForm(formName) {
 				this.$refs[formName].resetFields();
+				this.allocateData = []
+				console.log(this.cloneUnallocateData)
+				this.unallocateData = this.cloneUnallocateData
 			},
 			goBack() {
 				this.$router.push({path:'/alarm/alarmGroup'})

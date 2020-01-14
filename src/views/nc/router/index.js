@@ -69,5 +69,16 @@ export default {
           /* webpackChunkName: "editNcCode" */ "@/views/nc/pages/EditNcCode.vue"
         )
     },
+    {
+      path: "ncLog",
+      name: "ncLog",
+      meta:{
+        title:'不合格代码编辑'
+      },
+      component: () =>
+        import(
+          /* webpackChunkName: "ncLog" */ "@/views/nc/pages/NcLog.vue"
+        )
+    },
   ]
 };

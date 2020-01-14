@@ -235,6 +235,17 @@
 			},
 			resetForm(formName) {
 				this.$refs[formName].resetFields();
+				this.addForm.actionWeixinFlag = false
+				this.addForm.actionMailFlag = false
+				this.addForm.actionSmsFlag = false
+				this.addForm.actionSystemFlag = false
+				this.addForm.weixinInformDetails = ''
+				this.addForm.mailInformDetails = ''
+				this.addForm.smsInformDetails = ''
+				this.addForm.systemInformDetails = ''
+				this.alarm = ''
+				this.allocateData = []
+				this.unallocateData = []
 			},
 			goBack() {
 				this.$router.push({path:'/alarm/alarmMaintain'})

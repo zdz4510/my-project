@@ -91,6 +91,7 @@
         </template>
         <el-menu-item index="/nc/ncGroup">不合格代码组</el-menu-item>
         <el-menu-item index="/nc/ncCode">不合格代码</el-menu-item>
+        <el-menu-item index="/nc/ncLog">不合格记录</el-menu-item>
       </el-submenu>
       <el-submenu index="scrap">
         <template slot="title">

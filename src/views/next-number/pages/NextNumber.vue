@@ -22,8 +22,8 @@
 						</el-option>
 					</el-select>
 				</el-form-item>
-				<el-form-item label="" prop="value" v-if="searchForm.definedBy !== 'MAT_GROUP'">
-					<el-select v-model="searchForm.value" placeholder="请选择" @change="onChange">
+				<el-form-item label="" prop="value" v-if="searchForm.definedBy !== 'MATERIAL_GROUP'">
+					<el-select v-model="searchForm.value" placeholder="请选择" @change="onChange" filterable>
 						<el-option
 							v-for="item in options"
 							:key="item.material+'&'+item.materialRev"
@@ -34,8 +34,8 @@
 						</el-option>
 					</el-select>
 				</el-form-item>
-				<el-form-item label="" prop="value" v-if="searchForm.definedBy == 'MAT_GROUP'">
-					<el-select v-model="searchForm.value" placeholder="请选择" @change="onChange">
+				<el-form-item label="" prop="value" v-if="searchForm.definedBy == 'MATERIAL_GROUP'">
+					<el-select v-model="searchForm.value" placeholder="请选择" @change="onChange" filterable>
 						<el-option
 							v-for="item in options"
 							:key="item.materialGroup"
@@ -46,8 +46,8 @@
 						</el-option>
 					</el-select>
 				</el-form-item>
-				<el-form-item label="版本:" prop="vision" v-if="searchForm.definedBy !== 'MAT_GROUP'" required>
-					<el-input v-model="searchForm.vision"></el-input>
+				<el-form-item label="版本:" prop="materialRev" v-if="searchForm.definedBy !== 'MATERIAL_GROUP'" required>
+					<el-input v-model="searchForm.materialRev" disabled></el-input>
 				</el-form-item>
 				<el-form-item label="提交规则:" prop="commitType" required>
 					<el-select v-model="searchForm.commitType" placeholder="请选择">
@@ -76,13 +76,23 @@
 			ref="multipleTable"
 			:data="tableData.data"
 			tooltip-effect="dark"
+			row-key="sequence"
 			@selection-change="handleSelectionChange"
 			>
 				<el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
-				<el-table-column type="index" label="序号"></el-table-column>
-				<el-table-column prop="type" label="类型"></el-table-column>
-				<el-table-column prop="material" label="值"></el-table-column>
-				<el-table-column prop="operate" label="操作"></el-table-column>
+				<!-- <el-table-column type="index" label="序号"></el-table-column> -->
+				<el-table-column prop="sequence" label="序号"></el-table-column>
+				<el-table-column prop="sequenceType" label="类型"></el-table-column>
+				<el-table-column prop="fixedString" label="固定字符串值"></el-table-column>
+				<el-table-column prop="varType" label="可替换参数值"></el-table-column>
+				<el-table-column prop="dateTimeFormat" label="时间"></el-table-column>
+				<el-table-column prop="length" label="长度"></el-table-column>
+				<el-table-column prop="numBase" label="进制"></el-table-column>
+				<el-table-column prop="numIncrease" label="增量"></el-table-column>
+				<el-table-column prop="initValue" label="初始值"></el-table-column>
+				<el-table-column prop="finalValue" label="最终值"></el-table-column>
+				<el-table-column prop="reset" label="循环"></el-table-column>
+				<el-table-column prop="orders" label="顺序"></el-table-column>
 				<el-table-column label="操作">
 					<template slot-scope="scope">
 						<el-button @click="handleClick(scope.row)" type="text" size="small">
@@ -92,123 +102,13 @@
 					</template>
 				</el-table-column>
 			</el-table>
-			<el-pagination class="mtb20"
-				background
-				@size-change="handleSizeChange"
-				@current-change="handleCurrentChange"
-				:current-page="this.tableData.page.currentPage"
-				:page-sizes="[1, 10, 15, 20, 30, 50]"
-				:page-size="this.tableData.page.pageSize"
-				layout="->, total, prev, pager, next, sizes, jumper"
-				:total="this.tableData.page.total">
-			</el-pagination>
 		</div>
-		<el-dialog title="添加" :visible.sync="addDialog">
-			<el-form :model="addForm" :inline="true" :label-width="formLabelWidth">
-				<el-form-item label="规则类型:">
-					<el-select v-model="addForm.type" placeholder="请选择">
-						<el-option
-							v-for="item in ruleTypes"
-							:key="item.value"
-							:label="item.label"
-							:value="item.value">
-						</el-option>
-					</el-select>
-				</el-form-item>
-				<el-row v-if="addForm.type == 1">
-					<el-col :span="24">
-						<el-form-item label="固定字符串:" prop="str">
-							<el-input v-model="addForm.str"></el-input>
-						</el-form-item>
-					</el-col>
-				</el-row>
-				<el-row v-if="addForm.type == 2">
-					<el-col :span="24">
-						<el-form-item label="可替换参数:" prop="replaceable">
-							<el-select v-model="addForm.replaceable" placeholder="请选择">
-								<el-option
-									v-for="item in replaceable"
-									:key="item.value"
-									:label="item.label"
-									:value="item.value">
-								</el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-				</el-row>
-				<el-row>
-					<el-col :span="24">
-						<el-form-item label="时间格式化:" prop="date" v-if="addForm.type == 3">
-							<el-date-picker
-								v-model="addForm.date"
-								type="datetime"
-								placeholder="选择日期时间">
-							</el-date-picker>
-						</el-form-item>
-					</el-col>
-				</el-row>
-				<el-row v-if="addForm.type == 4">
-					<el-col :span="12">
-						<el-form-item label="长度:" prop="length" required>
-							<el-input v-model="addForm.length"></el-input>
-						</el-form-item>
-					</el-col>
-					<el-col :span="12">
-						<el-form-item label="进制:" prop="base">
-							<el-input v-model="addForm.base"></el-input>
-						</el-form-item>
-					</el-col>
-				</el-row>
-				<el-row v-if="addForm.type == 4">
-					<el-col :span="12">
-						<el-form-item label="增量:" prop="increment">
-							<el-input v-model="addForm.increment"></el-input>
-						</el-form-item>
-					</el-col>
-					<el-col :span="12">
-						<el-form-item label="初始值:" prop="initValue" required>
-							<el-input v-model="addForm.initValue"></el-input>
-						</el-form-item>
-					</el-col>
-				</el-row>
-				<el-row v-if="addForm.type == 4">
-					<el-col :span="12">
-						<el-form-item label="终值:" prop="finalValue">
-							<el-input v-model="addForm.finalValue"></el-input>
-						</el-form-item>
-					</el-col>
-					<el-col :span="12">
-						<el-form-item label="循环:" prop="circle">
-							<el-select v-model="addForm.circle" placeholder="请选择">
-								<el-option
-									v-for="item in circle"
-									:key="item.value"
-									:label="item.label"
-									:value="item.value">
-								</el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-				</el-row>
-				<el-row v-if="addForm.type == 4">
-					<el-col :span="12" style="padding-left: 120px;">
-						<el-radio-group v-model="addForm.sequence">
-							<el-radio-button label="顺序"></el-radio-button>
-							<el-radio-button label="反序"></el-radio-button>
-						</el-radio-group>
-					</el-col>
-				</el-row>
-			</el-form>
-			<div slot="footer" class="dialog-footer">
-				<el-button @click="addDialog = false">取 消</el-button>
-				<el-button type="primary" @click="addDialog = false">确 定</el-button>
-			</div>
-		</el-dialog>
 	</div>
 </template>
 
 <script>
-	import {getNextNumberList, searchMat, searchMatGroup} from '../../../api/next.number.api.js'
+	import {getNextNumberList, searchMat, searchMatGroup, deleteNextNumber} from '../../../api/next.number.api.js'
+	import { mapMutations } from "vuex";
 	export default {
 		name:'next-number',
 		data() {
@@ -218,7 +118,7 @@
 					definedBy: '',
 					nextNumberType: '',
 					value: '',
-					vision: '',
+					materialRev: '',
 					commitType: '',
 				},
 				addDialog: false,
@@ -228,51 +128,6 @@
 				},
 				checkedList:[],
 				options:[],
-				circle: [{
-					value: '1',
-					label: '从不'
-				},{
-					value: '2',
-					label: '总是'
-				},{
-					value: '3',
-					label: '每天'
-				},{
-					value: '4',
-					label: '每周'
-				},{
-					value: '5',
-					label: '每月'
-				},{
-					value: '6',
-					label: '每年'
-				}],
-				ruleTypes: [{
-					value: '1',
-					label: '固定字符串'
-				},{
-					value: '2',
-					label: '可替换参数'
-				},{
-					value: '3',
-					label: '时间'
-				},{
-					value: '4',
-					label: '自增长序列'
-				}],
-				replaceable: [{
-					value: '1',
-					label: '物料'
-				},{
-					value: '2',
-					label: '物料版本'
-				},{
-					value: '3',
-					label: '工单'
-				},{
-					value: '4',
-					label: '工厂'
-				}],
 
 				rules: {
 					nextNumberType:[
@@ -281,12 +136,18 @@
 					definedBy:[
 						{ required:true,message:'请选择定义目标', trigger: 'change' }
 					],
+					materialRev:[
+						{ required:true,message:'请填写版本号', trigger: 'blur' }
+					],
+					commitType:[
+						{ required:true,message:'请选择提交规则', trigger: 'change' }
+					],
 				},
 				tableData: {
 					data:[],
 					page:{
 						currentPage:1,
-						pageSize:10,
+						pageSize:0,
 						total:0
 					}
 				},
@@ -298,10 +159,10 @@
 					label: '车间库存接收'
 				}],
 				target: [{
-					value: 'MAT',
+					value: 'MATERIAL',
 					label: '物料'
 				}, {
-					value: 'MAT_GROUP',
+					value: 'MATERIAL_GROUP',
 					label: '物料组'
 				}],
 				commitRule: [{
@@ -314,34 +175,55 @@
 			}
 		},
 		created(){
-			this.search()
+			// this.search()
 		},
 		methods: {
+			...mapMutations(["SETNEXTNUMBEREDITLIST"]),
 			definedChange(val){
 				console.log(val)
-				if(val == 'MAT'){
+				this.searchForm.value = '',
+				this.searchForm.materialRev = ''
+				if(val == 'MATERIAL'){
 					searchMat().then(data=>{
 						this.options = data.data.data
 					})
-				}else if(val == 'MAT_GROUP'){
+				}else if(val == 'MATERIAL_GROUP'){
 					searchMatGroup().then(data=>{
 						this.options = data.data.data
 					})
 				}
 			},
-			search() {
-				let params = this.searchForm
-				params.pageSize = this.tableData.page.pageSize
-				params.currentPage = this.tableData.page.currentPage
-				getNextNumberList(params).then(data => {
-					this.tableData.data = data.data.data.data
-					this.tableData.page.total = data.data.data.total
-				})
+			search(formName){
+				this.$refs[formName].validate((valid) => {
+					if (valid) {
+						let params = this.searchForm
+						params.pageSize = this.tableData.page.pageSize
+						params.currentPage = this.tableData.page.currentPage
+						params.material = this.searchForm.value.split('&')[0]
+						getNextNumberList(params).then(data => {
+							if(data.data.code == 200){
+								this.tableData.data = data.data.data.sequences.data
+							}else{
+								this.$message.error(data.data.message)
+							}
+						})
+					} else {
+						console.log('error submit!!');
+						return false;
+					}
+				});
 			},
 			resetForm(formName) {
 				this.$refs[formName].resetFields();
 			},
 			handleSelectionChange(val){
+				val.map(item=>{
+					item.nextNumberType = this.searchForm.nextNumberType
+					item.definedBy = this.searchForm.definedBy
+					item.materialRev = this.searchForm.materialRev
+					item.commitType = this.searchForm.commitType
+					item.material = this.searchForm.value.split('&')[0]
+				})
 				this.checkedList = val
 			},
 			handleSizeChange(pageSize){
@@ -354,17 +236,47 @@
 			},
 			onChange(val){
 				console.log(val)
-				this.searchForm.vision = val.split('&')[1]
+				this.searchForm.materialRev = val.split('&')[1]
 			},
 			add() {
 				this.$router.push({path:'/nextNumber/addNextNumber'})
 			},
 			save() {
-
+				this.SETNEXTNUMBEREDITLIST(this.checkedList);
+				this.$router.push({path:'/nextNumber/editNextNumber'})
 			},
-			del() {
-
-			}
+			del(){
+				this.$confirm('是否删除所选数据?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+					let params = {}
+					params.nextNumberType = this.searchForm.nextNumberType
+					params.definedBy = this.searchForm.definedBy
+					params.material = this.searchForm.value.split('&')[0]
+					params.materialRev = this.searchForm.materialRev
+					params.commitType = this.searchForm.commitType
+					params.sequences = {
+						data:this.checkedList
+					}
+					deleteNextNumber(params).then(data=>{
+						if(data.data.code == 200){
+							this.$message.success('删除成功')
+							this.search('searchForm')
+							this.$refs.multipleTable.clearSelection()
+						}else{
+							this.$message.error(data.data.message)
+						}
+					})
+          
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+				});
+			},
 		}
 	}
 </script>

@@ -114,8 +114,9 @@ import { mapMutations } from "vuex";
 					console.log(data,'adddata')
 					if(data.data.code == 200){
 						this.$message.success('删除成功')
+						this.$refs.multipleTable.clearSelection()
+						this.search()
 					}
-					this.search()
 				})
         }).catch(() => {
           this.$message({
