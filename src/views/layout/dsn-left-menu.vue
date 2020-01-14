@@ -38,6 +38,9 @@
         <el-menu-item index="/material/materialGroup">物料组维护</el-menu-item>
         <el-menu-item index="/material/workOrder">工单维护</el-menu-item>
         <el-menu-item index="/material/issued">工单下达</el-menu-item>
+        <el-menu-item index="/material/routeMaintenance"
+          >工艺路线维护</el-menu-item
+        >
       </el-submenu>
       <el-submenu index="factory-model">
         <template slot="title">

@@ -32,7 +32,7 @@
       <el-button
         size="small"
         type="primary"
-        :disabled="selectionList.length <= 0"
+        :disabled="selectionList.length != 1"
         @click="handleEdit"
       >
         修改
@@ -97,10 +97,9 @@
 
 <script>
 import {
-  deleteResourceGroupHttp,
   exportExcelHttp
 } from "@/api/device/type.api.js";
-import { getTagConfigList } from "@/api/tag/tag.config.api";
+import {deleteTagConfig, getTagConfigList } from "@/api/tag/tag.config.api";
 import { mapMutations } from "vuex";
 
 export default {
@@ -160,7 +159,7 @@ export default {
     },
     handleAdd() {
       this.selectionList = [];
-      const emptyObj = { label: "", groupDes: "" };
+      const emptyObj = { label: "", groupDes: "", checked:true};
       this.selectionList.push(emptyObj);
       this.TAGCONFIGLIST(this.selectionList);
       this.$router.push({
@@ -168,7 +167,15 @@ export default {
         query: { operateType: "add" }
       });
     },
+    // 编辑
     handleEdit() {
+      if(this.selectionList.length!=1){
+         this.$message({
+           type:"warning",
+           message:"最多只能编辑一条"
+        })
+        return ;
+      }
       this.TAGCONFIGLIST(this.selectionList);
       this.$router.push({
         name: "tagConfigEdit",
@@ -176,7 +183,6 @@ export default {
       });
     },
     handleDelete() {
-      console.log(this.selectionList);
       const data = [];
       this.selectionList.forEach(element => {
         const obj = {
@@ -184,17 +190,16 @@ export default {
         };
         data.push(obj);
       });
-      console.log(data);
-      deleteResourceGroupHttp(data).then(data => {
+      deleteTagConfig(data).then(data => {
         const res = data.data;
         console.log(res);
         if (res.code === 200) {
           this.$message({
-            message: res.message,
+            message: "删除成功",
             type: "success"
           });
           this.deleteDialog = false;
-          this.init();
+          this.init();// 重新请求
           return;
         }
         this.deleteDialog = false;
