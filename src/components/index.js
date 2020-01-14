@@ -11,7 +11,6 @@ const requireComponent = require.context(
   /Dsn[A-Z]\w+\.(vue|js)$/
 )
 
-console.log(requireComponent.keys())
 
 requireComponent.keys().forEach(fileName => {
   // 获取组件配置
@@ -29,7 +28,6 @@ requireComponent.keys().forEach(fileName => {
   )
 
   // 全局注册组件
-  console.log(componentName)
   Vue.component(
     componentName,
     // 如果这个组件选项是通过 `export default` 导出的，
