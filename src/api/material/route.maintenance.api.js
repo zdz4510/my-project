@@ -1,6 +1,4 @@
 import request from "@/service/";
-import qs from "qs";
-
 /**
  *  
  *  获取所有工序

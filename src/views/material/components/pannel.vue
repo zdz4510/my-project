@@ -93,11 +93,9 @@ import lodash from "lodash";
 import { getDataA } from "./data_A";
 import { getDataB } from "./data_B";
 import { getDataC } from "./data_C";
-
-import {
-  getCraftTree,
-  getCraftProcess
-} from "@/api/process-flow/process.flow.api/";
+import { getAllOperation } from "@/api/material/route.maintenance.api";
+import { getCraftProcess } from "@/api/process-flow/process.flow.api/";
+import  "./handleData.js";
 export default {
   name: "pannel",
   props: {
@@ -178,7 +176,7 @@ export default {
       // 数据
       //  data: {}
       rightData: {
-        styleCode: "-----",
+        description:'',
         nodeList: [],
         lineList: []
       }
@@ -204,67 +202,55 @@ export default {
       }
 
       this.getLeftData();
-      this.getRightData();
+      // this.getRightData();
     },
-    clear() {
-      this.rightData.nodeList = [];
-      this.rightData.lineList = [];
-      this.menuList.map(item => {
-        if (item.children) {
-          item.children.map(subItem => {
-            subItem.hide = false;
-          });
-        }
 
-        return item;
-      });
-      this.dataReload(lodash.cloneDeep(this.rightData));
-    },
     handleLeftData(isEndDrag, isStartDrag) {
       this.menuList = this.menuList.map(item => {
         let newitem = {
-          id: item.categoryCode || item.craftNum,
-          name: item.componentName || item.craftName,
-          type: item.categoryCode || item.craftNum,
-          ico: "el-icon-user-solid"
+          id: item.operation,  // id
+          name: item.operation, //  名字
+          type: item.operation, // 类型
+          operationDes: item.operationDes,
+          reportingStep:'', // 报工步骤
+          resourceGroup: item.resourceGroup,
+          routerComponentType:'O',  // 工艺路线类型
+          ico: "el-icon-user-solid",
+          customizedData:[],
+          operation:'', // 工序id
+          isLastReportingStep:false, //最后包工步骤checkbox
+          description:'', //  描述
+          stepId:'步骤', //
+          returnOperation: "", // 返回工序
+          returnStepId: "",  // 返回步骤   
         };
-        let arr = [];
-
-        const componentCode = item.componentCode;
-        if (item.children && item.children.length) {
-          arr = item.children.map(item => {
-            return {
-              id: item.id,
-              name: item.name,
-              type: item.type,
-              ico: "el-icon-user-solid",
-              componentCode: componentCode,
-              craftNum: item.craftNum,
-              sequence: item.sequence,
-              hide: item.isDrag
-            };
-          });
-        }
         return {
-          ...newitem,
-          children: arr
+          ...newitem
         };
       });
+      const craft = {
+        id: "craft",
+        type: "craft",
+        name: "工序",
+        group: "craft",
+        ico: "el-icon-user-solid",
+        children: this.menuList
+      };
       const startAndEnd = {
         id: "group",
         type: "group",
-        name: "辅助",
+        name: "关键",
         ico: "el-icon-user-solid",
         children: [
-          {
-            id: "0",
-            type: "0",
-            name: "结束",
-            componentCode: "0",
-            craftNum: "0",
-            ico: "el-icon-odometer",
-            hide: isEndDrag
-          },
+          // {
+          //   id: "0",
+          //   type: "0",
+          //   name: "结束",
+          //   componentCode: "0",
+          //   craftNum: "0",
+          //   ico: "el-icon-odometer",
+          //   hide: isEndDrag
+          // },
           {
             id: "-1",
             type: "-1",
@@ -276,16 +262,52 @@ export default {
           }
         ]
       };
-      this.menuList.push(startAndEnd);
+      const handle = {
+        id: "handle",
+        type: "handle",
+        name: "处置",
+        ico: "el-icon-user-solid",
+        children: [
+        
+          {
+            id: "A",
+            type: "A",
+            name: "返回置任一步骤",
+            ico: "el-icon-odometer",
+            routerComponentType:'H',
+          },
+          {
+            id: "N",
+            type: "N",
+            name: "返回置上一步骤",
+            ico: "el-icon-odometer",
+            routerComponentType:'H',
+          },
+          {
+            id: "O",
+            type: "O",
+            name: "返回置原始步骤",
+            routerComponentType:'H',
+            ico: "el-icon-odometer",
+          },
+          {
+            id: "P",
+            type: "P",
+            name: "返回置下一步骤",
+            ico: "el-icon-odometer",
+            routerComponentType:'H',
+          }
+        ]
+      };
+
+      this.menuList = [startAndEnd, craft, handle];
     },
     getLeftData() {
-      getCraftTree({
-        styleCode: this.search
-      }).then(data => {
+      getAllOperation({}).then(data => {
         const res = data.data;
         if (res.code === 200) {
-          this.menuList = res.data.data;
-          this.handleLeftData(res.data.isEndDrag, res.data.isStartDrag);
+          this.menuList = res.data;
+          this.handleLeftData();
         }
       });
     },
@@ -484,12 +506,7 @@ export default {
       }
 
       let node = {
-        id: nodeId,
-        name: nodeMenu.name,
-        sequence: nodeMenu.sequence,
-        componentCode: nodeMenu.componentCode,
-        type: nodeMenu.type,
-        craftNum: nodeMenu.craftNum,
+        ...nodeMenu,
         left: left + "px",
         top: top + "px",
         ico: nodeMenu.ico,

@@ -1,3 +1,4 @@
+
 <template>
   <el-dialog
     title="节点信息"
@@ -17,28 +18,10 @@
       <el-form-item label="ico图标">
         <el-input v-model="node.ico"></el-input>
       </el-form-item>
-         <el-form-item label="步骤">
-        <el-input v-model="node.stepId"></el-input>
-      </el-form-item>
-         <el-form-item label="工序">
-        <el-input v-model="node.operation"></el-input>
-      </el-form-item>
-         <el-form-item label="描述">
-        <el-input v-model="node.description"></el-input>
-      </el-form-item>
-       <el-form-item label="报工步骤">
-        <el-input v-model="node.reportingStep"></el-input><el-checkbox v-model="node.ico">最后包工步骤</el-checkbox>
-      </el-form-item>
-      <el-form-item label="返回工序">
-        <el-input v-model="node.returnOperation"></el-input><el-checkbox v-model="node.ico">最后包工步骤</el-checkbox>
-      </el-form-item>
-      <el-form-item label="返回步骤">
-        <el-input v-model="node.returnStepId"></el-input><el-checkbox v-model="node.ico">最后包工步骤</el-checkbox>
-      </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false" icon="el-icon-close">取消</el-button>
-      <el-button type="primary" icon="el-icon-check" @click="visible = false" >确定</el-button>
+      <el-button type="primary" icon="el-icon-check" @click="visible = false">确定</el-button>
     </span>
   </el-dialog>
 </template>
