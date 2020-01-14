@@ -92,6 +92,14 @@
         <el-menu-item index="/nc/ncGroup">不合格代码组</el-menu-item>
         <el-menu-item index="/nc/ncCode">不合格代码</el-menu-item>
       </el-submenu>
+      <el-submenu index="scrap">
+        <template slot="title">
+          <i class="el-icon-location"></i>
+          <span slot="title">报废/删除</span>
+        </template>
+        <el-menu-item index="/scrapDelete/scrapRecover">报废/恢复</el-menu-item>
+        <el-menu-item index="/scrapDelete/deleteRecover">删除/恢复</el-menu-item>
+      </el-submenu>
       <el-submenu index="device">
         <template slot="title">
           <i class="el-icon-location"></i>

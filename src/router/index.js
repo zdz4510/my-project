@@ -7,6 +7,7 @@ import materialRouter from "@/views/material/router/index.js";
 import productRouter from "@/views/dc/router/index.js";
 import tagRouter from "@/views/tag/router/index.js";
 import ncRouter from "@/views/nc/router/index.js";
+import scrapDeleteRouter from "@/views/scrap-delete/router/index.js";
 import customizeRouter from "@/views/customize/router/index.js";
 import store from "@/store/";
 Vue.use(VueRouter);
@@ -445,6 +446,12 @@ const routes = [
    */
   {
     ...customizeRouter
+  },
+  /**
+   * 报废/删除
+   */
+  {
+    ...scrapDeleteRouter
   },
   /**
    * 设备维护模块
