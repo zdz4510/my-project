@@ -4,18 +4,21 @@
       <div class="left">
         <el-form label-width="80px" :inline="true" class="typeForm">
           <el-form-item label="工艺路线:">
-            <el-input placeholder="请输入工艺路线" v-model="shopOrder">
+            <el-input placeholder="请输入工艺路线" v-model="form.router">
               <i slot="append" class="el-icon-document-copy"></i>
             </el-input>
           </el-form-item>
           <el-form-item label="版本:">
-            <el-input placeholder="请输入版本" v-model="shopOrder"></el-input>
+            <el-input
+              placeholder="请输入版本"
+              v-model="form.revision"
+            ></el-input>
           </el-form-item>
         </el-form>
       </div>
 
       <div class="right">
-        <el-button size="small" type="primary">查询</el-button>
+        <el-button size="small" type="primary" @click="handleQuery">查询</el-button>
         <el-button size="small" type="primary" @click="reset">重置</el-button>
       </div>
     </div>
@@ -59,8 +62,8 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="状态" prop="state">
-              <el-select v-model="value" placeholder="请选择">
+            <el-form-item label="状态" prop="status">
+              <el-select v-model="form.status" placeholder="请选择">
                 <el-option
                   v-for="item in options2"
                   :key="item.value"
@@ -84,8 +87,9 @@
 </template>
 
 <script>
-import { createRouter } from "@/api/material/route.maintenance.api";
+import { createRouter,getRouter } from "@/api/material/route.maintenance.api";
 import Pannel from "../components/pannel";
+import handleData from "../components/handleData.js";
 export default {
   components: {
     Pannel
@@ -97,59 +101,44 @@ export default {
         description: "", // 描述
         currentRevision: false, // 当前版本
         routerType: "",
-        status: ""
+        status: "",
+        router: "",
+        revision: ""
       },
       options: [
         {
-          value: "1",
+          value: "P",
           label: "生产"
         },
         {
-          value: "2",
+          value: "D",
           label: "处置"
-        },
-        {
-          value: "3",
-          label: "工艺路线"
         }
       ],
       options2: [
         {
-          value: "1",
+          value: "Releasable",
           label: "可下达"
         },
         {
-          value: "2",
+          value: "New",
           label: "新建"
         },
         {
-          value: "3",
+          value: "Scrap",
           label: "作废"
         },
         {
-          value: "4",
+          value: "Hold",
           label: "保留"
-        },
-        {
-          value: "5",
-          label: "冻结"
         }
+        // {
+        //   value: "5",
+        //   label: "冻结"
+        // }
       ],
       value: "",
       //工单表信息
-      ruleForm: {
-        shopOrderType: "", //类型
-        status: "", //状态
-        plannedMaterial: "", //计划物料
-        plannedMaterialRev: "", //计划物料版本
-        plannedRouter: "", //计划工艺路线
-        plannedRouterRev: "", //计划工艺路线版本
-        productQty: "", //生产数量
-        releasedQuantity: "", //已下达数量
-        kay_1: "",
-        kay_2: "",
-        kay_3: ""
-      },
       rules: {
         style: [{ required: true, message: "请选择类型", trigger: "blur" }],
         state: [{ required: true, message: "请选择状态", trigger: "change" }],
@@ -175,24 +164,64 @@ export default {
   },
   methods: {
     init() {
-        this.$nextTick(()=>{
-          this.$refs["panel"].init();
-        })
+      this.$nextTick(() => {
+        this.$refs["panel"].init();
+      });
     },
     //重置
     reset() {},
 
     //保存
-    handleSave() {},
+    handleSave() {
+      this.handleCreateRouter();
+    },
     // 创建路线
     handleCreateRouter() {
-      const data = {};
-      createRouter(data).then(data => {
+      //  获取 附加工序的数据
+      const data = this.$refs["panel"].getDataInfo();
+      const { root, routerSteps } = handleData(data);
+      console.log(root)
+      const params = {
+        currentRevision: this.form.currentRevision, // 当前版本
+        customizedData: [], //  自定义的数据
+        description: this.form.description, //  描述
+        entryRouterStep: root[0].to, //  附加工序的根结点
+        routerSteps: routerSteps, //  附加工序的数据
+        router: this.form.router, //版本
+        revision: this.form.revision, //工艺路线名称
+        routerType: this.form.routerType,
+        status: this.form.status
+      };
+      createRouter(params).then(data => {
         const res = data.data;
         if (res.code == 200) {
-          this.$message("常见成功");
+          this.$message({
+            type: "success",
+            message: "新增成功"
+          });
+        } else {
+          this.$message({
+            type: "warning",
+            message: res.message
+          });
         }
       });
+    },
+    handleQuery(){
+      getRouter({
+        revision:this.form.revision,
+        router:this.form.router
+      }).then(data=>{
+        const res = data.data;
+        if(res.code==200){
+            console.log(data.data);
+        }else{
+          this.$message({
+            type:"error",
+            message:res.message
+          })
+        }
+      })
     }
   }
 };

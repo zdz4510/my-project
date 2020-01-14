@@ -13,7 +13,7 @@
         <i :class="nodeIcoClass"></i>
         <!--鼠标移入到节点中时右上角的【编辑】、【删除】 按钮-->
         <div v-show="mouseEnter" class="flow-node-operate">
-          <a href="#" @click="editNode"><img src="@/assets/edit.png"/></a>&nbsp;
+          <a href="#" v-if="node.routerComponentType"  @click="editNode"><img src="@/assets/edit.png"/></a>&nbsp;
           <a href="#" @click="deleteNode"><img src="@/assets/delete.png"/></a>
           &nbsp;
         </div>

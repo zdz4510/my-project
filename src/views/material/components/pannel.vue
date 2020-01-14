@@ -274,20 +274,20 @@ export default {
             type: "A",
             name: "返回置任一步骤",
             ico: "el-icon-odometer",
-            routerComponentType:'H',
+            routerComponentType:'R',
           },
           {
             id: "N",
             type: "N",
             name: "返回置上一步骤",
             ico: "el-icon-odometer",
-            routerComponentType:'H',
+            routerComponentType:'R',
           },
           {
             id: "O",
             type: "O",
             name: "返回置原始步骤",
-            routerComponentType:'H',
+            routerComponentType:'R',
             ico: "el-icon-odometer",
           },
           {
@@ -295,7 +295,7 @@ export default {
             type: "P",
             name: "返回置下一步骤",
             ico: "el-icon-odometer",
-            routerComponentType:'H',
+            routerComponentType:'R',
           }
         ]
       };
