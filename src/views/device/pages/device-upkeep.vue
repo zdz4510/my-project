@@ -122,9 +122,9 @@
 <script>
 import {
   listResourceMaintenanceLogHttp,
-  deleteResourceGroupHttp,
-  exportExcelHttp
+  deleteResourceGroupHttp
 } from "@/api/device/upkeep.api.js";
+import { exportExcel } from "@/until/excel.js";
 
 export default {
   data() {
@@ -250,11 +250,53 @@ export default {
       });
     },
     handleExport() {
-      const data = {
-        maintenanceStatus: this.upkeepForm.maintenanceStatus,
-        resource: this.upkeepForm.resource
-      };
-      exportExcelHttp(data);
+      const tHeader = [
+        "设备编号",
+        "条件名称·",
+        "线体",
+        "工站",
+        "工作中心",
+        "保养状态",
+        "最后保养时间",
+        "最后保养人",
+        "附加描述"
+      ];
+      const filterVal = [
+        "resource",
+        "conditionName",
+        "workCenterRelation",
+        "station",
+        "workCenter",
+        "maintenanceStatus",
+        "maintenanceEndTime",
+        "maintenanceUserId",
+        "additionalDes"
+      ];
+      let tipString = "";
+      let data = [];
+      if (this.selectionList.length === 0) {
+        data = this.tableData;
+      }
+      if (this.selectionList.length > 0) {
+        data = this.selectionList;
+      }
+      tipString = exportExcel(tHeader, filterVal, data, "设备保养表");
+      this.exportResult(tipString);
+    },
+    exportResult(tipString) {
+      if (tipString === undefined) {
+        this.$message({
+          message: "导出成功",
+          type: "success"
+        });
+        return;
+      } else {
+        this.$message({
+          message: tipString,
+          type: "warning"
+        });
+        return;
+      }
     }
   }
 };
