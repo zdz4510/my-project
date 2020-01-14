@@ -108,10 +108,10 @@
 <script>
 import {
   findResourceGroupListHttp,
-  deleteResourceGroupHttp,
-  exportExcelHttp
+  deleteResourceGroupHttp
 } from "@/api/device/type.api.js";
 import { mapMutations } from "vuex";
+import { exportExcel } from "@/until/excel.js";
 
 export default {
   data() {
@@ -236,11 +236,49 @@ export default {
       this.typeForm.resourceGroup = "";
     },
     handleExport() {
-      const data = {
-        resourceGroup: this.typeForm.resourceGroup,
-        groupDes: this.typeForm.groupDes
-      };
-      exportExcelHttp(data);
+      const tHeader = [
+        "设备类型",
+        "设备数量",
+        "设备类型描述",
+        "创建人",
+        "创建时间",
+        "修改人",
+        "修改时间"
+      ];
+      const filterVal = [
+        "resourceGroup",
+        "resourceCount",
+        "groupDes",
+        "createUserName",
+        "createTime",
+        "modifyUserName",
+        "modifyTime"
+      ];
+      let tipString = "";
+      let data = [];
+      if (this.selectionList.length === 0) {
+        data = this.tableData;
+      }
+      if (this.selectionList.length > 0) {
+        data = this.selectionList;
+      }
+      tipString = exportExcel(tHeader, filterVal, data, "设备类型表");
+      this.exportResult(tipString);
+    },
+    exportResult(tipString) {
+      if (tipString === undefined) {
+        this.$message({
+          message: "导出成功",
+          type: "success"
+        });
+        return;
+      } else {
+        this.$message({
+          message: tipString,
+          type: "warning"
+        });
+        return;
+      }
     }
   }
 };
