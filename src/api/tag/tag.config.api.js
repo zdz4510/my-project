@@ -34,7 +34,7 @@ export const deleteTagConfig = data => {
  *  修改标签信息
  */
 export const updateTagConfig = data => {
-  return request.post(`${window.VUE_APP_URL}mes/label/update`, data);
+  return request.post(`${window.VUE_APP_URL}/mes/label/update`, data);
 };
 
 /**
@@ -43,7 +43,7 @@ export const updateTagConfig = data => {
  */
 
 export const getListPageLink = data => {
-  return request.post(`${window.VUE_APP_URL}mes/label/listPageLink`, data);
+  return request.post(`${window.VUE_APP_URL}/mes/label/listPageLink`, data);
 };
 
 
@@ -53,5 +53,6 @@ export const getListPageLink = data => {
  */
 
 export const listPageUnallocatedLink = data => {
-    return request.post(`${window.VUE_APP_URL}mes/label/listPageUnallocatedLink`, data);
+    const params = qs.stringify(data);
+    return request.post(`${window.VUE_APP_URL}/mes/label/listPageUnallocatedLink?${params}`);
   };

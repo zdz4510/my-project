@@ -273,7 +273,6 @@ export default {
           const res = data.data;
           if (res.code === 200) {
             this.workCenters = res.data;
-            console.log(this.workCenters);
             this.workCenters.forEach(element => {
               element.value = element.workCenter;
             });

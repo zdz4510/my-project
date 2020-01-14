@@ -75,6 +75,14 @@ export default {
         import(
           /* webpackChunkName: "materialGroupEdit" */ "@/views/material/pages/material-group-edit.vue"
         )
+    },
+    {
+      path: "routeMaintenance",
+      name: "routeMaintenance",
+      component: () =>
+        import(
+          /* webpackChunkName: "routeMaintenance" */ "@/views/material/pages/route-maintenance"
+        )
     }
   ]
 };

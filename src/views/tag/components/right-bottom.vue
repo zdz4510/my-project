@@ -14,7 +14,8 @@
       <el-tabs v-model="component" type="card" @tab-click="handleClick">
         <el-tab-pane label="管理" name="manage">管理</el-tab-pane>
         <el-tab-pane label="插入" name="insert">
-          <el-row>
+         <div class="tab-content-container">
+            <el-row>
             <el-col
               :span="8"
               v-for="(item, index) in tableData"
@@ -40,6 +41,7 @@
               </draggable>
             </el-col>
           </el-row>
+         </div>
         </el-tab-pane>
       </el-tabs>
       <!-- </draggable> -->
@@ -178,12 +180,18 @@ export default {
     padding: 10px;
     box-sizing: border-box;
     background: white;
+    box-sizing: border-box;
     border: 0.5px solid rgb(223, 221, 221);
     .el-tabs {
+      height: 100%;
+      .el-tabs__content{
+        height: calc(100% - 60px);
+        overflow: hidden;
+        overflow-y: scroll;
+      }
       .el-tab-pane {
         .el-row {
           box-sizing: border-box;
-
           .el-col {
             // background: red;
             height: 80px;
@@ -208,6 +216,11 @@ export default {
         }
       }
     }
+  }
+
+  .tab-content-container{
+    height: calc(100%-60px);
+    overflow: scroll;
   }
 }
 </style>

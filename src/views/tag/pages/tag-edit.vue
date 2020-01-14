@@ -1,7 +1,7 @@
 <template>
   <div class="box">
     <div class="top" @click="handle">
-      <top   />
+      <top   @save="save" />
     </div>
     <div class="bottom">
       <div class="left"></div>
@@ -120,6 +120,9 @@ export default {
     window.onresize = null;
   },
   methods: {
+    save(){
+
+    },
     computedWindow() {
       const content = document.getElementById("content");
       this.width = content.offsetWidth;

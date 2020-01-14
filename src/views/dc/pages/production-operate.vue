@@ -6,20 +6,32 @@
       ref="searchForm"
       class="form-style"
       :label-width="formLabelWidth"
+      :rules="searchFormRules"
       style="display:flex;align-items:center"
     >
-      <el-form-item label="工序:" prop="mat">
+      <el-form-item label="工序:" prop="operation">
         <el-input v-model="searchForm.operation"></el-input>
       </el-form-item>
-      <el-form-item label="设备:" prop="mat">
-        <el-input v-model="searchForm.operation"></el-input>
+      <el-form-item label="设备:" prop="resource">
+        <el-input v-model="searchForm.resource"></el-input>
       </el-form-item>
-      <el-form-item label="LOT:" prop="matRev" style="display:flex;align-items:center;width:380px">
+      <el-form-item
+        label="LOT:"
+        prop="lot"
+        style="display:flex;align-items:center;width:300px"
+      >
         <div style="display:flex;align-item:center">
-          <el-input v-model="searchForm.operation"></el-input>
-          <i class="el-icon-document-copy" @click="details"></i>
-          <el-button class="pad1025" size="small" type="primary" @click="resetForm('searchForm')">重置</el-button>
+          <el-input v-model="searchForm.lot"></el-input>
+          <i class="el-icon-document-copy" @click="goQuery"></i>
         </div>
+      </el-form-item>
+      <el-form-item>
+        <el-button size="small" type="primary" @click="checkForm('searchForm')"
+          >查询</el-button
+        >
+        <el-button size="small" type="primary" @click="resetForm('searchForm')"
+          >重置</el-button
+        >
       </el-form-item>
     </el-form>
     <div class="operation">
@@ -42,63 +54,76 @@
         <el-table-column label="序号" width="120">
           <!-- <template slot-scope="scope">{{ scope.row.date }}</template> -->
         </el-table-column>
-        <el-table-column prop="name"  label="LOT编号" width="120"></el-table-column>
-        <el-table-column prop="address" label="LOT状态" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="address"  label="工单" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="address"  label="物料" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="address" label="工艺路线" show-overflow-tooltip></el-table-column>
+        <el-table-column
+          prop="name"
+          label="LOT编号"
+          width="120"
+        ></el-table-column>
+        <el-table-column
+          prop="address"
+          label="LOT状态"
+          show-overflow-tooltip
+        ></el-table-column>
+        <el-table-column
+          prop="address"
+          label="工单"
+          show-overflow-tooltip
+        ></el-table-column>
+        <el-table-column
+          prop="address"
+          label="物料"
+          show-overflow-tooltip
+        ></el-table-column>
+        <el-table-column
+          prop="address"
+          label="工艺路线"
+          show-overflow-tooltip
+        ></el-table-column>
       </el-table>
     </div>
 
     <!-- LOT模态框 -->
-    <el-dialog :visible.sync="popup" style="padding:10px 20px" >
-      <div class="popupBox">  
-        <el-table :data="popupData" width="100%" height="400px" @row-dblclick='handledbClick' ref="multipleTable">
-          <el-table-column prop="date" label="LOT编号" width="150px" height="50px"></el-table-column>
-          <el-table-column prop="name" label="LOT状态" width="150px" height="50px"></el-table-column>
-          <el-table-column prop="date" label="工单" width="150px" height="50px"></el-table-column>
-          <el-table-column prop="name" label="物料" width="150px" height="50px"></el-table-column>
-          <el-table-column prop="address" label="工艺路线" width="150px" height="50px"></el-table-column>
-        </el-table>
-      </div>
+    <el-dialog title="lot" :visible.sync="lotDialog" width="30%">
+      <span>
+        <allLotModel :lot="lotDatas" @selectLot="selectLot"></allLotModel>
+      </span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="lotDialog = false">取 消</el-button>
+        <el-button type="primary" @click="handleSelectLot">
+          确 定
+        </el-button>
+      </span>
     </el-dialog>
   </div>
 </template>
 <script>
+import { listLotHttp } from "@/api/dc/lot.divestiture.api.js";
+import allLotModel from "../components/all-lots-model.vue";
+import { listPodLotHttp } from "@/api/dc/production.operate.api.js";
+
 export default {
+  name: "productionOperate",
+  components: {
+    // mergeLotModel,
+    allLotModel
+  },
   data() {
     return {
-      popup: false,
-      formLabelWidth: "50px",
+      lotDialog: false,
+      formLabelWidth: "80px",
       searchForm: {
-        operation: ""
+        operation: "",
+        lot: "",
+        resource: ""
+      },
+      searchFormRules: {
+        operation: [
+          { required: true, message: "请输入工序", trigger: "change" }
+        ],
+        lot: [{ required: true, message: "请输入lot", trigger: "change" }],
+        resource: [{ required: true, message: "请输入设备", trigger: "change" }]
       },
       popupData: [
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄"
-        },
         {
           date: "2016-05-03",
           name: "王小虎",
@@ -106,24 +131,75 @@ export default {
         }
       ],
       tableData: [],
-      row:[],
+      row: [],
+      lotDatas: [],
+      currentLot: {}
     };
   },
   methods: {
-    handledbClick(row){
-     
-      this.row.push(row)
+    handledbClick(row) {
+      this.row.push(row);
       // this.row = row
       //  this.$refs.multipleTable.toggleRowSelection(row);
-       this.popup=false
+      this.lotDialog = false;
     },
     resetForm() {},
-    details() {
-      this.popup = true;
+    goQuery() {
+      const data = {};
+      listLotHttp(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.lotDatas = res.data;
+          this.lotDialog = true;
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
     },
     goEdit() {},
     reset() {
       this.$router.go(0);
+    },
+    //获取lot弹出框单个选择的数据
+    selectLot(row) {
+      this.currentLot = row;
+    },
+    //弹出框确认选择lot
+    handleSelectLot() {
+      this.searchForm.lot = this.currentLot.lot;
+      this.lotDialog = false;
+    },
+    //查询前验证表单
+    checkForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.handleQuery();
+        } else {
+          return false;
+        }
+      });
+    },
+    //查询
+    handleQuery() {
+      const data = {
+        lot: this.searchForm.lot,
+        operation: this.searchForm.operation,
+        resource: this.searchForm.resource
+      };
+      listPodLotHttp(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          console.log(res.data);
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
     }
   }
 };

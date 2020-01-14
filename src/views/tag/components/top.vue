@@ -28,6 +28,7 @@
       <span><u>U</u></span>
     </div>
     换行 左对齐 居中 右对齐
+    <dsn-button @click="save" >保存</dsn-button>
   </div>
 </template>
 
@@ -40,6 +41,11 @@ export default {
         region: ""
       }
     };
+  },
+  methods:{
+    save(){
+      this.$emit('save')
+    }
   }
 };
 </script>
