@@ -111,6 +111,15 @@
         ></el-input>
       </el-form-item>
     </el-form>
+    <el-dialog title="lot" :visible.sync="lotDialog" width="30%">
+      <span>是否确认删除{{ lotDialog.length }}条数据？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="lotDialog = false">取 消</el-button>
+        <el-button type="primary" @click="handleSelectLot">
+          确 定
+        </el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -130,7 +139,8 @@ export default {
         shopOrder: "",
         materialRev: "",
         routerRev: ""
-      }
+      },
+      lotDialog: false
     };
   },
   methods: {
@@ -151,7 +161,9 @@ export default {
     //重置
     handleReset() {},
     //查询LOT
-    goQuery() {}
+    goQuery() {},
+    //弹出框确认选择lot
+    handleSelectLot() {}
   }
 };
 </script>
