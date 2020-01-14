@@ -3,16 +3,17 @@
     <div class="query">
       <div class="left">
         <el-form
-          :model="lotDivestitureForm"
+          :model="lotForm"
           :inline="true"
-          ref="lotDivestitureForm"
+          ref="lotForm"
           label-width="100px"
-          class="lotDivestitureForm"
+          class="lotForm"
+          :rules="lotFormRules"
         >
           <el-form-item label="LOT" prop="lot">
             <el-input
               class="lot"
-              v-model.trim="lotDivestitureForm.lot"
+              v-model.trim="lotForm.lot"
               placeholder="请输入LOT"
             ></el-input>
             <i class="el-icon-document" @click="goQuery"></i>
@@ -20,7 +21,7 @@
         </el-form>
       </div>
       <div class="right">
-        <el-button size="small" type="primary" @click="handleQuery">
+        <el-button size="small" type="primary" @click="checkForm('lotForm')">
           查询
         </el-button>
         <el-button size="small" type="primary" @click="handleReset">
@@ -95,11 +96,12 @@
       ref="lotDivestitureForm"
       label-width="100px"
       class="newLot"
+      :rules="lotDivestitureFormRules"
     >
-      <el-form-item label="新LOT数量" prop="lot">
+      <el-form-item label="新LOT数量" prop="quantity">
         <el-input
           class="lot"
-          v-model.trim="lotDivestitureForm.lot"
+          v-model.trim="lotDivestitureForm.quantity"
           placeholder="请输入新LOT数量"
         ></el-input>
       </el-form-item>
@@ -112,7 +114,9 @@
       </el-form-item>
     </el-form>
     <el-dialog title="lot" :visible.sync="lotDialog" width="30%">
-      <span>是否确认删除{{ lotDialog.length }}条数据？</span>
+      <span>
+        <allLotModel :lot="tableData" @selectLot="selectLot"></allLotModel>
+      </span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="lotDialog = false">取 消</el-button>
         <el-button type="primary" @click="handleSelectLot">
@@ -124,12 +128,24 @@
 </template>
 
 <script>
-import { findLotAtOperationHttp } from "@/api/dc/lot.divestiture.api.js";
+import {
+  findLotAtOperationHttp,
+  listLotHttp
+} from "@/api/dc/lot.divestiture.api.js";
+import allLotModel from "../components/all-lots-model.vue";
+
 export default {
+  name: "lotDivestiture",
+  components: {
+    allLotModel
+  },
   data() {
     return {
-      lotDivestitureForm: {
+      lotForm: {
         lot: ""
+      },
+      lotFormRules: {
+        lot: [{ required: true, message: "请输入lot", trigger: "change" }]
       },
       showInfo: {
         status: "",
@@ -140,13 +156,35 @@ export default {
         materialRev: "",
         routerRev: ""
       },
-      lotDialog: false
+      lotDialog: false,
+      lotDivestitureForm: {
+        lot: "",
+        quantity: 0
+      },
+      lotDivestitureFormRules: {
+        lot: [{ required: true, message: "请输入lot", trigger: "change" }],
+        quantity: [
+          { required: true, message: "请输入lot数量", trigger: "change" }
+        ]
+      },
+      tableData: [],
+      currentLot: {}
     };
   },
   methods: {
+    //验证表单信息
+    checkForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.handleQuery();
+        } else {
+          return false;
+        }
+      });
+    },
     //查询LOT状态信息
     handleQuery() {
-      const data = { lot: this.lotDivestitureForm.lot };
+      const data = { lot: this.lotForm.lot };
       findLotAtOperationHttp(data).then(data => {
         const res = data.data;
         if (res.code === 200) {
@@ -159,11 +197,37 @@ export default {
       });
     },
     //重置
-    handleReset() {},
+    handleReset() {
+      this.$refs["lotForm"].resetFields();
+      this.$refs["lotDivestitureForm"].resetFields();
+      this.showInfo = {};
+    },
     //查询LOT
-    goQuery() {},
+    goQuery() {
+      const data = { lot: this.lotForm.lot };
+      listLotHttp(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.tableData = res.data;
+          this.lotDialog = true;
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
+    },
+    //获取弹出框选择的数据
+    selectLot(val) {
+      this.currentLot = val;
+      console.log(this.currentLot);
+    },
     //弹出框确认选择lot
-    handleSelectLot() {}
+    handleSelectLot() {
+      this.lotForm.lot = this.currentLot.lot;
+      this.lotDialog = false;
+    }
   }
 };
 </script>
