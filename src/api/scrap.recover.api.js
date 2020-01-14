@@ -18,7 +18,7 @@ export const getScrapList = data => {
  */
 
 export const scrapMark = data => {
-  return request.post(`${window.VUE_APP_URL}/mes/scrapAndDelete/scrap`, data);
+  return request.post(`${window.VUE_APP_URL}/mes/scrapAndDelete/scrap?codeType=${data.codeType}`, data.list);
 };
 
 /**
@@ -35,7 +35,7 @@ export const getRecoverList = data => {
  * url /mes/scrapAndDelete/unScrap
  */
 export const recoverMark = data => {
-  return request.post(`${window.VUE_APP_URL}/mes/scrapAndDelete/unScrap`,data);
+  return request.post(`${window.VUE_APP_URL}/mes/scrapAndDelete/unScrap?codeType=${data.codeType}`, data.list);
 };
 
 /**
