@@ -117,7 +117,7 @@ const handleData =(data)=>{
           },
       },   
       routerReturnComponent: {
-      retrunType: item.routerComponentType,
+      retrunType: item.retrunType,
       returnOperation: item.returnOperation, // 返回工序
       returnStepId: item.returnOperation,  // 返回步骤
       },
