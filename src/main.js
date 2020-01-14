@@ -16,7 +16,6 @@ import store from './store'
 Vue.use(ElementUI);
 Vue.component('vue-draggable-resizable', VueDraggableResizable)
 Vue.config.productionTip = false
-console.log(process.env)
 new Vue({
   router,
   store,
