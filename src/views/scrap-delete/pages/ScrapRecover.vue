@@ -12,7 +12,7 @@
         </el-form-item>
         <el-form-item label="" prop="">
           <el-button class="ml15 mr25 pad1025" size="small" type="primary" @click="search">查询</el-button>
-          <el-button class="pad1025" size="small" type="primary" @click="resetForm('searchForm')">重置</el-button>
+          <el-button class="pad1025" size="small" type="primary" @click="resetForm">重置</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -283,8 +283,9 @@ import {getScrapList, scrapMark, getRecoverList, recoverMark, getLogList} from '
         })
       },
       
-      resetForm(formName) {
-        this.$refs[formName].resetFields();
+      resetForm() {
+        // this.$refs[formName].resetFields();
+        this.searchForm.code = ''
         this.search()
       },
       
