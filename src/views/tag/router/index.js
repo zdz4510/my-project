@@ -41,6 +41,18 @@ export default {
         import(
           /* webpackChunkName: "tagPrint" */ "@/views/tag/pages/tag-print.vue"
         )
+    },
+     //标签编辑
+     {
+      path: "tagEdit",
+      name: "tagEdit",
+      meta: {
+        title: "标签编辑"
+      },
+      component: () =>
+        import(
+          /* webpackChunkName: "tagEdit" */ "@/views/tag/pages/tag-edit.vue"
+        )
     }
   ]
 };

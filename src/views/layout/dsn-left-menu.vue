@@ -136,6 +136,7 @@
         </template>
         <el-menu-item index="/tag/tagConfig">标签配置</el-menu-item>
         <el-menu-item index="/tag/tagPrint">标签打印</el-menu-item>
+        <el-menu-item index="/tag/tagEdit">标签编辑</el-menu-item>
       </el-submenu>
     </el-menu>
   </div>

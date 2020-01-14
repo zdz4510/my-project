@@ -112,7 +112,7 @@
 </template>
 
 <script>
-import { listAllHttp } from "@/api/work.center.api.js";
+import { getAllList } from "@/api/work.center.api.js";
 import { saveHttp } from "@/api/maintenance/working.certificate.api.js";
 import { mapGetters, mapMutations } from "vuex";
 import _ from "lodash";
@@ -179,7 +179,7 @@ export default {
       this.fn = _.debounce(cb => {
         const data = { workCenter: this.workCertificateForm.workCenter };
         //查询所有工作中心
-        listAllHttp(data).then(data => {
+        getAllList(data).then(data => {
           const res = data.data;
           if (res.code === 200) {
             this.workCenters = res.data;
