@@ -102,10 +102,10 @@
 <script>
 import {
   findResourceGroupListHttp,
-  deleteResourceBatchHttp,
-  exportExcelHttp
+  deleteResourceBatchHttp
 } from "@/api/device/maintenance.api.js";
 import { mapMutations } from "vuex";
+import { exportExcel } from "@/until/excel.js";
 
 export default {
   data() {
@@ -266,10 +266,47 @@ export default {
       this.init();
     },
     handleExport() {
-      const data = {
-        resource: this.maintenanceForm.resource
-      };
-      exportExcelHttp(data);
+      const tHeader = [
+        "设备编号",
+        "设备名称",
+        "线体",
+        "工站",
+        "工作中心",
+        "状态"
+      ];
+      const filterVal = [
+        "resource",
+        "resourceDes",
+        "workCenterRelation",
+        "station",
+        "workCenter",
+        "resourceStatus"
+      ];
+      let tipString = "";
+      let data = [];
+      if (this.selectionList.length === 0) {
+        data = this.tableData;
+      }
+      if (this.selectionList.length > 0) {
+        data = this.selectionList;
+      }
+      tipString = exportExcel(tHeader, filterVal, data, "设备维护表");
+      this.exportResult(tipString);
+    },
+    exportResult(tipString) {
+      if (tipString === undefined) {
+        this.$message({
+          message: "导出成功",
+          type: "success"
+        });
+        return;
+      } else {
+        this.$message({
+          message: tipString,
+          type: "warning"
+        });
+        return;
+      }
     }
   }
 };

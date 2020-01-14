@@ -1116,6 +1116,14 @@ address@^1.1.2:
   version "1.1.2"
   resolved "https://registry.npm.taobao.org/address/download/address-1.1.2.tgz#bf1116c9c758c51b7a933d296b72c221ed9428b6"
 
+adler-32@~1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/adler-32/-/adler-32-1.2.0.tgz#6a3e6bf0a63900ba15652808cb15c6813d1a5f25"
+  integrity sha1-aj5r8KY5ALoVZSgIyxXGgT0aXyU=
+  dependencies:
+    exit-on-epipe "~1.0.1"
+    printj "~1.1.0"
+
 aggregate-error@^3.0.0:
   version "3.0.1"
   resolved "https://registry.npm.taobao.org/aggregate-error/download/aggregate-error-3.0.1.tgz#db2fe7246e536f40d9b5442a39e117d7dd6a24e0"
@@ -1782,6 +1790,16 @@ caseless@~0.12.0:
   version "0.12.0"
   resolved "https://registry.npm.taobao.org/caseless/download/caseless-0.12.0.tgz#1b681c21ff84033c826543090689420d187151dc"
 
+cfb@^1.1.3:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/cfb/-/cfb-1.1.3.tgz#05de6816259c8e8bc32713aba905608ee385df66"
+  integrity sha512-joXBW0nMuwV9no7UTMiyVJnQL6XIU3ThXVjFUDHgl9MpILPOomyfaGqC290VELZ48bbQKZXnQ81UT5HouTxHsw==
+  dependencies:
+    adler-32 "~1.2.0"
+    commander "^2.16.0"
+    crc-32 "~1.2.0"
+    printj "~1.1.2"
+
 chalk@^1.1.1, chalk@^1.1.3:
   version "1.1.3"
   resolved "https://registry.npm.taobao.org/chalk/download/chalk-1.1.3.tgz?cache=0&sync_timestamp=1573282918610&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fchalk%2Fdownload%2Fchalk-1.1.3.tgz#a8115c55e4a702fe4d150abd3872822a7e09fc98"
@@ -1961,6 +1979,14 @@ code-point-at@^1.0.0:
   version "1.1.0"
   resolved "https://registry.npm.taobao.org/code-point-at/download/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
 
+codepage@~1.14.0:
+  version "1.14.0"
+  resolved "https://registry.yarnpkg.com/codepage/-/codepage-1.14.0.tgz#8cbe25481323559d7d307571b0fff91e7a1d2f99"
+  integrity sha1-jL4lSBMjVZ19MHVxsP/5HnodL5k=
+  dependencies:
+    commander "~2.14.1"
+    exit-on-epipe "~1.0.1"
+
 collection-visit@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npm.taobao.org/collection-visit/download/collection-visit-1.0.0.tgz#4bc0373c164bc3291b4d368c829cf1a80a59dca0"
@@ -2008,13 +2034,18 @@ combined-stream@^1.0.6, combined-stream@~1.0.6:
   dependencies:
     delayed-stream "~1.0.0"
 
-commander@2.17.x:
+commander@2.17.x, commander@~2.17.1:
   version "2.17.1"
   resolved "https://registry.npm.taobao.org/commander/download/commander-2.17.1.tgz?cache=0&sync_timestamp=1573464028535&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fcommander%2Fdownload%2Fcommander-2.17.1.tgz#bd77ab7de6de94205ceacc72f1716d29f20a77bf"
 
-commander@^2.18.0, commander@^2.20.0, commander@~2.20.3:
+commander@^2.16.0, commander@^2.18.0, commander@^2.20.0, commander@~2.20.3:
   version "2.20.3"
   resolved "https://registry.npm.taobao.org/commander/download/commander-2.20.3.tgz?cache=0&sync_timestamp=1573464028535&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fcommander%2Fdownload%2Fcommander-2.20.3.tgz#fd485e84c03eb4881c20722ba48035e8531aeb33"
+
+commander@~2.14.1:
+  version "2.14.1"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-2.14.1.tgz#2235123e37af8ca3c65df45b026dbd357b01b9aa"
+  integrity sha512-+YR16o3rK53SmWHU3rEM3tPAh2rwb1yPcQX5irVn7mb0gXbwuCCrnkbV5+PBfETdfg1vui07nM6PCG1zndcjQw==
 
 commander@~2.19.0:
   version "2.19.0"
@@ -2168,6 +2199,14 @@ cosmiconfig@^5.0.0:
     is-directory "^0.3.1"
     js-yaml "^3.13.1"
     parse-json "^4.0.0"
+
+crc-32@~1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/crc-32/-/crc-32-1.2.0.tgz#cb2db6e29b88508e32d9dd0ec1693e7b41a18208"
+  integrity sha512-1uBwHxF+Y/4yF5G48fwnKq6QsIXheor3ZLPT80yGBV1oEUwpPojlEhQbWKVw1VwcTQyMGHK1/XMmTjmlsmTTGA==
+  dependencies:
+    exit-on-epipe "~1.0.1"
+    printj "~1.1.0"
 
 create-ecdh@^4.0.0:
   version "4.0.3"
@@ -2645,6 +2684,11 @@ dotenv@^8.2.0:
   version "8.2.0"
   resolved "https://registry.npm.taobao.org/dotenv/download/dotenv-8.2.0.tgz?cache=0&sync_timestamp=1571190696472&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fdotenv%2Fdownload%2Fdotenv-8.2.0.tgz#97e619259ada750eea3e4ea3e26bceea5424b16a"
 
+downloadjs@^1.4.7:
+  version "1.4.7"
+  resolved "https://registry.yarnpkg.com/downloadjs/-/downloadjs-1.4.7.tgz#f69f96f940e0d0553dac291139865a3cd0101e3c"
+  integrity sha1-9p+W+UDg0FU9rCkROYZaPNAQHjw=
+
 duplexer@^0.1.1:
   version "0.1.1"
   resolved "https://registry.npm.taobao.org/duplexer/download/duplexer-0.1.1.tgz#ace6ff808c1ce66b57d1ebf97977acb02334cfc1"
@@ -2974,6 +3018,11 @@ execa@^3.3.0:
     signal-exit "^3.0.2"
     strip-final-newline "^2.0.0"
 
+exit-on-epipe@~1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/exit-on-epipe/-/exit-on-epipe-1.0.1.tgz#0bdd92e87d5285d267daa8171d0eb06159689692"
+  integrity sha512-h2z5mrROTxce56S+pnvAV890uu7ls7f1kEvVGJbw1OlFH3/mlJ5bkXu0KRyW94v37zzHPiUd55iLn3DA7TjWpw==
+
 expand-brackets@^2.1.4:
   version "2.1.4"
   resolved "https://registry.npm.taobao.org/expand-brackets/download/expand-brackets-2.1.4.tgz#b77735e315ce30f6b6eff0f83b04151a22449622"
@@ -3125,6 +3174,11 @@ file-loader@^4.2.0:
     loader-utils "^1.2.3"
     schema-utils "^2.5.0"
 
+file-saver@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/file-saver/-/file-saver-2.0.2.tgz#06d6e728a9ea2df2cce2f8d9e84dfcdc338ec17a"
+  integrity sha512-Wz3c3XQ5xroCxd1G8b7yL0Ehkf0TC9oYC6buPFkNnU9EnaPlifeAFCyCh+iewXTyFRcg0a6j3J7FmJsIhlhBdw==
+
 file-uri-to-path@1.0.0:
   version "1.0.0"
   resolved "https://registry.npm.taobao.org/file-uri-to-path/download/file-uri-to-path-1.0.0.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Ffile-uri-to-path%2Fdownload%2Ffile-uri-to-path-1.0.0.tgz#553a7b8446ff6f684359c445f1e37a05dacc33dd"
@@ -3248,6 +3302,11 @@ form-data@~2.3.2:
 forwarded@~0.1.2:
   version "0.1.2"
   resolved "https://registry.npm.taobao.org/forwarded/download/forwarded-0.1.2.tgz#98c23dab1175657b8c0573e8ceccd91b0ff18c84"
+
+frac@~1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/frac/-/frac-1.1.2.tgz#3d74f7f6478c88a1b5020306d747dc6313c74d0b"
+  integrity sha512-w/XBfkibaTl3YDqASwfDUqkna4Z2p9cFSr1aHDt0WoMTECnRfBOv2WArlZILlqgWlmdIlALXGpM2AOhEk5W3IA==
 
 fragment-cache@^0.2.1:
   version "0.2.1"
@@ -5739,6 +5798,11 @@ pretty-error@^2.0.2:
     renderkid "^2.0.1"
     utila "~0.4"
 
+printj@~1.1.0, printj@~1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/printj/-/printj-1.1.2.tgz#d90deb2975a8b9f600fb3a1c94e3f4c53c78a222"
+  integrity sha512-zA2SmoLaxZyArQTOPj5LXecR+RagfPSU5Kw1qP+jkWeNlrq+eJZyY2oS68SU1Z/7/myXM4lo9716laOFAVStCQ==
+
 private@^0.1.6:
   version "0.1.8"
   resolved "https://registry.npm.taobao.org/private/download/private-0.1.8.tgz#2381edb3689f7a53d653190060fcf822d2f368ff"
@@ -5883,6 +5947,11 @@ raw-body@2.4.0:
     http-errors "1.7.2"
     iconv-lite "0.4.24"
     unpipe "1.0.0"
+
+raw-loader@~0.5.1:
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/raw-loader/-/raw-loader-0.5.1.tgz#0c3d0beaed8a01c966d9787bf778281252a979aa"
+  integrity sha1-DD0L6u2KAclm2Xh793goElKpeao=
 
 read-pkg-up@^1.0.1:
   version "1.0.1"
@@ -6241,6 +6310,13 @@ schema-utils@^2.0.0, schema-utils@^2.1.0, schema-utils@^2.5.0, schema-utils@^2.6
     ajv "^6.10.2"
     ajv-keywords "^3.4.1"
 
+script-loader@^0.7.2:
+  version "0.7.2"
+  resolved "https://registry.yarnpkg.com/script-loader/-/script-loader-0.7.2.tgz#2016db6f86f25f5cf56da38915d83378bb166ba7"
+  integrity sha512-UMNLEvgOAQuzK8ji8qIscM3GIrRCWN6MmMXGD4SD5l6cSycgGsCo0tX5xRnfQcoghqct0tjHjcykgI1PyBE2aA==
+  dependencies:
+    raw-loader "~0.5.1"
+
 scss-tokenizer@^0.2.3:
   version "0.2.3"
   resolved "https://registry.npm.taobao.org/scss-tokenizer/download/scss-tokenizer-0.2.3.tgz#8eb06db9a9723333824d3f5530641149847ce5d1"
@@ -6551,6 +6627,13 @@ split-string@^3.0.1, split-string@^3.0.2:
 sprintf-js@~1.0.2:
   version "1.0.3"
   resolved "https://registry.npm.taobao.org/sprintf-js/download/sprintf-js-1.0.3.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fsprintf-js%2Fdownload%2Fsprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
+
+ssf@~0.10.2:
+  version "0.10.2"
+  resolved "https://registry.yarnpkg.com/ssf/-/ssf-0.10.2.tgz#65b2b4fcdfd967bc8e8383a41349009893115976"
+  integrity sha512-rDhAPm9WyIsY8eZEKyE8Qsotb3j/wBdvMWBUsOhJdfhKGLfQidRjiBUV0y/MkyCLiXQ38FG6LWW/VYUtqlIDZQ==
+  dependencies:
+    frac "~1.1.2"
 
 sshpk@^1.7.0:
   version "1.16.1"
@@ -7256,6 +7339,13 @@ vue-hot-reload-api@^2.3.0:
   version "2.3.4"
   resolved "https://registry.npm.taobao.org/vue-hot-reload-api/download/vue-hot-reload-api-2.3.4.tgz?cache=0&sync_timestamp=1568190386192&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fvue-hot-reload-api%2Fdownload%2Fvue-hot-reload-api-2.3.4.tgz#532955cc1eb208a3d990b3a9f9a70574657e08f2"
 
+vue-json-excel@^0.2.98:
+  version "0.2.98"
+  resolved "https://registry.yarnpkg.com/vue-json-excel/-/vue-json-excel-0.2.98.tgz#1d882fd97f8bd7caa1864014e3680b2ddd0e94bc"
+  integrity sha512-hPA3/cOe5nGbEZiJyfpdBIdqBExxF6EhMhpX6vC654PYbTVzdzp7O9ZsC1AgqbgRDR8VjzAaPaEeHg2vGS88FQ==
+  dependencies:
+    downloadjs "^1.4.7"
+
 vue-loader@^15.7.2:
   version "15.8.1"
   resolved "https://registry.npm.taobao.org/vue-loader/download/vue-loader-15.8.1.tgz#4d27c5a8799462731af3986205a1fe1c01dca7eb"
@@ -7652,6 +7742,19 @@ ws@^6.0.0, ws@^6.2.1:
   resolved "https://registry.npm.taobao.org/ws/download/ws-6.2.1.tgz#442fdf0a47ed64f59b6a5d8ff130f4748ed524fb"
   dependencies:
     async-limiter "~1.0.0"
+
+xlsx@^0.15.4:
+  version "0.15.4"
+  resolved "https://registry.yarnpkg.com/xlsx/-/xlsx-0.15.4.tgz#42ef1807829c4f9e98e8fce2641d53df5b5bde3e"
+  integrity sha512-5NKT5f4uRlQO6R9dEzWH5rxXNeT5iDB3I/80EFsAaYejxgP7a09l2KVtPap0pZRUrt1F8MVy8CRsEOJ5tbjheg==
+  dependencies:
+    adler-32 "~1.2.0"
+    cfb "^1.1.3"
+    codepage "~1.14.0"
+    commander "~2.17.1"
+    crc-32 "~1.2.0"
+    exit-on-epipe "~1.0.1"
+    ssf "~0.10.2"
 
 xtend@^4.0.0, xtend@~4.0.1:
   version "4.0.2"

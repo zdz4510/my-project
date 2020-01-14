@@ -32,22 +32,32 @@
       <div class="left">
         <el-form :model="showInfo" label-width="140px" class="demo-form-inline">
           <el-form-item label="状态：">
-            <el-input v-model.trim="showInfo.status" size="small"></el-input>
+            <el-input
+              v-model.trim="showInfo.status"
+              size="small"
+              :readonly="true"
+            ></el-input>
           </el-form-item>
           <el-form-item label="操作：">
             <el-input
               v-model.trim="showInfo.operationList"
               size="small"
+              :readonly="true"
             ></el-input>
           </el-form-item>
           <el-form-item label="资源：">
             <el-input
               v-model.trim="showInfo.resourceList"
               size="small"
+              :readonly="true"
             ></el-input>
           </el-form-item>
           <el-form-item label="数量：">
-            <el-input v-model.trim="showInfo.quantity" size="small"></el-input>
+            <el-input
+              v-model.trim="showInfo.quantity"
+              size="small"
+              :readonly="true"
+            ></el-input>
           </el-form-item>
         </el-form>
       </div>
@@ -60,10 +70,15 @@
             <el-input
               v-model.trim="showInfo.materialRev"
               size="small"
+              :readonly="true"
             ></el-input>
           </el-form-item>
           <el-form-item label="工艺路线（版本）：">
-            <el-input v-model.trim="showInfo.routerRev" size="small"></el-input>
+            <el-input
+              v-model.trim="showInfo.routerRev"
+              size="small"
+              :readonly="true"
+            ></el-input>
           </el-form-item>
         </el-form>
       </div>
