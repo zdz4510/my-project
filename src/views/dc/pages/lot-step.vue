@@ -69,25 +69,26 @@
         @cell-dblclick="cellDblClick"
       >
         <el-table-column type="selection" width="55"> </el-table-column>
-        <el-table-column prop="lot" label="步骤" width="120"> </el-table-column>
-        <el-table-column prop="resourceCount" label="工序" width="120">
+        <el-table-column prop="stepId" label="步骤" width="120">
         </el-table-column>
-        <el-table-column prop="groupDes" label="描述" width="170">
+        <el-table-column prop="operation" label="工序" width="120">
+        </el-table-column>
+        <el-table-column prop="operationDes" label="描述" width="170">
         </el-table-column>
 
-        <el-table-column prop="createUserName" label="步骤状态" width="120">
+        <el-table-column prop="stepStatus" label="步骤状态" width="120">
         </el-table-column>
-        <el-table-column prop="createTime" label="排队中数量" width="170">
+        <el-table-column prop="qtyInQueue" label="排队中数量" width="170">
         </el-table-column>
         <el-table-column
-          prop="modifyTime"
+          prop="qtyInWork"
           label="在制数量"
           show-overflow-tooltip
         >
         </el-table-column>
       </el-table>
     </div>
-    <div class="pagination">
+    <!-- <div class="pagination">
       <el-pagination
         background
         layout="->,total,prev,pager,next,sizes"
@@ -99,7 +100,7 @@
         @current-change="handleCurrentChange"
       >
       </el-pagination>
-    </div>
+    </div> -->
     <el-dialog title="删除" :visible.sync="deleteDialog" width="30%">
       <span>是否确认删除{{ selectionList.length }}条数据？</span>
       <span slot="footer" class="dialog-footer">
@@ -113,11 +114,7 @@
 </template>
 
 <script>
-import {
-  findResourceGroupListHttp,
-  deleteResourceGroupHttp,
-  exportExcelHttp
-} from "@/api/device/type.api.js";
+import { findLotStepStatusHttp } from "@/api/dc/lot.step.api.js";
 import { mapMutations } from "vuex";
 
 export default {
@@ -133,40 +130,20 @@ export default {
       tableData: [],
       selectionList: [],
       //分页
-      currentPage: 1,
-      pagesize: 10,
-      total: 0,
-      deleteDialog: false
+      // currentPage: 1,
+      // pagesize: 10,
+      // total: 0,
+      deleteDialog: false,
+      queryLots: [
+        "FIXED2020/01/1300000116MAT1",
+        "FIXED2020/01/1300000118MAT1",
+        "FIXED2020/01/1300000120MAT1"
+      ]
     };
   },
-  created() {
-    this.init();
-  },
+  created() {},
   methods: {
-    ...mapMutations(["SETTYPELIST"]),
-    init() {
-      const data = {
-        currentPage: this.currentPage,
-        pageSize: this.pagesize,
-        lot: this.lotStepForm.lot
-      };
-      findResourceGroupListHttp(data).then(data => {
-        const res = data.data;
-        console.log(res);
-        const list = res.data.data;
-        if (res.code === 200) {
-          // this.pageShow = true;
-          this.total = res.data.total;
-          this.tableData = list;
-          // this.lotStepForm.lot = "";
-          return;
-        }
-        this.$message({
-          message: res.message,
-          type: "warning"
-        });
-      });
-    },
+    ...mapMutations(["LOTSTEPDETAILLIST"]),
     toggleSelection(rows) {
       if (rows) {
         rows.forEach(row => {
@@ -182,79 +159,45 @@ export default {
       console.log(this.selectionList);
     },
     //双击单元格
-    cellDblClick(row, column) {
-      if (column.property === "lot") {
-        this.$router.push({ name: "lotStepDetail" });
-      }
+    cellDblClick(row) {
+      this.LOTSTEPDETAILLIST(row);
+      this.$router.push({ name: "lotStepDetail" });
     },
     //点击步骤操作菜单栏
     handleCommand(command) {
       console.log(command);
     },
-    //更改当前页码,再次请求数据
-    handleCurrentChange(currentChange) {
-      this.currentPage = currentChange;
-      this.init();
-    },
-    //更改页码大小
-    handlePagesize(pagesize) {
-      this.pagesize = pagesize;
-      this.currentPage = 1;
-      this.init();
-    },
+    // //更改当前页码,再次请求数据
+    // handleCurrentChange(currentChange) {
+    //   this.currentPage = currentChange;
+    //   this.init();
+    // },
+    // //更改页码大小
+    // handlePagesize(pagesize) {
+    //   this.pagesize = pagesize;
+    //   this.currentPage = 1;
+    // },
     //跳转到查询LOT界面
     goQuery() {
       this.$router.push({ name: "lotQuery" });
     },
-    handleEdit() {
-      this.SETTYPELIST(this.selectionList);
-      this.$router.push({
-        path: "/device/deviceTypeEdit",
-        // name: "deviceTypeEdit",
-        query: { operateType: "edit" }
-      });
-    },
-    handleDelete() {
-      console.log(this.selectionList);
-      const data = [];
-      this.selectionList.forEach(element => {
-        const obj = {
-          lot: element.lot
-        };
-        data.push(obj);
-      });
-      console.log(data);
-      deleteResourceGroupHttp(data).then(data => {
+    handleDelete() {},
+    handleQuery() {
+      const data = this.queryLots;
+      findLotStepStatusHttp(data).then(data => {
         const res = data.data;
-        console.log(res);
         if (res.code === 200) {
-          this.$message({
-            message: res.message,
-            type: "success"
-          });
-          this.deleteDialog = false;
-          this.init();
+          this.tableData = res.data;
           return;
         }
-        this.deleteDialog = false;
         this.$message({
           message: res.message,
           type: "warning"
         });
       });
     },
-    handleQuery() {
-      this.init();
-    },
     handleReset() {
       this.lotStepForm.lot = "";
-    },
-    handleExport() {
-      const data = {
-        lot: this.lotStepForm.lot,
-        groupDes: this.lotStepForm.groupDes
-      };
-      exportExcelHttp(data);
     }
   }
 };
