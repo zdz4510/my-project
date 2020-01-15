@@ -38,21 +38,15 @@
         <el-menu-item index="/material/materialGroup">物料组维护</el-menu-item>
         <el-menu-item index="/material/workOrder">工单维护</el-menu-item>
         <el-menu-item index="/material/issued">工单下达</el-menu-item>
-        <el-menu-item index="/material/routeMaintenance"
-          >工艺路线维护</el-menu-item
-        >
+        <el-menu-item index="/material/routeMaintenance">工艺路线维护</el-menu-item>
       </el-submenu>
       <el-submenu index="factory-model">
         <template slot="title">
           <i class="el-icon-location"></i>
           <span slot="title">工厂建模</span>
         </template>
-        <el-menu-item index="/operationMaintain/operationMaintain"
-          >工序维护</el-menu-item
-        >
-        <el-menu-item index="/operationStation/operationStation"
-          >工序与站位关系维护</el-menu-item
-        >
+        <el-menu-item index="/operationMaintain/operationMaintain">工序维护</el-menu-item>
+        <el-menu-item index="/operationStation/operationStation">工序与站位关系维护</el-menu-item>
         <el-menu-item index="/workCenter/workCenter">工作中心</el-menu-item>
       </el-submenu>
       <el-submenu index="system-config">
@@ -73,6 +67,7 @@
         <el-menu-item index="/dc/dataCollection">数据收集</el-menu-item>
         <el-menu-item index="/dc/dcCollection">独立数据收集</el-menu-item>
         <el-menu-item index="/dc/unpack">包装解包配置</el-menu-item>
+        <el-menu-item index="/dc/packWork">包装解包作业</el-menu-item>
         <el-menu-item index="/dc/lotStep">LOT步骤状态变更*</el-menu-item>
         <el-menu-item index="/dc/lotDivestiture">LOT拆分*</el-menu-item>
         <el-menu-item index="/dc/lotMerge">LOT合并*</el-menu-item>
@@ -119,18 +114,10 @@
           <i class="el-icon-location"></i>
           <span slot="title">维护管理</span>
         </template>
-        <el-menu-item index="/maintenance/standingMaintenance">
-          站位维护
-        </el-menu-item>
-        <el-menu-item index="/maintenance/workingCertificateMaintenance">
-          上岗证维护
-        </el-menu-item>
-        <el-menu-item index="/maintenance/genericCodeDefinition">
-          通用代码定义维护
-        </el-menu-item>
-        <el-menu-item index="/maintenance/genericCodeData">
-          通用代码数据维护
-        </el-menu-item>
+        <el-menu-item index="/maintenance/standingMaintenance">站位维护</el-menu-item>
+        <el-menu-item index="/maintenance/workingCertificateMaintenance">上岗证维护</el-menu-item>
+        <el-menu-item index="/maintenance/genericCodeDefinition">通用代码定义维护</el-menu-item>
+        <el-menu-item index="/maintenance/genericCodeData">通用代码数据维护</el-menu-item>
         <el-menu-item index="/device/test">测试页面</el-menu-item>
       </el-submenu>
       <el-submenu index="tag">

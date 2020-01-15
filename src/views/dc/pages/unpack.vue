@@ -3,10 +3,10 @@
     <el-form label-width="100px" class="typeForm">
       <el-form-item label="物料号:">
         <el-col :span="6" style="margin-right:20px">
-          <el-input placeholder="请输入物料号"></el-input>
+          <el-input placeholder="请输入物料号" v-model="payload.mat"></el-input>
         </el-col>
-        <el-button size="small" type="primary">查询</el-button>
-        <el-button size="small" type="primary">重置</el-button>
+        <el-button size="small" type="primary" @click="getList">查询</el-button>
+        <el-button size="small" type="primary" @click="handleReset">重置</el-button>
       </el-form-item>
     </el-form>
 
@@ -14,7 +14,6 @@
       <el-button type="primary" size="small" @click="goEdit">新增</el-button>
       <el-button type="primary" size="small" @click="handleModify">修改</el-button>
       <el-button type="danger" size="small" @click="handleDelete">删除</el-button>
-      <el-button type="primary" size="small">导出</el-button>
     </div>
     <!--表单-->
     <div class="tableBox">
@@ -23,7 +22,6 @@
         :data="tableData"
         tooltip-effect="dark"
         style="width: 100%"
-        height="514"
         @selection-change="selectCheck"
         @row-click="selectCheckBox"
       >
@@ -32,15 +30,26 @@
         <el-table-column prop="mat" label="物料号" width="120"></el-table-column>
         <el-table-column prop="containerType" label="容器类型" show-overflow-tooltip></el-table-column>
         <el-table-column prop="packingClass" label="包装层级" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="mainNumberType" label="容器编号规划" show-overflow-tooltip>
+        <el-table-column prop="mainNumberType" label="容器编号规则" show-overflow-tooltip>
           <span slot-scope="scope">{{scope.row.mainNumberType?'是':"否"}}</span>
         </el-table-column>
-        <el-table-column prop="mainNumberRev" label="容器编号规划版本" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="mainNumberRev" label="容器编号版本" show-overflow-tooltip></el-table-column>
         <el-table-column prop="accommodateNumber" label="容器容纳数量" show-overflow-tooltip></el-table-column>
         <el-table-column prop="labelPrinting" label="容器标签打印" show-overflow-tooltip>
           <span slot-scope="scope">{{scope.row.labelPrinting?'是':"否"}}</span>
         </el-table-column>
       </el-table>
+      <div class="pagination">
+        <el-pagination
+          background
+          layout="->,total,prev,pager,next,sizes"
+          :total="total"
+          :page-size="payload.pagesize"
+          :current-page="payload.currentPage"
+          @current-change="handleCurrentChange"
+          @size-change="handlePagesize"
+        ></el-pagination>
+      </div>
     </div>
     <!-- 删除模态框 -->
     <el-dialog title="删除" :visible.sync="deleteDialog" width="30%" :before-close="handleClose">
@@ -55,12 +64,18 @@
 <script>
 import { mapMutations } from "vuex";
 import {
-  getData,
-  deletePackagingConfigurationBatch
+  deletePackagingConfigurationBatch,
+  getPagData
 } from "@/api/dc/unpack.api";
 export default {
   data() {
     return {
+      payload: {
+        currentPage: 1,
+        pageSize: 10,
+        mat: ""
+      },
+      total: "",
       deleteDialog: false,
       tableData: [],
       selectList: []
@@ -71,6 +86,9 @@ export default {
   },
   methods: {
     ...mapMutations(["UNPACKEDIT"]),
+    handleReset() {
+      this.payload.mat = "";
+    },
     handleClose() {
       this.deleteDialog = false;
     },
@@ -117,6 +135,16 @@ export default {
       }
       this.deleteDialog = true;
     },
+    handleCurrentChange(currentChange) {
+      this.payload.currentPage = currentChange;
+      this.getList();
+    },
+    // pagesize 改变之后的回调
+    handlePagesize(pagesize) {
+      this.pagesize = pagesize; //设置pagesize
+      this.payload.currentPage = 1; // 从第一页开始请求
+      this.getList(); //从新渲染分页
+    },
     //当用户勾选数据行的 Checkbox 时触发的事件
     selectCheck(selection) {
       this.selectList = selection;
@@ -125,10 +153,15 @@ export default {
       this.$refs.multipleTable.toggleRowSelection(row);
     },
     getList() {
-      getData().then(res => {
+      console.log(this.payload);
+      getPagData(this.payload).then(res => {
         const {
-          data: { data }
+          data: {
+            data: { data }
+          }
         } = res;
+        console.log(res.data.data, "res");
+        this.total = res.data.data.total;
         const resData = data.map((item, i) => {
           return {
             ...item,
@@ -136,7 +169,6 @@ export default {
           };
         });
         this.tableData = resData;
-        console.log(resData, "resDataresData");
       });
     },
     goEdit() {

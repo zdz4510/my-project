@@ -35,6 +35,7 @@
                 v-model="ruleForm.mat"
                 :fetch-suggestions="this.querySearch"
                 placeholder="请输入物料号"
+                v-bind:disabled="this.operateType==='edit'"
               ></el-autocomplete>
             </el-form-item>
           </div>
@@ -77,7 +78,10 @@
               <el-input v-model="ruleForm.packingClass" v-bind:disabled="this.packingClassAble"></el-input>
             </el-form-item>
             <el-form-item label="被容器编号规则：" prop="subordinationNumberType">
-              <el-select v-model="ruleForm.region" @change="changesubordinationNumberType">
+              <el-select
+                v-model="ruleForm.subordinationNumberType"
+                @change="changesubordinationNumberType"
+              >
                 <el-option label="LOT" value="30"></el-option>
                 <el-option label="手动" value="20"></el-option>
                 <el-option label="调取编号规则" value="10"></el-option>
@@ -101,7 +105,8 @@
 <script>
 import {
   getMaterialList,
-  addPackagingConfiguration
+  addPackagingConfiguration,
+  updatePackagingConfiguration
 } from "@/api/dc/unpack.api";
 import { mapGetters } from "vuex";
 export default {
@@ -152,7 +157,6 @@ export default {
   },
   created() {
     this.operateType = this.$route.query.operateType;
-    console.log(this.operateType, "123132");
     this.init();
   },
   computed: {
@@ -165,7 +169,9 @@ export default {
         this.cloneList = JSON.parse(JSON.stringify(this.unpackEditList));
         console.log(this.cloneList, "cloneList");
         this.tableData = this.cloneList;
-        this.roleForm = this.cloneList[0];
+        this.ruleForm = this.cloneList[0];
+        this.isEditVal(this.ruleForm.subordinationNumberType);
+        this.changemainNumberType(this.ruleForm.mainNumberType);
       }
     },
     saveForm() {
@@ -173,35 +179,36 @@ export default {
       const payload = {
         ...this.ruleForm
       };
-      //   if (this.operateType === "add") {
-      addPackagingConfiguration(payload).then(data => {
-        const res = data.data;
-        this.$message({
-          message: res.code === 200 ? "操作成功" : res.message,
-          type: res.code === 200 ? "success" : "error"
+      if (this.operateType === "add") {
+        addPackagingConfiguration(payload).then(data => {
+          const res = data.data;
+          this.$message({
+            message: res.code === 200 ? "操作成功" : res.message,
+            type: res.code === 200 ? "success" : "error"
+          });
+          this.saveDialog = false;
+          if (res.code === 200) {
+            this.goback();
+          }
+          return;
         });
-        this.saveDialog = false;
-        if (res.code === 200) {
-          this.goback();
-        }
-        return;
-      });
-      //   } else {
-      // const newPayload = { ...payload, id: this.roleForm.id };
-      // updateRoleHttp(newPayload).then(data => {
-      //   const res = data.data;
-      //   this.$message({
-      //     message: res.code === 200 ? "操作成功" : res.message,
-      //     type: res.code === 200 ? "success" : "error"
-      //   });
-      //   this.saveDialog = false;
-      //   if (res.code === 200) {
-      //     this.$router.push({
-      //       path: "/base/role"
-      //     });
-      //   }
-      //   return;
-      // });
+      } else {
+        updatePackagingConfiguration(payload).then(data => {
+          const res = data.data;
+          this.$message({
+            message: res.code === 200 ? "操作成功" : res.message,
+            type: res.code === 200 ? "success" : "error"
+          });
+          this.saveDialog = false;
+          if (res.code === 200) {
+            this.goback();
+          }
+          return;
+        });
+      }
+    },
+    handleCurrentChange(val) {
+      this.ruleForm = val;
     },
     goback() {
       this.$router.push({ name: "unpack" });
@@ -249,12 +256,11 @@ export default {
         );
       };
     },
-    changesubordinationNumberType(val) {
+    isEditVal(val) {
       if (val === "30") {
         this.ruleForm.packingClass = 1;
         this.packingClassAble = true;
       } else if (val === "20") {
-        this.ruleForm.packingClass = "";
         this.packingClassAble = false;
         this.subordinationNumberRev = true;
         this.ruleForm.labelPrintingsubordinationNumberRev = "";
@@ -262,6 +268,9 @@ export default {
         this.ruleForm.packingClass = "";
         this.subordinationNumberRev = false;
       }
+    },
+    changesubordinationNumberType(val) {
+      this.isEditVal(val);
     }
   }
 };
