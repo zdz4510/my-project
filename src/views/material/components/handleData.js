@@ -98,7 +98,7 @@ const handleData =(data)=>{
 };
   const root = fromAtoB(-1);  //  获取root
   node = node.filter(item=>{
-     return item.id!='-1'
+     return item.name!='开始'
   })
   const routerSteps=  node.map(item => {
     let nodes = fromAtoB(item.id); //  查找当前节点下面的节点
@@ -123,7 +123,9 @@ const handleData =(data)=>{
       },
       routerNextStepIds:nodes||[], // 下一个工序id
       stepId: item.stepId, 
-      sequence:'3' 
+      sequence:'3',
+      left:item.left,
+      top:item.top 
        // 工序id
     };
     if(item.routerComponentType=='O'){

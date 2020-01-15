@@ -2,7 +2,7 @@
   <div class="workOrder">
     <div class="query">
       <div class="left">
-        <el-form label-width="80px" :inline="true" class="typeForm">
+        <el-form label-width="90px" :inline="true" class="typeForm">
           <el-form-item label="工艺路线:">
             <el-input placeholder="请输入工艺路线" v-model="form.router">
               <i slot="append" class="el-icon-document-copy"></i>
