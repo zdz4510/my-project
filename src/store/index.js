@@ -17,6 +17,7 @@ import certUserEdit from "./modules/base/cert.user.edit.js"; //用户证明分�
 import ncGroupEdit from "./modules/base/nc.group.edit.js"; //不合格代码组vuex module
 import ncCodeEdit from "./modules/base/nc.code.edit.js"; //不合格代码vuex module
 import tagConfigEdit from "./modules/tag/tag.config.edit.js"; //不合格代码vuex module
+import lotStepDetail from "./modules/dc/lot.step.detail.js"; //lot步骤详情vuex module
 
 Vue.use(Vuex);
 
@@ -41,6 +42,7 @@ export default new Vuex.Store({
     certUserEdit,
     ncGroupEdit,
     ncCodeEdit,
-    tagConfigEdit
+    tagConfigEdit,
+    lotStepDetail
   }
 });
