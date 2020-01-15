@@ -20,45 +20,81 @@
 				<el-form-item label="描述:" prop="operationDes" required>
 					<el-input v-model="addForm.operationDes"></el-input>
 				</el-form-item>
+				<el-row>
+					<el-col :span="24">
+						<el-row>
+							<el-col :span="8">
+								<el-table :data="allocateData.filter(data => (!workCenterRelation1 || data.workCenterRelation.toLowerCase().includes(workCenterRelation1.toLowerCase())) &&
+									(!station1 || data.station.toLowerCase().includes(station1.toLowerCase())) &&
+									(!stationDes1 || data.stationDes.toLowerCase().includes(stationDes1.toLowerCase())) )" @select="check1" @select-all="check1">
+									<el-table-column label="已分配站位">
+										<el-table-column label="选择">
+											<el-table-column type="selection" width="55"></el-table-column>
+										</el-table-column>
+										<el-table-column label="">
+											<template slot="header">
+												<el-input v-model="workCenterRelation1" placeholder="输入产线搜索"/></template>
+											<el-table-column prop="workCenterRelation" label="产线"></el-table-column>
+										</el-table-column>
+										<el-table-column label="">
+											<template slot="header">
+												<el-input v-model="station1" placeholder="输入站位搜索"/></template>
+											<el-table-column prop="station" label="站位"></el-table-column>
+										</el-table-column>
+										<el-table-column label="">
+											<template slot="header">
+												<el-input v-model="stationDes1" placeholder="输入站位描述搜索"/></template>
+											<el-table-column prop="stationDes" label="站位描述"></el-table-column>
+										</el-table-column>
+									</el-table-column>
+								</el-table>
+							</el-col>
+							<el-col :span="2">
+								<div class="direction mt70"><i class="el-icon-caret-right" @click="right"></i></div>
+								<div class="direction"><i class="el-icon-caret-left" @click="left"></i></div>
+							</el-col>
+							<el-col :span="8">
+								<el-table :data="unallocateData.filter(data => (!workCenterRelation2 || data.workCenterRelation.toLowerCase().includes(workCenterRelation2.toLowerCase())) &&
+									(!station2 || data.station.toLowerCase().includes(station2.toLowerCase())) &&
+									(!stationDes2 || data.stationDes.toLowerCase().includes(stationDes2.toLowerCase())) )" @select="check2" @select-all="check2">
+									<el-table-column label="未分配站位">
+										<el-table-column label="选择">
+											<el-table-column type="selection" width="55"></el-table-column>
+										</el-table-column>
+										<el-table-column label="">
+											<template slot="header">
+												<el-input v-model="workCenterRelation2" placeholder="输入产线搜索"/></template>
+											<el-table-column prop="workCenterRelation" label="产线"></el-table-column>
+										</el-table-column>
+										<el-table-column label="">
+											<template slot="header">
+												<el-input v-model="station2" placeholder="输入站位搜索"/></template>
+											<el-table-column prop="station" label="站位"></el-table-column>
+										</el-table-column>
+										<el-table-column label="">
+											<template slot="header">
+												<el-input v-model="stationDes2" placeholder="输入站位描述搜索"/></template>
+											<el-table-column prop="stationDes" label="站位描述"></el-table-column>
+										</el-table-column>
+									</el-table-column>
+								</el-table>
+							</el-col>
+						</el-row>
+					</el-col>
+				</el-row>
 			</el-form>
 		</div>
-		<div class="content">
-			<el-transfer
-        ref="transfer"
-        filterable
-        v-model="allocate"
-        :data="transferData"
-        :titles="['未分配站位', '已分配站位']"
-        :props="{
-          key: 'resource',
-          station: 'station',
-          workCenterRelation: 'workCenterRelation',
-          stationDes: 'stationDes',
-        }"
-      >
-        <span slot-scope="{ option }"
-          >{{ option.workCenterRelation }} - {{ option.station }} - {{ option.stationDes }}</span
-        >
-      </el-transfer>
-		</div>
+		
 	</div>
 </template>
 
 <script>
 import { addStation, getAllOperation, getOperationInfo} from '../../../api/operation.station.api.js'
+import _ from 'lodash';
 	export default {
 		name:'operation-station',
 		data() {
 			return {
-				transferData:[],
-				undistributed:[],
-				allocate:[],
-				allocateArr:[],
-				undistributedArr: [],
-				// value: [],
-				filterMethod(query, item) {
-					return item.workCenter.indexOf(query) > -1;
-				},
 				addForm: {
 					operation: '',
 					operationDes:''
@@ -68,81 +104,89 @@ import { addStation, getAllOperation, getOperationInfo} from '../../../api/opera
 						{ required: true, message: '请选择工序名称', trigger: 'change' },
 					],
 				},
-				options: [{
-					value: '选项1',
-					label: '黄金糕'
-				}, {
-					value: '选项2',
-					label: '双皮奶'
-				}],
-				status: [{
-					value: '1',
-					label: '已启用'
-				}, {
-					value: '2',
-					label: '未启用'
-				}],
+				options:[],
+				unallocateData:[],
+				allocateData:[],
+				workCenterRelation1:'',
+				workCenterRelation2:'',
+				station1:'',
+				station2:'',
+				stationDes1:'',
+				stationDes2:'',
+				selectedList:[],
+				selectedList2:[],
+				cloneUnallocateData:[],
+				cloneAllocateData:[],
 			}
 		},
 		created(){
 			// 获取所有工序
 			getAllOperation().then(data => {
-				let res = data.data.data
-				res.forEach(item => {
-					item.value = item.operation;
-				})
-				this.options = res
-				console.log(data,'da')
+				if(data.data.code == 200){
+					this.options = data.data.data
+				}else{
+					this.$message.error(data.data.message)
+				}
 			})
 		},
 		methods: {
+			onChange(value){
+				let params = {
+					operation:value
+				}
+				getOperationInfo(params).then(data=>{
+					if(data.data.code == 200){
+						this.unallocateData = data.data.data.undistributed
+						this.cloneUnallocateData = data.data.data.undistributed
+						this.allocateData = data.data.data.allocated
+						this.cloneAllocateData = data.data.data.allocated
+					}else{
+						this.$message.error(data.data.message)
+					}
+				})
+			},
+			check1(val){
+				this.selectedList = val
+			},
+			check2(val){
+				this.selectedList2 = val
+			},
+			right(){
+				this.unallocateData = _.concat(this.unallocateData,this.selectedList)
+				this.unallocateData = _.uniq(this.unallocateData)
+				this.allocateData = _.difference(this.allocateData,this.selectedList)
+				console.log(this.unallocateData,'un')
+				this.cloneAllocateData = _.cloneDeep(this.allocateData)
+			},
+			left(){
+				this.allocateData = _.concat(this.allocateData,this.selectedList2)
+				this.allocateData = _.uniq(this.allocateData)
+				this.unallocateData = _.difference(this.unallocateData,this.selectedList2)
+				console.log(this.unallocateData,'all')
+				this.cloneAllocateData = _.cloneDeep(this.allocateData)
+			},
 			goBack(){
 				this.$router.push({path:'/operationStation/operationStation'})
 			},
-			querySearch(queryString, cb) {
-				var options = this.options;
-        var results = queryString ? options.filter(this.createFilter(queryString)) : options;
-        // 调用 callback 返回建议列表的数据
-        cb(results);
-			},
-			createFilter(queryString) {
-        return (options) => {
-          return (options.operation.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
-        };
-			},
-			submitForm(formName) {
-				this.$refs[formName].validate((valid) => {
-					if (valid) {
-						console.log('submit!');
-					} else {
-						console.log('error submit!!');
-						return false;
-					}
-				});
-			},
+		
 			resetForm(formName) {
 				this.$refs[formName].resetFields();
+				this.allocateData = []
+				this.unallocateData = []
 			},
 			save(formName){
 				this.$refs[formName].validate((valid) => {
 					if (valid) {
-						console.log(this.allocate)
 						let arr = []
-						for(let i = 0; i < this.allocate.length; i++){
-							for(let j = 0; j < this.transferData.length; j++){
-								if(this.allocate[i] == this.transferData[j]['resource']){
-									let obj = {}
-									obj.operation = this.addForm.operation
-									obj.operationDes = this.addForm.operationDes
-									obj.workCenterRelation = this.transferData[j]['workCenterRelation']
-									obj.station = this.transferData[j]['station']
-									arr.push(obj)
-								}
-							}
-						}
-						console.log(arr,'arr')
+						this.allocateData.map(item=>{
+							let obj = {}
+							obj.operation = this.addForm.operation
+							obj.station = item.station
+							obj.workCenterRelation = item.workCenterRelation
+							arr.push(obj)
+						})
 						addStation(arr).then(data => {
-							if(data.data.message == 'success'){
+							if(data.data.code == 200){
 								this.$message({
 									type: 'success',
 									message: '保存成功!'
@@ -150,6 +194,8 @@ import { addStation, getAllOperation, getOperationInfo} from '../../../api/opera
 								setTimeout(()=>{
 									this.$router.push({path:'/operationStation/operationStation'})
 								},1000)
+							}else{
+								this.$message.error(data.data.message)
 							}
 						})
 					} else {
@@ -158,24 +204,9 @@ import { addStation, getAllOperation, getOperationInfo} from '../../../api/opera
 					}
 				});
 			},
-			handleChange(value, direction, movedKeys) {
-				console.log(value, direction, movedKeys)
-				this.allocate = value
-			},
-			onChange(value){
-				let params = {
-					operation:value
-				}
-				getOperationInfo(params).then(data=>{
-					console.log(data.data.data,'data')
-					let transData = [...data.data.data.allocated.filter(Boolean), ...data.data.data.undistributed.filter(Boolean)]
-					this.transferData = JSON.parse(JSON.stringify(transData)) ;
-
-					data.data.data.allocated.filter(Boolean).forEach(element => {
-						this.allocate.push(element.resource || '');
-					});
-				})
-			},
+		
+			
+			
 		}
 	}
 </script>
@@ -198,5 +229,14 @@ import { addStation, getAllOperation, getOperationInfo} from '../../../api/opera
 		padding: 10px;
 	}
 	.el-transfer /deep/ .el-transfer-panel { width: 300px !important; }
+	.direction {
+		color: #409eff;
+		font-size: 40px;
+		cursor: pointer;
+		text-align: center;
+	}
+	.mt70 {
+		margin-top: 70px;
+	}
 
 </style>
