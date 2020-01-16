@@ -10,10 +10,21 @@
       style="display:flex;align-items:center"
     >
       <el-form-item label="工序:" prop="operation">
-        <el-input v-model="searchForm.operation"></el-input>
+        <!-- <el-input v-model="searchForm.operation"></el-input> -->
+        <el-autocomplete
+          v-model.trim="searchForm.operation"
+          :fetch-suggestions="querySearchOperation"
+          placeholder="请输入工序"
+          @select="handleSelectOperation"
+        ></el-autocomplete>
       </el-form-item>
       <el-form-item label="设备:" prop="resource">
-        <el-input v-model="searchForm.resource"></el-input>
+        <el-autocomplete
+          v-model.trim="searchForm.resource"
+          :fetch-suggestions="querySearchResource"
+          placeholder="请输入设备"
+          @select="handleSelectResource"
+        ></el-autocomplete>
       </el-form-item>
       <el-form-item
         label="LOT:"
@@ -21,7 +32,7 @@
         style="display:flex;align-items:center;width:300px"
       >
         <div style="display:flex;align-item:center">
-          <el-input v-model="searchForm.lot"></el-input>
+          <el-input v-model="searchForm.lot" placeholder="请输入LOT"></el-input>
           <i class="el-icon-document-copy" @click="goQuery"></i>
         </div>
       </el-form-item>
@@ -29,7 +40,7 @@
         <el-button size="small" type="primary" @click="checkForm('searchForm')"
           >查询</el-button
         >
-        <el-button size="small" type="primary" @click="resetForm('searchForm')"
+        <el-button size="small" type="primary" @click="resetForm"
           >重置</el-button
         >
       </el-form-item>
@@ -102,7 +113,12 @@
 <script>
 import { listLotHttp } from "@/api/dc/lot.divestiture.api.js";
 import dimQueryLotModel from "../components/dim-query-lots-model.vue";
-import { listPodLotHttp } from "@/api/dc/production.operate.api.js";
+import {
+  listPodLotHttp,
+  findPageHttp,
+  findResourceListHttp
+} from "@/api/dc/production.operate.api.js";
+import _ from "lodash";
 
 export default {
   name: "productionOperate",
@@ -136,19 +152,87 @@ export default {
       tableData: [],
       row: [],
       lotDatas: [],
-      currentLot: {}
+      currentLot: {},
+      //工序搜索建议
+      operationFn: null,
+      operationList: [],
+      //设备搜索建议
+      resourceFn: null,
+      resourceList: []
     };
   },
+  created() {
+    this.deBounceSearchOperation();
+    this.deBounceSearchResource();
+  },
   methods: {
-    handledbClick(row) {
-      this.row.push(row);
-      // this.row = row
-      //  this.$refs.multipleTable.toggleRowSelection(row);
-      this.lotDialog = false;
+    //工序搜索建议请求
+    deBounceSearchOperation() {
+      this.operationFn = _.debounce(cb => {
+        let data = { operation: this.searchForm.operation, pageSize: 0 };
+        findPageHttp(data).then(data => {
+          const res = data.data;
+          if (res.code === 200) {
+            this.operationList = res.data.data;
+            this.operationList.forEach(element => {
+              element.value = element.operation;
+            });
+            cb(this.operationList);
+          } else {
+            this.$message({
+              message: res.message,
+              type: "warning"
+            });
+          }
+        });
+      }, 150);
     },
-    resetForm() {},
+    //工序搜索建议
+    querySearchOperation(queryString, cb) {
+      this.operationFn(cb);
+    },
+    //工序搜索后的点击事件
+    handleSelectOperation(item) {
+      this.searchForm.operation = item.value;
+    },
+    //设备搜索建议请求
+    deBounceSearchResource() {
+      this.resourceFn = _.debounce(cb => {
+        let data = { resource: this.searchForm.resource, pageSize: 0 };
+        findResourceListHttp(data).then(data => {
+          const res = data.data;
+          if (res.code === 200) {
+            this.resourceList = res.data.data;
+            this.resourceList.forEach(element => {
+              element.value = element.resource;
+            });
+            cb(this.resourceList);
+          } else {
+            this.$message({
+              message: res.message,
+              type: "warning"
+            });
+          }
+        });
+      }, 150);
+    },
+    //设备搜索建议
+    querySearchResource(queryString, cb) {
+      this.resourceFn(cb);
+    },
+    //设备搜索后的点击事件
+    handleSelectResource(item) {
+      this.searchForm.resource = item.value;
+    },
+
+    //重置
+    resetForm() {
+      this.$refs["searchForm"].resetFields();
+      this.tableData = [];
+    },
+    //查询lot列表
     goQuery() {
-      const data = {};
+      const data = { lot: this.searchForm.lot };
       listLotHttp(data).then(data => {
         const res = data.data;
         if (res.code === 200) {
