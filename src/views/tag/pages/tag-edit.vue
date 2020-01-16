@@ -1,11 +1,13 @@
 <template>
   <div class="box">
-    <div class="top" @click="handle">
+    <div class="top" >
       <top   @save="save" />
     </div>
     <div class="bottom">
       <div class="left"></div>
       <div class="content" id="content">
+        <span class="x"  :style="`top:${h}px;`"></span>
+        <span class="y" :style="`left:${w}px`"></span>
         <!--  @activated="onActivated(item)"
           @deactivated="onDeactivated(item)" -->
         <vue-draggable-resizable
@@ -78,6 +80,7 @@ import DImage from "../components/d-image";
 import DCircular from "../components/circular";
 import DRectangle from "../components/rectangle";
 import DTriangleText from "../components/triangle-text";
+import {  mapMutations,mapGetters} from "vuex";
 export default {
   components: {
     Right,
@@ -91,6 +94,11 @@ export default {
     DTriangleText,
     DText
   },
+  computed:{
+    ...mapGetters([
+      'tagConfigList'
+    ])
+  },
   data() {
     return {
       width: 100,
@@ -101,6 +109,8 @@ export default {
       vLine: [],
       hLine: [],
       list: [],
+      w:100,
+      h:100,
       current:{
 
       }
@@ -120,8 +130,25 @@ export default {
     window.onresize = null;
   },
   methods: {
+    ...mapMutations([
+      'TAGCONFIGLIST'
+    ]),
     save(){
-
+      const str =JSON.stringify(
+          {
+          width:this.w,
+          height:this.h,
+          list:this.list
+          }
+        );
+        this.TAGCONFIGLIST(
+        {
+        ...this.tagConfigList,
+        labelStorageList:str,
+        previewImage:''
+        }
+        )
+       this.$router.go(-1);
     },
     computedWindow() {
       const content = document.getElementById("content");
@@ -263,6 +290,24 @@ export default {
       background: #eee;
     }
     .content {
+      .x{
+        position: absolute;
+        z-index: 1;
+        left: 0px;
+        top: 100px;
+        width: 100%;
+        height: 0;
+        border-bottom: 1px dashed red;
+      }
+       .y{
+        position: absolute;
+        z-index: 1;
+        left: 200px;
+        top: 0;
+        height: 100%;
+        width: 0;
+        border-right: 1px dashed red;
+      }
       position: relative;
       flex: 1;
       height: 100%;

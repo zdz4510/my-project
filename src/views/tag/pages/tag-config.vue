@@ -50,12 +50,12 @@
       >
     </div>
     <div class="showInfo">
-      <dsn-advance-table 
+      <dsn-advance-table
         ref="multipleTable"
         :paramData="params"
         tooltip-effect="dark"
         style="width: 100%"
-        :httpFn ="httpFn"
+        :httpFn="httpFn"
         height="350px"
         @selection-change="handleSelectionChange"
       >
@@ -96,21 +96,19 @@
 </template>
 
 <script>
-import {
-  exportExcelHttp
-} from "@/api/device/type.api.js";
-import {deleteTagConfig, getTagConfigList } from "@/api/tag/tag.config.api";
+import { exportExcelHttp } from "@/api/device/type.api.js";
+import { deleteTagConfig, getTagConfigList } from "@/api/tag/tag.config.api";
 import { mapMutations } from "vuex";
 
 export default {
-  computed:{
-    params:function(){
+  computed: {
+    params: function() {
       return this.tagConfigForm;
     }
   },
   data() {
     return {
-      httpFn:getTagConfigList,
+      httpFn: getTagConfigList,
       tagConfigForm: {
         label: ""
       },
@@ -129,8 +127,8 @@ export default {
   methods: {
     ...mapMutations(["TAGCONFIGLIST"]),
     init() {
-      console.log( this.$refs['multipleTable'])
-        this.$refs['multipleTable'].search();
+      console.log(this.$refs["multipleTable"]);
+      this.$refs["multipleTable"].search();
     },
     toggleSelection(rows) {
       if (rows) {
@@ -159,9 +157,17 @@ export default {
     },
     handleAdd() {
       this.selectionList = [];
-      const emptyObj = { label: "", groupDes: "", checked:true};
-      this.selectionList.push(emptyObj);
-      this.TAGCONFIGLIST(this.selectionList);
+      const emptyObj = {
+        labelUseType: "", //标签应用类型
+        useTemplateType: "", //使用命令行设定
+        printFileSize: "", //标签内存大小，单位KB
+        labelDes: "", //标签描述
+        label: "", //label
+        labelStorageList: [],
+        labelLinkList: [],
+        url: ""
+      };
+      this.TAGCONFIGLIST(emptyObj);
       this.$router.push({
         name: "tagConfigEdit",
         query: { operateType: "add" }
@@ -169,12 +175,12 @@ export default {
     },
     // 编辑
     handleEdit() {
-      if(this.selectionList.length!=1){
-         this.$message({
-           type:"warning",
-           message:"最多只能编辑一条"
-        })
-        return ;
+      if (this.selectionList.length != 1) {
+        this.$message({
+          type: "warning",
+          message: "最多只能编辑一条"
+        });
+        return;
       }
       this.TAGCONFIGLIST(this.selectionList);
       this.$router.push({
@@ -199,7 +205,7 @@ export default {
             type: "success"
           });
           this.deleteDialog = false;
-          this.init();// 重新请求
+          this.init(); // 重新请求
           return;
         }
         this.deleteDialog = false;

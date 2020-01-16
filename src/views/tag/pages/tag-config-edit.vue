@@ -53,12 +53,12 @@
                   v-model="tagConfigForm.labelUseType"
                   placeholder="请选择标签应用类型"
                 >
-                  <el-option label="LOT" value="1"></el-option>
-                  <el-option label="容器" value="2"></el-option>
+                  <el-option label="LOT" value="10"></el-option>
+                  <el-option label="容器" value="20"></el-option>
                 </el-select>
               </el-form-item>
               <el-form-item>
-                <el-checkbox v-model="tagConfigForm.checked"
+                <el-checkbox v-model="tagConfigForm.useTemplateType"
                   >使用命令行打印</el-checkbox
                 >
               </el-form-item>
@@ -70,7 +70,15 @@
                     标签图像预览
                   </el-button>
                 </div>
-                <div class="image">放图片</div>
+                <div class="image">
+                  <div class="block">
+                    <el-image :src="tagConfigForm.previewImage">
+                      <div slot="error" class="image-slot">
+                        <i class="el-icon-picture-outline"></i>
+                      </div>
+                    </el-image>
+                  </div>
+                </div>
               </div>
               <div class="right">
                 <div>
@@ -80,7 +88,7 @@
                   <el-input
                     type="textarea"
                     placeholder="请输入内容"
-                    v-model="text"
+                    v-model="tagConfigForm.labelCommand"
                     :rows="5"
                     show-word-limit
                   >
@@ -103,13 +111,18 @@
           <el-tab-pane label="关系管理" class="relationManage">
             <div class="container">
               <div class="left">
-                <el-autocomplete
+                <el-input
                   :fetch-suggestions="querySearchAsync"
                   @select="handleSelect"
                   placeholder="请输入关系名称"
                   :style="'width: 200px'"
                   v-model="v"
-                ></el-autocomplete>
+                >
+                  <template slot-scope="{ item }">
+                    <div class="name">{{ item.linkValue }}</div>
+                  
+                  </template>
+                </el-input>
                 <el-select v-model="s1">
                   <el-option label="物料" value="20"></el-option>
                   <el-option label="物料组" value="10"></el-option>
@@ -119,6 +132,7 @@
                   :data="data"
                   style="width: 100%"
                   border
+                  height="540px"
                 >
                   <el-table-column type="selection" width="55" />
                   <el-table-column prop="date" label="关系名称">
@@ -143,7 +157,12 @@
                   placeholder="请输入关系名称"
                   :style="'width: 200px'"
                   v-model="v2"
-                ></el-autocomplete>
+                >
+                 <template slot-scope="{ item }">
+                    <div class="name">{{ item.linkValue }}</div>
+                    <!-- <span class="addr">{{ item.address }}</span> -->
+                  </template>
+                </el-autocomplete>
                 <el-select v-model="s2">
                   <el-option label="物料" value="20"></el-option>
                   <el-option label="物料组" value="10"></el-option>
@@ -153,6 +172,7 @@
                   :data="data"
                   style="width: 100%"
                   border
+                  height="540px"
                 >
                   <el-table-column type="selection" width="55" />
                   <el-table-column prop="date" label="关系名称">
@@ -176,7 +196,9 @@ import { mapGetters, mapMutations } from "vuex";
 import _ from "lodash";
 import {
   listPageUnallocatedLink,
-  getListPageLink
+  getListPageLink,
+  addTagConfig, //  添加标签
+  updateTagConfig,
 } from "@/api/tag/tag.config.api";
 export default {
   data() {
@@ -220,7 +242,11 @@ export default {
       getTemplate: "",
       debounceFn: null,
       leftSelectList: [],
-      rightSelectList: []
+      rightSelectList: [],
+      labelLinkList: [],
+      labelStorageList: [],
+      labelCommand:'',
+      previewImage:'',
     };
   },
   computed: {
@@ -228,12 +254,18 @@ export default {
   },
   created() {
     this.operateType = this.$route.query.operateType;
-    this.cloneList = JSON.parse(JSON.stringify(this.tagConfigList));
-    console.log(this.cloneList);
-    this.tagConfigForm = this.cloneList[0];
+    this.tagConfigForm = this.tagConfigList;
     if (this.operateType === "edit") {
       this.isEditResource = true;
     }
+
+    this.handleGetListPageLink(
+       {
+          linkType: this.s1,
+          linkValue: this.v
+        },
+        1
+    )
   },
   mounted() {
     this.init();
@@ -244,6 +276,7 @@ export default {
       }).then(data => {
         const res = data.data;
         if (res.code == 200) {
+          console.log(res.data);
           cb(res.data);
         }
       });
@@ -348,6 +381,43 @@ export default {
     },
     toTagOpe() {
       this.$router.push("/tag/tagEdit");
+    },
+
+    //  新增保存
+    handleSave() {
+      const data = this.tagConfigForm;
+      addTagConfig(data).then(data => {
+        const res = data.data;
+        if (res.code == 200) {
+          this.$message({
+            type: "success",
+            message: "新增成功"
+          });
+        } else {
+          this.$message({
+            type: "error",
+            message: "新增失败"
+          });
+        }
+      });
+    },
+    // 修改保存
+    handleUpdate() {
+      const data = {};
+      updateTagConfig(data).then(data => {
+        const res = data.data;
+        if (res.code == 200) {
+          this.$message({
+            type: "success",
+            message: "更新成功"
+          });
+        } else {
+          this.$message({
+            type: "error",
+            message: res.message
+          });
+        }
+      });
     }
   }
 };

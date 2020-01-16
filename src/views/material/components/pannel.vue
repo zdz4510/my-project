@@ -497,10 +497,21 @@ export default {
      * @param mousePosition 鼠标拖拽结束的坐标
      */
     addNode(evt, nodeMenu, mousePosition) {
-      console.log(nodeMenu);
+      let nodeId = nodeMenu.id;
+       const item =  this.rightData.nodeList.filter(item=>{
+         return item.id==nodeMenu.id
+       });
+       if(item.length>0){
+         this.$message({
+           type:'warning',
+           message:"工序在右边画板已经存在,不可添加"
+         });
+         return ;
+       }
+
       let width = this.$refs.nodeMenu.$el.clientWidth;
 
-      let nodeId = this.getUUID();
+      
       let left = mousePosition.left;
       let top = mousePosition.top;
       if (left < 0) {

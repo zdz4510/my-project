@@ -27,8 +27,8 @@
     <div class="u">
       <span><u>U</u></span>
     </div>
-    换行 左对齐 居中 右对齐
-    <dsn-button @click="save" >保存</dsn-button>
+    <div>  换行 左对齐 居中 右对齐</div>
+    <dsn-button  @click.native="save" >保存</dsn-button>
   </div>
 </template>
 

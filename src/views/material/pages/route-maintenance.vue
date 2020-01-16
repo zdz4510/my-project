@@ -23,12 +23,9 @@
       </div>
     </div>
     <div class="operate">
-      <el-button size="small" type="primary" @click="handleSave"
-        >保存</el-button
-      >
+      <el-button size="small" type="primary" @click="handleSave">保存</el-button>
       <el-button size="small" type="danger">清除</el-button>
     </div>
-
     <div class="showInfo">
       <el-tabs type="border-card">
         <el-tab-pane>
@@ -87,9 +84,14 @@
 </template>
 
 <script>
-import { createRouter,getRouter } from "@/api/material/route.maintenance.api";
+import {
+  createRouter,
+  getRouter,
+  updateRouter
+} from "@/api/material/route.maintenance.api";
 import Pannel from "../components/pannel";
 import handleData from "../components/handleData.js";
+import handleRightData from "../components/handleRightData";
 export default {
   components: {
     Pannel
@@ -102,8 +104,8 @@ export default {
         currentRevision: false, // 当前版本
         routerType: "",
         status: "",
-        router: "",
-        revision: ""
+        router: "AAAAAA",
+        revision: "BBBBBB"
       },
       options: [
         {
@@ -173,19 +175,56 @@ export default {
 
     //保存
     handleSave() {
+      if(this.form.modifyTime && this.form.reference){
+         console.log('save')
+         this.handleUpdateRoute();
+         return ;
+      }
       this.handleCreateRouter();
+    },
+    handleUpdateRoute() {
+      const data = this.$refs["panel"].getDataInfo();
+      const { entryRouterStep, routerSteps } = handleData(data);
+
+      const params = {
+        currentRevision: this.form.currentRevision, // 当前版本
+        customizedData: [], //  自定义的数据
+        description: this.form.description, //  描述
+        entryRouterStep: entryRouterStep, //  附加工序的根结点
+        routerSteps: routerSteps, //  附加工序的数据
+        router: this.form.router, //版本
+        revision: this.form.revision, //工艺路线名称
+        routerType: this.form.routerType,
+        status: this.form.status,
+        modifyTime: this.form.modifyTime,
+        reference: this.form.reference
+      };
+      updateRouter(params).then(data => {
+        const res = data.data;
+        if (res.code == 200) {
+          this.$message({
+            type: "success",
+            message: "更新成功"
+          });
+        } else {
+          this.$message({
+            type: "error",
+            message: res.message
+          });
+        }
+      });
     },
     // 创建路线
     handleCreateRouter() {
       //  获取 附加工序的数据
       const data = this.$refs["panel"].getDataInfo();
-      const { root, routerSteps } = handleData(data);
-      console.log(root)
+      const { entryRouterStep, routerSteps } = handleData(data);
+
       const params = {
         currentRevision: this.form.currentRevision, // 当前版本
         customizedData: [], //  自定义的数据
         description: this.form.description, //  描述
-        entryRouterStep: root[0].to, //  附加工序的根结点
+        entryRouterStep: entryRouterStep, //  附加工序的根结点
         routerSteps: routerSteps, //  附加工序的数据
         router: this.form.router, //版本
         revision: this.form.revision, //工艺路线名称
@@ -207,21 +246,51 @@ export default {
         }
       });
     },
-    handleQuery(){
+    handleQuery() {
       getRouter({
-        revision:this.form.revision,
-        router:this.form.router
-      }).then(data=>{
+        revision: this.form.revision,
+        router: this.form.router
+      }).then(data => {
         const res = data.data;
-        if(res.code==200){
-            console.log(data.data);
-        }else{
+        if (res.code == 200) {
+          const {
+            description,
+            currentRevision,
+            routerType,
+            status,
+            revision,
+            router,
+            entryRouterStep,
+            routerSteps,
+            reference,
+            modifyTime
+          } = res.data;
+          this.form = {
+            description: description, // 描述
+            currentRevision: currentRevision, // 当前版本
+            routerType: routerType,
+            status: status,
+            router: router,
+            revision: revision,
+            reference,
+            modifyTime
+          };
+          const data = handleRightData({
+            entryRouterStep,
+            routerSteps
+          });
+          // 重新渲染 附加工序的图
+          this.$refs["panel"].dataReload({
+            nodeList: data.nodes,
+            lineList: data.lines
+          });
+        } else {
           this.$message({
-            type:"error",
-            message:res.message
-          })
+            type: "error",
+            message: res.message
+          });
         }
-      })
+      });
     }
   }
 };
