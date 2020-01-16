@@ -14,6 +14,7 @@
 		<div class="operate ml30 mtb10">
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="add" :disabled="this.checkedList.length>0">新增</el-button>
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="edit" :disabled="this.checkedList.length === 0">编辑</el-button>
+			<el-button class="mr25 pad1025" size="small" type="warning"  @click="handleExport" >导出</el-button>
 		</div>
 		
 		<div class="">
@@ -46,11 +47,15 @@
 
 <script>
 import { getStationList} from '../../../api/operation.station.api.js'
+import { exportExcel } from "@/until/excel.js";
 import { mapMutations } from "vuex";
 	export default {
 		name:'operation-station',
 		data() {
 			return {
+				tHeader:['工序','站位','产线'],
+				filterVal:['operation','station','workCenterRelation'],
+				fileName:'工序与站位维护表',
 				checkedList:[],
 				formLabelWidth:'120px',
 				searchForm: {
@@ -83,8 +88,12 @@ import { mapMutations } from "vuex";
 					operation:this.searchForm.operation,
 				}
 				getStationList(params).then(data => {
-					this.tableData.data = data.data.data.data
-					this.tableData.page.total = data.data.data.total
+					if(data.data.code == 200){
+						this.tableData.data = data.data.data.data
+						this.tableData.page.total = data.data.data.total
+					}else{
+						this.$message.error(data.data.message)
+					}
 				})
 			},
 			handleSizeChange(pageSize){
@@ -105,6 +114,43 @@ import { mapMutations } from "vuex";
 				this.SETSTATIONEDITLIST(this.checkedList);
 				this.$router.push({path:'/operationStation/editOperationStation'})
 			},
+			//导出开始
+			handleExport() {
+				if (this.checkedList.length === 0) {
+					this.exportHttp();
+				}
+				if (this.checkedList.length > 0) {
+					this.exportResult(this.checkedList);
+				}
+			},
+			exportHttp() {
+				let params= {
+					pageSize: 0,
+					currentPage: this.tableData.page.currentPage,
+					operation:this.searchForm.operation,
+				}
+				getStationList(params).then(data => {
+					if(data.data.code == 200){
+						let res = data.data.data.data
+						this.exportResult(res);
+					}else{
+						this.$message.error(data.data.message)
+					}
+				})
+			},
+			exportResult(data) {
+				const tipString = exportExcel(this.tHeader, this.filterVal, data, this.fileName);
+				if (tipString === undefined) {
+					return;
+				} else {
+					this.$message({
+						message: tipString,
+						type: "warning"
+					});
+					return;
+				}
+			},
+			//导出结束
 		}
 	}
 </script>
