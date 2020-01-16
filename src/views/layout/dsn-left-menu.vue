@@ -118,6 +118,7 @@
         <el-menu-item index="/maintenance/workingCertificateMaintenance">上岗证维护</el-menu-item>
         <el-menu-item index="/maintenance/genericCodeDefinition">通用代码定义维护</el-menu-item>
         <el-menu-item index="/maintenance/genericCodeData">通用代码数据维护</el-menu-item>
+        <el-menu-item index="/maintenance/materialList">物料清单维护</el-menu-item>
         <el-menu-item index="/device/test">测试页面</el-menu-item>
       </el-submenu>
       <el-submenu index="tag">

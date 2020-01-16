@@ -74,6 +74,30 @@ export default {
         import(
           /* webpackChunkName: "genericCodeData" */ "@/views/maintenance/pages/generic-code-data.vue"
         )
-    }
+    },
+    // 物料清单维护
+    {
+      path: "materialList",
+      name: "materialList",
+      meta: {
+        title: "物料清单维护"
+      },
+      component: () =>
+        import(
+          /* webpackChunkName: "standingMaintenanceEdit" */ "@/views/maintenance/pages/material-list-maintenance.vue"
+        )
+    },
+    // 物料清单维护
+    {
+      path: "materialListEdit",
+      name: "materialListEdit",
+      meta: {
+        title: "物料清单维护编辑"
+      },
+      component: () =>
+        import(
+          /* webpackChunkName: "standingMaintenanceEdit" */ "@/views/maintenance/pages/material-list-maintenance-edit.vue"
+        )
+    },
   ]
 };
