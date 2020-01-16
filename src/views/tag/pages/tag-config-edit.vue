@@ -4,7 +4,7 @@
       <el-button size="small" type="primary" @click="handleBack">
         返回
       </el-button>
-      <el-button size="small" type="primary">
+      <el-button size="small" type="primary" @click="handleSave">
         保存
       </el-button>
       <el-button size="small" type="primary" @click="handleReset">
@@ -112,15 +112,13 @@
             <div class="container">
               <div class="left">
                 <el-input
-                  :fetch-suggestions="querySearchAsync"
-                  @select="handleSelect"
+                  @intpu="querySearchAsync"
                   placeholder="请输入关系名称"
                   :style="'width: 200px'"
                   v-model="v"
                 >
                   <template slot-scope="{ item }">
                     <div class="name">{{ item.linkValue }}</div>
-                  
                   </template>
                 </el-input>
                 <el-select v-model="s1">
@@ -128,56 +126,61 @@
                   <el-option label="物料组" value="10"></el-option>
                 </el-select>
                 <el-table
-                  :selection-change="handleLeftSelect"
-                  :data="data"
+                  @selection-change="handleLeftSelect"
+                  :data="list"
                   style="width: 100%"
                   border
                   height="540px"
                 >
                   <el-table-column type="selection" width="55" />
-                  <el-table-column prop="date" label="关系名称">
+                  <el-table-column prop="linkValue" label="关系名称">
                   </el-table-column>
-                  <el-table-column prop="name" label="关系类型">
+                  <el-table-column prop="linkType" label="关系类型">
                   </el-table-column>
                   <el-table-column prop="address" label="描述">
                   </el-table-column>
                 </el-table>
               </div>
               <div class="ope">
-                <el-button type="primary" icon="el-icon-arrow-left"></el-button>
+                <el-button
+                  type="primary"
+                  icon="el-icon-arrow-left"
+                  @click="toLeft"
+                ></el-button>
                 <el-button
                   type="primary"
                   icon="el-icon-arrow-right"
+                  @click="toRight"
                 ></el-button>
               </div>
               <div class="right">
-                <el-autocomplete
-                  :fetch-suggestions="querySearchAsync2"
-                  @select="handleSelect2"
+                <el-input
+                  @input="querySearchAsync2"
+                  @change="querySearchAsync2"
                   placeholder="请输入关系名称"
                   :style="'width: 200px'"
                   v-model="v2"
                 >
-                 <template slot-scope="{ item }">
+                  <template slot-scope="{ item }">
                     <div class="name">{{ item.linkValue }}</div>
                     <!-- <span class="addr">{{ item.address }}</span> -->
                   </template>
-                </el-autocomplete>
+                </el-input>
                 <el-select v-model="s2">
                   <el-option label="物料" value="20"></el-option>
                   <el-option label="物料组" value="10"></el-option>
                 </el-select>
                 <el-table
-                  :selection-change="handleRightSelect"
-                  :data="data"
+                  @selection-change="handleRightSelect"
+                  :data="list2"
                   style="width: 100%"
                   border
                   height="540px"
                 >
                   <el-table-column type="selection" width="55" />
-                  <el-table-column prop="date" label="关系名称">
+                  <el-table-column prop="linkValue" label="关系名称">
                   </el-table-column>
-                  <el-table-column prop="name" label="关系类型">
+                  <el-table-column prop="linkType" label="关系类型">
                   </el-table-column>
                   <el-table-column prop="address" label="描述">
                   </el-table-column>
@@ -198,7 +201,7 @@ import {
   listPageUnallocatedLink,
   getListPageLink,
   addTagConfig, //  添加标签
-  updateTagConfig,
+  updateTagConfig
 } from "@/api/tag/tag.config.api";
 export default {
   data() {
@@ -210,6 +213,7 @@ export default {
       v: "", //穿梭框
       v2: "",
       data: [],
+      list2: [],
       value: [],
       filterMethod(query, item) {
         return item.pinyin.indexOf(query) > -1;
@@ -241,12 +245,14 @@ export default {
       currentRow: {},
       getTemplate: "",
       debounceFn: null,
+      debounceFn2: null,
       leftSelectList: [],
       rightSelectList: [],
       labelLinkList: [],
       labelStorageList: [],
-      labelCommand:'',
-      previewImage:'',
+      labelCommand: "",
+      previewImage: "",
+      cloneList: ""
     };
   },
   computed: {
@@ -255,36 +261,51 @@ export default {
   created() {
     this.operateType = this.$route.query.operateType;
     this.tagConfigForm = this.tagConfigList;
+    this.init();
     if (this.operateType === "edit") {
       this.isEditResource = true;
-    }
-
-    this.handleGetListPageLink(
-       {
-          linkType: this.s1,
-          linkValue: this.v
+      this.list = this.tagConfigForm.labelLinkList || [];
+      this.cloneList = _.cloneDeep(this.list);
+      this.handleGetListPageLink(
+        {
+          linkType: "",
+          linkValue: this.v,
+          label: this.tagConfigForm.label
         },
         1
-    )
+      );
+    }
   },
-  mounted() {
-    this.init();
-    this.debounceFn = _.debounce((cb, flag) => {
-      listPageUnallocatedLink({
-        linkValue: flag == 1 ? this.v : this.v2,
-        linkType: flag == 1 ? this.s1 : this.s2
-      }).then(data => {
-        const res = data.data;
-        if (res.code == 200) {
-          console.log(res.data);
-          cb(res.data);
-        }
-      });
-    });
-  },
+  mounted() {},
   methods: {
     ...mapMutations(["TAGCONFIGLIST"]),
-    init() {},
+    init() {
+      this.debounceFn = _.debounce(() => {
+        getListPageLink({
+          linkValue: this.v,
+          linkType: this.s1
+        }).then(data => {
+          const res = data.data;
+          if (res.code == 200) {
+            console.log(res.data);
+          }
+        });
+      });
+      this.debounceFn2 = _.debounce(() => {
+        listPageUnallocatedLink({
+          linkValue: this.v2,
+          linkType: this.s2
+        }).then(data => {
+          const res = data.data;
+          if (res.code == 200) {
+            // console.log(res.data);
+            this.list2 = res.data;
+          }
+        });
+      });
+
+      this.debounceFn2();
+    },
     handleChangeRadio(val) {
       this.tagConfigForm.resourceStatus = val;
       console.log(val);
@@ -310,7 +331,6 @@ export default {
     addResourceHttp() {},
     updateResourceHttp() {},
     handleBack() {
-      console.log(11);
       this.selectionList = [];
       this.TAGCONFIGLIST(this.selectionList);
       this.$router.push({
@@ -329,9 +349,10 @@ export default {
     },
     querySearchAsync(key, cb) {
       this.debounceFn(cb, 1);
+      this.debounceFn();
     },
-    querySearchAsync2(key, cb) {
-      this.debounceFn(cb, 2);
+    querySearchAsync2() {
+      this.debounceFn2();
     },
     handleSelect(v) {
       this.v = v.linkValue;
@@ -353,25 +374,40 @@ export default {
         2
       );
     },
-    handleGetListPageLink(data, falg) {
+    handleGetListPageLink(data) {
       getListPageLink(data).then(data => {
         const res = data.data;
         if (res.code == 200) {
-          if (falg == 1) {
-            this.list = res.data;
-          } else {
-            this.list2 = res.data;
-          }
+          this.list = res.data.data;
         }
+      });
+    },
+    //  查询子元素
+    findItemInArr(item, arr) {
+      return arr.filter(subItem => {
+        return (
+          item.linkType == subItem.linkType &&
+          item.linkValue == subItem.linkValue
+        );
       });
     },
     // 选择的数据移动到左边
     toLeft() {
-      this.list = [...this.list, ...this.rightSelectList];
+      const arr = this.rightSelectList.filter(item => {
+        //  console.log(this.findItemInArr(item,this.list))
+        return this.findItemInArr(item, this.list).length == 0;
+        // return this.list.includes(item) == false;
+      });
+      this.list = [...this.list, ...arr];
+      this.selectionList = [];
     },
     //选择到数据移动到右边
     toRight() {
-      this.list2 = [...this.list2, ...this.leftSelectList];
+      const arr = this.leftSelectList.filter(item => {
+        return this.findItemInArr(item, this.list2).length == 0;
+      });
+      this.list2 = [...this.list2, ...arr];
+      this.selectionList = [];
     },
     handleLeftSelect(s) {
       this.leftSelectList = s;
@@ -385,8 +421,18 @@ export default {
 
     //  新增保存
     handleSave() {
+      if(this.isEditResource){
+        this.handleUpdate()
+      } else{
+        this.handleAdd();
+      }
+    },
+    handleAdd(){
       const data = this.tagConfigForm;
-      addTagConfig(data).then(data => {
+      addTagConfig({
+        ...data,
+        labelLinkList: this.list
+      }).then(data => {
         const res = data.data;
         if (res.code == 200) {
           this.$message({
@@ -403,7 +449,7 @@ export default {
     },
     // 修改保存
     handleUpdate() {
-      const data = {};
+      const data = this.tagConfigForm;
       updateTagConfig(data).then(data => {
         const res = data.data;
         if (res.code == 200) {

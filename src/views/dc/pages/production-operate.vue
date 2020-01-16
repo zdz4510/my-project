@@ -66,27 +66,27 @@
           <!-- <template slot-scope="scope">{{ scope.row.date }}</template> -->
         </el-table-column>
         <el-table-column
-          prop="name"
+          prop="lot"
           label="LOT编号"
           width="120"
         ></el-table-column>
         <el-table-column
-          prop="address"
+          prop="status"
           label="LOT状态"
           show-overflow-tooltip
         ></el-table-column>
         <el-table-column
-          prop="address"
+          prop="shopOrder"
           label="工单"
           show-overflow-tooltip
         ></el-table-column>
         <el-table-column
-          prop="address"
+          prop="material"
           label="物料"
           show-overflow-tooltip
         ></el-table-column>
         <el-table-column
-          prop="address"
+          prop="router"
           label="工艺路线"
           show-overflow-tooltip
         ></el-table-column>
@@ -279,7 +279,7 @@ export default {
       listPodLotHttp(data).then(data => {
         const res = data.data;
         if (res.code === 200) {
-          console.log(res.data);
+          this.row =res.data;
           return;
         }
         this.$message({

@@ -7,7 +7,7 @@ const tagConfigEdit = {
       printFileSize:'', //标签内存大小，单位KB
       labelDes:'',  //标签描述
       label:'',  //label
-      labelStorageList:[],
+      labelStorage:'',
       labelLinkList:[],
       labelCommand:'',
       previewImage:'',

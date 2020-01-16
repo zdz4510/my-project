@@ -144,17 +144,6 @@ export default {
       this.selectionList = val;
       console.log(this.selectionList);
     },
-    //更改当前页码,再次请求数据
-    handleCurrentChange(currentChange) {
-      this.currentPage = currentChange;
-      this.init();
-    },
-    //更改页码大小
-    handlePagesize(pagesize) {
-      this.pagesize = pagesize;
-      this.currentPage = 1;
-      this.init();
-    },
     handleAdd() {
       this.selectionList = [];
       const emptyObj = {
@@ -182,21 +171,21 @@ export default {
         });
         return;
       }
-      this.TAGCONFIGLIST(this.selectionList);
+      this.TAGCONFIGLIST(this.selectionList[0]);
       this.$router.push({
         name: "tagConfigEdit",
         query: { operateType: "edit" }
       });
     },
     handleDelete() {
-      const data = [];
-      this.selectionList.forEach(element => {
-        const obj = {
-          label: element.label
-        };
-        data.push(obj);
-      });
-      deleteTagConfig(data).then(data => {
+      // const data = [];
+      // this.selectionList.forEach(element => {
+      //   const obj = {
+      //     label: element.label
+      //   };
+      //   data.push(obj);
+      // });
+      deleteTagConfig(this.selectionList).then(data => {
         const res = data.data;
         console.log(res);
         if (res.code === 200) {
