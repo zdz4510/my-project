@@ -351,12 +351,11 @@ export default {
     height: 40px;
     padding: 10px;
     display: flex;
-    justify-content: space-between;
     .left {
-      width: 300px;
+      // width: 300px;
     }
     .right {
-      width: 680px;
+      // width: 680px;
       padding: 5px 30px;
     }
   }

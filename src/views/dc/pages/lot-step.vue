@@ -18,9 +18,9 @@
             ></el-input>
             <i class="el-icon-document" @click="goQuery"></i>
           </el-form-item>
-          <el-form-item label="备注" prop="remark">
+          <el-form-item label="备注" prop="comment ">
             <el-input
-              v-model.trim="lotStepForm.remark"
+              v-model.trim="lotStepForm.comment"
               placeholder="请输入备注"
             ></el-input>
           </el-form-item>
@@ -36,7 +36,7 @@
       </div>
     </div>
     <div class="operate">
-      <el-button size="small" type="primary">
+      <el-button size="small" type="primary" @click="handleSetFinish">
         LOT状态置为完成
       </el-button>
       <el-dropdown @command="handleCommand">
@@ -122,7 +122,7 @@ export default {
     return {
       lotStepForm: {
         lot: "",
-        remark: ""
+        comment: ""
       },
       lotStepFormRules: {
         lot: [{ required: true, message: "请输入lot", trigger: "blur" }]
@@ -209,6 +209,45 @@ export default {
     handleReset() {
       this.lotStepForm.lot = "";
       this.tableData = [];
+    },
+    handleSetFinish() {
+      if (this.tableData.length === 0) {
+        this.$message({
+          message: "请先执行查询后再进行操作！",
+          type: "warning"
+        });
+        return;
+      }
+      this.$confirm("是否确认将LOT的状态置为完成？", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          if (this.lotStepForm.comment === "") {
+            this.$message({
+              type: "warning",
+              message: "请填写备注！"
+            });
+            return;
+          }
+          this.setFinishHttp();
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消操作"
+          });
+        });
+    },
+    //请求
+    setFinishHttp() {
+      // const data = { comment: this.lotStepForm.comment };
+
+      this.$message({
+        type: "success",
+        message: "操作成功!"
+      });
     }
   }
 };
