@@ -42,8 +42,8 @@ export const createRouter = data => {
   export const listRouterPage = data => {
     return request.get(
       `${window.VUE_APP_URL}/mes/router/listRouterPage`,{
-          params:data
-      }
+        params:data
+      },
     );
   };
 
@@ -52,10 +52,8 @@ export const createRouter = data => {
  */
 
 export const updateRouter = data => {
-    return request.get(
-      `${window.VUE_APP_URL}mes/router/updateRouter`,{
-          params:data
-      }
+    return request.post(
+      `${window.VUE_APP_URL}/mes/router/updateRouter`,data
     );
   };
 

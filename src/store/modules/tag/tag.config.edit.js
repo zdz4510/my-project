@@ -1,7 +1,19 @@
 const tagConfigEdit = {
   // 初始化状态
   state: {
-    tagConfigList: []
+    tagConfigList: {
+      labelUseType:'',    //标签应用类型
+      useTemplateType:'',  //使用命令行设定
+      printFileSize:'', //标签内存大小，单位KB
+      labelDes:'',  //标签描述
+      label:'',  //label
+      labelStorageList:[],
+      labelLinkList:[],
+      labelCommand:'',
+      previewImage:'',
+
+
+    }
   },
   // 编写动作
   mutations: {

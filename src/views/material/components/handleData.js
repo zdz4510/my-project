@@ -96,15 +96,33 @@ const handleData =(data)=>{
     return item.from == A;
   });
 };
-  const root = fromAtoB(-1);  //  获取root
+  const findNodseByArr=(arr)=>{
+    return  node.filter(item=>{
+          return arr.indexOf(item.id)!=-1;
+    })
+  }
+  const root = fromAtoB(-1);  //  获取
+  
+  const arr = node.filter(item=>{
+    return root[0].to == item.id;
+  });
+ 
   node = node.filter(item=>{
      return item.id!='-1'
   })
+  let i=1;
   const routerSteps=  node.map(item => {
     let nodes = fromAtoB(item.id); //  查找当前节点下面的节点
      nodes= nodes.map(item=>{
          return item.to
      })
+
+     nodes= findNodseByArr(nodes);
+     nodes = nodes.map(item=>{
+        return item.stepId
+     })
+
+    console.log(item.ico)
      let newItem = {
       description: item.description,  // 描述  
       routerComponent: {
@@ -115,28 +133,32 @@ const handleData =(data)=>{
                operation: item.operation,   //工序号
                reportingStep: item.reportingStep, //报工步骤
           },
+          routerReturnComponent: {
+            retrunType: item.retrunType,
+            returnOperation: item.returnOperation, // 返回工序
+            returnStepId: item.returnStepId,  // 返回步骤
+            },
       },   
-      routerReturnComponent: {
-      retrunType: item.retrunType,
-      returnOperation: item.returnOperation, // 返回工序
-      returnStepId: item.returnOperation,  // 返回步骤
-      },
+     
       routerNextStepIds:nodes||[], // 下一个工序id
       stepId: item.stepId, 
-      sequence:'3' 
+      sequence:i++,
+      left:item.left,
+      top:item.top,
+      ico:item.ico
        // 工序id
     };
     if(item.routerComponentType=='O'){
-        delete newItem['routerReturnComponent']
+        delete newItem['routerComponent']['routerReturnComponent']
     } else{
-      delete newItem['routerComponent']
+      delete newItem['routerComponent']['routerOperationComponent']
     } 
     return  newItem;
 
   });
 
   return {
-    routerSteps , root
+    routerSteps , entryRouterStep:arr[0].stepId
   }
 }
 

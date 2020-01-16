@@ -54,11 +54,11 @@
           <!--画布-->
           <el-col :span="24" style="height:100%" class="pannerBox">
             <div id="flowContainer" class="container">
-              <template v-for="node in rightData.nodeList">
+              <template v-for="(node,index) in rightData.nodeList">
                 <flow-node
-                  v-show="node.show"
+                  
                   :id="node.id"
-                  :key="node.id"
+                  :key="node.id+index"
                   :node="node"
                   @deleteNode="deleteNode"
                   @changeNodeSite="changeNodeSite"
@@ -497,10 +497,21 @@ export default {
      * @param mousePosition 鼠标拖拽结束的坐标
      */
     addNode(evt, nodeMenu, mousePosition) {
-      console.log(nodeMenu);
+      let nodeId = nodeMenu.id;
+       const item =  this.rightData.nodeList.filter(item=>{
+         return item.id==nodeMenu.id
+       });
+       if(item.length>0){
+         this.$message({
+           type:'warning',
+           message:"工序在右边画板已经存在,不可添加"
+         });
+         return ;
+       }
+
       let width = this.$refs.nodeMenu.$el.clientWidth;
 
-      let nodeId = nodeMenu.id;
+      
       let left = mousePosition.left;
       let top = mousePosition.top;
       if (left < 0) {
@@ -515,7 +526,9 @@ export default {
         left: left + "px",
         top: top + "px",
         ico: nodeMenu.ico,
-        show: true
+        show: true,
+        id: nodeId,
+        type:nodeId
       };
       /**
        * 这里可以进行业务判断、是否能够添加该节点
@@ -585,7 +598,7 @@ export default {
             const element = array[index];
             if (element.id == id) {
               //array.splice(index,1);
-              element.hide = true;
+              element.hide = false;
             }
           }
         }
