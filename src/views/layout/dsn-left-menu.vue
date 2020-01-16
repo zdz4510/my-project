@@ -41,6 +41,12 @@
         <el-menu-item index="/material/routeMaintenance"
           >工艺路线维护</el-menu-item
         >
+        <el-menu-item index="/material/proConfiguration"
+          >生产操作界面配置</el-menu-item>
+        <el-menu-item index="/material/addProConfig"
+          >新增普通按钮(生产操作界面配置)</el-menu-item>
+        <el-menu-item index="/material/addGroupProCon"
+          >新增按钮组(生产操作界面配置)</el-menu-item>
       </el-submenu>
       <el-submenu index="factory-model">
         <template slot="title">
