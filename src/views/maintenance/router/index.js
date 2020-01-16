@@ -99,5 +99,28 @@ export default {
           /* webpackChunkName: "standingMaintenanceEdit" */ "@/views/maintenance/pages/material-list-maintenance-edit.vue"
         )
     },
+    {
+      path: "themeSafeguard",
+      name: "themeSafeguard",
+      meta: {
+        title: "主题维护"
+      },
+      component: () =>
+        import(
+          /* webpackChunkName: "standingMaintenanceEdit" */ "@/views/maintenance/pages/theme-safeguard.vue"
+        )
+    },
+    {
+      path: "themeAdd",
+      name: "themeAdd",
+      meta: {
+        title: "主题维护新"
+      },
+      component: () =>
+        import(
+          /* webpackChunkName: "standingMaintenanceEdit" */ "@/views/maintenance/pages/theme-add.vue"
+        )
+    },
+
   ]
 };
