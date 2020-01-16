@@ -144,7 +144,7 @@ export default {
         this.TAGCONFIGLIST(
         {
         ...this.tagConfigList,
-        labelStorageList:str,
+        labelStorage:str,
         previewImage:''
         }
         )

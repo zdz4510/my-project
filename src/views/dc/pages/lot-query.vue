@@ -9,14 +9,15 @@
               :model="lotConditionForm"
               label-width="110px"
               class="lotConditionForm"
+              ref="lotConditionFormLeft"
             >
-              <el-form-item label="LOT">
+              <el-form-item label="LOT" prop="lot">
                 <el-input
                   v-model.trim="lotConditionForm.lot"
                   size="small"
                 ></el-input>
               </el-form-item>
-              <el-form-item label="LOT状态">
+              <el-form-item label="LOT状态" prop="lotStatus">
                 <el-select
                   v-model="lotConditionForm.lotStatus"
                   placeholder="LOT状态"
@@ -31,7 +32,7 @@
                   <el-option label="已完成" value="DONE"></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item label="物料">
+              <el-form-item label="物料" prop="material">
                 <el-input
                   v-model.trim="lotConditionForm.material"
                   size="small"
@@ -42,7 +43,7 @@
                   ><span>{{ lotConditionForm.materialRev }}</span>
                 </div>
               </el-form-item>
-              <el-form-item label="工艺路线">
+              <el-form-item label="工艺路线" prop="router">
                 <el-input
                   v-model.trim="lotConditionForm.router"
                   size="small"
@@ -59,23 +60,24 @@
             <el-form
               :model="lotConditionForm"
               label-width="110px"
-              class="demo-form-inline"
+              class="lotConditionForm"
+              ref="lotConditionFormRight"
             >
-              <el-form-item label="工单">
+              <el-form-item label="工单" prop="shopOrder">
                 <el-input
                   v-model.trim="lotConditionForm.shopOrder"
                   size="small"
                 ></el-input>
                 <i class="el-icon-document"></i>
               </el-form-item>
-              <el-form-item label="工序">
+              <el-form-item label="工序" prop="operation">
                 <el-input
                   v-model.trim="lotConditionForm.operation"
                   size="small"
                 ></el-input>
                 <i class="el-icon-document"></i>
               </el-form-item>
-              <el-form-item label="资源">
+              <el-form-item label="资源" prop="resource">
                 <el-input
                   v-model.trim="lotConditionForm.resource"
                   size="small"
@@ -89,7 +91,7 @@
           <el-button size="small" type="primary" @click="handleQueryCheck">
             查询
           </el-button>
-          <el-button size="small" type="primary">
+          <el-button size="small" type="primary" @click="handleReset">
             重置
           </el-button>
           <div class="red"><span>*请至少输入一个查询条件</span></div>
@@ -105,20 +107,19 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55"> </el-table-column>
-          <el-table-column prop="lot" label="LOT" width="120"> </el-table-column
-          ><el-table-column prop="createUserName" label="工单" width="120">
+          <el-table-column prop="lot" label="LOT" width="200"> </el-table-column
+          ><el-table-column prop="shopOrder" label="工单"> </el-table-column>
+          <el-table-column prop="lotStatus" label="状态"> </el-table-column>
+          <el-table-column prop="operation" label="工序"> </el-table-column>
+          <el-table-column label="物料/版本">
+            <template slot-scope="scope">
+              <span>{{ scope.row.material }}/{{ scope.row.materialRev }}</span>
+            </template>
           </el-table-column>
-          <el-table-column prop="groupDes" label="状态" width="170">
-          </el-table-column>
-          <el-table-column prop="createUserName" label="工序" width="120">
-          </el-table-column>
-          <el-table-column prop="createTime" label="物料/版本" width="170">
-          </el-table-column>
-          <el-table-column
-            prop="modifyTime"
-            label="工艺路线/版本"
-            show-overflow-tooltip
-          >
+          <el-table-column prop="modifyTime" label="工艺路线/版本">
+            <template slot-scope="scope">
+              <span>{{ scope.row.router }}/{{ scope.row.routerRev }}</span>
+            </template>
           </el-table-column>
         </el-table>
         <div class="confirm">
@@ -136,6 +137,7 @@
 
 <script>
 import { searchLotDetailHttp } from "@/api/dc/lot.step.api.js";
+import { mapMutations } from "vuex";
 
 export default {
   data() {
@@ -151,10 +153,23 @@ export default {
         router: "",
         routerRev: "",
         shopOrder: ""
-      }
+      },
+      // lotConditionFormRules:{
+      //   lot: "",
+      //   lotStatus: "",
+      //   material: "",
+      //   materialRev: "",
+      //   operation: "",
+      //   resource: "",
+      //   router: "",
+      //   routerRev: "",
+      //   shopOrder: ""
+      // }
+      selectionList: []
     };
   },
   methods: {
+    ...mapMutations(["LOTQUERYLIST"]),
     //返回
     goBack() {
       this.$router.push({ name: "lotStep" });
@@ -162,7 +177,6 @@ export default {
     //当前选中行
     handleSelectionChange(val) {
       this.selectionList = val;
-      console.log(this.selectionList);
     },
     //查询前验证查询条件
     handleQueryCheck() {
@@ -203,12 +217,34 @@ export default {
       searchLotDetailHttp(data).then(data => {
         const res = data.data;
         if (res.code === 200) {
-          console.log(res.data);
+          this.tableData = res.data;
+          return;
         }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
       });
+    },
+    handleReset() {
+      this.$refs["lotConditionFormLeft"].resetFields();
+      this.$refs["lotConditionFormRight"].resetFields();
+      this.tableData = [];
     },
     //确认选择Lot
     handleConfirm() {
+      if (this.selectionList.length === 0) {
+        this.$message({
+          message: "还没有选择哦",
+          type: "warning"
+        });
+        return;
+      }
+      const tempArr = [];
+      this.selectionList.forEach(element => {
+        tempArr.push(element.lot);
+      });
+      this.LOTQUERYLIST(tempArr);
       this.goBack();
     }
   }

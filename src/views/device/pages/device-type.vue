@@ -59,18 +59,18 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55"> </el-table-column>
-        <el-table-column prop="resourceGroup" label="设备类型" width="120">
+        <el-table-column prop="resourceGroup" label="设备类型">
         </el-table-column>
-        <el-table-column prop="resourceCount" label="设备数量" width="120">
+        <el-table-column prop="resourceCount" label="设备数量">
         </el-table-column>
         <el-table-column prop="groupDes" label="设备类型描述" width="170">
         </el-table-column>
 
-        <el-table-column prop="createUserName" label="创建人" width="120">
+        <el-table-column prop="createUserName" label="创建人">
         </el-table-column>
         <el-table-column prop="createTime" label="创建时间" width="170">
         </el-table-column>
-        <el-table-column prop="modifyUserName" label="修改人" width="120">
+        <el-table-column prop="modifyUserName" label="修改人">
         </el-table-column>
         <el-table-column
           prop="modifyTime"
@@ -316,12 +316,9 @@ export default {
     height: 40px;
     padding: 10px;
     display: flex;
-    justify-content: space-between;
     .left {
-      width: 300px;
     }
     .right {
-      width: 680px;
       padding: 5px 30px;
     }
   }
