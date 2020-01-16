@@ -59,18 +59,18 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55"> </el-table-column>
-        <el-table-column prop="resourceGroup" label="设备类型" width="120">
+        <el-table-column prop="resourceGroup" label="设备类型">
         </el-table-column>
-        <el-table-column prop="resourceCount" label="设备数量" width="120">
+        <el-table-column prop="resourceCount" label="设备数量">
         </el-table-column>
         <el-table-column prop="groupDes" label="设备类型描述" width="170">
         </el-table-column>
 
-        <el-table-column prop="createUserName" label="创建人" width="120">
+        <el-table-column prop="createUserName" label="创建人">
         </el-table-column>
         <el-table-column prop="createTime" label="创建时间" width="170">
         </el-table-column>
-        <el-table-column prop="modifyUserName" label="修改人" width="120">
+        <el-table-column prop="modifyUserName" label="修改人">
         </el-table-column>
         <el-table-column
           prop="modifyTime"
@@ -113,9 +113,31 @@ import {
 import { mapMutations } from "vuex";
 import { exportExcel } from "@/until/excel.js";
 
+const tHeader = [
+  "设备类型",
+  "设备数量",
+  "设备类型描述",
+  "创建人",
+  "创建时间",
+  "修改人",
+  "修改时间"
+];
+const filterVal = [
+  "resourceGroup",
+  "resourceCount",
+  "groupDes",
+  "createUserName",
+  "createTime",
+  "modifyUserName",
+  "modifyTime"
+];
+const fileName = "设备类型表";
 export default {
   data() {
     return {
+      tHeader,
+      filterVal,
+      fileName,
       typeForm: {
         resourceGroup: ""
       },
@@ -144,10 +166,8 @@ export default {
         console.log(res);
         const list = res.data.data;
         if (res.code === 200) {
-          // this.pageShow = true;
           this.total = res.data.total;
           this.tableData = list;
-          // this.typeForm.resourceGroup = "";
           return;
         }
         this.$message({
@@ -235,37 +255,39 @@ export default {
     handleReset() {
       this.typeForm.resourceGroup = "";
     },
+    //未选择导出请求数据
+    exportHttp() {
+      const request = {
+        currentPage: this.currentPage,
+        pageSize: 0,
+        resourceGroup: this.typeForm.resourceGroup
+      };
+      findResourceGroupListHttp(request).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          data = res.data.data;
+          this.exportResult(data);
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
+    },
+    //导出
     handleExport() {
-      const tHeader = [
-        "设备类型",
-        "设备数量",
-        "设备类型描述",
-        "创建人",
-        "创建时间",
-        "修改人",
-        "修改时间"
-      ];
-      const filterVal = [
-        "resourceGroup",
-        "resourceCount",
-        "groupDes",
-        "createUserName",
-        "createTime",
-        "modifyUserName",
-        "modifyTime"
-      ];
-      let tipString = "";
-      let data = [];
       if (this.selectionList.length === 0) {
-        data = this.tableData;
+        this.exportHttp();
       }
       if (this.selectionList.length > 0) {
-        data = this.selectionList;
+        const data = this.selectionList;
+        this.exportResult(data);
       }
-      tipString = exportExcel(tHeader, filterVal, data, "设备类型表");
-      this.exportResult(tipString);
     },
-    exportResult(tipString) {
+    //返回结果，提示信息
+    exportResult(data) {
+      const tipString = exportExcel(tHeader, filterVal, data, this.fileName);
       if (tipString === undefined) {
         this.$message({
           message: "导出成功",
@@ -294,12 +316,9 @@ export default {
     height: 40px;
     padding: 10px;
     display: flex;
-    justify-content: space-between;
     .left {
-      width: 300px;
     }
     .right {
-      width: 680px;
       padding: 5px 30px;
     }
   }

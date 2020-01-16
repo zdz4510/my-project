@@ -79,13 +79,13 @@
 										</el-row>
 										<el-row>
 											<el-col :span="24">
-												<el-form-item label="上岗证:" prop="certOperation" >
+												<el-form-item label="上岗证:" prop="certOperation" required>
 													<el-select v-model="editForm.certOperation" >
 														<el-option
 															v-for="item in certOperation"
-															:key="item.value"
-															:label="item.label"
-															:value="item.value">
+															:key="item.cert"
+															:label="item.cert"
+															:value="item.cert">
 														</el-option>
 													</el-select>
 												</el-form-item>
@@ -117,7 +117,7 @@
 
 <script>
 import { mapGetters, mapMutations } from "vuex";
-import {saveOperation, getAllResourceGroup} from '../../../api/operation.maintain.api.js'
+import {saveOperation, getAllResourceGroup, getAllCert} from '../../../api/operation.maintain.api.js'
 export default {
   name:'edit-operation-maintain',
   computed: {
@@ -138,7 +138,18 @@ export default {
 				resourceGroup:'',
 			},
 			rules: {
-
+				operation:[
+						{ required:true,message:'请填写工序名称', trigger: 'blur' }
+					],
+					status:[
+						{ required:true,message:'请选择状态', trigger: 'change' }
+					],
+					resourceGroup:[
+						{ required:true,message:'请选择设备组', trigger: 'change' }
+					],
+					certOperation:[
+						{ required:true,message:'请选择上岗证', trigger: 'change' }
+					]
 			},
 			status:[{
 				label:'已启用',
@@ -157,7 +168,25 @@ export default {
       selectIsDisabled: false,
     };
   },
-
+	created() {
+		getAllResourceGroup().then(data => {
+			if(data.data.code == 200){
+				this.resourceGroup = data.data.data
+			}else{
+				this.$message.error(data.data.message)
+			}
+		})
+		getAllCert().then(data=>{
+			if(data.data.code == 200){
+				this.certOperation = data.data.data
+			}else{
+				this.$message.error(data.data.message)
+			}
+		})
+    this.$nextTick(() => {
+      this.init();
+    });
+  },
   methods: {
     ...mapMutations(["SETOPERATIONEDITLIST"]),
     //初始化的操作
@@ -315,14 +344,6 @@ export default {
 			});
     }
   },
-  created() {
-		getAllResourceGroup().then(data => {
-			this.resourceGroup = data.data.data
-		})
-    this.$nextTick(() => {
-      this.init();
-    });
-  }
 };
 </script>
 

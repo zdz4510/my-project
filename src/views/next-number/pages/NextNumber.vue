@@ -68,7 +68,7 @@
 		<div class="operate ml30 mtb10">
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="add" :disabled="this.checkedList.length>0">新增</el-button>
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="save" :disabled="this.checkedList.length===0">编辑</el-button>
-			<el-button class="mr25 pad1025" size="small" type="warning" @click="del" :disabled="this.checkedList.length===0">删除</el-button>
+			<el-button class="mr25 pad1025" size="small" type="warning" @click="del">删除</el-button>
 		</div>
 		<div class="">
 			<el-table
@@ -81,24 +81,23 @@
 			>
 				<el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
 				<!-- <el-table-column type="index" label="序号"></el-table-column> -->
-				<el-table-column prop="sequence" label="序号"></el-table-column>
+				<el-table-column prop="sequence" width="55" label="序号"></el-table-column>
 				<el-table-column prop="sequenceType" label="类型"></el-table-column>
 				<el-table-column prop="fixedString" label="固定字符串值"></el-table-column>
 				<el-table-column prop="varType" label="可替换参数值"></el-table-column>
 				<el-table-column prop="dateTimeFormat" label="时间"></el-table-column>
-				<el-table-column prop="length" label="长度"></el-table-column>
-				<el-table-column prop="numBase" label="进制"></el-table-column>
-				<el-table-column prop="numIncrease" label="增量"></el-table-column>
-				<el-table-column prop="initValue" label="初始值"></el-table-column>
-				<el-table-column prop="finalValue" label="最终值"></el-table-column>
+				<el-table-column prop="length" width="70" label="长度"></el-table-column>
+				<el-table-column prop="numBase"  width="70" label="进制"></el-table-column>
+				<el-table-column prop="numIncrease" width="70" label="增量"></el-table-column>
+				<el-table-column prop="initValue"  width="70" label="初始值"></el-table-column>
+				<el-table-column prop="finalValue" width="70" label="最终值"></el-table-column>
 				<el-table-column prop="reset" label="循环"></el-table-column>
 				<el-table-column prop="orders" label="顺序"></el-table-column>
 				<el-table-column label="操作">
 					<template slot-scope="scope">
-						<el-button @click="handleClick(scope.row)" type="text" size="small">
-							<el-button size="mini" type="primary">↑</el-button>
-							<el-button size="mini" type="primary">↓</el-button>
-						</el-button>
+						<el-button size="mini" type="primary" @click="handleClickUp(scope.row)" >↑</el-button>
+						<el-button size="mini" type="primary" @click="handleClickDown(scope.row)">↓</el-button>
+						<el-button size="mini" type="warning" @click="handleClickDelete(scope.row)">删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -107,7 +106,7 @@
 </template>
 
 <script>
-	import {getNextNumberList, searchMat, searchMatGroup, deleteNextNumber} from '../../../api/next.number.api.js'
+	import {getNextNumberList, searchMat, searchMatGroup, deleteNextNumber, saveNextNumber} from '../../../api/next.number.api.js'
 	import { mapMutations } from "vuex";
 	export default {
 		name:'next-number',
@@ -202,7 +201,7 @@
 						params.material = this.searchForm.value.split('&')[0]
 						getNextNumberList(params).then(data => {
 							if(data.data.code == 200){
-								this.tableData.data = data.data.data.sequences.data
+								this.tableData.data = data.data.data.sequences
 							}else{
 								this.$message.error(data.data.message)
 							}
@@ -257,19 +256,126 @@
 					params.material = this.searchForm.value.split('&')[0]
 					params.materialRev = this.searchForm.materialRev
 					params.commitType = this.searchForm.commitType
-					params.sequences = {
-						data:this.checkedList
-					}
+					params.sequences = []
 					deleteNextNumber(params).then(data=>{
 						if(data.data.code == 200){
 							this.$message.success('删除成功')
-							this.search('searchForm')
+							// this.search('searchForm')
 							this.$refs.multipleTable.clearSelection()
+							this.tableData.data= []
 						}else{
 							this.$message.error(data.data.message)
 						}
 					})
           
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+				});
+			},
+			swap(arr, first, second){
+				let tmp = arr[second]
+				arr[second] = arr[first]
+				arr[first] = tmp
+				return arr
+			},
+			handleClickUp(row){
+				if(row.sequence == 1){
+					return
+				}else{
+					let arr = this.swap(this.tableData.data, row.sequence-2, row.sequence-1)
+					arr.map((item, index)=>{
+						item.sequence = index+1
+					})
+					//调用保存方法
+					let params = {}
+					params.createList = []
+					params.deleteList = []
+					params.updateList = [{
+						nextNumberType:this.searchForm.nextNumberType,
+						definedBy:this.searchForm.definedBy,
+						material:this.searchForm.material,
+						materialRev:this.searchForm.materialRev,
+						commitType:this.searchForm.commitType,
+						sequences:arr
+					}]
+					saveNextNumber(params).then(data=>{
+						if(data.data.code == 200){
+							this.$message.success('操作成功')
+							this.search('searchForm')
+						}else{
+							this.$message.error(data.data.message)
+						}
+					})
+				}
+				
+
+			},
+			handleClickDown(row){
+				console.log(row,'r')
+				let length = this.tableData.data.length
+				if(row.sequence == length){
+					return
+				}else{
+					let arr = this.swap(this.tableData.data, row.sequence-1, row.sequence)
+					arr.map((item, index)=>{
+						item.sequence = index+1
+					})
+					//调用保存方法
+					let params = {}
+					params.createList = []
+					params.deleteList = []
+					params.updateList = [{
+						nextNumberType:this.searchForm.nextNumberType,
+						definedBy:this.searchForm.definedBy,
+						material:this.searchForm.material,
+						materialRev:this.searchForm.materialRev,
+						commitType:this.searchForm.commitType,
+						sequences:arr
+					}]
+					saveNextNumber(params).then(data=>{
+						if(data.data.code == 200){
+							this.$message.success('操作成功')
+							this.search('searchForm')
+						}else{
+							this.$message.error(data.data.message)
+						}
+					})
+				}
+			},
+			handleClickDelete(row){
+				this.$confirm('是否删除所选数据?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+					let arr = this.tableData.data.splice(row.sequence,1)
+					console.log(arr,'ar')
+					arr.map((item, index)=>{
+						item.sequence = index+1
+					})
+					//调用保存方法
+					let params = {}
+					params.createList = []
+					params.deleteList = []
+					params.updateList = [{
+						nextNumberType:this.searchForm.nextNumberType,
+						definedBy:this.searchForm.definedBy,
+						material:this.searchForm.material,
+						materialRev:this.searchForm.materialRev,
+						commitType:this.searchForm.commitType,
+						sequences:arr
+					}]
+					saveNextNumber(params).then(data=>{
+						if(data.data.code == 200){
+							this.$message.success('操作成功')
+							this.search('searchForm')
+						}else{
+							this.$message.error(data.data.message)
+						}
+					})
         }).catch(() => {
           this.$message({
             type: 'info',

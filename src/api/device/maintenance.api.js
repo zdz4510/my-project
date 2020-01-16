@@ -79,6 +79,14 @@ export const listAlarmHttp = data => {
 };
 
 /**
+ * 获取所有设备
+ *  url /mes/resource/listAllResource
+ */
+export const listAllResourceHttp = () => {
+  return request.get(`${window.VUE_APP_URL}/mes/resource/listAllResource`);
+};
+
+/**
  * 添加和修改设备保养配置
  *  url /mes/resourceMaintenance/saveResourceMaintenance
  */

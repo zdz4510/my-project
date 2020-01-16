@@ -141,9 +141,9 @@
         </el-table-column>
         <el-table-column prop="createUserName" label="工序" width="120">
           <template slot-scope="scope">
-            <span style="margin-left: 10px">{{
-              scope.row.operationList | operationFilter
-            }}</span>
+            <span style="margin-left: 10px">
+              {{ scope.row.operationList | operationFilter }}
+            </span>
           </template>
         </el-table-column>
         <el-table-column prop="createTime" label="资源" width="120">

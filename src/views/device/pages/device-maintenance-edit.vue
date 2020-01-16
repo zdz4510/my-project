@@ -52,7 +52,10 @@
                 ></el-input>
               </el-form-item>
               <el-form-item label="状态:" prop="resourceStatus">
-                <el-radio-group v-model="maintenanceForm.resourceStatus">
+                <el-radio-group
+                  v-model="maintenanceForm.resourceStatus"
+                  @change="selectStatus"
+                >
                   <el-radio :label="10">待用</el-radio>
                   <el-radio :label="20">作业中</el-radio>
                   <el-radio :label="30">待修</el-radio>
@@ -261,12 +264,7 @@ export default {
         //工作中心
         workCenter: ""
       },
-      rules: {
-        resource: [{ required: true, message: "请输入设备编号" }],
-        resourceDes: [{ required: false, message: "请输入设备编号" }],
-        resourceStatus: [{ required: true, message: "请选择状态" }],
-        workCenter: [{ required: true, message: "请输入工作中心" }]
-      },
+      // rules: this.rules,
       //验证基础信息表单ref
       refArrBaseInfo: ["maintenanceFormOne", "maintenanceFormTwo"],
       //验证保养配置表单ref
@@ -291,6 +289,8 @@ export default {
       upkeepConfigRules: this.upkeepConfigRule,
       upkeepStartDate: "",
       tableData: [],
+      cloneTableData: [],
+      cloneList: [],
       selectionList: [],
       operateType: "",
       saveType: "baseInfo",
@@ -299,11 +299,20 @@ export default {
       alarmList: [],
       fn: null,
       isRequired: false,
+      isWorkCenter: false,
       currentRow: {}
     };
   },
   computed: {
     ...mapGetters(["maintenanceList"]),
+    rules() {
+      return {
+        resource: [{ required: true, message: "请输入设备编号" }],
+        resourceDes: [{ required: false, message: "请输入设备编号" }],
+        resourceStatus: [{ required: true, message: "请选择状态" }],
+        workCenter: [{ required: this.isWorkCenter, message: "请输入工作中心" }]
+      };
+    },
     upkeepConfigRule() {
       return {
         conditionName: [
@@ -346,7 +355,7 @@ export default {
     this.deBounceSearch();
     this.operateType = this.$route.query.operateType;
     this.cloneList = JSON.parse(JSON.stringify(this.maintenanceList));
-    this.maintenanceForm = this.cloneList[0];
+    this.maintenanceForm = JSON.parse(JSON.stringify(this.cloneList[0]));
     if (this.operateType === "edit") {
       this.isEditResource = true;
     }
@@ -363,7 +372,7 @@ export default {
         const res = data.data;
         if (res.code === 200) {
           this.tableData = res.data;
-          console.log(res.data);
+          this.cloneTableData = JSON.parse(JSON.stringify(this.tableData));
         } else {
           this.$message({
             message: res.message,
@@ -417,12 +426,21 @@ export default {
     },
     //选择是否启用预警功能
     selectWarnFunc(val) {
-      console.log(val);
       this.isRequired = val ? true : false;
     },
+    //是否必填工作中心
+    selectStatus(val) {
+      this.isWorkCenter = val === 20 ? true : false;
+    },
     handleSelectionChange(val) {
+      console.log(val);
+      console.log(111);
       this.selectionList = val;
-      this.upkeepConfigForm = this.selectionList[0];
+      if (this.selectionList.length > 0) {
+        this.upkeepConfigForm = this.selectionList[0];
+      } else {
+        this.upkeepConfigForm = this.tableData[0];
+      }
     },
     handleChangeRadio(val) {
       this.maintenanceForm.resourceStatus = val;
@@ -436,19 +454,22 @@ export default {
       }
     },
     handleReset(formName) {
-      this.maintenanceForm.resourceDes = "";
       if (this.operateType === "add") {
+        this.maintenanceForm.resourceDes = "";
         formName.forEach(element => {
           this.$refs[element].resetFields();
         });
         return;
       }
       if (this.operateType === "edit") {
-        formName.forEach(element => {
-          if (element !== "maintenanceFormOne") {
-            this.$refs[element].resetFields();
-          }
-        });
+        this.maintenanceForm = JSON.parse(JSON.stringify(this.cloneList[0]));
+        this.tableData = JSON.parse(JSON.stringify(this.cloneTableData));
+
+        // formName.forEach(element => {
+        //   if (element !== "maintenanceFormOne") {
+        //     this.$refs[element].resetFields();
+        //   }
+        // });
       }
     },
     //验证form表单
@@ -577,13 +598,26 @@ export default {
         });
         return;
       }
-      this.tableData.forEach((element1, index1) => {
-        this.selectionList.forEach(element2 => {
-          if (JSON.stringify(element1) === JSON.stringify(element2)) {
-            this.tableData.splice(index1, 1);
-          }
-        });
+
+      // this.tableData = [];
+      this.tableData = this.tableData.filter(item => {
+        return this.selectionList.includes(item) == false;
       });
+      // this.upkeepConfigForm = this.tableData[0];
+      console.log(this.upkeepConfigForm);
+      console.log(this.tableData[0]);
+      // console.log(this.tableData);
+      // this.upkeepConfigForm.conditionName = "";
+      // this.upkeepConfigForm.startTime = "";
+      // this.upkeepConfigForm.conditionDes = "";
+      // this.upkeepConfigForm.maintenanceUserId = "";
+      // this.upkeepConfigForm.alarm = "";
+      // this.upkeepConfigForm.warningFunction = "";
+      // this.upkeepConfigForm.maintenancePeriod = "";
+      // this.upkeepConfigForm.periodUnit = "";
+      // this.upkeepConfigForm.maintenanceLocation = "";
+      // this.$refs["upkeepConfigForm"].resetFields();
+      console.log(this.upkeepConfigForm);
     },
     handleSaveUpkeepConfig() {
       const data = JSON.parse(JSON.stringify(this.tableData));

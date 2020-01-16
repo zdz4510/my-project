@@ -18,6 +18,7 @@
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="add" :disabled="this.checkedList.length>0">新增</el-button>
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="edit" :disabled="this.checkedList.length === 0">编辑</el-button>
 			<el-button class="mr25 pad1025" size="small" type="warning"  @click="del" :disabled="this.checkedList.length === 0">删除</el-button>
+			<el-button class="mr25 pad1025" size="small" type="warning"  @click="handleExport" >导出</el-button>
 		</div>
 
 		<div class="">
@@ -31,7 +32,7 @@
 				<el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
 				<el-table-column type="index" label="序号"></el-table-column>
 				<el-table-column prop="materialType" label="物料分类"></el-table-column>
-				<el-table-column prop="material" label="物料料号"></el-table-column>
+				<el-table-column prop="material" label="物料号"></el-table-column>
 				<el-table-column prop="materialRev" label="版本"></el-table-column>
 				<el-table-column prop="currentRev" label="当前版本"></el-table-column>
 				<el-table-column label="产品状态">
@@ -57,11 +58,15 @@
 
 <script>
 import {getMaterialList, deleteMaterial} from '../../../api/material.info.api'
+import { exportExcel } from "@/until/excel.js";
 import { mapMutations } from "vuex";
 	export default {
 		name:'material-info',
 		data() {
 			return {
+				tHeader:['物料分类','物料号','版本','当前版本','产品状态','客户','供应商','物料描述'],
+				filterVal:['materialType','material','materialRev','currentRev','materialStatus','client','vebdor','materialDes'],
+				fileName:'物料维护表',
 				checkedList:[],
 				formLabelWidth:'120px',
 				searchForm: {
@@ -92,17 +97,19 @@ import { mapMutations } from "vuex";
 			...mapMutations(["SETMATEDITLIST"]),
 			search(){
 				let params= {
-					// deleteFlag: false,
-					// tenantSiteCode: this.searchForm.tenantSiteCode,
 					material: this.searchForm.material,
 					materialRev: this.searchForm.materialRev,
 					pageSize: this.tableData.page.pageSize,
 					currentPage: this.tableData.page.currentPage,
 				}
 				getMaterialList(params).then(data => {
-					console.log(data)
-					this.tableData.data = data.data.data.data
-					this.tableData.page.total = data.data.data.total
+					if(data.data.code == 200){
+						this.tableData.data = data.data.data.data
+						this.tableData.page.total = data.data.data.total
+					}else{
+						this.$message.error(data.data.message)
+					}
+					
 				})
 			},
 			handleSizeChange(pageSize){
@@ -151,6 +158,49 @@ import { mapMutations } from "vuex";
 				this.$refs[formName].resetFields();
 				this.search()
 			},
+			//导出开始
+			handleExport() {
+				if (this.checkedList.length === 0) {
+					this.exportHttp();
+				}
+				if (this.checkedList.length > 0) {
+					const data = this.checkedList;
+					this.exportResult(data);
+				}
+			},
+			exportHttp() {
+				let params= {
+					material: this.searchForm.material,
+					materialRev: this.searchForm.materialRev,
+					pageSize: 0,
+					currentPage: this.tableData.page.currentPage,
+				}
+				getMaterialList(params).then(data => {
+					if(data.data.code == 200){
+						let res = data.data.data.data
+						res.map(item=>{
+							item.materialStatus = item.materialStatus ? '已启用' : '未启用'
+						})
+						this.exportResult(res);
+					}else{
+						this.$message.error(data.data.message)
+					}
+					
+				})
+			},
+			exportResult(data) {
+				const tipString = exportExcel(this.tHeader, this.filterVal, data, this.fileName);
+				if (tipString === undefined) {
+					return;
+				} else {
+					this.$message({
+						message: tipString,
+						type: "warning"
+					});
+					return;
+				}
+			},
+			//导出结束
 		}
 	}
 </script>

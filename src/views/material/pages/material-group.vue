@@ -63,11 +63,10 @@
         </el-table-column>
         <el-table-column prop="materialGroup" label="物料组" width="120">
         </el-table-column>
-        <el-table-column
-          prop="materialList.length"
-          label="总物料数"
-          width="120"
-        >
+        <el-table-column label="总物料数" width="120">
+          <template slot-scope="scope">
+            <span>{{ scope.row.materialList.length }}</span>
+          </template>
         </el-table-column>
         <el-table-column prop="groupDes" label="物料组描述" width="170">
         </el-table-column>
@@ -111,17 +110,35 @@
 </template>
 
 <script>
-// import {
-//   findResourceGroupListHttp,
-//   deleteResourceGroupHttp,
-//   exportExcelHttp
-// } from "@/api/device/type.api.js";
 import { findPageHttp, deleteHttp } from "@/api/material/material.group.api.js";
 import { mapMutations } from "vuex";
+import { exportExcel } from "@/until/excel.js";
 
+const tHeader = [
+  "物料组",
+  "总物料数",
+  "物料组描述",
+  "创建人",
+  "创建时间",
+  "修改人",
+  "修改时间"
+];
+const filterVal = [
+  "materialGroup",
+  "materialTotal",
+  "groupDes",
+  "createUserName",
+  "createTime",
+  "modifyUserName",
+  "modifyTime"
+];
+const fileName = "物料组维护表";
 export default {
   data() {
     return {
+      tHeader,
+      filterVal,
+      fileName,
       materialGroupForm: {
         materialGroup: ""
       },
@@ -147,7 +164,6 @@ export default {
       };
       findPageHttp(data).then(data => {
         const res = data.data;
-        console.log(res);
         if (res.code === 200) {
           // this.pageShow = true;
           this.total = res.data.total;
@@ -233,12 +249,55 @@ export default {
       this.materialGroupForm.materialGroup = "";
       this.init();
     },
+    //未选择导出请求数据
+    exportHttp() {
+      const request = {
+        currentPage: this.currentPage,
+        pageSize: 0,
+        materialGroup: this.materialGroupForm.materialGroup
+      };
+      findPageHttp(request).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          data = res.data.data;
+          data.forEach(element => {
+            element.materialTotal = element.materialList.length;
+          });
+          this.exportResult(data);
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
+    },
+    //导出
     handleExport() {
-      //   const data = {
-      //     materialGroup: this.materialGroupForm.materialGroup,
-      //     groupDes: this.materialGroupForm.groupDes
-      //   };
-      //   exportExcelHttp(data);
+      if (this.selectionList.length === 0) {
+        this.exportHttp();
+      }
+      if (this.selectionList.length > 0) {
+        const data = this.selectionList;
+        this.exportResult(data);
+      }
+    },
+    //返回结果，提示信息
+    exportResult(data) {
+      const tipString = exportExcel(tHeader, filterVal, data, this.fileName);
+      if (tipString === undefined) {
+        this.$message({
+          message: "导出成功",
+          type: "success"
+        });
+        return;
+      } else {
+        this.$message({
+          message: tipString,
+          type: "warning"
+        });
+        return;
+      }
     }
   }
 };
