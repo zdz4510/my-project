@@ -100,9 +100,13 @@ import { mapMutations } from "vuex";
 					currentPage: this.tableData.page.currentPage,
 				}
 				getMaterialList(params).then(data => {
-					console.log(data)
-					this.tableData.data = data.data.data.data
-					this.tableData.page.total = data.data.data.total
+					if(data.data.code == 200){
+						this.tableData.data = data.data.data.data
+						this.tableData.page.total = data.data.data.total
+					}else{
+						this.$message.error(data.data.message)
+					}
+					
 				})
 			},
 			handleSizeChange(pageSize){

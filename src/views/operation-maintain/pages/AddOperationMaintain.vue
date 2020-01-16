@@ -62,7 +62,7 @@
 								</el-row>
 								<el-row>
 									<el-col :span="24">
-										<el-form-item label="上岗证:" prop="certOperation" >
+										<el-form-item label="上岗证:" prop="certOperation" required>
 											<el-select v-model="addForm.certOperation" >
 												<el-option
 													v-for="item in certList"
@@ -103,6 +103,9 @@
 					],
 					resourceGroup:[
 						{ required:true,message:'请选择设备组', trigger: 'change' }
+					],
+					certOperation:[
+						{ required:true,message:'请选择上岗证', trigger: 'change' }
 					]
 				},
 				addForm: {
@@ -127,7 +130,12 @@
 		},
 		created() {
 			getAllResourceGroup().then(data => {
-				this.resourceGroup = data.data.data
+				if(data.data.code == 200){
+					this.resourceGroup = data.data.data
+				}else{
+					this.$message.error(data.data.message)
+				}
+				
 			})
 			getAllCert().then(data=>{
 				if(data.data.code == 200){
