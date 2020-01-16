@@ -231,6 +231,7 @@ export default {
             type: "success"
           });
           this.deleteDialog = false;
+          this.getMaterialList();
           return;
         }
         this.$message({
