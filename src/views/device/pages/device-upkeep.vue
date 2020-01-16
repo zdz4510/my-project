@@ -126,9 +126,35 @@ import {
 } from "@/api/device/upkeep.api.js";
 import { exportExcel } from "@/until/excel.js";
 
+const tHeader = [
+  "设备编号",
+  "条件名称·",
+  "线体",
+  "工站",
+  "工作中心",
+  "保养状态",
+  "最后保养时间",
+  "最后保养人",
+  "附加描述"
+];
+const filterVal = [
+  "resource",
+  "conditionName",
+  "workCenterRelation",
+  "station",
+  "workCenter",
+  "maintenanceStatus",
+  "maintenanceEndTime",
+  "maintenanceUserId",
+  "additionalDes"
+];
+const fileName = "设备保养表";
 export default {
   data() {
     return {
+      tHeader,
+      filterVal,
+      fileName,
       upkeepForm: {
         resource: "",
         maintenanceStatus: "",
@@ -249,41 +275,45 @@ export default {
         }
       });
     },
+    //未选择导出请求数据
+    exportHttp() {
+      const request = {
+        currentPage: this.currentPage,
+        pageSize: 0,
+        resource: this.upkeepForm.resource,
+        maintenanceStatus: this.upkeepForm.maintenanceStatus
+      };
+      listResourceMaintenanceLogHttp(request).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          data = res.data.data;
+          this.exportResult(data);
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
+    },
+    //导出
     handleExport() {
-      const tHeader = [
-        "设备编号",
-        "条件名称·",
-        "线体",
-        "工站",
-        "工作中心",
-        "保养状态",
-        "最后保养时间",
-        "最后保养人",
-        "附加描述"
-      ];
-      const filterVal = [
-        "resource",
-        "conditionName",
-        "workCenterRelation",
-        "station",
-        "workCenter",
-        "maintenanceStatus",
-        "maintenanceEndTime",
-        "maintenanceUserId",
-        "additionalDes"
-      ];
-      let tipString = "";
-      let data = [];
       if (this.selectionList.length === 0) {
-        data = this.tableData;
+        this.exportHttp();
       }
       if (this.selectionList.length > 0) {
-        data = this.selectionList;
+        const data = this.selectionList;
+        this.exportResult(data);
       }
-      tipString = exportExcel(tHeader, filterVal, data, "设备保养表");
-      this.exportResult(tipString);
     },
-    exportResult(tipString) {
+    //返回结果，提示信息
+    exportResult(data) {
+      const tipString = exportExcel(
+        this.tHeader,
+        this.filterVal,
+        data,
+        this.fileName
+      );
       if (tipString === undefined) {
         this.$message({
           message: "导出成功",

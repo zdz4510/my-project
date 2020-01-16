@@ -83,9 +83,12 @@
     </div>
 
     <!-- LOT模态框 -->
-    <el-dialog title="lot" :visible.sync="lotDialog" width="30%">
+    <el-dialog title="lot" :visible.sync="lotDialog" width="50%">
       <span>
-        <allLotModel :lot="lotDatas" @selectLot="selectLot"></allLotModel>
+        <dimQueryLotModel
+          :lot="lotDatas"
+          @selectLot="selectLot"
+        ></dimQueryLotModel>
       </span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="lotDialog = false">取 消</el-button>
@@ -98,14 +101,14 @@
 </template>
 <script>
 import { listLotHttp } from "@/api/dc/lot.divestiture.api.js";
-import allLotModel from "../components/all-lots-model.vue";
+import dimQueryLotModel from "../components/dim-query-lots-model.vue";
 import { listPodLotHttp } from "@/api/dc/production.operate.api.js";
 
 export default {
   name: "productionOperate",
   components: {
     // mergeLotModel,
-    allLotModel
+    dimQueryLotModel
   },
   data() {
     return {

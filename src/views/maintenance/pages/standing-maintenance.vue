@@ -141,9 +141,42 @@ import {
   findResourceGroupListHttp
 } from "@/api/maintenance/standing.api.js";
 import { mapMutations } from "vuex";
+import { exportExcel } from "@/until/excel.js";
+
+const tHeader = [
+  "站位",
+  "站位描述",
+  "IP地址",
+  "设备",
+  "工作中心",
+  "产线",
+  "状态",
+  "站位类型",
+  "满站数量",
+  "总在制",
+  "站内在制"
+];
+const filterVal = [
+  "station",
+  "stationDes",
+  "padIp",
+  "resource",
+  "workCenter",
+  "workCenterRelation",
+  "status",
+  "stationType",
+  "fullQty",
+  //总在制 站内在制暂时没有
+  "name",
+  "address"
+];
+const fileName = "站位维护表";
 export default {
   data() {
     return {
+      tHeader,
+      filterVal,
+      fileName,
       standingForm: {
         //产线
         workCenterRelation: "",
@@ -262,9 +295,53 @@ export default {
     },
     //上传文件
     upLoad() {},
+    //未选择导出请求数据
+    exportHttp() {
+      const request = {
+        currentPage: this.currentPage,
+        pageSize: 0,
+        station: this.standingForm.station,
+        workCenterRelation: this.standingForm.workCenterRelation
+      };
+      findPageHttp(request).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          data = res.data.data;
+          this.exportResult(data);
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
+    },
     //导出
-    handleExport(){
-
+    handleExport() {
+      if (this.selectionList.length === 0) {
+        this.exportHttp();
+      }
+      if (this.selectionList.length > 0) {
+        const data = this.selectionList;
+        this.exportResult(data);
+      }
+    },
+    //返回结果，提示信息
+    exportResult(data) {
+      const tipString = exportExcel(tHeader, filterVal, data, this.fileName);
+      if (tipString === undefined) {
+        this.$message({
+          message: "导出成功",
+          type: "success"
+        });
+        return;
+      } else {
+        this.$message({
+          message: tipString,
+          type: "warning"
+        });
+        return;
+      }
     }
   }
 };

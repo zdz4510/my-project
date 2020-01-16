@@ -54,11 +54,11 @@
           <!--画布-->
           <el-col :span="24" style="height:100%" class="pannerBox">
             <div id="flowContainer" class="container">
-              <template v-for="node in rightData.nodeList">
+              <template v-for="(node,index) in rightData.nodeList">
                 <flow-node
-                  v-show="node.show"
+                  
                   :id="node.id"
-                  :key="node.id"
+                  :key="node.id+index"
                   :node="node"
                   @deleteNode="deleteNode"
                   @changeNodeSite="changeNodeSite"
@@ -217,10 +217,10 @@ export default {
           routerComponentType:'O',  // 工艺路线类型
           ico: "el-icon-user-solid",
           customizedData:[],
-          operation:'', // 工序id
+          operation:item.operation, // 工序id
           isLastReportingStep:false, //最后包工步骤checkbox
           description:'', //  描述
-          stepId:'步骤', //
+          stepId:'', //
           returnOperation: "", // 返回工序
           returnStepId: "",  // 返回步骤   
         };
@@ -267,6 +267,7 @@ export default {
         type: "handle",
         name: "处置",
         ico: "el-icon-user-solid",
+        
         children: [
         
           {
@@ -275,6 +276,7 @@ export default {
             name: "返回置任一步骤",
             ico: "el-icon-odometer",
             routerComponentType:'R',
+            retrunType:'A'
           },
           {
             id: "N",
@@ -282,6 +284,7 @@ export default {
             name: "返回置上一步骤",
             ico: "el-icon-odometer",
             routerComponentType:'R',
+            retrunType:'N'
           },
           {
             id: "O",
@@ -289,6 +292,7 @@ export default {
             name: "返回置原始步骤",
             routerComponentType:'R',
             ico: "el-icon-odometer",
+            retrunType:'O'
           },
           {
             id: "P",
@@ -296,6 +300,7 @@ export default {
             name: "返回置下一步骤",
             ico: "el-icon-odometer",
             routerComponentType:'R',
+             retrunType:'P'
           }
         ]
       };
@@ -492,10 +497,21 @@ export default {
      * @param mousePosition 鼠标拖拽结束的坐标
      */
     addNode(evt, nodeMenu, mousePosition) {
-      console.log(nodeMenu);
+      let nodeId = nodeMenu.id;
+       const item =  this.rightData.nodeList.filter(item=>{
+         return item.id==nodeMenu.id
+       });
+       if(item.length>0){
+         this.$message({
+           type:'warning',
+           message:"工序在右边画板已经存在,不可添加"
+         });
+         return ;
+       }
+
       let width = this.$refs.nodeMenu.$el.clientWidth;
 
-      let nodeId = nodeMenu.id;
+      
       let left = mousePosition.left;
       let top = mousePosition.top;
       if (left < 0) {
@@ -510,7 +526,9 @@ export default {
         left: left + "px",
         top: top + "px",
         ico: nodeMenu.ico,
-        show: true
+        show: true,
+        id: nodeId,
+        type:nodeId
       };
       /**
        * 这里可以进行业务判断、是否能够添加该节点
@@ -580,7 +598,7 @@ export default {
             const element = array[index];
             if (element.id == id) {
               //array.splice(index,1);
-              element.hide = true;
+              element.hide = false;
             }
           }
         }
