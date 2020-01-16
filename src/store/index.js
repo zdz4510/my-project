@@ -18,6 +18,8 @@ import ncGroupEdit from "./modules/base/nc.group.edit.js"; //不合格代码组v
 import ncCodeEdit from "./modules/base/nc.code.edit.js"; //不合格代码vuex module
 import tagConfigEdit from "./modules/tag/tag.config.edit.js"; //不合格代码vuex module
 import nextNumberEdit from "./modules/base/next.number.edit.js"; //编码规则vuex module
+import unpackEdit from "./modules/dc/unpack.edit.js"; //包装解包的vuex module
+import lotStepDetail from "./modules/dc/lot.step.detail.js"; //lot步骤详情vuex module
 
 Vue.use(Vuex);
 
@@ -43,6 +45,8 @@ export default new Vuex.Store({
     ncGroupEdit,
     ncCodeEdit,
     tagConfigEdit,
-    nextNumberEdit
+    nextNumberEdit,
+    unpackEdit,
+    lotStepDetail
   }
 });

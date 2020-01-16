@@ -270,7 +270,12 @@ export default {
           this.showInfo.operationList = operations;
           const resources = res.data.resourceList.join(",");
           this.showInfo.resourceList = resources;
+          return;
         }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
       });
     },
     //重置

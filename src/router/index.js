@@ -330,6 +330,18 @@ const routes = [
           import(
             /* webpackChunkName: "dcCollection" */ "../views/dc/pages/DCCollection.vue"
           )
+      },
+      // 包装解包作业
+      {
+        path: "packWork",
+        name: "packWork",
+        meta: {
+          title: "包装解包作业"
+        },
+        component: () =>
+          import(
+            /* webpackChunkName: "dcCollection" */ "../views/dc/pages/packWork.vue"
+          )
       }
     ]
   },
