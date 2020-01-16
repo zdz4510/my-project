@@ -117,23 +117,13 @@ import { mapMutations } from "vuex";
 import { exportExcel } from "@/until/excel.js";
 
 const tHeader = [
-  "设备类型",
-  "设备数量",
-  "设备类型描述",
-  "创建人",
-  "创建时间",
-  "修改人",
-  "修改时间"
+  "上岗证",
+  "上岗证描述",
+  "状态",
+  "持续时间类型",
+  "上岗证持续截止时间"
 ];
-const filterVal = [
-  "resourceGroup",
-  "resourceCount",
-  "groupDes",
-  "createUserName",
-  "createTime",
-  "modifyUserName",
-  "modifyTime"
-];
+const filterVal = ["cert", "certDes", "status", "certType", "certTime"];
 const fileName = "上岗证维护表";
 export default {
   data() {
@@ -274,6 +264,11 @@ export default {
         const res = data.data;
         if (res.code === 200) {
           data = res.data.data;
+          //"status", "certType"
+          data.forEach(element => {
+            element.status = element.status ? "已启用" : "未启用";
+            element.certType = element.certType ? "永久" : "临时";
+          });
           this.exportResult(data);
           return;
         }

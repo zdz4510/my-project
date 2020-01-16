@@ -164,7 +164,6 @@ export default {
       };
       findPageHttp(data).then(data => {
         const res = data.data;
-        console.log(res);
         if (res.code === 200) {
           // this.pageShow = true;
           this.total = res.data.total;
