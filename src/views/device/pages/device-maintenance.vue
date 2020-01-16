@@ -32,7 +32,7 @@
       <el-button
         size="small"
         type="primary"
-        :disabled="selectionList.length <= 0"
+        :disabled="selectionList.length !== 1"
         @click="handleEdit"
       >
         修改
@@ -59,21 +59,18 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55"> </el-table-column>
-        <el-table-column prop="resource" label="设备编号" width="160">
-        </el-table-column>
-        <el-table-column prop="resourceDes" label="设备名称" width="160">
-        </el-table-column>
-        <el-table-column prop="workCenterRelation" label="线体" width="160">
+        <el-table-column prop="resource" label="设备编号"> </el-table-column>
+        <el-table-column prop="resourceDes" label="设备名称"> </el-table-column>
+        <!-- <el-table-column prop="workCenterRelation" label="线体" width="160">
         </el-table-column>
         <el-table-column prop="station" label="工站" width="160">
+        </el-table-column> -->
+        <el-table-column prop="workCenter" label="工作中心"> </el-table-column>
+        <el-table-column label="状态" show-overfslow-tooltip>
+          <template slot-scope="scope">
+            <span>{{ scope.row.resourceStatus | filterStatus }}</span>
+          </template>
         </el-table-column>
-        <el-table-column prop="workCenter" label="工作中心" width="160">
-        </el-table-column>
-        <el-table-column
-          prop="resourceStatus"
-          label="状态"
-          show-overflow-tooltip
-        ></el-table-column>
       </el-table>
       <el-pagination
         background
@@ -107,9 +104,15 @@ import {
 import { mapMutations } from "vuex";
 import { exportExcel } from "@/until/excel.js";
 
+const tHeader = ["设备编号", "设备名称", "工作中心", "状态"];
+const filterVal = ["resource", "resourceDes", "workCenter", "resourceStatus"];
+const fileName = "设备维护表";
 export default {
   data() {
     return {
+      tHeader,
+      filterVal,
+      fileName,
       maintenanceForm: {
         resource: ""
       },
@@ -120,6 +123,23 @@ export default {
       total: 0,
       deleteDialog: false
     };
+  },
+  filters: {
+    filterStatus(status) {
+      if (status === 10) {
+        return "待用";
+      }
+      if (status === 20) {
+        return "作业中";
+      }
+      if (status === 30) {
+        return "待修";
+      }
+
+      if (status === 40) {
+        return "报废";
+      }
+    }
   },
   created() {
     this.init();
@@ -265,35 +285,44 @@ export default {
       this.maintenanceForm.resource = "";
       this.init();
     },
+    //未选择导出请求数据
+    exportHttp() {
+      const request = {
+        currentPage: this.currentPage,
+        pageSize: 0,
+        resource: this.maintenanceForm.resource
+      };
+      findResourceGroupListHttp(request).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          data = res.data.data;
+          this.exportResult(data);
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
+    },
+    //导出
     handleExport() {
-      const tHeader = [
-        "设备编号",
-        "设备名称",
-        "线体",
-        "工站",
-        "工作中心",
-        "状态"
-      ];
-      const filterVal = [
-        "resource",
-        "resourceDes",
-        "workCenterRelation",
-        "station",
-        "workCenter",
-        "resourceStatus"
-      ];
-      let tipString = "";
-      let data = [];
       if (this.selectionList.length === 0) {
-        data = this.tableData;
+        this.exportHttp();
       }
       if (this.selectionList.length > 0) {
-        data = this.selectionList;
+        const data = this.selectionList;
+        this.exportResult(data);
       }
-      tipString = exportExcel(tHeader, filterVal, data, "设备维护表");
-      this.exportResult(tipString);
     },
-    exportResult(tipString) {
+    //返回结果，提示信息
+    exportResult(data) {
+      const tipString = exportExcel(
+        this.tHeader,
+        this.filterVal,
+        data,
+        this.fileName
+      );
       if (tipString === undefined) {
         this.$message({
           message: "导出成功",
