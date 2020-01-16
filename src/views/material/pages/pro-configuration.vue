@@ -24,10 +24,10 @@
         </div>
         <div class="operation">
             <el-button size='small' type='primary' @click="handlePodConfig">查询</el-button>
-            <el-button size='small' type='primary' >添加</el-button>
+            <el-button size='small' type='danger' @click="deleteDialog = true">删除</el-button>
             <el-button size='small' type='primary' @click="handleSave">保存</el-button>
             <el-button size='small' type='danger' @click="handleReset">清除</el-button>
-            <el-button size='small' type='danger' @click="deleteDialog = true">删除</el-button>
+            <el-button size='small' type='primary' >添加</el-button>
             <el-button size='small' type='primary' @click="handleEdit">编辑</el-button>
             <el-button size='small' type="danger" @click="handleMove">移除</el-button>
         </div>
@@ -404,7 +404,7 @@ export default {
         },
         //编辑
         handleEdit(){
-            
+
         }
     },
     created(){
