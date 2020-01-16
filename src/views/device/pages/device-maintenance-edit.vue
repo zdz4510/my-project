@@ -433,8 +433,14 @@ export default {
       this.isWorkCenter = val === 20 ? true : false;
     },
     handleSelectionChange(val) {
+      console.log(val);
+      console.log(111);
       this.selectionList = val;
-      this.upkeepConfigForm = this.selectionList[0];
+      if (this.selectionList.length > 0) {
+        this.upkeepConfigForm = this.selectionList[0];
+      } else {
+        this.upkeepConfigForm = this.tableData[0];
+      }
     },
     handleChangeRadio(val) {
       this.maintenanceForm.resourceStatus = val;
@@ -592,9 +598,15 @@ export default {
         });
         return;
       }
+
+      // this.tableData = [];
       this.tableData = this.tableData.filter(item => {
-        return this.selectionList.indexOf(item) === -1;
+        return this.selectionList.includes(item) == false;
       });
+      // this.upkeepConfigForm = this.tableData[0];
+      console.log(this.upkeepConfigForm);
+      console.log(this.tableData[0]);
+      // console.log(this.tableData);
       // this.upkeepConfigForm.conditionName = "";
       // this.upkeepConfigForm.startTime = "";
       // this.upkeepConfigForm.conditionDes = "";

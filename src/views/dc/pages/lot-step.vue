@@ -115,7 +115,7 @@
 
 <script>
 import { findLotStepStatusHttp } from "@/api/dc/lot.step.api.js";
-import { mapMutations } from "vuex";
+import { mapMutations, mapGetters } from "vuex";
 
 export default {
   data() {
@@ -141,7 +141,17 @@ export default {
       ]
     };
   },
-  created() {},
+  created() {
+    if (this.lotQueryList.length === 1) {
+      this.lotStepForm.lot = this.lotQueryList[0];
+    }
+    if (this.lotQueryList.length > 1) {
+      this.lotStepForm.lot = "已选择" + this.lotQueryList.length + "个";
+    }
+  },
+  computed: {
+    ...mapGetters(["lotQueryList"])
+  },
   methods: {
     ...mapMutations(["LOTSTEPDETAILLIST"]),
     toggleSelection(rows) {
@@ -198,6 +208,7 @@ export default {
     },
     handleReset() {
       this.lotStepForm.lot = "";
+      this.tableData = [];
     }
   }
 };
