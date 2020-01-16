@@ -18,7 +18,7 @@
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="add" :disabled="this.checkedList.length>0">新增</el-button>
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="edit" :disabled="this.checkedList.length === 0">编辑</el-button>
 			<el-button class="mr25 pad1025" size="small" type="warning"  @click="del" :disabled="this.checkedList.length === 0">删除</el-button>
-			<el-button class="mr25 pad1025" size="small" type="warning"  @click="exportExcel" >导出</el-button>
+			<el-button class="mr25 pad1025" size="small" type="warning"  @click="handleExport" >导出</el-button>
 		</div>
 		
 		<div class="">
@@ -57,11 +57,15 @@
 
 <script>
 import {getAlarmDefList, deleteData} from '../../../api/alarm.maintain.api'
+import { exportExcel } from "@/until/excel.js";
 import { mapMutations } from "vuex";
 	export default {
 		name:'alarm-maintain',
 		data() {
 			return {
+				tHeader:['事件编号','事件主题','事件等级','创建人','创建时间','修改人','修改时间'],
+				filterVal:['alarm','theme','alarmLevelFlag','createUserName','createTime','modifyUserName','modifyTime'],
+				fileName:'预警事件维护表',
 				checkedList:[],
 				formLabelWidth:'120px',
 				searchForm: {
@@ -93,8 +97,12 @@ import { mapMutations } from "vuex";
 				params.pageSize = this.tableData.page.pageSize
 				params.currentPage = this.tableData.page.currentPage
 				getAlarmDefList(params).then(data => {
-					this.tableData.data = data.data.data.data
-					this.tableData.page.total = data.data.data.total
+					if(data.data.code == 200){
+						this.tableData.data = data.data.data.data
+						this.tableData.page.total = data.data.data.total
+					}else{
+						this.$message.error(data.data.message)
+					}
 				})
 			},
 			handleSizeChange(pageSize){
@@ -117,7 +125,6 @@ import { mapMutations } from "vuex";
           type: 'warning'
         }).then(() => {
 				deleteData(this.checkedList).then(data=>{
-					console.log(data,'adddata')
 					if(data.data.code == 200){
 						this.$message.success('删除成功')
 						this.search()
@@ -153,9 +160,47 @@ import { mapMutations } from "vuex";
 				this.$refs[formName].resetFields();
 				this.search()
 			},
-			exportExcel(){
-
-			}
+			//导出开始
+			handleExport() {
+				if (this.checkedList.length === 0) {
+					this.exportHttp();
+				}
+				if (this.checkedList.length > 0) {
+					this.checkedList.map(item=>{
+						item.alarmLevelFlag = item.alarmLevelFlag == 10 ? '提示' : (item.alarmLevelFlag == 20 ? '警告' : '错误')
+					})
+					this.exportResult(this.checkedList);
+				}
+			},
+			exportHttp() {
+				let params = this.searchForm
+				params.pageSize = 0
+				params.currentPage = this.tableData.page.currentPage
+				getAlarmDefList(params).then(data => {
+					if(data.data.code == 200){
+						let res = data.data.data.data
+						res.map(item=>{
+							item.alarmLevelFlag = item.alarmLevelFlag == 10 ? '提示' : (item.alarmLevelFlag == 20 ? '警告' : '错误')
+						})
+						this.exportResult(res);
+					}else{
+						this.$message.error(data.data.message)
+					}
+				})
+			},
+			exportResult(data) {
+				const tipString = exportExcel(this.tHeader, this.filterVal, data, this.fileName);
+				if (tipString === undefined) {
+					return;
+				} else {
+					this.$message({
+						message: tipString,
+						type: "warning"
+					});
+					return;
+				}
+			},
+			//导出结束
 		}
 	}
 </script>

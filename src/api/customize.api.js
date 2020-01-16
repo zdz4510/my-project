@@ -36,3 +36,12 @@ export const getCode = data => {
   return request.get(
     `${window.VUE_APP_URL}/mes/generalCodeService/findRecord?generalCodeGroup=${data.generalCodeGroup}&generalCode=${data.generalCode}`);
 };
+
+/**
+ * 查询自定义项目名称
+ *  url /mes/generalCodeDataService/findGeneralCode
+ */
+export const getNames = data => {
+  return request.post(`${window.VUE_APP_URL}/mes/generalCodeDataService/findGeneralCode?generalCode=${data.generalCode}`);
+};
+

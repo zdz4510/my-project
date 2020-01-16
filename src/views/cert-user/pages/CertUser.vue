@@ -18,6 +18,7 @@
 			<!-- <el-button class="mr25 pad1025" size="small" type="primary" @click="add" :disabled="this.checkedList.length>0">新增</el-button> 逻辑变更，此功能去掉，注意后面去掉路由配置信息 -->
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="edit" :disabled="this.checkedList.length === 0">编辑</el-button>
 			<el-button class="mr25 pad1025" size="small" type="warning"  @click="del" :disabled="this.checkedList.length === 0">删除</el-button>
+			<el-button class="mr25 pad1025" size="small" type="warning"  @click="handleExport" >导出</el-button>
 		</div>
 		<div class="">
 			<el-table
@@ -34,10 +35,10 @@
 				<el-table-column prop="cert" label="上岗证"></el-table-column>
 				<el-table-column prop="certDes" label="上岗证描述"></el-table-column>
 				<el-table-column label="状态">
-					<template slot-scope="scope">{{ scope.row.status == true ? '已启用' : (scope.row.status == false ? '未启用' : '--') }}</template>
+					<template slot-scope="scope">{{ scope.row.status == true ? '已启用' : '未启用' }}</template>
 				</el-table-column>
 				<el-table-column label="持续时间类型">
-					<template slot-scope="scope">{{ scope.row.certType == true ? '永久' : (scope.row.certType == false ? '临时' : '--') }}</template>
+					<template slot-scope="scope">{{ scope.row.certType == true ? '永久' : '临时' }}</template>
 				</el-table-column>
 				<el-table-column prop="certTime" label="上岗证截止日期"></el-table-column>
 			</el-table>
@@ -57,11 +58,15 @@
 
 <script>
 import {getCertUserList, deleteData} from '../../../api/cert.user.api'
+import { exportExcel } from "@/until/excel.js";
 import { mapMutations } from "vuex";
 	export default {
 		name:'',
 		data() {
 			return {
+				tHeader:['用户','姓名','上岗证','上岗证描述','状态','持续时间类型','上岗证截止日期'],
+				filterVal:['user','name','cert','certDes','status','certType','certTime'],
+				fileName:'用户证明维护表',
 				checkedList:[],
 				formLabelWidth:'120px',
 				searchForm: {
@@ -93,8 +98,12 @@ import { mapMutations } from "vuex";
 				params.pageSize = this.tableData.page.pageSize
 				params.currentPage = this.tableData.page.currentPage
 				getCertUserList(params).then(data => {
-					this.tableData.data = data.data.data.data
-					this.tableData.page.total = data.data.data.total
+					if(data.data.code == 200){
+						this.tableData.data = data.data.data.data
+						this.tableData.page.total = data.data.data.total
+					}else{
+						this.$message.error(data.data.message)
+					}
 				})
 			},
 			handleSizeChange(pageSize){
@@ -118,7 +127,7 @@ import { mapMutations } from "vuex";
 						item.cert = []
 					})
 					deleteData(this.checkedList).then(data=>{
-						if(data.data.message == 'success'){
+						if(data.data.code == 200){
 							this.$message({
 								type: 'success',
 								message: '删除成功!'
@@ -141,6 +150,49 @@ import { mapMutations } from "vuex";
 				this.SETCERTUSEREDITLIST(this.checkedList);
 				this.$router.push({path:'/certUser/editCertUser'})
 			},
+			//导出开始
+			handleExport() {
+				if (this.checkedList.length === 0) {
+					this.exportHttp();
+				}
+				if (this.checkedList.length > 0) {
+					this.checkedList.map(item=>{
+						item.status = item.status ? '已启用' : '未启用'
+						item.certType = item.certType ? '永久' : '临时'
+					})
+					this.exportResult(this.checkedList);
+				}
+			},
+			exportHttp() {
+				let params = this.searchForm
+				params.pageSize = 0
+				params.currentPage = this.tableData.page.currentPage
+				getCertUserList(params).then(data => {
+					if(data.data.code == 200){
+						let res = data.data.data.data
+						res.map(item=>{
+							item.status = item.status ? '已启用' : '未启用'
+							item.certType = item.certType ? '永久' : '临时'
+						})
+						this.exportResult(res);
+					}else{
+						this.$message.error(data.data.message)
+					}
+				})
+			},
+			exportResult(data) {
+				const tipString = exportExcel(this.tHeader, this.filterVal, data, this.fileName);
+				if (tipString === undefined) {
+					return;
+				} else {
+					this.$message({
+						message: tipString,
+						type: "warning"
+					});
+					return;
+				}
+			},
+			//导出结束
 		}
 	}
 </script>

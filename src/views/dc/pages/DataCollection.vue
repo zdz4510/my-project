@@ -25,7 +25,7 @@
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="add" :disabled="this.checkedList.length>0">新增</el-button>
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="edit" :disabled="this.checkedList.length === 0">编辑</el-button>
 			<el-button class="mr25 pad1025" size="small" type="warning"  @click="del" :disabled="this.checkedList.length === 0">删除</el-button>
-			<el-button class="mr25 pad1025" size="small" type="warning"  @click="exportExcel">导出</el-button>
+			<el-button class="mr25 pad1025" size="small" type="warning"  @click="handleExport" >导出</el-button>
 		</div>
 		
 		<div class="">
@@ -64,11 +64,15 @@
 
 <script>
 import {getDataCollectionList, deleteDataCollection} from '../../../api/data.collection.api'
+import { exportExcel } from "@/until/excel.js";
 import { mapMutations } from "vuex";
 	export default {
 		name:'data-collection',
 		data() {
 			return {
+				tHeader:['数据收集组','数据收集组类型','数据收集描述','创建人','创建时间','修改人','修改时间'],
+				filterVal:['dcGroup','collectionType','dcGroupDes','createUserName','createTime','modifyUserName','modifyTime'],
+				fileName:'数据收集维护表',
 				checkedList:[],
 				formLabelWidth:'120px',
 				searchForm: {
@@ -117,8 +121,12 @@ import { mapMutations } from "vuex";
 					currentPage: this.tableData.page.currentPage,
 				}
 				getDataCollectionList(params).then(data => {
-					this.tableData.data = data.data.data.data
-					this.tableData.page.total = data.data.data.total
+					if(data.data.code == 200){
+						this.tableData.data = data.data.data.data
+						this.tableData.page.total = data.data.data.total
+					}else{
+						this.$message.error(data.data.message)
+					}
 				})
 			},
 			handleSizeChange(pageSize){
@@ -176,14 +184,56 @@ import { mapMutations } from "vuex";
           return '工序'
         }else if(collectionType == '40') {
           return '工单'
-        }else {
-          return '--'
         }
       },
-      exportExcel(){
-				let data = this.searchForm
-				window.location.href=`${window.VUE_APP_URL}/mes/dcGroup/exportExcel?collectionType=${data.collectionType}&dcGroup=${data.dcGroup}&resource=${data.resource}&tenantSiteCode=${data.tenantSiteCode}`
-			}
+      // exportExcel(){
+			// 	let data = this.searchForm
+			// 	window.location.href=`${window.VUE_APP_URL}/mes/dcGroup/exportExcel?collectionType=${data.collectionType}&dcGroup=${data.dcGroup}&resource=${data.resource}&tenantSiteCode=${data.tenantSiteCode}`
+			// },
+			//导出开始
+			handleExport() {
+				if (this.checkedList.length === 0) {
+					this.exportHttp();
+				}
+				if (this.checkedList.length > 0) {
+					this.checkedList.map(item=>{
+						item.collectionType = item.collectionType == 10 ? '物料' : (item.collectionType == 20 ? '资源' : (item.collectionType == 30 ? '工序' : '工单'))
+					})
+					this.exportResult(this.checkedList);
+				}
+			},
+			exportHttp() {
+				let params= {
+					dcGroup: this.searchForm.dcGroup,
+					collectionType: this.searchForm.collectionType,
+					pageSize: 0,
+					currentPage: this.tableData.page.currentPage,
+				}
+				getDataCollectionList(params).then(data => {
+					if(data.data.code == 200){
+						let res = data.data.data.data
+						res.map(item=>{
+							item.collectionType = item.collectionType == 10 ? '物料' : (item.collectionType == 20 ? '资源' : (item.collectionType == 30 ? '工序' : '工单'))
+						})
+						this.exportResult(res);
+					}else{
+						this.$message.error(data.data.message)
+					}
+				})
+			},
+			exportResult(data) {
+				const tipString = exportExcel(this.tHeader, this.filterVal, data, this.fileName);
+				if (tipString === undefined) {
+					return;
+				} else {
+					this.$message({
+						message: tipString,
+						type: "warning"
+					});
+					return;
+				}
+			},
+			//导出结束
 		}
 	}
 </script>
