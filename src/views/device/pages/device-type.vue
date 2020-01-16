@@ -166,10 +166,8 @@ export default {
         console.log(res);
         const list = res.data.data;
         if (res.code === 200) {
-          // this.pageShow = true;
           this.total = res.data.total;
           this.tableData = list;
-          // this.typeForm.resourceGroup = "";
           return;
         }
         this.$message({
