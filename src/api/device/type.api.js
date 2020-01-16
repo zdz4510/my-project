@@ -19,12 +19,9 @@ export const findResourceGroupListHttp = data => {
 获取所有设备类型信息
  *  url /mes/resource_group/listAllResourceGroup
  */
-export const listAllResourceGroupHttp = data => {
+export const listAllResourceGroupHttp = () => {
   return request.get(
-    `${window.VUE_APP_URL}/mes/resource_group/listAllResourceGroup`,
-    {
-      params: data
-    }
+    `${window.VUE_APP_URL}/mes/resource_group/listAllResourceGroup`
   );
 };
 

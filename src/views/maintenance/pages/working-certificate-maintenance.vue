@@ -114,10 +114,33 @@ import {
   deleteHttp
 } from "@/api/maintenance/working.certificate.api.js";
 import { mapMutations } from "vuex";
-// import { filter } from "minimatch";
+import { exportExcel } from "@/until/excel.js";
+
+const tHeader = [
+  "设备类型",
+  "设备数量",
+  "设备类型描述",
+  "创建人",
+  "创建时间",
+  "修改人",
+  "修改时间"
+];
+const filterVal = [
+  "resourceGroup",
+  "resourceCount",
+  "groupDes",
+  "createUserName",
+  "createTime",
+  "modifyUserName",
+  "modifyTime"
+];
+const fileName = "上岗证维护表";
 export default {
   data() {
     return {
+      tHeader,
+      filterVal,
+      fileName,
       workCertificateForm: {
         //上岗证
         cert: ""
@@ -240,8 +263,53 @@ export default {
         this.deleteDialog = false;
       });
     },
+    //未选择导出请求数据
+    exportHttp() {
+      const request = {
+        currentPage: this.currentPage,
+        pageSize: 0,
+        cert: this.workCertificateForm.cert
+      };
+      listCertHttp(request).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          data = res.data.data;
+          this.exportResult(data);
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
+    },
     //导出
-    handleExport() {}
+    handleExport() {
+      if (this.selectionList.length === 0) {
+        this.exportHttp();
+      }
+      if (this.selectionList.length > 0) {
+        const data = this.selectionList;
+        this.exportResult(data);
+      }
+    },
+    //返回结果，提示信息
+    exportResult(data) {
+      const tipString = exportExcel(tHeader, filterVal, data, this.fileName);
+      if (tipString === undefined) {
+        this.$message({
+          message: "导出成功",
+          type: "success"
+        });
+        return;
+      } else {
+        this.$message({
+          message: tipString,
+          type: "warning"
+        });
+        return;
+      }
+    }
   }
 };
 </script>

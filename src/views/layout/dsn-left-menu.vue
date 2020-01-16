@@ -110,7 +110,7 @@
           <span slot="title">设备管理</span>
         </template>
         <el-menu-item index="/device/deviceType">设备类型</el-menu-item>
-        <el-menu-item index="/device/deviceMaintenance">设备维修</el-menu-item>
+        <el-menu-item index="/device/deviceMaintenance">设备维护</el-menu-item>
         <el-menu-item index="/device/deviceUpkeep">设备保养</el-menu-item>
         <el-menu-item index="/device/test">测试页面</el-menu-item>
       </el-submenu>
