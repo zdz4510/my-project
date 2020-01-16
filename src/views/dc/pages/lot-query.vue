@@ -110,7 +110,11 @@
           <el-table-column prop="lot" label="LOT" width="200"> </el-table-column
           ><el-table-column prop="shopOrder" label="工单"> </el-table-column>
           <el-table-column prop="lotStatus" label="状态"> </el-table-column>
-          <el-table-column prop="operation" label="工序"> </el-table-column>
+          <el-table-column prop="operation" label="工序">
+            <template slot-scope="scope">
+              <span>{{ scope.row.operationList.join(",") }}</span>
+            </template>
+          </el-table-column>
           <el-table-column label="物料/版本">
             <template slot-scope="scope">
               <span>{{ scope.row.material }}/{{ scope.row.materialRev }}</span>
@@ -154,17 +158,6 @@ export default {
         routerRev: "",
         shopOrder: ""
       },
-      // lotConditionFormRules:{
-      //   lot: "",
-      //   lotStatus: "",
-      //   material: "",
-      //   materialRev: "",
-      //   operation: "",
-      //   resource: "",
-      //   router: "",
-      //   routerRev: "",
-      //   shopOrder: ""
-      // }
       selectionList: []
     };
   },

@@ -28,6 +28,9 @@
           <span slot="title">基础库</span>
         </template>
         <el-menu-item index="/base/base">基础</el-menu-item>
+        <el-menu-item index="/base/standingButtonDistribute"
+          >站位按钮分配</el-menu-item
+        >
       </el-submenu>
       <el-submenu index="material">
         <template slot="title">
@@ -38,15 +41,21 @@
         <el-menu-item index="/material/materialGroup">物料组维护</el-menu-item>
         <el-menu-item index="/material/workOrder">工单维护</el-menu-item>
         <el-menu-item index="/material/issued">工单下达</el-menu-item>
-        <el-menu-item index="/material/routeMaintenance">工艺路线维护</el-menu-item>
+        <el-menu-item index="/material/routeMaintenance"
+          >工艺路线维护</el-menu-item
+        >
       </el-submenu>
       <el-submenu index="factory-model">
         <template slot="title">
           <i class="el-icon-location"></i>
           <span slot="title">工厂建模</span>
         </template>
-        <el-menu-item index="/operationMaintain/operationMaintain">工序维护</el-menu-item>
-        <el-menu-item index="/operationStation/operationStation">工序与站位关系维护</el-menu-item>
+        <el-menu-item index="/operationMaintain/operationMaintain"
+          >工序维护</el-menu-item
+        >
+        <el-menu-item index="/operationStation/operationStation"
+          >工序与站位关系维护</el-menu-item
+        >
         <el-menu-item index="/workCenter/workCenter">工作中心</el-menu-item>
       </el-submenu>
       <el-submenu index="system-config">
@@ -97,7 +106,9 @@
           <span slot="title">报废/删除</span>
         </template>
         <el-menu-item index="/scrapDelete/scrapRecover">报废/恢复</el-menu-item>
-        <el-menu-item index="/scrapDelete/deleteRecover">删除/恢复</el-menu-item>
+        <el-menu-item index="/scrapDelete/deleteRecover"
+          >删除/恢复</el-menu-item
+        >
       </el-submenu>
       <el-submenu index="device">
         <template slot="title">
@@ -114,10 +125,18 @@
           <i class="el-icon-location"></i>
           <span slot="title">维护管理</span>
         </template>
-        <el-menu-item index="/maintenance/standingMaintenance">站位维护</el-menu-item>
-        <el-menu-item index="/maintenance/workingCertificateMaintenance">上岗证维护</el-menu-item>
-        <el-menu-item index="/maintenance/genericCodeDefinition">通用代码定义维护</el-menu-item>
-        <el-menu-item index="/maintenance/genericCodeData">通用代码数据维护</el-menu-item>
+        <el-menu-item index="/maintenance/standingMaintenance"
+          >站位维护</el-menu-item
+        >
+        <el-menu-item index="/maintenance/workingCertificateMaintenance"
+          >上岗证维护</el-menu-item
+        >
+        <el-menu-item index="/maintenance/genericCodeDefinition"
+          >通用代码定义维护</el-menu-item
+        >
+        <el-menu-item index="/maintenance/genericCodeData"
+          >通用代码数据维护</el-menu-item
+        >
         <el-menu-item index="/device/test">测试页面</el-menu-item>
       </el-submenu>
       <el-submenu index="tag">
