@@ -37,9 +37,9 @@
         <el-tabs v-model="activeName" type="card">
           <el-tab-pane label="基础信息" name="baseInfo">
             <div class="showData">
-              <div><span class="name">物料号：</span><span>{{}}</span></div>
-              <div><span class="name">物料组:</span><span>{{}}</span></div>
-              <div><span class="name">容器层级:</span><span>{{}}</span></div>
+              <div><span class="name">物料号：</span><span>{{info.mat}}</span></div>
+              <div><span class="name">物料组:</span><span>{{info.matGroup}}</span></div>
+              <div><span class="name">容器层级:</span><span>{{info.packingClass}}</span></div>
             </div>
           </el-tab-pane>
         </el-tabs>
@@ -131,6 +131,7 @@ export default {
       info: {
         matGroup:'',
         mat:'',
+        packingClass:''
       }
     };
   },
