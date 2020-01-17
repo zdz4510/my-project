@@ -16,7 +16,6 @@
           </el-form-item>
         </el-form>
       </div>
-
       <div class="right">
         <el-button size="small" type="primary" @click="handleQuery">查询</el-button>
         <el-button size="small" type="primary" @click="reset">重置</el-button>

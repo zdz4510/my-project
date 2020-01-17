@@ -113,7 +113,8 @@ export default {
       h:100,
       current:{
 
-      }
+      },
+      isEditResource:false,
     };
   },
   mounted() {
@@ -122,6 +123,20 @@ export default {
     window.onresize = this.computedWindow();
     this.computedWindow();
     this.init()
+    this.isEditResource = this.$route.query.isEditResource;
+    
+    if(this.isEditResource=='true'){
+     
+        let data =  this.tagConfigList.labelStorage;
+        
+        if(data){
+          data= JSON.parse(data)
+        this.w = data.width||200;
+        this.h = data.height||200;
+        this.list =data.list||[];
+        }
+       
+    }
   },
 
 

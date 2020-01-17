@@ -104,6 +104,8 @@
               <el-input
                 class="getTemplate"
                 v-model.trim="getTemplate"
+               
+                @keyup.enter.native='enter'
                 placeholder="请输入标签模板"
               ></el-input>
             </div>
@@ -201,7 +203,8 @@ import {
   listPageUnallocatedLink,
   getListPageLink,
   addTagConfig, //  添加标签
-  updateTagConfig
+  updateTagConfig,
+  getLabelStorageByLabel
 } from "@/api/tag/tag.config.api";
 export default {
   data() {
@@ -266,6 +269,7 @@ export default {
       this.isEditResource = true;
       this.list = this.tagConfigForm.labelLinkList || [];
       this.cloneList = _.cloneDeep(this.list);
+      this.getLabelStorageByLabelId(this.tagConfigForm.label);
       this.handleGetListPageLink(
         {
           linkType: "",
@@ -416,7 +420,9 @@ export default {
       this.rightSelectList = s;
     },
     toTagOpe() {
-      this.$router.push("/tag/tagEdit");
+      this.$router.push({path:"/tag/tagEdit",query:{
+          isEditResource:this.isEditResource
+      }});
     },
 
     //  新增保存
@@ -464,6 +470,27 @@ export default {
           });
         }
       });
+    },
+    getLabelStorageByLabelId(label){
+        getLabelStorageByLabel({
+          label:label 
+        }).then(data=>{
+          const res=  data.data;
+          if(res.code==200){
+              if(res.data!=''){
+                this.tagConfigForm.labelStorage = JSON.parse(res.data);
+              }
+              this.TAGCONFIGLIST(this.tagConfigForm)
+          }else{
+              this.$message({
+                type:"error",
+                message:res.message
+              })
+          }
+        })
+    },
+    enter(e){
+      this.getLabelStorageByLabelId(e.target.value)
     }
   }
 };

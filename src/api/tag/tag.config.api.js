@@ -57,3 +57,12 @@ export const listPageUnallocatedLink = data => {
     const params = qs.stringify(data);
     return request.post(`${window.VUE_APP_URL}/mes/label/listPageUnallocatedLink?${params}`);
   };
+
+/**
+ * /label/getLabelStorageByLabel
+ */
+
+export const getLabelStorageByLabel = data => {
+  const params = qs.stringify(data);
+  return request.post(`${window.VUE_APP_URL}/mes/label/getLabelStorageByLabel?${params}`);
+};
