@@ -5,7 +5,13 @@
         <el-form ref="form" :model="form" label-width="100px">
           <el-form-item label="标签应用类型">
             <el-col :span="16">
-              <el-input v-model="form.name"></el-input>
+              <el-select
+                v-model="form.labelUseType"
+                placeholder="请选择标签应用类型"
+              >
+                <el-option label="LOT" value="10"></el-option>
+                <el-option label="容器" value="20"></el-option>
+              </el-select>
             </el-col>
           </el-form-item>
           <el-form-item label="输入栏">
@@ -15,7 +21,12 @@
           </el-form-item>
           <el-form-item>
             <el-col :span="16">
-              <el-button size="small" type="primary">检索</el-button>
+              <el-button
+                size="small"
+                type="primary"
+                @click="handleSearchByLotNo"
+                >检索</el-button
+              >
               <el-button size="small" type="primary">打印</el-button>
               <el-checkbox v-model="autoPrint">自动打印</el-checkbox>
             </el-col>
@@ -100,11 +111,13 @@
 </template>
 
 <script>
+import { searchByLotNo } from "@/api/tag/tag.print.api.js";
 export default {
   data() {
     return {
       form: {
-        name: ""
+        name: "",
+        labelUseType: ""
       },
       autoPrint: false,
       activeName: "baseInfo",
@@ -113,7 +126,8 @@ export default {
       pageSize: 10,
       currentPage: 1,
       deleteDialog: false,
-      selectionList: []
+      selectionList: [],
+      info: {}
     };
   },
   methods: {
@@ -133,7 +147,24 @@ export default {
       this.currentPage = 1;
       this.init();
     },
-    handleDelete() {}
+    handleDelete() {},
+    //  检索
+    handleSearchByLotNo() {
+      searchByLotNo({
+        labelApplyType: this.form.labelUseType,
+        inputValue: this.form.name
+      }).then(data => {
+        const res = data.data;
+        if (res.code == 200) {
+          this.info = res.data;
+        } else {
+          this.$message({
+            tyep: "error",
+            message: res.message
+          });
+        }
+      });
+    }
   }
 };
 </script>
