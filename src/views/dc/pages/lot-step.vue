@@ -18,9 +18,9 @@
             ></el-input>
             <i class="el-icon-document" @click="goQuery"></i>
           </el-form-item>
-          <el-form-item label="备注" prop="remark">
+          <el-form-item label="备注" prop="comment ">
             <el-input
-              v-model.trim="lotStepForm.remark"
+              v-model.trim="lotStepForm.comment"
               placeholder="请输入备注"
             ></el-input>
           </el-form-item>
@@ -36,7 +36,7 @@
       </div>
     </div>
     <div class="operate">
-      <el-button size="small" type="primary">
+      <el-button size="small" type="primary" @click="handleSetFinish">
         LOT状态置为完成
       </el-button>
       <el-dropdown @command="handleCommand">
@@ -46,15 +46,15 @@
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item command="clear">清除步骤</el-dropdown-item>
           <el-dropdown-item command="byPass">绕过步骤</el-dropdown-item>
-          <el-dropdown-item command="stepDone">
+          <el-dropdown-item command="inQueue">
             将整个数量置于队列中
           </el-dropdown-item>
-          <el-dropdown-item command="lotDone">
+          <el-dropdown-item command="stepDone">
             将步骤标记为已完成
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
-      <el-button size="small" type="primary">
+      <el-button size="small" type="primary" @click="handleSave">
         保存
       </el-button>
     </div>
@@ -114,7 +114,10 @@
 </template>
 
 <script>
-import { findLotStepStatusHttp } from "@/api/dc/lot.step.api.js";
+import {
+  findLotStepStatusHttp,
+  setLotsStatusDoneHttp
+} from "@/api/dc/lot.step.api.js";
 import { mapMutations, mapGetters } from "vuex";
 
 export default {
@@ -122,7 +125,7 @@ export default {
     return {
       lotStepForm: {
         lot: "",
-        remark: ""
+        comment: ""
       },
       lotStepFormRules: {
         lot: [{ required: true, message: "请输入lot", trigger: "blur" }]
@@ -138,7 +141,8 @@ export default {
         "FIXED2020/01/1300000116MAT1",
         "FIXED2020/01/1300000118MAT1",
         "FIXED2020/01/1300000120MAT1"
-      ]
+      ],
+      stepStatusList: []
     };
   },
   created() {
@@ -175,18 +179,48 @@ export default {
     },
     //点击步骤操作菜单栏
     handleCommand(command) {
-      console.log(command);
+      // if (this.selectionList.length === 0) {
+      //   this.$message({
+      //     message: "请至少选择一行数据进行操作！",
+      //     type: "warning"
+      //   });
+      //   return;
+      // }
+      //清除步骤
+      if (command === "clear") {
+        this.stepStatusList.push({
+          changeType: "CLEAR",
+          stepId: this.selectionList[0].stepId
+        });
+        this.stepOperate("");
+      }
+      //步骤绕过
+      if (command === "byPass") {
+        this.stepOperate("已绕过");
+      }
+      //步骤已完成
+      if (command === "stepDone") {
+        this.stepOperate("已完成");
+      }
+      //整个数量置于队列中
+      if (command === "inQueue") {
+        this.inQueue();
+      }
     },
-    // //更改当前页码,再次请求数据
-    // handleCurrentChange(currentChange) {
-    //   this.currentPage = currentChange;
-    //   this.init();
-    // },
-    // //更改页码大小
-    // handlePagesize(pagesize) {
-    //   this.pagesize = pagesize;
-    //   this.currentPage = 1;
-    // },
+    //步骤操作
+    stepOperate(stepStatus) {
+      this.tableData.forEach(element1 => {
+        this.selectionList.forEach(element2 => {
+          if (JSON.stringify(element1) === JSON.stringify(element2)) {
+            element1.stepStatus = stepStatus;
+            element1.qtyInQueue = 0;
+            element1.qtyInQueue = 0;
+          }
+        });
+      });
+    },
+    //整个数量置于队列中
+    inQueue() {},
     //跳转到查询LOT界面
     goQuery() {
       this.$router.push({ name: "lotQuery" });
@@ -209,6 +243,89 @@ export default {
     handleReset() {
       this.lotStepForm.lot = "";
       this.tableData = [];
+    },
+    handleSetFinish() {
+      if (this.tableData.length === 0) {
+        this.$message({
+          message: "请先执行查询后再进行操作！",
+          type: "warning"
+        });
+        return;
+      }
+      this.$confirm("是否确认将LOT的状态置为完成？", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          if (this.lotStepForm.comment === "") {
+            this.$message({
+              type: "warning",
+              message: "请填写备注！"
+            });
+            return;
+          }
+          this.setFinishHttp();
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消操作"
+          });
+        });
+    },
+    //请求
+    setFinishHttp() {
+      // const tempArr = [];
+      // this.tableData.forEach(element => {
+      //   tempArr.push(element.lot);
+      // });
+      console.log(this.selectionList[0].lots);
+      const data = {
+        comment: this.lotStepForm.comment,
+        lots: this.selectionList.lots
+      };
+      setLotsStatusDoneHttp(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          console.log(res.data);
+          this.$message({
+            type: "success",
+            message: "操作成功!"
+          });
+          return;
+        }
+        this.$message({
+          type: "warning",
+          message: res.message
+        });
+      });
+    },
+    handleSave() {
+      if (this.tableData.length === 0) {
+        this.$message({
+          type: "warning",
+          message: "请先执行查询后再进行操作"
+        });
+        return;
+      }
+      if (this.stepStatusList.length === 0) {
+        this.$message({
+          type: "warning",
+          message: "请先执行“步骤操作”后再进行操作！"
+        });
+        return;
+      }
+      this.tableData.forEach(element => {
+        if (element.qtyInQueue <= 0 || element.qtyInWork <= 0) {
+          this.$message({
+            type: "warning",
+            message:
+              "LOT必须在某一步骤为”排队中“或”工作中“的状态，才允许执行”保存“操作"
+          });
+          return;
+        }
+      });
     }
   }
 };
