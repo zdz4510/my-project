@@ -50,13 +50,27 @@ export const deleteHttp = data => {
 // mes/topic/addTopic
 // 添加主题维护信息
 export const addTopicHttp = data => {
-    return request.post(`${window.VUE_APP_URL}/mes/topic/addTopic`, data);
-  };
+  return request.post(`${window.VUE_APP_URL}/mes/topic/addTopic`, data);
+};
 
 //   mes/topic/findTopicPage
 //   分页查询主题维护表
 export const findTopicPageHttp = data => {
-    return request.get(`${window.VUE_APP_URL}/mes/topic/findTopicPage`, {
-        params:data
-    });
-  };
+  return request.get(`${window.VUE_APP_URL}/mes/topic/findTopicPage`, {
+      params:data
+  });
+};
+
+// /topic/findStationList
+// 查询当前主题的分配关系
+export const findStationListHttp = data => {
+  return request.get(`${window.VUE_APP_URL}/mes/topic/findStationList`, {
+      params:data
+  });
+};
+
+// topic/updateTopic
+// 修改主题维护信息
+export const updateTopicHttp = data => {
+  return request.put(`${window.VUE_APP_URL}/mes/topic/updateTopic`, data);
+};

@@ -114,11 +114,22 @@ export default {
       path: "themeAdd",
       name: "themeAdd",
       meta: {
-        title: "主题维护新"
+        title: "主题维护新增"
       },
       component: () =>
         import(
           /* webpackChunkName: "standingMaintenanceEdit" */ "@/views/maintenance/pages/theme-add.vue"
+        )
+    },
+    {
+      path: "themeEdit",
+      name: "themeEdit",
+      meta: {
+        title: "主题维护修改"
+      },
+      component: () =>
+        import(
+          /* webpackChunkName: "standingMaintenanceEdit" */ "@/views/maintenance/pages/theme-edit.vue"
         )
     },
 
