@@ -128,7 +128,10 @@ export default {
       currentPage: 1,
       showConfig: true,
       selectionList: [],
-      info: {}
+      info: {
+        matGroup:'',
+        mat:'',
+      }
     };
   },
   components:{
