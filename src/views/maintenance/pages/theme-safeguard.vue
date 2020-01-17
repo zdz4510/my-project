@@ -54,18 +54,16 @@
         ref="multipleTable"
         :data="tableData"
         tooltip-effect="dark"
-        style="width: 100%"
-        height="350px"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column type="selection" width="55"> </el-table-column>
-        <el-table-column type="index" label="序号" width="50">
+        <el-table-column type="selection"> </el-table-column>
+        <el-table-column type="index" label="序号">
         </el-table-column>
-        <el-table-column prop="topic" label="主题" width="120">
+        <el-table-column prop="topic" label="主题">
         </el-table-column>
-        <el-table-column prop="topicDes" label="主题描述" width="170">
+        <el-table-column prop="topicDes" label="主题描述">
         </el-table-column>
-        <el-table-column prop="catenation" label="地址连接" width="120">
+        <el-table-column prop="catenation" label="地址连接">
         </el-table-column>
       </el-table>
     </div>
@@ -297,9 +295,6 @@ export default {
 <style lang="scss">
 .topic {
   padding: 0 30px;
-  .operate {
-    padding: 10px 5px;
-  }
   .query {
     height: 40px;
     padding: 10px;
@@ -309,9 +304,18 @@ export default {
       width: 300px;
     }
     .right {
-      width: 680px;
+      width: 380px;
       padding: 5px 30px;
     }
+  }
+  .operate {
+    padding: 10px 5px;
+  }
+  .showInfo{
+    width:100%;
+    // .el-table__header{
+    //   width: 1000px !important;
+    // }
   }
 }
 </style>
