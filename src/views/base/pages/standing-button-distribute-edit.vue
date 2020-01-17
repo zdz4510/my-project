@@ -20,25 +20,25 @@
     >
       <el-form-item label="产线:">
         <el-input
-          v-model="standingBtnDistributeForm.chanxian"
+          v-model="standingBtnDistributeForm.workCenter"
           placeholder="请输入产线"
         ></el-input>
       </el-form-item>
       <el-form-item label="站位:">
         <el-input
-          v-model="standingBtnDistributeForm.chanxian"
+          v-model="standingBtnDistributeForm.workCenterDes"
           placeholder="请输入站位"
         ></el-input>
       </el-form-item>
       <el-form-item label="产线描述:">
         <el-input
-          v-model="standingBtnDistributeForm.chanxian"
+          v-model="standingBtnDistributeForm.station"
           placeholder="请输入产线描述"
         ></el-input>
       </el-form-item>
       <el-form-item label="站位描述:">
         <el-input
-          v-model="standingBtnDistributeForm.chanxian"
+          v-model="standingBtnDistributeForm.stationDes"
           placeholder="请输入站位描述"
         ></el-input>
       </el-form-item>
@@ -108,17 +108,30 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 export default {
   data() {
     return {
       standingBtnDistributeForm: {
-        chanxian: ""
+        station: "",
+        workCenter: "",
+        stationDes: "",
+        workCenterDes: ""
       },
       activeName: "btnDistribute",
       v: "", //穿梭框
       v2: "",
       data: []
     };
+  },
+  computed: {
+    ...mapGetters(["standingBtnDistributeEdit"])
+  },
+  created() {
+    console.log(this.standingBtnDistributeEdit);
+    this.standingBtnDistributeForm = JSON.parse(
+      JSON.stringify(this.standingBtnDistributeEdit)
+    );
   },
   methods: {
     //返回

@@ -138,7 +138,7 @@ export default {
     // this.init();
   },
   methods: {
-    ...mapMutations(["topicLIST"]),
+    ...mapMutations(["themeList"]),
     init() {
       const data = {
         currentPage: this.currentPage,
@@ -148,7 +148,6 @@ export default {
       findTopicPageHttp(data).then(data => {
         const res = data.data;
         if (res.code === 200) {
-          console.log(res,"数据按时长春市")
           this.total = res.data.total;
           this.tableData = res.data.data;
           // this.themeForm.topic = "";
@@ -186,7 +185,10 @@ export default {
     //当前选中行
     handleSelectionChange(val) {
       this.selectionList = val;
-      console.log(this.selectionList);
+      // 将选中的数据获取放到vuex中
+      this.themeList(this.selectionList);
+      // console.log(this.themeList(this.selectionList),"vuex是佛")
+      // console.log(this.selectionList);
     },
     //更改当前页码,再次请求数据
     handleCurrentChange(currentChange) {
@@ -204,12 +206,8 @@ export default {
     },
     handleEdit() {
       console.log(this.selectionList);
-      this.topicLIST(this.selectionList);
-      this.$router.push({
-        // path: "/device/topicEdit",
-        name: "topicEdit",
-        query: { operateType: "edit" }
-      });
+      // this.topicLIST(this.selectionList);
+      this.$router.push({path:'/maintenance/themeEdit'});
     },
     handleDelete() {
       deleteHttp(this.selectionList).then(data => {
