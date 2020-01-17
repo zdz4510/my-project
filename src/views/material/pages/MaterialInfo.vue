@@ -164,8 +164,10 @@ import { mapMutations } from "vuex";
 					this.exportHttp();
 				}
 				if (this.checkedList.length > 0) {
-					const data = this.checkedList;
-					this.exportResult(data);
+					this.checkedList.map(item=>{
+						item.materialStatus = item.materialStatus ? '已启用' : '未启用'
+					})
+					this.exportResult(this.checkedList);
 				}
 			},
 			exportHttp() {
@@ -185,7 +187,6 @@ import { mapMutations } from "vuex";
 					}else{
 						this.$message.error(data.data.message)
 					}
-					
 				})
 			},
 			exportResult(data) {

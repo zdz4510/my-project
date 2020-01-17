@@ -143,7 +143,7 @@ import{
     findShopOrderRequest,
     updateShopOrderRequest,
     saveShopOrderRequest,
-    findFieldRequest,
+    // findFieldRequest,
     deleteRequest
 } from '@/api/work-order/work-order.api.js' 
 export default {
@@ -184,14 +184,14 @@ export default {
   },
   methods:{
     //初始化获取自定义字段
-    getCustom(){
-        const params ={
-          customizedItem:'永恒之歌'
-        }
-        findFieldRequest(params).then(data=>{
-          console.log("初始化自定义字段"+JSON.stringify(data))
-        })
-      },
+    // getCustom(){
+    //     const params ={
+    //       customizedItem:'永恒之歌'
+    //     }
+    //     findFieldRequest(params).then(data=>{
+    //       console.log("初始化自定义字段"+JSON.stringify(data))
+    //     })
+    //   },
     //重置
     reset(){
       //把绑定ruleForm的数据清空
@@ -211,9 +211,9 @@ export default {
             tenantSiteCode:this.tenantSiteCode
         }
         findShopOrderRequest(params).then(data =>{
-          console.log('获取工单所有信息'+JSON.stringify(data))
+          // console.log('获取工单所有信息'+JSON.stringify(data))
             const res = data.data
-            console.log('获取工单'+JSON.stringify(data))
+            // console.log('获取工单'+JSON.stringify(data))
             if(res.code == 200){
                 this.getSearchData = res.data.shopOrder//工单信息
                 this.oldShopOrder = this.getSearchData.shopOrder
@@ -321,7 +321,7 @@ export default {
                 type:'warning'
               })
             }
-            console.log('oldShopOrder和shopOrder相同则调用更新接口'+JSON.stringify(data))
+            // console.log('oldShopOrder和shopOrder相同则调用更新接口'+JSON.stringify(data))
           })
         }else{
           //oldShopOrder和shopOrder不相同则调用新增接口
@@ -339,7 +339,7 @@ export default {
                 type:'warning'
               })
             }
-            console.log('oldShopOrder和shopOrder不同则调用更新接口'+JSON.stringify(data))
+            // console.log('oldShopOrder和shopOrder不同则调用更新接口'+JSON.stringify(data))
           })
         }
       }
@@ -361,9 +361,9 @@ export default {
       const params = {
         shopOrder:this.oldShopOrder
       }
-      console.log(this.oldShopOrder)
+      // console.log(this.oldShopOrder)
       deleteRequest(params).then(data =>{
-        console.log('删除的返回信息'+JSON.stringify(data))
+        // console.log('删除的返回信息'+JSON.stringify(data))
         const res = data.data
         if(res.code == 200){
           this.dialogVisible = false
@@ -385,7 +385,7 @@ export default {
 
   },
   created(){
-    this.getCustom()
+    // this.getCustom()
   }
 };
 </script>
