@@ -98,11 +98,11 @@
       >
       </el-pagination>
     </div>
-    <el-dialog title="删除" :visible.sync="deleteDialog" width="30%">
-      <span>是否确认删除{{ selectionList.length }}条数据？</span>
+    <el-dialog title="删除" :visible.sync="showConfig" width="30%">
+      <tag-print-config />
       <span slot="footer" class="dialog-footer">
-        <el-button @click="deleteDialog = false">取 消</el-button>
-        <el-button type="primary" @click="handleDelete">
+        <el-button @click="showConfig = false">取 消</el-button>
+        <el-button type="primary" >
           确 定
         </el-button>
       </span>
@@ -112,6 +112,7 @@
 
 <script>
 import { searchByLotNo } from "@/api/tag/tag.print.api.js";
+import TagPrintConfig from "./tag-print-config";
 export default {
   data() {
     return {
@@ -125,10 +126,13 @@ export default {
       total: 0,
       pageSize: 10,
       currentPage: 1,
-      deleteDialog: false,
+      showConfig: true,
       selectionList: [],
       info: {}
     };
+  },
+  components:{
+    TagPrintConfig
   },
   methods: {
     //当前选中行
