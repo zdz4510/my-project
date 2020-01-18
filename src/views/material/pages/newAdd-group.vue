@@ -137,23 +137,14 @@ export default {
         handleSelectionChange(rows){
             this.selectedList = rows
         },
-        dealHandler(){
-            if(this.proRow.groupFlag===true){
-                this.ruleForm.style="组"
-            }else{
-                this.ruleForm.style="普通"
-            }
-            this.tableData=this.proRow.podActivities;
-        },
-        //到添加页面
         handleAdd(){
-            this.$router.push({path:'/material/addProConfig'});
+            this.$router.push({path:'/material/newAddGroCon'});
         },
     },
     created(){
-        this.$nextTick(()=>{
-            this.dealHandler();
-        })
+        // this.$nextTick(()=>{
+        //     this.dealHandler();
+        // })
     },
 }
 </script>

@@ -105,12 +105,12 @@ export default {
                     "@/views/material/pages/pro-configuration"
                 )
         },
-        //新增普通按钮(生产操作界面配置)
+        //编辑普通按钮(生产操作界面配置)
         {
             path: "addProConfig",
             name: "addProConfig",
             meta: {
-                title: "新增普通按钮(生产操作界面配置)"
+                title: "编辑普通按钮(生产操作界面配置)"
             },
             component: () =>
                 import (
@@ -118,17 +118,43 @@ export default {
                     "@/views/material/pages/add-pro-config"
                 )
         },
-        //新增按钮组(生产操作界面配置)
+        //编辑按钮组(生产操作界面配置)
         {
             path: "addGroupProCon",
             name: "addGroupProCon",
+            meta: {
+                title: "编辑按钮组(生产操作界面配置)"
+            },
+            component: () =>
+                import (
+                    /* webpackChunkName: "add-group-pro-con" */
+                    "@/views/material/pages/add-group-pro-con"
+                )
+        },
+        //新增普通按钮(生产操作界面配置)
+        {
+            path: "newAddGroCon",
+            name: "newAddGroCon",
+            meta: {
+                title: "新增普通按钮(生产操作界面配置)"
+            },
+            component: () =>
+                import (
+                    /* webpackChunkName: "add-pro-config" */
+                    "@/views/material/pages/newAdd-group-con"
+                )
+        },
+        //新增按钮组(生产操作界面配置)
+        {
+            path: "newAddGroup",
+            name: "newAddGroup",
             meta: {
                 title: "新增按钮组(生产操作界面配置)"
             },
             component: () =>
                 import (
                     /* webpackChunkName: "add-group-pro-con" */
-                    "@/views/material/pages/add-group-pro-con"
+                    "@/views/material/pages/newAdd-group"
                 )
         }
     ]

@@ -440,6 +440,20 @@ export default {
     .right {
       flex: 1;
     }
+    .inputChoice{
+      .input-left{
+        text-align:center;
+        line-height:24px;
+      }
+      .input-right{
+        input{
+          width:100%;
+          text-align:center;
+          height:40px;
+          border:1px #ededed solid;
+        }
+      }
+    }
     .ope {
       display: flex;
       flex-direction: column;

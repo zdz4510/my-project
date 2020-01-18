@@ -5,7 +5,14 @@
                 <el-form label-width="100px" class="typeForm">
                     <el-form-item label="生产操作界面:" label-width="150px">
                         <el-col :span="15">
-                            <el-input  v-model="podConfigName"></el-input>
+                            <!-- <el-input  v-model="podConfigName">
+                                <i
+                                    class="el-icon-document-copy"
+                                    slot="append"
+                                    @click="handleIconClick">
+                                </i>
+                            </el-input> -->
+                            <input v-model="podConfigName" />
                         </el-col>
                         <!-- <el-select v-model="podConfigName" placeholder="请选择" @change="handlePodConfig">
                             <el-option
@@ -18,16 +25,16 @@
                     </el-form-item>
                 </el-form>
             </div>
-            <div class="choiceBox" style="height:41px;display:flex;align-items:center" >
+            <!-- <div class="choiceBox" style="height:41px;display:flex;align-items:center" >
                 <i class="el-icon-document-copy" ></i>
-            </div>
+            </div> -->
         </div>
         <div class="operation">
             <el-button size='small' type='primary' @click="handlePodConfig">查询</el-button>
             <el-button size='small' type='danger' @click="deleteDialog = true">删除</el-button>
             <el-button size='small' type='primary' @click="handleSave">保存</el-button>
             <el-button size='small' type='danger' @click="handleReset">清除</el-button>
-            <el-button size='small' type='primary' >添加</el-button>
+            <el-button size='small' type='primary' @click="handleAdd" >添加</el-button>
             <el-button size='small' type='primary' @click="handleEdit">编辑</el-button>
             <el-button size='small' type="danger" @click="handleMove">移除</el-button>
         </div>
@@ -161,7 +168,14 @@ import {
     deleteRequest,
     addOrModiaRequest
 } from '@/api/pro-configuration/pro-configuration.api.js'
+import { mapMutations,
+mapGetters
+ } from "vuex";
 export default {
+    name:'pro-configuration',
+    computed: {
+        ...mapGetters(["proRow"])
+    },
     data(){
         return{
             dialogVisible:false,//生产操作界面名称弹窗
@@ -283,9 +297,11 @@ export default {
         }
     },
     methods:{
+        ...mapMutations(["PROROW"]),
         handleSelectionChange(rows){
-            this.selectedList = rows
-            console.log('勾选'+JSON.stringify(this.selectedList))
+            this.selectedList = rows;
+            this.PROROW(this.selectedList[0])
+            // console.log('勾选',this.selectedList[0].groupFlag);
         },
         //查询生产面板名称下拉列表
         getProConfigName(){
@@ -299,10 +315,8 @@ export default {
         //通过名称查询一条生产界面信息
         handlePodConfig(){
             const params = this.podConfigName
-
             podConfigRequest(params).then(data =>{
                 const res = data.data 
-                // console.log('通过名称查询一条生产界面信息'+JSON.stringify(res))
                 if(res.code == 200){
                     this.ruleForm = res.data
                     
@@ -379,6 +393,10 @@ export default {
             this.ruleForm = this.emptyData
             this.podConfigName = ''
         },
+        // 跳转新增界面
+        handleAdd(){
+            this.$router.push({path:'/material/newAddGroup'});
+        },
         //保存操作
         handleSave(){
             if(this.ruleForm.podButtons[0].buttionDesc == ''){
@@ -404,7 +422,9 @@ export default {
         },
         //编辑
         handleEdit(){
-
+            if(this.selectedList.length===1){
+                this.$router.push({path:'/material/addGroupProCon'});
+            }
         }
     },
     created(){
