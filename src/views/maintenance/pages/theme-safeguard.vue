@@ -40,8 +40,7 @@
       <el-button
         size="small"
         type="primary"
-        :disabled="selectionList.length <= 0"
-        @click="deleteDialog = true"
+        :disabled="true"
       >
         保存
       </el-button>
@@ -80,22 +79,10 @@
       >
       </el-pagination>
     </div>
-    <el-dialog title="删除" :visible.sync="deleteDialog" width="30%">
-      <span>是否确认删除{{ selectionList.length }}条数据？</span>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="deleteDialog = false">取 消</el-button>
-        <el-button type="primary" @click="handleDelete">
-          确 定
-        </el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 
 <script>
-import { 
-    // findPageHttp, 
-deleteHttp } from "@/api/material/material.group.api.js";
 
 import { findTopicPageHttp } from "@/api/theme/theme.api.js";
 import { mapMutations } from "vuex";
@@ -131,7 +118,6 @@ export default {
       currentPage: 1,
       pagesize: 10,
       total: 0,
-      deleteDialog: false
     };
   },
   created() {
@@ -208,26 +194,6 @@ export default {
       console.log(this.selectionList);
       // this.topicLIST(this.selectionList);
       this.$router.push({path:'/maintenance/themeEdit'});
-    },
-    handleDelete() {
-      deleteHttp(this.selectionList).then(data => {
-        const res = data.data;
-        console.log(res);
-        if (res.code === 200) {
-          this.$message({
-            message: res.message,
-            type: "success"
-          });
-          this.deleteDialog = false;
-          this.init();
-          return;
-        }
-        this.deleteDialog = false;
-        this.$message({
-          message: res.message,
-          type: "warning"
-        });
-      });
     },
     handleQuery() {
       this.init();

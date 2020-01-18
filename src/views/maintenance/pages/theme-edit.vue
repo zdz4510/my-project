@@ -68,49 +68,57 @@
                   <el-table-column type="selection" width="55" />
                   <el-table-column prop="workCenterRelation" label="产线">
                     <template slot="header">
-                        <span>产线</span>
-                        <el-select v-model="list.workCenterRelation" @change="changeWork"  placeholder="请选择">
-                            <el-option
-                                v-for="(item,index) in workCenterRelationList"
-                                :key="index"
-                                :label="item"
-                                :value="item">
-                            </el-option>
-                        </el-select>
+                      <div class="inputChoice">
+                        <div class="input-left">产线</div>
+                        <div class="input-right">
+                          <input
+                            v-model="v"
+                            class="input"
+                            v-on:input="changeWork"
+                            placeholder="请输入产线"
+                          />
+                        </div>
+                      </div>
                     </template>
                   </el-table-column>
                   <el-table-column prop="station" label="站位">
                     <template slot="header">
-                        <span>站位</span>
-                        <el-select v-model="list.station" @change="changeStation" placeholder="请选择">
-                            <el-option
-                                v-for="(item,index) in stationList"
-                                :key="index"
-                                :label="item"
-                                :value="item">
-                            </el-option>
-                        </el-select>
+                      <div class="inputChoice">
+                        <div class="input-left">站位</div>
+                        <div class="input-right">
+                          <input
+                            v-model="v1"
+                            class="input"
+                            v-on:input="changeStation"
+                            placeholder="请输入站位"
+                          />
+                        </div>
+                      </div>
                     </template>
                   </el-table-column>
                   <el-table-column prop="stationDes" label="站位描述">
                     <template slot="header">
-                        <span>站位描述</span>
-                        <el-select v-model="list.stationDes" @change="changeStationDes" placeholder="请选择">
-                            <el-option
-                                v-for="(item,index) in stationDesList"
-                                :key="index"
-                                :label="item"
-                                :value="item">
-                            </el-option>
-                        </el-select>
+                      <div class="inputChoice">
+                        <div class="input-left">站位描述</div>
+                        <div class="input-right">
+                          <input
+                            v-model="v2"
+                            class="input"
+                            v-on:input="changeStationDes"
+                            placeholder="请输入站位描述"
+                          />
+                        </div>
+                      </div>
                     </template>
                   </el-table-column>
                 </el-table>
               </div>
               <div class="ope">
-                <el-button type="primary" 
-                  icon="el-icon-arrow-left" 
-                  @click.native="toLeft">
+                <el-button
+                  type="primary"
+                  icon="el-icon-arrow-left"
+                  @click.native="toLeft"
+                >
                 </el-button>
                 <el-button
                   type="primary"
@@ -129,41 +137,49 @@
                   <el-table-column type="selection" width="55" />
                   <el-table-column prop="workCenterRelation" label="产线">
                     <template slot="header">
-                        <span>产线</span>
-                        <el-select v-model="list2.workCenterRelation" @change="changeWork2"  placeholder="请选择">
-                            <el-option
-                                v-for="(item,index) in workCenterRelationList2"
-                                :key="index"
-                                :label="item"
-                                :value="item">
-                            </el-option>
-                        </el-select>
+                      <div class="inputChoice">
+                        <div class="input-left">产线</div>
+                        <div class="input-right">
+                          <input
+                            v-model="w"
+                            class="input"
+                            v-on:input="changeWork"
+                            placeholder="请输入产线"
+                          />
+                        </div>
+                      </div>
                     </template>
                   </el-table-column>
                   <el-table-column prop="station" label="站位">
                     <template slot="header">
-                        <span>站位</span>
-                        <el-select v-model="list.station" @change="changeStation2" placeholder="请选择">
-                            <el-option
-                                v-for="(item,index) in stationList2"
-                                :key="index"
-                                :label="item"
-                                :value="item">
-                            </el-option>
-                        </el-select>
+                      <div class="inputChoice">
+                        <div class="input-left">站位</div>
+                        <div class="input-right">
+                          <input
+                            v-model="w1"
+                            class="input"
+                            v-on:input="changeStation"
+                            placeholder="请输入站位"
+                          />
+                        </div>
+                      </div>
                     </template>
                   </el-table-column>
                   <el-table-column prop="stationDes" label="站位描述">
                     <template slot="header">
-                        <span>站位描述</span>
-                        <el-select v-model="list.stationDes" @change="changeStationDes2" placeholder="请选择">
-                            <el-option
-                                v-for="(item,index) in stationDesList2"
-                                :key="index"
-                                :label="item"
-                                :value="item">
-                            </el-option>
-                        </el-select>
+                      <template slot="header">
+                      <div class="inputChoice">
+                        <div class="input-left">站位描述</div>
+                        <div class="input-right">
+                          <input
+                            v-model="w2"
+                            class="input"
+                            v-on:input="changeStationDes"
+                            placeholder="请输入站位描述"
+                          />
+                        </div>
+                      </div>
+                    </template>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -179,17 +195,21 @@
 <script>
 import { findStationListHttp,updateTopicHttp } from "@/api/theme/theme.api.js";
 import { mapGetters, mapMutations } from "vuex";
+import _ from "lodash";
 export default {
   data() {
     return {
       list: [],
       list2:[],
-      workCenterRelationList:[],
-      stationList:[],
-      stationDesList:[],
-      workCenterRelationList2:[],
-      stationList2:[],
-      stationDesList2:[],
+      allList:{},
+      // 左侧未分配数据
+      v:'',
+      v1:'',
+      v2:'',
+      // 右侧已分配数据
+      w:'',
+      w1:'',
+      w2:'',
       themeForm: {
         //主题描述
         topicDes: "",
@@ -227,11 +247,9 @@ export default {
       this.themeForm=this.themeListGet[0];
   },
   mounted() {
-    this.init();
   },
   methods: {
     ...mapMutations(["themeList"]),
-    init() {},
     // handleChangeRadio(val) {
     //   this.themeForm.resourceStatus = val;
     //   console.log(val);
@@ -245,8 +263,12 @@ export default {
         if (res.code === 200) {
           this.list2=res.data.currentAllotStations
           this.list = res.data.unAllotStations;
-          this.mesHanadler();
-          // this.themeForm.topic = "";
+          let obj={
+            currentAllotStations: this.list2,
+            unAllotStations: this.list
+          }
+          // 深拷贝查询出来的表格数据
+          this.allList= _.cloneDeep(obj)
           return;
         }
         this.$message({
@@ -255,103 +277,53 @@ export default {
         });
       });
     },
-    // 数据处理
-    mesHanadler(){
-      let arr= [];
-      let arr2=[];
-      let arr3=[];
-      let arr4=[];
-      let arr5=[];
-      let arr6=[];
-      if(this.list.length>0){
-        this.list.forEach(item=>{
-          arr.push(item.workCenterRelation);
-          arr2.push(item.station);
-          arr3.push(item.stationDes);
-        })
-        this.workCenterRelationList=arr
-        this.stationList=arr2;
-        this.stationDesList=arr3;
-      }
-      if(this.list.length>0){
-        this.list2.forEach(item=>{
-          arr4.push(item.workCenterRelation);
-          arr5.push(item.station);
-          arr6.push(item.stationDes);
-        })
-        this.workCenterRelationList2=arr4
-        this.stationList2=arr5;
-        this.stationDesList2=arr6;
-      }
-      else{
-        return
-      }
+    changeWork() {
+      let arr = this.list.filter(item => {
+        if(item.workCenterRelation.indexOf(this.v)>=0){
+          return  item.workCenterRelation;
+        }
+      });
+      this.list=arr;
     },
-    changeWork(val){
-      let arr=this.list.filter(item=>{
-        return val===item.workCenterRelation
-      })
-      this.list = arr;
-      this.list.workCenterRelation=val;
-      // 下拉框默认显示第一条数据的内容
-      this.list.station=arr[0].station;
-      this.list.stationDes=arr[0].stationDes;
-      this.mesHanadler();
+    changeWork2() {
+      let arr = this.list2.filter(item => {
+        if(item.workCenterRelation.indexOf(this.w)>=0){
+          return  item.workCenterRelation;
+        }
+      });
+      this.list2=arr;
     },
-    changeWork2(val){
-      let arr=this.list2.filter(item=>{
-        return val===item.workCenterRelation
-      })
-      this.list2 = arr;
-      this.list2.workCenterRelation=val;
-      // 下拉框默认显示第一条数据的内容
-      this.list2.station=arr[0].station;
-      this.list2.stationDes=arr[0].stationDes;
-      this.mesHanadler();
+    changeStation() {
+      let arr = this.list.filter(item => {
+        if(item.station.indexOf(this.v1)>=0){
+          return  item.station;
+        }
+      });
+      this.list=arr;
     },
-    changeStation(val){
-      let arr=this.list.filter(item=>{
-        return val===item.station
-      })
-      this.list = arr;
-      this.list.station=val;
-      // 下拉框默认显示第一条数据的内容
-      this.list.workCenterRelation=arr[0].workCenterRelation;
-      this.list.stationDes=arr[0].stationDes;
-      this.mesHanadler();
+    changeStation2() {
+      let arr = this.list2.filter(item => {
+        if(item.station.indexOf(this.w1)>=0){
+          return  item.station;
+        }
+      });
+      this.list2=arr;
     },
-    changeStation2(val){
-      let arr=this.list2.filter(item=>{
-        return val===item.station
-      })
-      this.list2 = arr;
-      this.list2.station=val;
-      // 下拉框默认显示第一条数据的内容
-      this.list2.workCenterRelation=arr[0].workCenterRelation;
-      this.list2.stationDes=arr[0].stationDes;
-      this.mesHanadler();
+    changeStationDes() {
+      let arr = this.list.filter(item => {
+        if(item.stationDes.indexOf(this.v2)>=0){
+          return  item.stationDes;
+        }
+      });
+      this.list=arr;
     },
-    changeStationDes(val){
-      let arr=this.list.filter(item=>{
-        return val===item.stationDes
-      })
-      this.list = arr;
-      this.list.stationDes=val;
-      // 下拉框默认显示第一条数据的内容
-      this.list.workCenterRelation=arr[0].workCenterRelation;
-      this.list.station=arr[0].station;
-      this.mesHanadler();
-    },
-    changeStationDes2(val){
-      let arr=this.list2.filter(item=>{
-        return val===item.stationDes
-      })
-      this.list2 = arr;
-      this.list2.stationDes=val;
-      // 下拉框默认显示第一条数据的内容
-      this.list2.workCenterRelation=arr[0].workCenterRelation;
-      this.list2.station=arr[0].station;
-      this.mesHanadler();
+    changeStationDes2() {
+      let arr = this.list2.filter(item => {
+        if(item.stationDes.indexOf(this.w2)>=0){
+          return  item.stationDes;
+        }
+      });
+      this.list2=arr;
     },
     handleReset() {
       this.themeForm={}
