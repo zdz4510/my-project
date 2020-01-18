@@ -122,6 +122,9 @@ const routes = [
       {
         path: "unpack",
         name: "unpack",
+        meta: {
+          title: "包装解包配置"
+        },
         component: () =>
           import(
             /* webpackChunkName: "dc-collection" */
@@ -134,6 +137,9 @@ const routes = [
       {
         path: "unpackEdit",
         name: "unpackEdit",
+        meta: {
+          title: "包装解包配置编辑"
+        },
         component: () =>
           import(
             /* webpackChunkName: "unpack-edit" */
