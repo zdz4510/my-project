@@ -8,7 +8,7 @@
 							<el-input v-model="undealSearchForm.sequence"></el-input>
 						</el-form-item>
 						<el-form-item label="触发时间:" prop="triggeringTime">
-							<el-date-picker v-model="undealSearchForm.triggeringTime" type="date" placeholder="选择日期"></el-date-picker>
+							<el-date-picker v-model="undealSearchForm.triggeringTime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd"></el-date-picker>
 						</el-form-item>
 						<el-form-item label="事件编号:" prop="alarm">
 							<el-input v-model="undealSearchForm.alarm"></el-input>
@@ -81,7 +81,7 @@
 							<el-input v-model="dealSearchForm.sequence"></el-input>
 						</el-form-item>
 						<el-form-item label="触发时间:" prop="triggeringTime">
-							<el-date-picker v-model="dealSearchForm.triggeringTime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd hh:mm:ss"></el-date-picker>
+							<el-date-picker v-model="dealSearchForm.triggeringTime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd"></el-date-picker>
 						</el-form-item>
 						<el-form-item label="事件编号:" prop="alarm">
 							<el-input v-model="dealSearchForm.alarm"></el-input>

@@ -124,12 +124,12 @@ import { mapMutations } from "vuex";
 						arr.push(item.ncCode)
 					})
 					deleteNcCode(arr).then(data=>{
-						console.log(data,'adddata')
-						this.$message({
-							type: 'success',
-							message: '删除成功!'
-						});
 						this.search()
+						if(data.data.code == 200){
+							this.$message.success('删除成功')
+							this.search()
+							this.$refs.multipleTable.clearSelection()
+						}
 					})
           
         }).catch(() => {
