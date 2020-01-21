@@ -137,11 +137,11 @@
 											</el-select>
 										</el-form-item>
 									</el-col>
-									<el-col :span="8">
+									<!-- <el-col :span="8">
 										<el-form-item label="创建人/修改人:" prop="modified_user_id">
 											<el-input v-model="addForm.modified_user_id" disabled></el-input>
 										</el-form-item>
-									</el-col>
+									</el-col> -->
 								</el-row>
 							</el-tab-pane>
 							<el-tab-pane label="基础属性配置" name="second">

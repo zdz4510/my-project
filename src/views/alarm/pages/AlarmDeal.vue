@@ -8,7 +8,7 @@
 							<el-input v-model="undealSearchForm.sequence"></el-input>
 						</el-form-item>
 						<el-form-item label="触发时间:" prop="triggeringTime">
-							<el-date-picker v-model="undealSearchForm.triggeringTime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd"></el-date-picker>
+							<el-date-picker v-model="undealSearchForm.triggeringTime" type="datetime" placeholder="选择日期" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
 						</el-form-item>
 						<el-form-item label="事件编号:" prop="alarm">
 							<el-input v-model="undealSearchForm.alarm"></el-input>
@@ -81,7 +81,7 @@
 							<el-input v-model="dealSearchForm.sequence"></el-input>
 						</el-form-item>
 						<el-form-item label="触发时间:" prop="triggeringTime">
-							<el-date-picker v-model="dealSearchForm.triggeringTime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd"></el-date-picker>
+							<el-date-picker v-model="dealSearchForm.triggeringTime" type="datetime" placeholder="选择日期" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
 						</el-form-item>
 						<el-form-item label="事件编号:" prop="alarm">
 							<el-input v-model="dealSearchForm.alarm"></el-input>
@@ -214,6 +214,16 @@ import { exportExcel } from "@/until/excel.js";
 	export default {
 		name:'alarm-deal',
 		data() {
+			var numCheck = (rule, value, callback) => {
+				var reg = /^(0|\+?[1-9][0-9]*)$/
+				if(!value){
+					callback()
+				}
+				if (!reg.test(value)) {
+					return callback(new Error('只能输入正整数和0'));
+				}
+				callback()
+			};
 			return {
 				tHeader:['触发序号','容器','LOT','设备编号','工单','事件编号','事件等级','确认标记','工作中心','产线','工序站位','当前工序','多次触发次数'],
 				filterVal:['sequence','mainNumber','lot','resource','shopOrder','alarm','alarmLevel','ackFlag','workCenter','workCenterRelation','station','operation','involeNumber'],
@@ -230,7 +240,11 @@ import { exportExcel } from "@/until/excel.js";
 					resource: '',
 					alarm: '',
 				},
-				rules:{},
+				rules:{
+					sequence: [
+						{ required:false, validator: numCheck, trigger: 'blur' }
+					],
+				},
 				tableData: {
 					data:[],
 					page:{
@@ -278,24 +292,32 @@ import { exportExcel } from "@/until/excel.js";
 			}
 		},
 		created(){
-			this.search()
+			this.$nextTick(()=>this.search())
+			// this.search()
 			this.searchUndeal()
 			this.searchDeal()
 		},
 		methods: {
 			search(){
-				let params = this.searchForm
-				params.pageSize = this.tableData.page.pageSize
-				params.currentPage = this.tableData.page.currentPage
-				getSequenceList(params).then(data => {
-					if(data.data.code == 200){
-						this.tableData.data = data.data.data.data
-						this.tableData.page.total = data.data.data.total
-					}else{
-						this.$message.error(data.data.message)
+				this.$refs.searchForm.validate((valid) => {
+					if (valid) {
+						let params = this.searchForm
+						params.pageSize = this.tableData.page.pageSize
+						params.currentPage = this.tableData.page.currentPage
+						getSequenceList(params).then(data => {
+							if(data.data.code == 200){
+								this.tableData.data = data.data.data.data
+								this.tableData.page.total = data.data.data.total
+							}else{
+								this.$message.error(data.data.message)
+							}
+							
+						})
+					} else {
+						console.log('error submit!!');
+						return false;
 					}
-					
-				})
+				});
 			},
 			handleSizeChange(pageSize){
 				this.tableData.page.pageSize = pageSize

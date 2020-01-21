@@ -2,7 +2,7 @@
 	<div>
 		<div class="operate mtb10">
 			<el-button class="mr25 ml30 pad1025" size="small" type="primary" @click="search">查询</el-button>
-			<el-button class="mr25 pad1025" size="small" type="primary" @click="add('addForm')">编辑</el-button>
+			<el-button class="mr25 pad1025" size="small" type="primary" @click="add('addForm')">保存</el-button>
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="resetForm('addForm')">重置</el-button>
 		</div>
 		<div class="addForm">
@@ -169,8 +169,8 @@
         paramsDialogVisible:false,
         dialogVisible:false,
 				rules: {
-					customize: [
-            { required: true, message: '请填写自定义项目名称', trigger: 'blur' }
+					customizedItem: [
+            { required: true, message: '请填写自定义项目名称', trigger: 'change' }
           ],
         },
         srules:{
@@ -348,17 +348,31 @@
       onChange(){
         this.addSetForm.targetValue = ''
       },
-      add(){
-        let params = this.addForm
-        params.type = 'add'
-        params.customizedFieldDefInfoList = this.SetupInfoList
-        saveData(params).then(data=>{
-          if(data.data.code == 200){
-            this.$message.success('保存成功')
-          }else{
-            this.$message.error(data.data.message)
-          }
-        })
+      add(formName){
+        this.$refs[formName].validate((valid) => {
+					if (valid) {
+						let params = this.addForm
+            params.type = 'add'
+            params.customizedFieldDefInfoList = this.SetupInfoList
+            if(this.SetupInfoList.length>0){
+              saveData(params).then(data=>{
+                if(data.data.code == 200){
+                  this.$message.success('保存成功')
+                  this.resetForm('addForm')
+                  this.SetupInfoList = []
+                }else{
+                  this.$message.error(data.data.message)
+                }
+              })
+            }else{
+              this.$message.error('自定义字段数据为空，请先添加数据')
+            }
+            
+					} else {
+						console.log('error submit!!');
+						return false;
+					}
+        });
       },
       edit(){
        
