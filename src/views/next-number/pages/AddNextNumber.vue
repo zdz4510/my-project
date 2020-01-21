@@ -6,9 +6,9 @@
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="resetForm('addForm')">重置</el-button>
 		</div>
 		<div class="addForm">
-			<el-form :model="addForm" :inline="true" ref="addForm" :label-width="formLabelWidth">
+			<el-form :model="addForm" :inline="true" ref="addForm" :label-width="formLabelWidth" :rules="rules">
 				<el-form-item label="规则类型:" prop="sequenceType" required>
-					<el-select v-model="addForm.sequenceType" placeholder="请选择">
+					<el-select v-model="addForm.sequenceType" placeholder="请选择" @change=onChange>
 						<el-option
 							v-for="item in ruleTypes"
 							:key="item.value"
@@ -44,7 +44,7 @@
 							<el-date-picker
 								v-model="addForm.dateTimeFormat"
 								type="datetime"
-								value-format="yyyy-MM-dd hh:mm:ss"
+								value-format="yyyy-MM-dd HH:mm:ss"
 								placeholder="选择日期时间">
 							</el-date-picker>
 						</el-form-item>
@@ -113,11 +113,21 @@
 	export default {
 		name:'add-next-number',
 		data() {
+			var fiexedStringRequired = (rule, value, callback) => {
+				var reg = /^[0-9a-zA-Z_/-]{1,}$/
+				if(!value || value.length > 30){
+					return callback(new Error('只能填写数字，字母，-，_,/;30个字符以内'));
+				}
+				if (!reg.test(value)) {
+					return callback(new Error('只能填写数字，字母，-，_,/;30个字符以内'));
+				}
+				callback()
+			};
 			return {
 				formLabelWidth:'120px',
 				rules: {
-					operation:[
-						{ required:true,message:'请填写工序名称', trigger: 'blur' }
+					fixedString:[
+						{ required:true,validator: fiexedStringRequired, trigger: 'change' }
 					],
 					status:[
 						{ required:true,message:'请选择状态', trigger: 'change' }
@@ -214,8 +224,10 @@
 			save(formName){
 				this.$refs[formName].validate((valid) => {
 					if (valid) {
+						let searchForm = JSON.parse(sessionStorage.getItem('searchForm'))
+						let obj = {...this.addForm,...searchForm}
 						let params = {
-							createList:[this.addForm],
+							createList:[obj],
 							updateList:[],
 							deleteList:[]
 						}
@@ -238,7 +250,21 @@
 					}
 				});
 			},
-
+			onChange(val){
+				this.addForm = {}
+				this.addForm.sequenceType = val
+				console.log(this.addForm,'sea')
+			}
+		},
+		computed : {
+			fixedString:{
+				get: function(){
+					return this.addForm.fixedString;
+				},
+				set : function(val){
+					this.addForm.fixedString = val.toUpperCase();
+				}
+			}
 		}
 	}
 </script>

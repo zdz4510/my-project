@@ -25,7 +25,7 @@
 				<div>
 					<el-form :model="editForm" :inline="true" ref="editForm" :label-width="formLabelWidth">
 						<el-form-item label="规则类型:" prop="sequenceType" required>
-							<el-select v-model="editForm.sequenceType" placeholder="请选择">
+							<el-select v-model="editForm.sequenceType" placeholder="请选择" @change=onChange>
 								<el-option
 									v-for="item in ruleTypes"
 									:key="item.value"
@@ -61,7 +61,7 @@
 									<el-date-picker
 										v-model="editForm.dateTimeFormat"
 										type="datetime"
-										value-format="yyyy-MM-dd hh:mm:ss"
+										value-format="yyyy-MM-dd HH:mm:ss"
 										placeholder="选择日期时间">
 									</el-date-picker>
 								</el-form-item>
@@ -324,7 +324,6 @@ export default {
     handleSave(formName) {
 			this.$refs[formName].validate((valid) => {
 				if (valid) {
-				
 					let params = {}
 					params.createList = []
 					params.deleteList = []
@@ -334,9 +333,7 @@ export default {
 						material:this.editForm.material,
 						materialRev:this.editForm.materialRev,
 						commitType:this.editForm.commitType,
-						sequences:{
-							data:[this.editForm]
-						}
+						sequences:[this.editForm]
 					}]
 
 					saveNextNumber(params).then(data => {
@@ -385,7 +382,10 @@ export default {
 				}
 			});
     },
-    
+    onChange(val){
+			this.editForm = {}
+			this.editForm.sequenceType = val
+		}
   }
 };
 </script>
