@@ -96,33 +96,33 @@
 									<el-col :span="24">
 										<el-row>
 											<el-col :span="8">
-												<el-table :data="allocateUser.filter(data => !workCenter1 || data.workCenter.toLowerCase().includes(workCenter1.toLowerCase()))" @select="check1" @select-all="check1">
+												<el-table :data="allocateUser.filter(data => !name1 || data.name.toLowerCase().includes(name1.toLowerCase()))" @select="checkUser1" @select-all="checkUser1">
 													<el-table-column label="用户:">
 														<el-table-column type="selection" width="55"></el-table-column>
-														<el-table-column prop="workCenterRelation" label="已分配用户"></el-table-column>
+														<el-table-column prop="name" label="已分配用户"></el-table-column>
 													</el-table-column>
 													<el-table-column label="">
 														<template slot="header">
-															<el-input v-model="workCenter1" placeholder="输入用户搜索"/></template>
-														<el-table-column prop="workCenterDes" label="用户描述"></el-table-column>
+															<el-input v-model="name1" placeholder="输入用户搜索"/></template>
+														<el-table-column prop="desc" label="用户描述"></el-table-column>
 													</el-table-column>
 												</el-table>
 											</el-col>
 											<el-col :span="2">
-												<div class="direction mt70"><i class="el-icon-caret-right" @click="right"></i></div>
-												<div class="direction"><i class="el-icon-caret-left" @click="left"></i></div>
+												<div class="direction mt70"><i class="el-icon-caret-right" @click="rightUser"></i></div>
+												<div class="direction"><i class="el-icon-caret-left" @click="leftUser"></i></div>
 											</el-col>
 											<el-col :span="8">
-												<el-table :data="unallocateUser.filter(data => !workCenter2 || data.workCenter.toLowerCase().includes(workCenter2.toLowerCase()))" @select="check2" @select-all="check2">
+												<el-table :data="unallocateUser.filter(data => !name2 || data.name.toLowerCase().includes(name2.toLowerCase()))" @select="checkUser2" @select-all="checkUser2">
 													<el-table-column label="用户:">
 														<el-table-column type="selection" width="55"></el-table-column>
-														<el-table-column prop="workCenter" label="未分配用户"></el-table-column>
+														<el-table-column prop="name" label="未分配用户"></el-table-column>
 													</el-table-column>
 													<el-table-column label="">
 														<template slot="header">
-															<el-input v-model="workCenter2" placeholder="输入用户搜索" />
+															<el-input v-model="name2" placeholder="输入用户搜索" />
 														</template>
-														<el-table-column prop="workCenterDes" label="用户描述"></el-table-column>
+														<el-table-column prop="desc" label="用户描述"></el-table-column>
 													</el-table-column>
 												</el-table>
 											</el-col>
@@ -139,7 +139,7 @@
 </template>
 
 <script>
-	import {getAllList, saveWorkCenter} from '../../../api/work.center.api'
+	import {getAllList, saveWorkCenter, getUserList} from '../../../api/work.center.api'
 	import _ from 'lodash';
 	export default {
 		name:'add-work-center',
@@ -149,6 +149,8 @@
 				formLabelWidth:'150px',
 				workCenter1:'',
 				workCenter2:'',
+				name1:'',
+				name2:'',
 				rules: {
 					workCenter: [
 						{ required:true,message:'请填写工作中心名称', trigger: 'blur' }
@@ -173,6 +175,8 @@
 				},
 				selectedList:[],
 				selectedList2:[],
+				selectedListUser:[],
+				selectedListUser2:[],
 				allocateData:[],
 				unallocateData:[],
 				allocateUser:[],
@@ -193,11 +197,24 @@
 				}],
 				cloneUnallocateData:[],
 				cloneAllocateData:[],
+				cloneUnallocateUser:[],
+				cloneAllocateUser:[],
 			}
 		},
 		created(){
 			getAllList({workCenter:''}).then(data=>{
-				this.unallocateData = data.data.data
+				if(data.data.code == 200){
+					this.unallocateData = data.data.data
+				}else{
+					this.$message.error(data.data.message)
+				}
+			})
+			getUserList().then(data=>{
+				if(data.data.code == 200){
+					this.unallocateUser = data.data.data
+				}else{
+					this.$message.error(data.data.message)
+				}
 			})
 		},
 		methods: {
@@ -215,7 +232,8 @@
 								workCenterType: this.addForm.workCenterType,
 								workCenterDes:this.addForm.workCenterDes,
 								workCenter:this.addForm.workCenter,
-								workCenterRelation: arr
+								workCenterRelation: arr,
+								userList: this.allocateUser
 							}]
 						}
 						console.log(params,'ppp')
@@ -237,6 +255,7 @@
 			resetForm(formName) {
 				this.$refs[formName].resetFields();
 				this.allocateData = []
+				this.allocateUser = []
 			},
 			goBack() {
 				this.$router.push({path:'/workCenter/workCenter'})
@@ -246,6 +265,12 @@
 			},
 			check2(val){
 				this.selectedList2 = val
+			},
+			checkUser1(val){
+				this.selectedListUser = val
+			},
+			checkUser2(val){
+				this.selectedListUser2 = val
 			},
 			right(){
 				this.unallocateData = _.concat(this.unallocateData,this.selectedList)
@@ -261,55 +286,20 @@
 				console.log(this.unallocateData,'all')
 				this.cloneAllocateData = _.cloneDeep(this.allocateData)
 			},
-			getUnallocate(){
-				console.log('ss')
-				if(this.select2){
-					this.unallocateData =this.cloneUnallocateData
-					this.unallocateData = this.unallocateData.filter(item=>{
-						if(this.input2){
-							return item.userType == this.select2 && item.informUserId.indexOf(this.input2) > -1
-						}else{
-							return item.userType == this.select2
-						}
-					})
-				}else{
-					this.unallocateData =this.cloneUnallocateData
-					this.unallocateData = this.unallocateData.filter(item=>{
-						if(this.input2.length>0){
-							return item.informUserId.indexOf(this.input2) > -1
-						}else{
-							return true
-						}
-					})
-				}
+			rightUser(){
+				this.unallocateUser = _.concat(this.unallocateUser,this.selectedListUser)
+				this.unallocateUser = _.uniq(this.unallocateUser)
+				this.allocateUser = _.difference(this.allocateUser,this.selectedListUser)
+				console.log(this.unallocateUser,'unuser')
+				this.cloneAllocateData = _.cloneDeep(this.allocateUser)
 			},
-			getAllocate(){
-				console.log('ds')
-				if(this.select1){
-					this.allocateData =this.cloneAllocateData
-					this.allocateData = this.allocateData.filter(item=>{
-						if(this.input1){
-							return item.userType == this.select1 && item.informUserId.indexOf(this.input1) > -1
-						}else{
-							return item.userType == this.select1
-						}
-					})
-				}else{
-					console.log(this.cloneAllocateData,'d')
-					this.allocateData =this.cloneAllocateData
-					this.allocateData = this.allocateData.filter(item=>{
-						if(this.input1.length>0){
-							return item.informUserId.indexOf(this.input1) > -1
-						}else{
-							return true
-						}
-					})
-				}
+			leftUser(){
+				this.allocateUser = _.concat(this.allocateUser,this.selectedListUser2)
+				this.allocateUser = _.uniq(this.allocateUser)
+				this.unallocateUser = _.difference(this.unallocateUser,this.selectedListUser2)
+				console.log(this.unallocateUser,'allUser')
+				this.cloneAllocateData = _.cloneDeep(this.allocateUser)
 			},
-			searchUnallocate(val){
-				console.log(val,this.workCenter2,'dd')
-
-			}
 		}
 	}
 </script>

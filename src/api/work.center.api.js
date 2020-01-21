@@ -55,3 +55,14 @@ export const deleteWorkCenter = data => {
 export const getRelationData = data => {
   return request.post(`${window.VUE_APP_URL}/mes/workCenter/getRelation?workCenter=${data.workCenter}`);
 };
+/**
+ * 获取所有用户
+ * url /mes/workCenter/findAllUser
+ */
+export const getUserList = () => {
+  return request.post(`${window.VUE_APP_URL}/mes/workCenter/findAllUser`);
+};
+
+
+
+

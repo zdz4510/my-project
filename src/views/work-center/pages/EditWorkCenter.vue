@@ -100,38 +100,38 @@
 									</el-col>
 								</el-row>
 							</el-tab-pane>
-							<el-tab-pane label="用户" name="third">
-                <el-row>
+							<el-tab-pane label="用户" name="three">
+								<el-row>
 									<el-col :span="24">
 										<el-row>
 											<el-col :span="8">
-												<el-table :data="allocateUser.filter(data => !workCenter1 || data.workCenter.toLowerCase().includes(workCenter1.toLowerCase()))" @select="check1" @select-all="check1">
-													<el-table-column label="工作中心:">
+												<el-table :data="allocateUser.filter(data => !name1 || data.name.toLowerCase().includes(name1.toLowerCase()))" @select="checkUser1" @select-all="checkUser1">
+													<el-table-column label="用户:">
 														<el-table-column type="selection" width="55"></el-table-column>
-														<el-table-column prop="workCenterRelation" label="已分配工作中心"></el-table-column>
+														<el-table-column prop="name" label="已分配用户"></el-table-column>
 													</el-table-column>
 													<el-table-column label="">
 														<template slot="header">
-															<el-input v-model="workCenter1" placeholder="输入工作中心搜索"/></template>
-														<el-table-column prop="workCenterDes" label="工作中心描述"></el-table-column>
+															<el-input v-model="name1" placeholder="输入用户搜索"/></template>
+														<el-table-column prop="desc" label="用户描述"></el-table-column>
 													</el-table-column>
 												</el-table>
 											</el-col>
 											<el-col :span="2">
-												<div class="direction mt70"><i class="el-icon-caret-right" @click="right"></i></div>
-												<div class="direction"><i class="el-icon-caret-left" @click="left"></i></div>
+												<div class="direction mt70"><i class="el-icon-caret-right" @click="rightUser"></i></div>
+												<div class="direction"><i class="el-icon-caret-left" @click="leftUser"></i></div>
 											</el-col>
 											<el-col :span="8">
-												<el-table :data="unallocateUser.filter(data => !workCenter2 || data.workCenter.toLowerCase().includes(workCenter2.toLowerCase()))" @select="check2" @select-all="check2">
-													<el-table-column label="工作中心:">
+												<el-table :data="unallocateUser.filter(data => !name2 || data.name.toLowerCase().includes(name2.toLowerCase()))" @select="checkUser2" @select-all="checkUser2">
+													<el-table-column label="用户:">
 														<el-table-column type="selection" width="55"></el-table-column>
-														<el-table-column prop="workCenter" label="未分配工作中心"></el-table-column>
+														<el-table-column prop="name" label="未分配用户"></el-table-column>
 													</el-table-column>
 													<el-table-column label="">
 														<template slot="header">
-															<el-input v-model="workCenter2" placeholder="输入工作中心搜索" />
+															<el-input v-model="name2" placeholder="输入用户搜索" />
 														</template>
-														<el-table-column prop="workCenterDes" label="工作中心描述"></el-table-column>
+														<el-table-column prop="desc" label="用户描述"></el-table-column>
 													</el-table-column>
 												</el-table>
 											</el-col>
@@ -164,7 +164,7 @@
 
 <script>
 import { mapGetters, mapMutations } from "vuex";
-import {saveWorkCenter, getRelationData} from '../../../api/work.center.api.js'
+import {saveWorkCenter, getRelationData, getAllList} from '../../../api/work.center.api.js'
 import _ from 'lodash';
 export default {
   name:'edit-work-center',
@@ -209,14 +209,20 @@ export default {
 			selectIsDisabled: false,
 			selectedList:[],
 			selectedList2:[],
+			selectedListUser:[],
+			selectedListUser2:[],
 			allocateData:[],
 			unallocateData:[],
+			allocateUser:[],
+			unallocateUser:[],
 			cloneUnallocateData:[],
 			cloneAllocateData:[],
+			cloneUnallocateUser:[],
+			cloneAllocateUser:[],
       workCenter1:'',
-      workCenter2:'',
-      allocateUser:[],
-      unallocateUser:[],
+			workCenter2:'',
+			name1:'',
+      name2:'',
     };
   },
   created() {
@@ -225,147 +231,185 @@ export default {
     });
   },
   methods: {
-    ...mapMutations(["SETWORKCENTEREDITLIST"]),
-    //初始化的操作
-    init() {
-      if (this.workCenterEditList.length > 0) {
-        this.cloneList = JSON.parse(JSON.stringify(this.workCenterEditList)); //复制一份副本,保证副本和初始列表数据一致性
-        this.editForm = this.cloneList[0]; // 默认选中第一行
-        this.cloneModify = JSON.parse(JSON.stringify(this.editForm)); // modify 的副本
-        this.setCurrent(this.editForm); // 设置选中第一行
-        this.currentRow = this.editForm; // 设置初始currentRow 为第一行
-        let params = {
-          workCenter:this.editForm.workCenter
-        }
-        getRelationData(params).then(data=>{
-          this.unallocateData = data.data.data.outerRelations
-          this.allocateData = data.data.data.relations
-        })
-      }
-    },
-    //清除下拉列表时触发
-    handleClearSelect() {
-      this.init();
-    },
-    //选中下拉列表时触发
-    handleChangeOption(row) {
-      if(row==''){
-        return ;
-      }
-      //过滤数组
-      const tempList = this.cloneList.filter(item => item["workCenter"] == row);
-      console.log(tempList);
-      // this.cloneList = tempList;
-      this.editForm = tempList[0];
-      this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
-      this.setCurrent(tempList[0]);
-      let params = {
-        workCenter:this.editForm.workCenter
-      }
-      getRelationData(params).then(data=>{
-        this.unallocateData = data.data.data.outerRelations
-        this.allocateData = data.data.data.relations
-      })
-    },
-    //下拉列表获取到焦点时触发
-    handleSelectFocus() {
-      // this.oldRow = oldRow;
-      //  当前编辑的和之前的数据不一样就显示弹窗
-      if (JSON.stringify(this.editForm) !== JSON.stringify(this.cloneModify)) {
-        console.log('数据不一样禁用下拉框还有弹出保存')
-        this.saveDialog = true; // 保存弹出框出现
-        this.selectIsDisabled = true; // 禁用下拉框
-        this.$refs['select'].blur();
-      } else {
-         console.log('数据一样不禁用下拉框还有不弹出保存')
-        this.saveDialog = false;
-        this.selectIsDisabled = false;
-      }
-    },
-    //设置某一行被选中
-    setCurrent(row) {
-      this.$refs.editTable.setCurrentRow(row);
-    },
+		...mapMutations(["SETWORKCENTEREDITLIST"]),
+		//初始化的操作
+		init() {
+			if (this.workCenterEditList.length > 0) {
+				this.cloneList = JSON.parse(JSON.stringify(this.workCenterEditList)); //复制一份副本,保证副本和初始列表数据一致性
+				this.editForm = this.cloneList[0]; // 默认选中第一行
+				this.cloneModify = JSON.parse(JSON.stringify(this.editForm)); // modify 的副本
+				this.setCurrent(this.editForm); // 设置选中第一行
+				this.currentRow = this.editForm; // 设置初始currentRow 为第一行
+				let params = {
+					workCenter:this.editForm.workCenter
+				}
+				getRelationData(params).then(data=>{
+					if(data.data.code == 200){
+						this.unallocateData = data.data.data.outerRelations
+						this.allocateData = data.data.data.relations
+					}else{
+						this.$message.error(data.data.message)
+					}
+				})
+				getAllList(params).then(data=>{
+					if(data.data.code == 200){
+						this.unallocateUser = data.data.data.outerUserList
+						this.allocateUser = data.data.data.userList
+					}else{
+						this.$message.error(data.data.message)
+					}
+				})
+			}
+		},
+		//清除下拉列表时触发
+		handleClearSelect() {
+			this.init();
+		},
+		//选中下拉列表时触发
+		handleChangeOption(row) {
+			if(row==''){
+				return ;
+			}
+			//过滤数组
+			const tempList = this.cloneList.filter(item => item["workCenter"] == row);
+			console.log(tempList);
+			// this.cloneList = tempList;
+			this.editForm = tempList[0];
+			this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
+			this.setCurrent(tempList[0]);
+			let params = {
+				workCenter:this.editForm.workCenter
+			}
+			getRelationData(params).then(data=>{
+				if(data.data.code == 200){
+					this.unallocateData = data.data.data.outerRelations
+					this.allocateData = data.data.data.relations
+				}else{
+					this.$message.error(data.data.message)
+				}
+			})
+			getAllList(params).then(data=>{
+				if(data.data.code == 200){
+					this.unallocateUser = data.data.data.outerUserList
+					this.allocateUser = data.data.data.userList
+				}else{
+					this.$message.error(data.data.message)
+				}
+			})
+		},
+		//下拉列表获取到焦点时触发
+		handleSelectFocus() {
+			// this.oldRow = oldRow;
+			//  当前编辑的和之前的数据不一样就显示弹窗
+			if (JSON.stringify(this.editForm) !== JSON.stringify(this.cloneModify)) {
+				console.log('数据不一样禁用下拉框还有弹出保存')
+				this.saveDialog = true; // 保存弹出框出现
+				this.selectIsDisabled = true; // 禁用下拉框
+				this.$refs['select'].blur();
+			} else {
+					console.log('数据一样不禁用下拉框还有不弹出保存')
+				this.saveDialog = false;
+				this.selectIsDisabled = false;
+			}
+		},
+		//设置某一行被选中
+		setCurrent(row) {
+			this.$refs.editTable.setCurrentRow(row);
+		},
 
-    findItemByKey(arr, keyV, kerStr) {
-      let temp = arr.filter(item => item[kerStr] == keyV);
-      if (temp.length > 0) {
-        return temp[0];
-      }
-      return null;
-    },
-    // 点击某一行选中后操作的状态你
-    handleCurrentChange(currentRow) {
-      this.oldRow = this.currentRow;
-      this.currentRow = currentRow;
-      if (
-        JSON.stringify(this.editForm) !== JSON.stringify(this.cloneModify)
-      ) {
-        this.saveDialog = true; // 弹出保存的提示框
-        return;
-      }
-      this.editForm = currentRow;
-      this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
-      let params = {
-        workCenter:this.editForm.workCenter
-      }
-      getRelationData(params).then(data=>{
-        this.unallocateData = data.data.data.outerRelations
-        this.allocateData = data.data.data.relations
-      })
-    },
-    //选中某一行
-    //返回操作
+		findItemByKey(arr, keyV, kerStr) {
+			let temp = arr.filter(item => item[kerStr] == keyV);
+			if (temp.length > 0) {
+				return temp[0];
+			}
+			return null;
+		},
+		// 点击某一行选中后操作的状态你
+		handleCurrentChange(currentRow) {
+			this.oldRow = this.currentRow;
+			this.currentRow = currentRow;
+			if (
+				JSON.stringify(this.editForm) !== JSON.stringify(this.cloneModify)
+			) {
+				this.saveDialog = true; // 弹出保存的提示框
+				return;
+			}
+			this.editForm = currentRow;
+			this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
+			let params = {
+				workCenter:this.editForm.workCenter
+			}
+			getRelationData(params).then(data=>{
+				if(data.data.code == 200){
+					this.unallocateData = data.data.data.outerRelations
+					this.allocateData = data.data.data.relations
+				}else{
+					this.$message.error(data.data.message)
+				}
+			})
+			getAllList(params).then(data=>{
+				if(data.data.code == 200){
+					this.unallocateUser = data.data.data.outerUserList
+					this.allocateUser = data.data.data.userList
+				}else{
+					this.$message.error(data.data.message)
+				}
+			})
+
+		},
+		//选中某一行
+		//返回操作
 		goBack() {
 			this.$router.push({path:'/workCenter/workCenter'})
 		},
-    /**
-     *  通过workCenter
-     *  return >1 就找到了
-     */
-    findIndexByItem(arr, v) {
-      return arr.findIndex(item => item["workCenter"] == v);
-    },
-    // 取消操作  一般是在弹框出现的时候才有取消操作
-    handleCancle() {
-      this.saveDialog = false;
-      this.selectIsDisabled = false;
-      //数据还原
-      if(this.cloneList.length<this.workCenterEditList.length && this.value!=''){
-          this.cloneList = JSON.parse(JSON.stringify([this.cloneModify]));
-          this.editForm = this.cloneList[0];
-          return ;
-      }
-      this.cloneList = JSON.parse(JSON.stringify(this.workCenterEditList));  //取消直接复制一份副本
-      if (this.currentRow) {
-        let code = this.currentRow.workCenter;
-        let item = this.findItemByKey(this.cloneList, code, "workCenter");
-        if (item) {
-          this.setCurrent(item);
-        }
-        this.editForm = item;
-      }
-    },
-    //保存操作
-    handleSave(formName) {
+		/**
+		 *  通过workCenter
+		 *  return >1 就找到了
+		 */
+		findIndexByItem(arr, v) {
+			return arr.findIndex(item => item["workCenter"] == v);
+		},
+		// 取消操作  一般是在弹框出现的时候才有取消操作
+		handleCancle() {
+			this.saveDialog = false;
+			this.selectIsDisabled = false;
+			//数据还原
+			if(this.cloneList.length<this.workCenterEditList.length && this.value!=''){
+					this.cloneList = JSON.parse(JSON.stringify([this.cloneModify]));
+					this.editForm = this.cloneList[0];
+					return ;
+			}
+			this.cloneList = JSON.parse(JSON.stringify(this.workCenterEditList));  //取消直接复制一份副本
+			if (this.currentRow) {
+				let code = this.currentRow.workCenter;
+				let item = this.findItemByKey(this.cloneList, code, "workCenter");
+				if (item) {
+					this.setCurrent(item);
+				}
+				this.editForm = item;
+			}
+		},
+		//保存操作
+		handleSave(formName) {
 			this.$refs[formName].validate((valid) => {
 				if (valid) {
-          let arr = []
-          this.allocateData.map(item=>{
-            arr.push(item.workCenterRelation)
-          })
-          this.editForm.workCenterRelation = arr
-          let params = {
-            createList:[],
-            deleteList:[],
-            updateList:[{
-              status: this.editForm.status,
-              workCenterType: this.editForm.workCenterType,
-              workCenterDes:this.editForm.workCenterDes,
-              workCenter:this.editForm.workCenter,
-              workCenterRelation: arr
-            }]
-          }
+					let arr = []
+					this.allocateData.map(item=>{
+						arr.push(item.workCenterRelation)
+					})
+					this.editForm.workCenterRelation = arr
+					let params = {
+						createList:[],
+						deleteList:[],
+						updateList:[{
+							status: this.editForm.status,
+							workCenterType: this.editForm.workCenterType,
+							workCenterDes:this.editForm.workCenterDes,
+							workCenter:this.editForm.workCenter,
+							workCenterRelation: arr,
+							userList:this.allocateUser
+						}]
+					}
 
 					saveWorkCenter(params).then(data => {
 						const res = data.data;
@@ -412,12 +456,18 @@ export default {
 					});
 				}
 			});
-    },
-    check1(val){
+		},
+		check1(val){
 			this.selectedList = val
 		},
 		check2(val){
 			this.selectedList2 = val
+		},
+		checkUser1(val){
+			this.selectedListUser = val
+		},
+		checkUser2(val){
+			this.selectedListUser2 = val
 		},
 		right(){
 			this.unallocateData = _.concat(this.unallocateData,this.selectedList)
@@ -433,7 +483,21 @@ export default {
 			console.log(this.unallocateData,'all')
 			this.cloneAllocateData = _.cloneDeep(this.allocateData)
 		},
-  }
+		rightUser(){
+			this.unallocateUser = _.concat(this.unallocateUser,this.selectedListUser)
+			this.unallocateUser = _.uniq(this.unallocateUser)
+			this.allocateUser = _.difference(this.allocateUser,this.selectedListUser)
+			console.log(this.unallocateUser,'unuser')
+			this.cloneAllocateData = _.cloneDeep(this.allocateUser)
+		},
+		leftUser(){
+			this.allocateUser = _.concat(this.allocateUser,this.selectedListUser2)
+			this.allocateUser = _.uniq(this.allocateUser)
+			this.unallocateUser = _.difference(this.unallocateUser,this.selectedListUser2)
+			console.log(this.unallocateUser,'allUser')
+			this.cloneAllocateData = _.cloneDeep(this.allocateUser)
+		},
+	}
 };
 </script>
 
