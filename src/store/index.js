@@ -23,7 +23,7 @@ import lotStepDetail from "./modules/dc/lot.step.detail.js"; //lot步骤详情vu
 import materiaListlEdit from "./modules/maintenance/materialList.edit"; //物料清单维护详情vuex module
 import standingBtnDistributeEdit from "./modules/base/standing.btn.distribute.edit.js"; //站位按钮分配vuex module
 import themeEdit from "./modules/theme/theme.group.edit";
-
+import userinfo from './modules/base/userinfo'
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -53,6 +53,7 @@ export default new Vuex.Store({
     lotStepDetail,
     materiaListlEdit,
     themeEdit,
-    standingBtnDistributeEdit
+    standingBtnDistributeEdit,
+    userinfo
   }
 });
