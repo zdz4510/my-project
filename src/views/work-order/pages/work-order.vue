@@ -413,7 +413,7 @@ export default {
   }
 }
 //选择弹框
-.choiceBox {
+.workOrder .choiceBox {
   width: 15px;
   height: 41px;
   display: flex;
@@ -421,11 +421,11 @@ export default {
   align-items: center;
   margin-right: 50px;
 }
-.version {
+.workOrder .version {
   width: 300px;
   display: inline-block;
 }
-.el-form-item__content {
+.workOrder .el-form-item__content {
   display: flex;
 }
 </style>
