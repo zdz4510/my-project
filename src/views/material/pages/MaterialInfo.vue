@@ -34,7 +34,9 @@
 				<el-table-column prop="materialType" label="物料分类"></el-table-column>
 				<el-table-column prop="material" label="物料号"></el-table-column>
 				<el-table-column prop="materialRev" label="版本"></el-table-column>
-				<el-table-column prop="currentRev" label="当前版本"></el-table-column>
+				<el-table-column prop="currentRev" label="当前版本">
+					<template slot-scope="scope">{{ scope.row.currentRev ? '是' : '否' }}</template>
+				</el-table-column>
 				<el-table-column label="产品状态">
 					<template slot-scope="scope">{{ scope.row.materialStatus === 'true' ? '已启用' : (scope.row.materialStatus === 'false' ? '未启用' : '--') }}</template>
 				</el-table-column>
@@ -164,8 +166,10 @@ import { mapMutations } from "vuex";
 					this.exportHttp();
 				}
 				if (this.checkedList.length > 0) {
-					const data = this.checkedList;
-					this.exportResult(data);
+					this.checkedList.map(item=>{
+						item.materialStatus = item.materialStatus ? '已启用' : '未启用'
+					})
+					this.exportResult(this.checkedList);
 				}
 			},
 			exportHttp() {
@@ -185,7 +189,6 @@ import { mapMutations } from "vuex";
 					}else{
 						this.$message.error(data.data.message)
 					}
-					
 				})
 			},
 			exportResult(data) {

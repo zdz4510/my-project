@@ -66,8 +66,8 @@
 			</el-form>
 		</div>
 		<div class="operate ml30 mtb10">
-			<el-button class="mr25 pad1025" size="small" type="primary" @click="add" :disabled="this.checkedList.length>0">新增</el-button>
-			<el-button class="mr25 pad1025" size="small" type="primary" @click="save" :disabled="this.checkedList.length===0">编辑</el-button>
+			<el-button class="mr25 pad1025" size="small" type="primary" @click="add('searchForm')" :disabled="this.checkedList.length>0">新增</el-button>
+			<el-button class="mr25 pad1025" size="small" type="primary" @click="save('searchForm')" :disabled="this.checkedList.length===0">编辑</el-button>
 			<el-button class="mr25 pad1025" size="small" type="warning" @click="del">删除</el-button>
 		</div>
 		<div class="">
@@ -141,6 +141,9 @@
 					commitType:[
 						{ required:true,message:'请选择提交规则', trigger: 'change' }
 					],
+					value:[
+						{ required:true,message:'请选择物料或物料组名称', trigger: 'change' }
+					],
 				},
 				tableData: {
 					data:[],
@@ -175,6 +178,18 @@
 		},
 		created(){
 			// this.search()
+			if(sessionStorage.getItem('searchForm')){
+				this.searchForm = JSON.parse(sessionStorage.getItem('searchForm')) 
+			}
+			if(this.searchForm.definedBy == 'MATERIAL'){
+				searchMat().then(data=>{
+						this.options = data.data.data
+					})
+			}else if(this.searchForm.definedBy == 'MATERIAL_GROUP'){
+				searchMatGroup().then(data=>{
+						this.options = data.data.data
+					})
+			}
 		},
 		methods: {
 			...mapMutations(["SETNEXTNUMBEREDITLIST"]),
@@ -198,7 +213,14 @@
 						let params = this.searchForm
 						params.pageSize = this.tableData.page.pageSize
 						params.currentPage = this.tableData.page.currentPage
-						params.material = this.searchForm.value.split('&')[0]
+						if(this.searchForm.definedBy == 'MATERIAL_GROUP'){
+							params.material = ''
+							params.materialGroup = this.searchForm.value.split('&')[0]
+						}else if(this.searchForm.definedBy == 'MATERIAL'){
+							params.materialGroup = ''
+							params.material = this.searchForm.value.split('&')[0]
+						}
+						
 						getNextNumberList(params).then(data => {
 							if(data.data.code == 200){
 								this.tableData.data = data.data.data.sequences
@@ -214,6 +236,7 @@
 			},
 			resetForm(formName) {
 				this.$refs[formName].resetFields();
+				this.tableData.data = []
 			},
 			handleSelectionChange(val){
 				val.map(item=>{
@@ -237,12 +260,38 @@
 				console.log(val)
 				this.searchForm.materialRev = val.split('&')[1]
 			},
-			add() {
-				this.$router.push({path:'/nextNumber/addNextNumber'})
+			add(formName) {
+				this.$refs[formName].validate((valid) => {
+					if (valid) {
+						if(this.searchForm.definedBy == 'MATERIAL'){
+							this.searchForm.value = this.searchForm.material
+						}else{
+							this.searchForm.value = this.searchForm.materialGroup
+						}
+						sessionStorage.setItem('searchForm', JSON.stringify(this.searchForm))
+						this.$router.push({path:'/nextNumber/addNextNumber'})
+					} else {
+						console.log('error submit!!');
+						return false;
+					}
+				})
 			},
-			save() {
-				this.SETNEXTNUMBEREDITLIST(this.checkedList);
-				this.$router.push({path:'/nextNumber/editNextNumber'})
+			save(formName) {
+				this.$refs[formName].validate((valid) => {
+					if (valid) {
+						if(this.searchForm.definedBy == 'MATERIAL'){
+							this.searchForm.value = this.searchForm.material
+						}else{
+							this.searchForm.value = this.searchForm.materialGroup
+						}
+						sessionStorage.setItem('searchForm', JSON.stringify(this.searchForm))
+						this.SETNEXTNUMBEREDITLIST(this.checkedList);
+						this.$router.push({path:'/nextNumber/editNextNumber'})
+					} else {
+						console.log('error submit!!');
+						return false;
+					}
+				})
 			},
 			del(){
 				this.$confirm('是否删除所选数据?', '提示', {
@@ -383,6 +432,9 @@
           });
 				});
 			},
+		},
+		beforeDestroy(){
+			// sessionStorage.removeItem('searchForm')
 		}
 	}
 </script>

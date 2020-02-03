@@ -156,9 +156,14 @@
 													</el-select>
 												</el-form-item>
 											</el-col>
-											<el-col :span="8">
-												<el-form-item label="创建人/修改人:" prop="modified_user_id">
-													<el-input v-model="editForm.modified_user_id" disabled></el-input>
+											<el-col :span="8" v-if="editForm.modifyUserId">
+												<el-form-item label="创建人/修改人:" prop="modifyUserId">
+													<el-input v-model="editForm.modifyUserId" disabled></el-input>
+												</el-form-item>
+											</el-col>
+											<el-col :span="8" v-else>
+												<el-form-item label="创建人/修改人:" prop="createUserId">
+													<el-input v-model="editForm.createUserId" disabled></el-input>
 												</el-form-item>
 											</el-col>
 										</el-row>

@@ -21,7 +21,9 @@ import nextNumberEdit from "./modules/base/next.number.edit.js"; //编码规则v
 import unpackEdit from "./modules/dc/unpack.edit.js"; //包装解包的vuex module
 import lotStepDetail from "./modules/dc/lot.step.detail.js"; //lot步骤详情vuex module
 import materiaListlEdit from "./modules/maintenance/materialList.edit"; //物料清单维护详情vuex module
-
+import standingBtnDistributeEdit from "./modules/base/standing.btn.distribute.edit.js"; //站位按钮分配vuex module
+import themeEdit from "./modules/theme/theme.group.edit";
+import userinfo from './modules/base/userinfo'
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -49,6 +51,9 @@ export default new Vuex.Store({
     nextNumberEdit,
     unpackEdit,
     lotStepDetail,
-    materiaListlEdit
+    materiaListlEdit,
+    themeEdit,
+    standingBtnDistributeEdit,
+    userinfo
   }
 });

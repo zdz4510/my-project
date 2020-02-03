@@ -5,7 +5,7 @@
 
 const findNodeBystepId = (stepId, routerSteps) => {
   const arr = routerSteps.filter(item => {
-    return (item.stepId = stepId);
+    return (item.stepId == stepId);
   });
 
   return arr[0];
@@ -34,16 +34,19 @@ export default ({ entryRouterStep, routerSteps }) => {
     if(item.stepId==entryRouterStep){
       rootId = key;
     }
-    if (routerNextStepIds && routerNextStepIds.lenght > 0) {
-      routerNextStepIds.forEach(item => {
-        const node = findNodeBystepId(item, routerSteps); // 找到了对用的节点了
+    
+    console.log(routerNextStepIds)
+    if (routerNextStepIds && routerNextStepIds.length >0) {
+      routerNextStepIds.forEach(subItem => {
+        const node = findNodeBystepId(subItem, routerSteps); // 找到了对用的节点了
+        console.log(node)
         // 根据节点的类型找key
         let nodeType = node.routerComponent.routerComponentType == "O";
         let to;
         if (nodeType) {
-          from = node.routerComponent.routerOperationComponent.operation;
+          to = node.routerComponent.routerOperationComponent.operation;
         } else {
-          from = node.routerComponent.routerReturnComponent.retrunType;
+          to = node.routerComponent.routerReturnComponent.retrunType;
         }
         lines.push({ form: from, to: to });
       });

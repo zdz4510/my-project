@@ -26,7 +26,7 @@ export const addTagConfig = data => {
  *  批量删除标签信息
  */
 export const deleteTagConfig = data => {
-  return request.delete(`${window.VUE_APP_URL}/mes/label/insert`, data);
+  return request.post(`${window.VUE_APP_URL}/mes/label/deleteBatch`, data);
 };
 
 /**
@@ -43,7 +43,8 @@ export const updateTagConfig = data => {
  */
 
 export const getListPageLink = data => {
-  return request.post(`${window.VUE_APP_URL}/mes/label/listPageLink`, data);
+  const params = qs.stringify(data);
+  return request.post(`${window.VUE_APP_URL}/mes/label/listPageLink?${params}`);
 };
 
 
@@ -56,3 +57,12 @@ export const listPageUnallocatedLink = data => {
     const params = qs.stringify(data);
     return request.post(`${window.VUE_APP_URL}/mes/label/listPageUnallocatedLink?${params}`);
   };
+
+/**
+ * /label/getLabelStorageByLabel
+ */
+
+export const getLabelStorageByLabel = data => {
+  const params = qs.stringify(data);
+  return request.post(`${window.VUE_APP_URL}/mes/label/getLabelStorageByLabel?${params}`);
+};

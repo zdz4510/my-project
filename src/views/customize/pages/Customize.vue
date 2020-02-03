@@ -2,16 +2,26 @@
 	<div>
 		<div class="operate mtb10">
 			<el-button class="mr25 ml30 pad1025" size="small" type="primary" @click="search">查询</el-button>
-			<el-button class="mr25 pad1025" size="small" type="primary" @click="add('addForm')">编辑</el-button>
+			<el-button class="mr25 pad1025" size="small" type="primary" @click="add('addForm')">保存</el-button>
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="resetForm('addForm')">重置</el-button>
 		</div>
 		<div class="addForm">
 			<el-form :inline="true" :model="addForm" ref="addForm" :rules="rules" class="form-style" label-position="right" :label-width="formLabelWidth">
 				<el-row>
 					<el-col :span="8">
-						<el-form-item label="自定义项目:" prop="customizedItem" required>
+						<!-- <el-form-item label="自定义项目:" prop="customizedItem" required>
 							<el-input v-model="addForm.customizedItem"></el-input>
-						</el-form-item>
+						</el-form-item> -->
+            <el-form-item label="自定义项目:" prop="customizedItem" required>
+              <el-select v-model="addForm.customizedItem" filterable placeholder="请选择">
+                <el-option
+                  v-for="item in customizedItem"
+                  :key="item.FIELD_01"
+                  :label="item.FIELD_01"
+                  :value="item.FIELD_01">
+                </el-option>
+              </el-select>
+            </el-form-item>
 					</el-col>
 				</el-row>
         <el-row>
@@ -149,7 +159,7 @@
 </template>
 
 <script>
-	import {saveData, getCustomizeInfo, getField, getCode} from '../../../api/customize.api.js'
+	import {saveData, getCustomizeInfo, getField, getCode, getNames} from '../../../api/customize.api.js'
 	export default {
 		name:'add-data-collection',
 		data() {
@@ -159,8 +169,8 @@
         paramsDialogVisible:false,
         dialogVisible:false,
 				rules: {
-					customize: [
-            { required: true, message: '请填写自定义项目名称', trigger: 'blur' }
+					customizedItem: [
+            { required: true, message: '请填写自定义项目名称', trigger: 'change' }
           ],
         },
         srules:{
@@ -218,6 +228,7 @@
         currentOperation:'',
         code:[],
         field:[],
+        customizedItem:[],
 			}
     },
     created(){
@@ -230,10 +241,29 @@
         generalCodeGroup:'S'
       }
       getField(p1).then(data=>{
-        this.field = data.data.data
+        if(data.data.code == 200){
+          this.field = data.data.data
+        }else{
+          this.$message.error(data.data.message)
+        }
+        
       })
       getCode(p2).then(data=>{
-        this.code = data.data.data
+        if(data.data.code == 200){
+          this.code = data.data.data
+        }else{
+          this.$message.error(data.data.message)
+        }
+      })
+      let p3 = {
+        generalCode: 'CUSTOMIZED_FIELD'
+      }
+      getNames(p3).then(data=>{
+        if(data.data.code == 200){
+          this.customizedItem = data.data.data.definedData
+        }else{
+          this.$message.error(data.data.message)
+        }
       })
     },
 		methods: {
@@ -242,7 +272,12 @@
         params.customizedItem = this.addForm.customizedItem
         params.tenantSiteCode = 'test'
         getCustomizeInfo(params).then(data=>{
-          this.SetupInfoList = data.data.data.customizedFieldDefInfoList
+          if(data.data.code == 200){
+            this.SetupInfoList = data.data.data.customizedFieldDefInfoList
+          }else{
+            this.$message.error(data.data.message)
+          }
+          
         })
       },
 			save(formName){
@@ -253,7 +288,7 @@
 						params.type = 'add'
 						params.dcSetupInfoList = this.SetupInfoList
 						saveData(params).then(data => {
-							if(data.data.message == 'success'){
+							if(data.data.code == 200){
 								this.$message({
 									type: 'success',
 									message: '保存成功!'
@@ -313,14 +348,31 @@
       onChange(){
         this.addSetForm.targetValue = ''
       },
-      add(){
-        let params = this.addForm
-        params.type = 'add'
-        params.customizedFieldDefInfoList = this.SetupInfoList
-        saveData(params).then(data=>{
-          console.log(data)
-          this.$message.success('保存成功')
-        })
+      add(formName){
+        this.$refs[formName].validate((valid) => {
+					if (valid) {
+						let params = this.addForm
+            params.type = 'add'
+            params.customizedFieldDefInfoList = this.SetupInfoList
+            if(this.SetupInfoList.length>0){
+              saveData(params).then(data=>{
+                if(data.data.code == 200){
+                  this.$message.success('保存成功')
+                  this.resetForm('addForm')
+                  this.SetupInfoList = []
+                }else{
+                  this.$message.error(data.data.message)
+                }
+              })
+            }else{
+              this.$message.error('自定义字段数据为空，请先添加数据')
+            }
+            
+					} else {
+						console.log('error submit!!');
+						return false;
+					}
+        });
       },
       edit(){
        

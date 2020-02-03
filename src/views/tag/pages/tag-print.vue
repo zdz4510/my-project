@@ -5,7 +5,13 @@
         <el-form ref="form" :model="form" label-width="100px">
           <el-form-item label="标签应用类型">
             <el-col :span="16">
-              <el-input v-model="form.name"></el-input>
+              <el-select
+                v-model="form.labelUseType"
+                placeholder="请选择标签应用类型"
+              >
+                <el-option label="LOT" value="10"></el-option>
+                <el-option label="容器" value="20"></el-option>
+              </el-select>
             </el-col>
           </el-form-item>
           <el-form-item label="输入栏">
@@ -15,7 +21,12 @@
           </el-form-item>
           <el-form-item>
             <el-col :span="16">
-              <el-button size="small" type="primary">检索</el-button>
+              <el-button
+                size="small"
+                type="primary"
+                @click="handleSearchByLotNo"
+                >检索</el-button
+              >
               <el-button size="small" type="primary">打印</el-button>
               <el-checkbox v-model="autoPrint">自动打印</el-checkbox>
             </el-col>
@@ -26,9 +37,17 @@
         <el-tabs v-model="activeName" type="card">
           <el-tab-pane label="基础信息" name="baseInfo">
             <div class="showData">
-              <div><span class="name">物料号：</span><span>{{}}</span></div>
-              <div><span class="name">物料组:</span><span>{{}}</span></div>
-              <div><span class="name">容器层级:</span><span>{{}}</span></div>
+              <div>
+                <span class="name">物料号：</span><span>{{ info.mat }}</span>
+              </div>
+              <div>
+                <span class="name">物料组:</span
+                ><span>{{ info.matGroup }}</span>
+              </div>
+              <div>
+                <span class="name">容器层级:</span
+                ><span>{{ info.packingClass }}</span>
+              </div>
             </div>
           </el-tab-pane>
         </el-tabs>
@@ -41,7 +60,7 @@
         tooltip-effect="dark"
         style="width: 100%"
         height="350px"
-        @selection-change="handleSelectionChange"
+       
       >
         <el-table-column type="selection" width="55"> </el-table-column>
         <el-table-column prop="resourceGroup" label="接收值" width="100">
@@ -74,24 +93,12 @@
         </el-table-column>
       </el-table>
     </div>
-    <div class="pagination">
-      <el-pagination
-        background
-        layout="->,total,prev,pager,next,sizes"
-        :total="total"
-        :page-size="pageSize"
-        :page-sizes="[5, 10, 15, 20]"
-        :current-page="currentPage"
-        @size-change="handlePagesize"
-        @current-change="handleCurrentChange"
-      >
-      </el-pagination>
-    </div>
-    <el-dialog title="删除" :visible.sync="deleteDialog" width="30%">
-      <span>是否确认删除{{ selectionList.length }}条数据？</span>
+   
+    <el-dialog title="删除" :visible.sync="showConfig" width="30%">
+      <tag-print-config />
       <span slot="footer" class="dialog-footer">
-        <el-button @click="deleteDialog = false">取 消</el-button>
-        <el-button type="primary" @click="handleDelete">
+        <el-button @click="showConfig = false">取 消</el-button>
+        <el-button type="primary">
           确 定
         </el-button>
       </span>
@@ -100,40 +107,89 @@
 </template>
 
 <script>
+import {
+  searchByLotNo,
+  getPrintDevicesAvailable,
+  searchLabelIdListByMat
+} from "@/api/tag/tag.print.api.js";
+import TagPrintConfig from "./tag-print-config";
 export default {
   data() {
     return {
       form: {
-        name: ""
+        name: "",
+        labelUseType: ""
       },
+      list: [], // 可用打印设备数组
       autoPrint: false,
       activeName: "baseInfo",
       tableData: [],
       total: 0,
       pageSize: 10,
       currentPage: 1,
-      deleteDialog: false,
-      selectionList: []
+      showConfig: true,
+      selectionList: [],
+      info: {
+        matGroup: "",
+        mat: "",
+        packingClass: ""
+      },
+      labelList: []
     };
   },
+  components: {
+    TagPrintConfig
+  },
   methods: {
-    //当前选中行
-    handleSelectionChange(val) {
-      this.selectionList = val;
-      console.log(this.selectionList);
+    //  检索
+    handleSearchByLotNo() {
+      searchByLotNo({
+        labelApplyType: this.form.labelUseType,
+        inputValue: this.form.name
+      }).then(data => {
+        const res = data.data;
+        if (res.code == 200) {
+          this.info = res.data;
+          this.handleSearchLabelIdListByMat();
+          this.handleGetPrintDevicesAvailable()
+        } else {
+          this.$message({
+            type: "error",
+            message: res.message
+          });
+        }
+      });
     },
-    //更改当前页码,再次请求数据
-    handleCurrentChange(currentChange) {
-      this.currentPage = currentChange;
-      this.init();
+    //  获取可用的打印设备
+    handleGetPrintDevicesAvailable() {
+      getPrintDevicesAvailable().then(data => {
+        const res = data.data;
+        if (res.code == 200) {
+          this.list = res.data;
+        } else {
+          this.$message({
+            type: "error",
+            message: res.message
+          });
+        }
+      });
     },
-    //更改页码大小
-    handlePagesize(pageSise) {
-      this.pageSise = pageSise;
-      this.currentPage = 1;
-      this.init();
-    },
-    handleDelete() {}
+    //  搜索可用的标签id
+    handleSearchLabelIdListByMat() {
+      searchLabelIdListByMat({
+        mat:this.info.mat
+      }).then(data => {
+        const res = data.data;
+        if (res.code == 200) {
+          this.labelList = res.data;
+        } else {
+          this.$message({
+            type: "error",
+            message: res.message
+          });
+        }
+      });
+    }
   }
 };
 </script>

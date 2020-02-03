@@ -15,7 +15,7 @@
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="add" :disabled="this.checkedList.length>0">新增</el-button>
 			<el-button class="mr25 pad1025" size="small" type="primary" @click="edit" :disabled="this.checkedList.length === 0">编辑</el-button>
 			<el-button class="mr25 pad1025" size="small" type="warning"  @click="del" :disabled="this.checkedList.length === 0">删除</el-button>
-			<el-button class="mr25 pad1025" size="small" type="warning"  @click="exportExcel" >导出</el-button>
+			<el-button class="mr25 pad1025" size="small" type="warning"  @click="handleExport" >导出</el-button>
 		</div>
 		
 		<div class="">
@@ -29,7 +29,7 @@
 				<el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
 				<el-table-column type="index" label="序号"></el-table-column>
 				<el-table-column prop="alarmGroup" label="预警事件分组"></el-table-column>
-				<el-table-column prop="theme" label="事件数量"></el-table-column>
+				<el-table-column prop="alarmCount" label="事件数量"></el-table-column>
 				<el-table-column prop="groupDes" label="分组描述"></el-table-column>
 				<el-table-column prop="createUserName" label="创建人"></el-table-column>
 				<el-table-column prop="createTime" label="创建时间"></el-table-column>
@@ -52,11 +52,15 @@
 
 <script>
 import {getAlarmGroupList, deleteData} from '../../../api/alarm.group.api'
+import { exportExcel } from "@/until/excel.js";
 import { mapMutations } from "vuex";
 	export default {
 		name:'alarm-group',
 		data() {
 			return {
+				tHeader:['预警事件分组','事件数量','分组描述','创建人','创建时间','修改人','修改时间'],
+				filterVal:['alarmGroup','alarmCount','groupDes','createUserName','createTime','modifyUserName','modifyTime'],
+				fileName:'预警事件分组维护表',
 				checkedList:[],
 				formLabelWidth:'120px',
 				searchForm: {
@@ -146,9 +150,41 @@ import { mapMutations } from "vuex";
 				this.$refs[formName].resetFields();
 				this.search()
 			},
-			exportExcel(){
-
-			}
+			//导出开始
+			handleExport() {
+				if (this.checkedList.length === 0) {
+					this.exportHttp();
+				}
+				if (this.checkedList.length > 0) {
+					this.exportResult(this.checkedList);
+				}
+			},
+			exportHttp() {
+				let params = this.searchForm
+				params.pageSize = 0
+				params.currentPage = this.tableData.page.currentPage
+				getAlarmGroupList(params).then(data => {
+					if(data.data.code == 200){
+						let res = data.data.data.data
+						this.exportResult(res);
+					}else{
+						this.$message.error(data.data.message)
+					}
+				})
+			},
+			exportResult(data) {
+				const tipString = exportExcel(this.tHeader, this.filterVal, data, this.fileName);
+				if (tipString === undefined) {
+					return;
+				} else {
+					this.$message({
+						message: tipString,
+						type: "warning"
+					});
+					return;
+				}
+			},
+			//导出结束
 		}
 	}
 </script>

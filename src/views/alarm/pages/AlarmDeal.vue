@@ -8,7 +8,7 @@
 							<el-input v-model="undealSearchForm.sequence"></el-input>
 						</el-form-item>
 						<el-form-item label="触发时间:" prop="triggeringTime">
-							<el-date-picker v-model="undealSearchForm.triggeringTime" type="date" placeholder="选择日期"></el-date-picker>
+							<el-date-picker v-model="undealSearchForm.triggeringTime" type="datetime" placeholder="选择日期" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
 						</el-form-item>
 						<el-form-item label="事件编号:" prop="alarm">
 							<el-input v-model="undealSearchForm.alarm"></el-input>
@@ -59,7 +59,7 @@
 						<el-table-column prop="resource" label="设备编号"></el-table-column>
 						<el-table-column prop="clearFlag" label="初始化与否"></el-table-column>
 						<el-table-column prop="clearTime" label="初始化时间"></el-table-column>
-						<el-table-column prop="clearUserId" label="初始化用户"></el-table-column>
+						<el-table-column prop="clearUserName" label="初始化用户"></el-table-column>
 						<el-table-column prop="clearComment" label="初始化注释"></el-table-column>
 					</el-table>
 					<el-pagination class="mtb20"
@@ -81,7 +81,7 @@
 							<el-input v-model="dealSearchForm.sequence"></el-input>
 						</el-form-item>
 						<el-form-item label="触发时间:" prop="triggeringTime">
-							<el-date-picker v-model="dealSearchForm.triggeringTime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd hh:mm:ss"></el-date-picker>
+							<el-date-picker v-model="dealSearchForm.triggeringTime" type="datetime" placeholder="选择日期" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
 						</el-form-item>
 						<el-form-item label="事件编号:" prop="alarm">
 							<el-input v-model="dealSearchForm.alarm"></el-input>
@@ -136,10 +136,10 @@
 						<el-table-column prop="ackTime" label="确认时间"></el-table-column>
 						<el-table-column prop="clearFlag" label="初始化与否"></el-table-column>
 						<el-table-column prop="clearTime" label="初始化时间"></el-table-column>
-						<el-table-column prop="clearUserId" label="初始化用户"></el-table-column>
+						<el-table-column prop="clearUserName" label="初始化用户"></el-table-column>
 						<el-table-column prop="clearComment" label="初始化注释"></el-table-column>
-						<el-table-column prop="modifyUserId" label="修改人"></el-table-column>
-						<el-table-column prop="modifyUserName" label="修改时间"></el-table-column>
+						<el-table-column prop="modifyUserName" label="修改人"></el-table-column>
+						<el-table-column prop="modifyTime" label="修改时间"></el-table-column>
 					</el-table>
 					<el-pagination class="mtb20"
 						background
@@ -182,11 +182,15 @@
 						<el-table-column prop="mainNumber" label="容器"></el-table-column>
 						<el-table-column prop="lot" label="LOT"></el-table-column>
 						<el-table-column prop="resource" label="设备编号"></el-table-column>
-						<el-table-column prop="alarm" label="工单"></el-table-column>
+						<el-table-column prop="shopOrder" label="工单"></el-table-column>
 						<el-table-column prop="alarm" label="事件编号"></el-table-column>
-						<el-table-column prop="alarm" label="事件等级"></el-table-column>
-						<el-table-column prop="alarm" label="确认标记"></el-table-column>
-						<el-table-column prop="alarm" label="是否多次触发"></el-table-column>
+						<el-table-column prop="alarmLevel" label="事件等级"></el-table-column>
+						<el-table-column prop="ackFlag" label="确认标记"></el-table-column>
+						<el-table-column prop="workCenter" label="工作中心"></el-table-column>
+						<el-table-column prop="workCenterRelation" label="产线"></el-table-column>
+						<el-table-column prop="station" label="工序站位"></el-table-column>
+						<el-table-column prop="operation" label="当前工序"></el-table-column>
+						<el-table-column prop="involeNumber" label="多次触发次数"></el-table-column>
 					</el-table>
 					<el-pagination class="mtb20"
 						background
@@ -206,10 +210,24 @@
 
 <script>
 import {getAlarmGroupList, getSequenceList, updateAckData, updateInitData, deleteData} from '../../../api/alarm.deal.api'
+import { exportExcel } from "@/until/excel.js";
 	export default {
 		name:'alarm-deal',
 		data() {
+			var numCheck = (rule, value, callback) => {
+				var reg = /^(0|\+?[1-9][0-9]*)$/
+				if(!value){
+					callback()
+				}
+				if (!reg.test(value)) {
+					return callback(new Error('只能输入正整数和0'));
+				}
+				callback()
+			};
 			return {
+				tHeader:['触发序号','容器','LOT','设备编号','工单','事件编号','事件等级','确认标记','工作中心','产线','工序站位','当前工序','多次触发次数'],
+				filterVal:['sequence','mainNumber','lot','resource','shopOrder','alarm','alarmLevel','ackFlag','workCenter','workCenterRelation','station','operation','involeNumber'],
+				fileName:'事件涉及SN序列/LOT序列维护表',
 				activeName:'first',
 				checkedList:[],
 				undealCheckedList:[],
@@ -222,7 +240,11 @@ import {getAlarmGroupList, getSequenceList, updateAckData, updateInitData, delet
 					resource: '',
 					alarm: '',
 				},
-				rules:{},
+				rules:{
+					sequence: [
+						{ required:false, validator: numCheck, trigger: 'blur' }
+					],
+				},
 				tableData: {
 					data:[],
 					page:{
@@ -270,24 +292,32 @@ import {getAlarmGroupList, getSequenceList, updateAckData, updateInitData, delet
 			}
 		},
 		created(){
-			this.search()
+			this.$nextTick(()=>this.search())
+			// this.search()
 			this.searchUndeal()
 			this.searchDeal()
 		},
 		methods: {
 			search(){
-				let params = this.searchForm
-				params.pageSize = this.tableData.page.pageSize
-				params.currentPage = this.tableData.page.currentPage
-				getSequenceList(params).then(data => {
-					if(data.data.code == 200){
-						this.tableData.data = data.data.data.data
-						this.tableData.page.total = data.data.data.total
-					}else{
-						this.$message.error(data.data.message)
+				this.$refs.searchForm.validate((valid) => {
+					if (valid) {
+						let params = this.searchForm
+						params.pageSize = this.tableData.page.pageSize
+						params.currentPage = this.tableData.page.currentPage
+						getSequenceList(params).then(data => {
+							if(data.data.code == 200){
+								this.tableData.data = data.data.data.data
+								this.tableData.page.total = data.data.data.total
+							}else{
+								this.$message.error(data.data.message)
+							}
+							
+						})
+					} else {
+						console.log('error submit!!');
+						return false;
 					}
-					
-				})
+				});
 			},
 			handleSizeChange(pageSize){
 				this.tableData.page.pageSize = pageSize
@@ -422,14 +452,116 @@ import {getAlarmGroupList, getSequenceList, updateAckData, updateInitData, delet
 				this.$refs[formName].resetFields();
 				this.searchdeal()
 			},
-			exportExcel(){
+			//导出
+			exportResult(data) {
+				this.tHeader=['触发序号','容器','LOT','设备编号','工单','事件编号','事件等级','确认标记','工作中心','产线','工序站位','当前工序','多次触发次数']
+				this.filterVal=['sequence','mainNumber','lot','resource','shopOrder','alarm','alarmLevel','ackFlag','workCenter','workCenterRelation','station','operation','involeNumber']
+				this.fileName='事件涉及SN序列/LOT序列维护表'
 
+				const tipString = exportExcel(this.tHeader, this.filterVal, data, this.fileName);
+				if (tipString === undefined) {
+					return;
+				} else {
+					this.$message({
+						message: tipString,
+						type: "warning"
+					});
+					return;
+				}
+			},
+			exportResultUndeal(data) {
+				this.tHeader = ['触发序号','触发时间','预警分组','事件编号','事件等级','触发类型','工作中心','产线','工序站位','工单','涉及数量','设备编号','初始化与否','初始化时间','初始化用户','初始化注释']
+				this.filterVal = ['sequence','triggeringTime','alarmGroup','alarm','alarmLevel','triggerType','workCenter','workCenterRelation','station','shopOrder','numbersInvolved','resource','clearFlag','clearTime','clearUserName','clearComment']
+				this.fileName='事件未处理维护表'
+				const tipString = exportExcel(this.tHeader, this.filterVal, data, this.fileName);
+				if (tipString === undefined) {
+					return;
+				} else {
+					this.$message({
+						message: tipString,
+						type: "warning"
+					});
+					return;
+				}
+			},
+			exportResultDeal(data) {
+				this.tHeader = ['触发序号','触发时间','预警分组','事件编号','事件等级','触发类型','工作中心','产线','工序站位','工单','涉及数量','设备编号','确认标记','确认时间','初始化与否','初始化时间','初始化用户','初始化注释','修改人','修改时间']
+				this.filterVal =['sequence','triggeringTime','alarmGroup','alarm','alarmLevel','triggerType','workCenter','workCenterRelation','station','shopOrder','numbersInvolved','resource','ackFlag','ackTime','clearFlag','clearTime','clearUserName','clearComment','modifyUserName','modifyTime']
+				this.fileName='事件已处理维护表'
+				const tipString = exportExcel(this.tHeader, this.filterVal, data, this.fileName);
+				if (tipString === undefined) {
+					return;
+				} else {
+					this.$message({
+						message: tipString,
+						type: "warning"
+					});
+					return;
+				}
+			},
+			exportHttpUndeal() {
+				let params = this.undealSearchForm
+				params.pageSize = 0
+				params.currentPage = this.undealTableData.page.currentPage
+				getAlarmGroupList(params).then(data => {
+					if(data.data.code == 200){
+						let res = data.data.data.data
+						this.exportResultUndeal(res);
+					}else{
+						this.$message.error(data.data.message)
+					}
+				})
+			},
+			exportHttp() {
+				let params = this.searchForm
+				params.pageSize = 0
+				params.currentPage = this.tableData.page.currentPage
+				getSequenceList(params).then(data => {
+					if(data.data.code == 200){
+						let res = data.data.data.data
+						this.exportResult(res);
+					}else{
+						this.$message.error(data.data.message)
+					}
+				})
+			},
+			
+			exportHttpDeal() {
+				let params = this.dealSearchForm
+				params.pageSize = 0
+				params.currentPage = this.dealTableData.page.currentPage
+				getAlarmGroupList(params).then(data => {
+					if(data.data.code == 200){
+						let res = data.data.data.data
+						this.exportResultDeal(res);
+					}else{
+						this.$message.error(data.data.message)
+					}
+				})
+			},
+			exportExcel(){
+				if (this.checkedList.length === 0) {
+					this.exportHttp();
+				}
+				if (this.checkedList.length > 0) {
+					this.exportResult(this.checkedList);
+				}
 			},
 			exportExcelUndeal(){
-
+				if (this.undealCheckedList.length === 0) {
+					this.exportHttpUndeal();
+				}
+				if (this.undealCheckedList.length > 0) {
+					this.exportResultUndeal(this.undealCheckedList);
+				}
 			},
 			exportExcelDeal(){
-
+				if (this.dealCheckedList.length === 0) {
+					this.exportHttpDeal();
+				}
+				if (this.dealCheckedList.length > 0) {
+					this.exportResultDeal(this.dealCheckedList);
+				}
 			}
 		}
 	}

@@ -17,7 +17,7 @@
       </el-form>
     </div>
     <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
-      <el-tab-pane label="删除" name="first">
+      <el-tab-pane label="报废" name="first">
         <div class="operate ml30 mtb10">
           <el-button class="mr25 pad1025" size="small" type="primary" @click="mark" :disabled="this.checkedList.length===0">报废标记</el-button>
           <el-input placeholder="请输入内容" v-model="deleteDes" class="des">

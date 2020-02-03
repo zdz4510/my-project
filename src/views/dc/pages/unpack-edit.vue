@@ -113,6 +113,7 @@ export default {
   data() {
     return {
       queryList: [],
+      oldPackClass: "",
       params: {
         mat: "",
         deleteFlag: "",
@@ -170,6 +171,7 @@ export default {
         console.log(this.cloneList, "cloneList");
         this.tableData = this.cloneList;
         this.ruleForm = this.cloneList[0];
+        this.oldPackClass = this.ruleForm.packingClass;
         this.isEditVal(this.ruleForm.subordinationNumberType);
         this.changemainNumberType(this.ruleForm.mainNumberType);
       }
@@ -193,7 +195,13 @@ export default {
           return;
         });
       } else {
-        updatePackagingConfiguration(payload).then(data => {
+        const oldClass = this.oldPackClass;
+        const params = {
+          ...this.ruleForm,
+          packingClassNew: this.ruleForm.packingClass,
+          packingClass: oldClass
+        };
+        updatePackagingConfiguration(params).then(data => {
           const res = data.data;
           this.$message({
             message: res.code === 200 ? "操作成功" : res.message,
@@ -209,6 +217,7 @@ export default {
     },
     handleCurrentChange(val) {
       this.ruleForm = val;
+      this.oldPackClass = this.ruleForm.packingClass;
     },
     goback() {
       this.$router.push({ name: "unpack" });

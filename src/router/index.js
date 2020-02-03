@@ -9,6 +9,7 @@ import tagRouter from "@/views/tag/router/index.js";
 import ncRouter from "@/views/nc/router/index.js";
 import scrapDeleteRouter from "@/views/scrap-delete/router/index.js";
 import customizeRouter from "@/views/customize/router/index.js";
+import baseRouter from "@/views/base/router/index.js";
 import store from "@/store/";
 Vue.use(VueRouter);
 
@@ -21,43 +22,7 @@ const routes = [
    * 基础库
    */
   {
-    path: "/base",
-    name: "base",
-    component: () =>
-      import(/* webpackChunkName: "layout" */ "../views/layout/"),
-    children: [
-      {
-        path: "base",
-        name: "base",
-        meta: {
-          title: "基础库"
-        },
-        component: () =>
-          import(/* webpackChunkName: "base" */ "../views/base/pages/Base.vue")
-      },
-      {
-        path: "addBase",
-        name: "addBase",
-        meta: {
-          title: "基础库添加"
-        },
-        component: () =>
-          import(
-            /* webpackChunkName: "addBase" */ "../views/base/pages/AddBase.vue"
-          )
-      },
-      {
-        path: "editBase",
-        name: "editBase",
-        meta: {
-          title: "基础库编辑"
-        },
-        component: () =>
-          import(
-            /* webpackChunkName: "editBase" */ "../views/base/pages/EditBase.vue"
-          )
-      }
-    ]
+    ...baseRouter
   },
   /**
    * 产品配置
@@ -157,6 +122,9 @@ const routes = [
       {
         path: "unpack",
         name: "unpack",
+        meta: {
+          title: "包装解包配置"
+        },
         component: () =>
           import(
             /* webpackChunkName: "dc-collection" */
@@ -169,6 +137,9 @@ const routes = [
       {
         path: "unpackEdit",
         name: "unpackEdit",
+        meta: {
+          title: "包装解包配置编辑"
+        },
         component: () =>
           import(
             /* webpackChunkName: "unpack-edit" */
