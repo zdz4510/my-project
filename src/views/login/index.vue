@@ -66,7 +66,7 @@ export default {
               data.tokenId = tokenId;
               this.$store.dispatch("setInfo", data);
               this.$router.push({
-                path: "/base/role"
+                path: "/"
               });
             } else {
               this.$message({
