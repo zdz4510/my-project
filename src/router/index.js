@@ -10,13 +10,14 @@ import ncRouter from "@/views/nc/router/index.js";
 import scrapDeleteRouter from "@/views/scrap-delete/router/index.js";
 import customizeRouter from "@/views/customize/router/index.js";
 import baseRouter from "@/views/base/router/index.js";
+import Welcome from "@/views/welcome"
 import store from "@/store/";
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: "/",
-    redirect: "/base/base"
+    redirect: "/welcome/"
   },
   /**
    * 基础库
@@ -30,6 +31,22 @@ const routes = [
   {
     ...materialRouter
   },
+  {
+    path:'/welcome',
+    name:'welcome',
+    component: () =>
+      import(/* webpackChunkName: "layout" */ "../views/layout/"),
+      children:[
+        {
+          path: "",
+          name: "welcomePage",
+          meta: {
+            title: "工序维护"
+          },
+          component:Welcome
+        }
+      ]
+  }, 
   /**
    * 工序维护
    */

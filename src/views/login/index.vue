@@ -24,8 +24,13 @@
 
         <el-form-item label="登陆系统:">
           <el-select v-model="loginForm.systemKey" placeholder="请选择" size="small">
-            <el-option label="MES" value="MES"></el-option>
-            <el-option label="SYS" value="SYS"></el-option>
+          <el-option
+                :label="item.key"
+                :value="item.id"
+                v-for="item in list"
+                :key="item.id"
+              >
+              </el-option>
           </el-select>
         </el-form-item>
 
@@ -37,7 +42,7 @@
   </div>
 </template>
 <script>
-import { login } from "@/api/login.api.js";
+import { login,getResourceList } from "@/api/login.api.js";
 export default {
   name:'login',
   data() {
@@ -46,34 +51,33 @@ export default {
         userName: "",
         password: "",
         usbKey: "abc",
-        systemKey: "SYS",
+        systemKey: "",
         tenantSiteCode: "test"
-      }
+      },
+      list:[]
     };
   },
-  created() {},
+  created() {
+    this.handleGetSystemId()
+  },
   methods: {
+    handleGetSystemId(){
+          getResourceList({type:'SYSTEM'}).then(data=>{
+            const res = data.data;
+            if(res.code==200){
+                this.list = res.data.data;
+            }
+          })
+    },
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
           login(this.loginForm).then(res => {
             const result = res.data;
             const data = result.data;
-            console.log(data, "res");
-            if (data.userId) {
-              const tokenId = this.$cookies.get("tokenId");
-              this.$cookies.set("tokenId",data.userId)
-              data.tokenId = tokenId;
-              this.$store.dispatch("setInfo", data);
-              this.$router.push({
-                path: "/"
-              });
-            } else {
-              this.$message({
-                message: result.message,
-                type: "error"
-              });
-            }
+           
+          this.$cookies.set("mcs.sessionId",data.id,{ expires: '8h' })
+          this.$router.push('/welcome?systemId='+this.loginForm.systemKey);
             // this.$store.state.userinfo.userinfo
           });
         } else {
