@@ -451,21 +451,21 @@ export default {
         margin-bottom:30px;
     }
 }
-.title{
+.proCon .title{
     width:100px;
     word-wrap:break-word ;
 }
-.el-form-item__content{
+.proCon .el-form-item__content{
     width:100%;
     display: flex;
     align-items: center;
     margin-left:0;
 }
-.choiceBox{
+.proCon .choiceBox{
     margin-right:100px;
     z-index:10;
 }
-.iconBox{
+.proCon .iconBox{
     display: inline-block;
     width:20px;
     height:20px;

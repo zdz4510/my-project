@@ -216,7 +216,7 @@ export default {
     }
     
 }
-.height48{
+.issued .height48{
     height:48px;
     width:100%;
     background:#fff;
@@ -236,7 +236,7 @@ export default {
     }
 }
 //选择弹框
-.choiceBox{
+.issued .choiceBox{
     width:150px;
     height:41px;
     display: flex;
@@ -247,7 +247,7 @@ export default {
         margin-right:7px;
     }
 }
-.el-form-item__content{
+.issued .el-form-item__content{
     display: flex;
 }
 </style>
