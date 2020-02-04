@@ -1,15 +1,9 @@
 <template>
   <div class="typeEdit">
     <div class="operate">
-      <el-button size="small" type="primary" @click="handleBack">
-        返回
-      </el-button>
-      <el-button size="small" type="primary" @click="checkAdd('typeForm')">
-        保存
-      </el-button>
-      <el-button size="small" type="primary" @click="handleReset">
-        重置
-      </el-button>
+      <el-button size="small" type="primary" @click="handleBack">返回</el-button>
+      <el-button size="small" type="primary" @click="checkAdd('typeForm')">保存</el-button>
+      <el-button size="small" type="primary" @click="handleReset">重置</el-button>
     </div>
 
     <div class="showInfo">
@@ -29,11 +23,7 @@
             ></el-input>
           </el-form-item>
           <el-form-item label="组别描述">
-            <el-input
-              type="textarea"
-              rows="2"
-              v-model.trim="typeForm.groupDes"
-            ></el-input>
+            <el-input type="textarea" rows="2" v-model.trim="typeForm.groupDes"></el-input>
           </el-form-item>
         </el-form>
         <el-transfer
@@ -49,19 +39,15 @@
             resourceDes: 'resourceDes'
           }"
         >
-          <span slot-scope="{ option }"
-            >{{ option.resource }} - {{ option.resourceDes }}</span
-          >
+          <span slot-scope="{ option }">{{ option.resource }} - {{ option.resourceDes }}</span>
         </el-transfer>
       </div>
     </div>
-    <el-dialog title="删除" :visible.sync="saveDialog" width="30%">
+    <el-dialog title="保存" :visible.sync="saveDialog" width="30%">
       <span>是否确认保存该条数据？</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleReset">取 消</el-button>
-        <el-button type="primary" @click="handleSave">
-          确 定
-        </el-button>
+        <el-button @click="saveDialog = false">取 消</el-button>
+        <el-button type="primary" @click="handleSave">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -187,6 +173,10 @@ export default {
       if (this.operateType === "add") {
         this.typeForm.resourceGroup = "";
         this.typeForm.groupDes = "";
+      }
+      if (this.operateType === "edit") {
+        const tempList = JSON.parse(JSON.stringify(this.typeList));
+        this.typeForm = tempList[0];
       }
     },
     //保存前验证表单

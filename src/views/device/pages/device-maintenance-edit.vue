@@ -1,19 +1,9 @@
 <template>
   <div class="maintenanceEdit">
     <div class="operate">
-      <el-button size="small" type="primary" @click="handleBack">
-        返回
-      </el-button>
-      <el-button size="small" type="primary" @click="checkTabCurrentStatus">
-        保存
-      </el-button>
-      <el-button
-        size="small"
-        type="primary"
-        @click="handleReset(resetFormInfo)"
-      >
-        重置
-      </el-button>
+      <el-button size="small" type="primary" @click="handleBack">返回</el-button>
+      <el-button size="small" type="primary" @click="checkTabCurrentStatus">保存</el-button>
+      <el-button size="small" type="primary" @click="handleReset(resetFormInfo)">重置</el-button>
     </div>
     <div class="showInfo">
       <div class="right">
@@ -37,7 +27,7 @@
 
         <el-tabs type="border-card" @tab-click="handleTabClick">
           <el-tab-pane class="baseInfo">
-            <span slot="label"> 设备基础信息</span>
+            <span slot="label">设备基础信息</span>
             <el-form
               :model="maintenanceForm"
               :rules="rules"
@@ -46,16 +36,10 @@
               class="demo-maintenanceForm"
             >
               <el-form-item label="设备描述:">
-                <el-input
-                  type="textarea"
-                  v-model.trim="maintenanceForm.resourceDes"
-                ></el-input>
+                <el-input type="textarea" v-model.trim="maintenanceForm.resourceDes"></el-input>
               </el-form-item>
               <el-form-item label="状态:" prop="resourceStatus">
-                <el-radio-group
-                  v-model="maintenanceForm.resourceStatus"
-                  @change="selectStatus"
-                >
+                <el-radio-group v-model="maintenanceForm.resourceStatus" @change="selectStatus">
                   <el-radio :label="10">待用</el-radio>
                   <el-radio :label="20">作业中</el-radio>
                   <el-radio :label="30">待修</el-radio>
@@ -63,11 +47,8 @@
                 </el-radio-group>
               </el-form-item>
               <el-form-item label="所在工作中心:" prop="workCenter">
-                <el-input
-                  v-model.trim="maintenanceForm.workCenter"
-                  class="workCenter"
-                ></el-input>
-                <i class="el-icon-document"></i>
+                <el-input v-model.trim="maintenanceForm.workCenter" class="workCenter"></el-input>
+                <i class="el-icon-document" @click="queryWorkCenter"></i>
                 <!-- <div slot="error" slot-scope="error">{{error}}</div> -->
               </el-form-item>
             </el-form>
@@ -81,11 +62,7 @@
               class="demo-form-inline"
               label-width="110px"
             >
-              <el-form-item
-                label="保养条件名称"
-                prop="conditionName"
-                inline-message="true"
-              >
+              <el-form-item label="保养条件名称" prop="conditionName" inline-message="true">
                 <el-input
                   v-model.trim="upkeepConfigForm.conditionName"
                   placeholder="请输入保养条件名称"
@@ -99,8 +76,7 @@
                   placeholder="选择日期"
                   size="small"
                   value-format="yyyy-MM-dd HH:mm:ss"
-                >
-                </el-date-picker>
+                ></el-date-picker>
               </el-form-item>
               <el-form-item label="保养条件描述" prop="conditionDes">
                 <el-input
@@ -144,14 +120,12 @@
                   <el-option label="天数" :value="1">天数</el-option>
                   <el-option label="月份" :value="30">月份</el-option>
                   <el-option label="季度" :value="90">季度</el-option>
+                  <el-option label="半年" :value="180">半年</el-option>
                   <el-option label="年" :value="365">年</el-option>
                 </el-select>
               </el-form-item>
               <el-form-item label="启用预警功能" prop="warningFunction">
-                <el-radio-group
-                  v-model="upkeepConfigForm.warningFunction"
-                  @change="selectWarnFunc"
-                >
+                <el-radio-group v-model="upkeepConfigForm.warningFunction" @change="selectWarnFunc">
                   <el-radio :label="true" :value="true">启用</el-radio>
                   <el-radio :label="false" :value="false">不启用</el-radio>
                 </el-radio-group>
@@ -165,19 +139,9 @@
               </el-form-item>
             </el-form>
             <div class="upkeep">
-              <el-button
-                size="small"
-                type="primary"
-                @click="handleLocalAdd(refArrUpkeepConfig)"
-              >
-                新增
-              </el-button>
-              <el-button size="small" type="primary" @click="handleLocalSave">
-                提交
-              </el-button>
-              <el-button size="small" type="primary" @click="handleLocalDelete">
-                删除
-              </el-button>
+              <el-button size="small" type="primary" @click="handleLocalAdd(refArrUpkeepConfig)">新增</el-button>
+              <el-button size="small" type="primary" @click="handleLocalSave">提交</el-button>
+              <el-button size="small" type="primary" @click="handleLocalDelete">删除</el-button>
             </div>
             <el-table
               ref="multipleTable"
@@ -188,54 +152,32 @@
               height="200px"
               @selection-change="handleSelectionChange"
             >
-              <el-table-column type="selection" width="55"> </el-table-column>
-              <el-table-column
-                prop="conditionName"
-                label="保养条件名称"
-                width="120"
-              >
+              <el-table-column type="selection" width="55"></el-table-column>
+              <el-table-column prop="conditionName" label="保养条件名称" width="120"></el-table-column>
+              <el-table-column prop="maintenancePeriod" label="保养周期" width="120"></el-table-column>
+              <el-table-column prop="periodUnit" label="保养周期单位" width="120">
+                <template slot-scope="scope">
+                  <span>{{ scope.row.periodUnit |periodUnitFilter}}</span>
+                </template>
               </el-table-column>
-              <el-table-column
-                prop="maintenancePeriod"
-                label="保养周期"
-                width="120"
-              >
-              </el-table-column>
-              <el-table-column
-                prop="periodUnit"
-                label="保养周期单位"
-                width="120"
-              >
-              </el-table-column>
-              <el-table-column
-                prop="startTime"
-                label="保养起始时间"
-                width="180"
-              >
-              </el-table-column>
-              <el-table-column
-                prop="maintenanceLocation"
-                label="保养地址"
-                width="120"
-              >
-              </el-table-column>
-              <el-table-column
-                prop="maintenanceUserId"
-                label="保养人员"
-                width="120"
-              >
-              </el-table-column>
-              <el-table-column
-                prop="conditionDes"
-                label="保养条件描述"
-                show-overflow-tooltip
-              >
-              </el-table-column>
+              <el-table-column prop="startTime" label="保养起始时间" width="180"></el-table-column>
+              <el-table-column prop="maintenanceLocation" label="保养地址" width="120"></el-table-column>
+              <el-table-column prop="maintenanceUserId" label="保养人员" width="120"></el-table-column>
+              <el-table-column prop="conditionDes" label="保养条件描述" show-overflow-tooltip></el-table-column>
             </el-table>
           </el-tab-pane>
         </el-tabs>
       </div>
     </div>
+    <el-dialog title="工作中心" :visible.sync="workCenterDialog" width="50%">
+      <span>
+        <workCenterModel :workCenterData="workCenterData" @selectWorkCenter="selectWorkCenter"></workCenterModel>
+      </span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="workCenterDialog = false">取 消</el-button>
+        <el-button type="primary" @click="handleSelectWorkCenter">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -248,9 +190,15 @@ import {
   findResourceMaintenanceListHttp,
   saveResourceMaintenanceHttp
 } from "@/api/device/maintenance.api.js";
+import { getAllList } from "@/api/work.center.api.js";
+import workCenterModel from "../components/work-center-model.vue";
 import _ from "lodash";
 
 export default {
+  name: "device-maintenance-edit",
+  components: {
+    workCenterModel
+  },
   data() {
     return {
       list: [],
@@ -300,8 +248,29 @@ export default {
       fn: null,
       isRequired: false,
       isWorkCenter: false,
-      currentRow: {}
+      currentRow: {},
+      workCenterDialog: false,
+      currentWorkCenter: {},
+      workCenterData: []
     };
+  },
+  filters: {
+    periodUnitFilter: value => {
+      switch (value) {
+        case 1:
+          return "天";
+        case 30:
+          return "月";
+        case 90:
+          return "季";
+        case 180:
+          return "半年";
+        case 365:
+          return "年";
+        default:
+          break;
+      }
+    }
   },
   computed: {
     ...mapGetters(["maintenanceList"]),
@@ -493,6 +462,7 @@ export default {
         const copyObj = JSON.parse(JSON.stringify(this.upkeepConfigForm));
         copyObj.resource = this.maintenanceForm.resource;
         this.tableData.push(copyObj);
+        console.log(this.tableData);
         return;
       }
     },
@@ -637,6 +607,38 @@ export default {
         });
         return;
       });
+    },
+    //查询工作中心
+    queryWorkCenter() {
+      const data = {
+        workCenter: this.maintenanceForm.workCenter
+      };
+      getAllList(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.$message({
+            message: res.message,
+            type: "success"
+          });
+          this.workCenterData = res.data;
+          this.workCenterDialog = true;
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+        return;
+      });
+    },
+    //弹出框选择工作中心
+    selectWorkCenter(row) {
+      this.currentWorkCenter = row;
+    },
+    //弹出框确认选择工作中心
+    handleSelectWorkCenter() {
+      this.maintenanceForm.workCenter = this.currentWorkCenter.workCenter;
+      this.workCenterDialog = false;
     }
   }
 };
