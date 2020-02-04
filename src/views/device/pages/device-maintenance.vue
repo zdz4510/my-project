@@ -9,45 +9,30 @@
           class="maintenanceForm"
         >
           <el-form-item label="设备编号">
-            <el-input
-              v-model="maintenanceForm.resource"
-              placeholder="请输入设备设备编号"
-            ></el-input>
+            <el-input v-model="maintenanceForm.resource" placeholder="请输入设备设备编号"></el-input>
           </el-form-item>
         </el-form>
       </div>
       <div class="right">
-        <el-button size="small" type="primary" @click="handleQuery">
-          查询
-        </el-button>
-        <el-button size="small" type="primary" @click="handleReset">
-          重置
-        </el-button>
+        <el-button size="small" type="primary" @click="handleQuery">查询</el-button>
+        <el-button size="small" type="primary" @click="handleReset">重置</el-button>
       </div>
     </div>
     <div class="operate">
-      <el-button size="small" type="primary" @click="handleAdd">
-        新增
-      </el-button>
+      <el-button size="small" type="primary" @click="handleAdd">新增</el-button>
       <el-button
         size="small"
         type="primary"
         :disabled="selectionList.length !== 1"
         @click="handleEdit"
-      >
-        修改
-      </el-button>
+      >修改</el-button>
       <el-button
         size="small"
         type="primary"
         :disabled="selectionList.length <= 0"
         @click="handleDelete"
-      >
-        删除
-      </el-button>
-      <el-button size="small" type="primary" @click="handleExport"
-        >导出</el-button
-      >
+      >删除</el-button>
+      <el-button size="small" type="primary" @click="handleExport">导出</el-button>
     </div>
     <div class="showInfo">
       <el-table
@@ -58,14 +43,14 @@
         height="350px"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column type="selection" width="55"> </el-table-column>
-        <el-table-column prop="resource" label="设备编号"> </el-table-column>
-        <el-table-column prop="resourceDes" label="设备名称"> </el-table-column>
+        <el-table-column type="selection" width="55"></el-table-column>
+        <el-table-column prop="resource" label="设备编号"></el-table-column>
+        <el-table-column prop="resourceDes" label="设备名称"></el-table-column>
         <!-- <el-table-column prop="workCenterRelation" label="线体" width="160">
         </el-table-column>
         <el-table-column prop="station" label="工站" width="160">
-        </el-table-column> -->
-        <el-table-column prop="workCenter" label="工作中心"> </el-table-column>
+        </el-table-column>-->
+        <el-table-column prop="workCenter" label="工作中心"></el-table-column>
         <el-table-column label="状态" show-overfslow-tooltip>
           <template slot-scope="scope">
             <span>{{ scope.row.resourceStatus | filterStatus }}</span>
@@ -81,16 +66,13 @@
         :current-page="currentPage"
         @size-change="handlePagesize"
         @current-change="handleCurrentChange"
-      >
-      </el-pagination>
+      ></el-pagination>
     </div>
     <el-dialog title="删除" :visible.sync="deleteDialog" width="30%">
       <span>是否确认删除{{ selectionList.length }}条数据？</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="deleteDialog = false">取 消</el-button>
-        <el-button type="primary" @click="handleDelete">
-          确 定
-        </el-button>
+        <el-button type="primary" @click="handleDelete">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -351,11 +333,7 @@ export default {
     height: 40px;
     padding: 10px;
     display: flex;
-    .left {
-      // width: 300px;
-    }
     .right {
-      // width: 680px;
       padding: 5px 30px;
     }
   }
