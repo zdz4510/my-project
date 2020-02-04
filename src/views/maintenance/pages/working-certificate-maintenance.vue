@@ -8,47 +8,32 @@
         label-width="100px"
       >
         <el-form-item label="上岗证">
-          <el-input
-            v-model="workCertificateForm.cert"
-            placeholder="请输入上岗证"
-          ></el-input>
+          <el-input v-model="workCertificateForm.cert" placeholder="请输入上岗证"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button size="small" type="primary" @click="handleQuery">
-            查询
-          </el-button>
-          <el-button size="small" type="primary" @click="handleReset">
-            重置
-          </el-button>
+          <el-button size="small" type="primary" @click="handleQuery">查询</el-button>
+          <el-button size="small" type="primary" @click="handleReset">重置</el-button>
         </el-form-item>
       </el-form>
     </div>
     <div class="operate">
-      <el-button size="small" type="primary" @click="handleAdd">
-        新增
-      </el-button>
+      <el-button size="small" type="primary" @click="handleAdd">新增</el-button>
       <el-button
         size="small"
         type="primary"
         :disabled="selectionList.length <= 0"
         @click="handleEdit"
-      >
-        修改
-      </el-button>
+      >修改</el-button>
       <el-button
         size="small"
         type="primary"
         :disabled="selectionList.length <= 0"
         @click="deleteDialog = true"
-      >
-        删除
-      </el-button>
+      >删除</el-button>
       <!-- <el-button size="small" type="primary" @click="handleExport"
         >导出</el-button
-      > -->
-      <el-button size="small" type="primary" @click="handleExport"
-        >导出</el-button
-      >
+      >-->
+      <el-button size="small" type="primary" @click="handleExport">导出</el-button>
     </div>
     <div class="showInfo">
       <el-table
@@ -58,11 +43,9 @@
         style="width: 100%"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column type="selection" width="55"> </el-table-column>
-        <el-table-column prop="cert" label="上岗证" width="140">
-        </el-table-column>
-        <el-table-column prop="certDes" label="上岗证描述" width="140">
-        </el-table-column>
+        <el-table-column type="selection" width="55"></el-table-column>
+        <el-table-column prop="cert" label="上岗证" width="140"></el-table-column>
+        <el-table-column prop="certDes" label="上岗证描述" width="140"></el-table-column>
         <el-table-column prop="status" label="状态" width="140">
           <template slot-scope="scope">
             {{ scope.row.status ? "已启用" : "未启用" }}
@@ -75,12 +58,7 @@
             {{ scope.row.certType ? "永久" : "临时" }}
           </template>
         </el-table-column>
-        <el-table-column
-          prop="certTime"
-          label="上岗证持续截止时间"
-          show-overflow-tooltip
-        >
-        </el-table-column>
+        <el-table-column prop="certTime" label="上岗证持续截止时间" show-overflow-tooltip></el-table-column>
       </el-table>
     </div>
     <div class="pagination">
@@ -93,16 +71,13 @@
         :current-page="currentPage"
         @size-change="handlePagesize"
         @current-change="handleCurrentChange"
-      >
-      </el-pagination>
+      ></el-pagination>
     </div>
     <el-dialog title="删除" :visible.sync="deleteDialog" width="30%">
       <span>是否确认删除{{ selectionList.length }}条数据？</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="deleteDialog = false">取 消</el-button>
-        <el-button type="primary" @click="handleDelete">
-          确 定
-        </el-button>
+        <el-button type="primary" @click="handleDelete">确 定</el-button>
       </span>
     </el-dialog>
   </div>

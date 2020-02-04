@@ -1,53 +1,37 @@
 <template>
   <div class="materialGroup">
     <div class="query">
-      <div class="left">
-        <el-form
-          :model="materialGroupForm"
-          ref="materialGroupForm"
-          label-width="100px"
-          class="materialGroupForm"
-        >
-          <el-form-item label="物料组" prop="materialGroup">
-            <el-input
-              v-model.trim="materialGroupForm.materialGroup"
-              placeholder="请输入物料组"
-            ></el-input>
-          </el-form-item>
-        </el-form>
-      </div>
-      <div class="right">
-        <el-button size="small" type="primary" @click="handleQuery">
-          查询
-        </el-button>
-        <el-button size="small" type="primary" @click="handleReset">
-          重置
-        </el-button>
-      </div>
+      <el-form
+        :model="materialGroupForm"
+        ref="materialGroupForm"
+        label-width="100px"
+        class="materialGroupForm"
+        :inline="true"
+      >
+        <el-form-item label="物料组" prop="materialGroup">
+          <el-input v-model.trim="materialGroupForm.materialGroup" placeholder="请输入物料组"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button size="small" type="primary" @click="handleQuery">查询</el-button>
+          <el-button size="small" type="primary" @click="handleReset">重置</el-button>
+        </el-form-item>
+      </el-form>
     </div>
     <div class="operate">
-      <el-button size="small" type="primary" @click="handleAdd">
-        新增
-      </el-button>
+      <el-button size="small" type="primary" @click="handleAdd">新增</el-button>
       <el-button
         size="small"
         type="primary"
         :disabled="selectionList.length <= 0"
         @click="handleEdit"
-      >
-        修改
-      </el-button>
+      >修改</el-button>
       <el-button
         size="small"
         type="primary"
         :disabled="selectionList.length <= 0"
         @click="deleteDialog = true"
-      >
-        删除
-      </el-button>
-      <el-button size="small" type="primary" @click="handleExport"
-        >导出</el-button
-      >
+      >删除</el-button>
+      <el-button size="small" type="primary" @click="handleExport">导出</el-button>
     </div>
     <div class="showInfo">
       <el-table
@@ -58,30 +42,19 @@
         height="350px"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column type="selection" width="55"> </el-table-column>
-        <el-table-column type="index" label="序号" width="50">
-        </el-table-column>
-        <el-table-column prop="materialGroup" label="物料组" width="120">
-        </el-table-column>
+        <el-table-column type="selection" width="55"></el-table-column>
+        <el-table-column type="index" label="序号" width="50"></el-table-column>
+        <el-table-column prop="materialGroup" label="物料组" width="120"></el-table-column>
         <el-table-column label="总物料数" width="120">
           <template slot-scope="scope">
             <span>{{ scope.row.materialList.length }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="groupDes" label="物料组描述" width="170">
-        </el-table-column>
-        <el-table-column prop="createUserName" label="创建人" width="120">
-        </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" width="170">
-        </el-table-column>
-        <el-table-column prop="modifyUserName" label="修改人" width="120">
-        </el-table-column>
-        <el-table-column
-          prop="modifyTime"
-          label="修改时间"
-          show-overflow-tooltip
-        >
-        </el-table-column>
+        <el-table-column prop="groupDes" label="物料组描述" width="170"></el-table-column>
+        <el-table-column prop="createUserName" label="创建人" width="120"></el-table-column>
+        <el-table-column prop="createTime" label="创建时间" width="170"></el-table-column>
+        <el-table-column prop="modifyUserName" label="修改人" width="120"></el-table-column>
+        <el-table-column prop="modifyTime" label="修改时间" show-overflow-tooltip></el-table-column>
       </el-table>
     </div>
     <div class="pagination">
@@ -94,16 +67,13 @@
         :current-page="currentPage"
         @size-change="handlePagesize"
         @current-change="handleCurrentChange"
-      >
-      </el-pagination>
+      ></el-pagination>
     </div>
     <el-dialog title="删除" :visible.sync="deleteDialog" width="30%">
       <span>是否确认删除{{ selectionList.length }}条数据？</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="deleteDialog = false">取 消</el-button>
-        <el-button type="primary" @click="handleDelete">
-          确 定
-        </el-button>
+        <el-button type="primary" @click="handleDelete">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -189,7 +159,6 @@ export default {
     //当前选中行
     handleSelectionChange(val) {
       this.selectionList = val;
-      console.log(this.selectionList);
     },
     //更改当前页码,再次请求数据
     handleCurrentChange(currentChange) {
@@ -214,7 +183,6 @@ export default {
       });
     },
     handleEdit() {
-      console.log(this.selectionList);
       this.MATERIALGROUPLIST(this.selectionList);
       this.$router.push({
         // path: "/device/materialGroupEdit",
@@ -225,7 +193,6 @@ export default {
     handleDelete() {
       deleteHttp(this.selectionList).then(data => {
         const res = data.data;
-        console.log(res);
         if (res.code === 200) {
           this.$message({
             message: res.message,
@@ -310,17 +277,7 @@ export default {
     padding: 10px 5px;
   }
   .query {
-    height: 40px;
     padding: 10px;
-    display: flex;
-    justify-content: space-between;
-    .left {
-      width: 300px;
-    }
-    .right {
-      width: 680px;
-      padding: 5px 30px;
-    }
   }
 }
 </style>

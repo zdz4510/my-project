@@ -1,19 +1,9 @@
 <template>
   <div class="materialGroupEdit">
     <div class="operate">
-      <el-button size="small" type="primary" @click="handleBack">
-        返回
-      </el-button>
-      <el-button
-        size="small"
-        type="primary"
-        @click="checkAdd('materialGroupForm')"
-      >
-        保存
-      </el-button>
-      <el-button size="small" type="primary" @click="handleReset">
-        重置
-      </el-button>
+      <el-button size="small" type="primary" @click="handleBack">返回</el-button>
+      <el-button size="small" type="primary" @click="checkAdd('materialGroupForm')">保存</el-button>
+      <el-button size="small" type="primary" @click="handleReset">重置</el-button>
     </div>
 
     <div class="showInfo">
@@ -35,7 +25,7 @@
             :value="item.salaryLevelCode"
           >
           </el-option>
-        </el-select> -->
+      </el-select>-->
 
       <!-- <el-table
           ref="editTable"
@@ -49,7 +39,7 @@
           <el-table-column prop="materialGroup" label="物料组">
           </el-table-column>
           <el-table-column prop="groupDes" label="组别描述"> </el-table-column>
-        </el-table> -->
+      </el-table>-->
       <!-- </div> -->
       <div class="right">
         <el-form
@@ -67,11 +57,7 @@
             ></el-input>
           </el-form-item>
           <el-form-item label="组别描述">
-            <el-input
-              type="textarea"
-              rows="2"
-              v-model.trim="materialGroupForm.groupDes"
-            ></el-input>
+            <el-input type="textarea" rows="2" v-model.trim="materialGroupForm.groupDes"></el-input>
           </el-form-item>
         </el-form>
         <el-transfer
@@ -89,11 +75,11 @@
             materialStatus: 'materialStatus'
           }"
         >
-          <span slot-scope="{ option }"
-            >{{ option.material }} - {{ option.materialRev }}-{{
-              option.materialDes
-            }}-{{ option.materialStatus }}</span
-          >
+          <span slot-scope="{ option }">
+            {{ option.material }} - {{ option.materialRev }}-{{
+            option.materialDes
+            }}-{{ option.materialStatus }}
+          </span>
         </el-transfer>
       </div>
     </div>
@@ -101,9 +87,7 @@
       <span>是否确认保存该条数据？</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleReset">取 消</el-button>
-        <el-button type="primary" @click="handleSave">
-          确 定
-        </el-button>
+        <el-button type="primary" @click="handleSave">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -147,7 +131,6 @@ export default {
   },
   created() {
     this.operateType = this.$route.query.operateType;
-    console.log(this.operateType);
     this.cloneList = JSON.parse(JSON.stringify(this.materialGroupList));
     this.materialGroupForm = this.cloneList[0];
     this.init();
@@ -164,7 +147,6 @@ export default {
       getAllDistinctHttp().then(data => {
         const res = data.data;
         if (res.code === 200) {
-          console.log(res.data);
           this.transferData = res.data;
           return;
         }
@@ -189,13 +171,19 @@ export default {
       this.unrelatived.forEach(element => {
         this.value.push(element.material);
       });
+      if (this.operateType === "edit") {
+        const tempList = JSON.parse(JSON.stringify(this.materialGroupList));
+        this.materialGroupForm = tempList[0];
+        this.materialGroupForm.materialList.forEach(element => {
+          this.value.push(element.material);
+        });
+      }
       if (this.operateType === "add") {
         this.materialGroupForm.materialGroup = "";
         this.materialGroupForm.groupDes = "";
       }
     },
     checkAdd(formName) {
-      console.log(this.materialGroupForm.materialGroup === "");
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.saveDialog = true;
@@ -224,7 +212,6 @@ export default {
           : { createList: [], updateList: tempArr };
       saveHttp(data).then(data => {
         const res = data.data;
-        console.log(res);
         if (res.code === 200) {
           this.$message({
             message: res.message,
