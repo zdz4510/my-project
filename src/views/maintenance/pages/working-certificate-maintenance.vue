@@ -1,5 +1,5 @@
 <template>
-  <div class="workingCertificateMaintenance">
+  <div class="working-certificate-maintenance">
     <div class="query">
       <el-form
         :inline="true"
@@ -179,7 +179,6 @@ export default {
     },
     //查询
     handleQuery() {
-      console.log(11);
       this.init();
     },
     //重置
@@ -205,7 +204,6 @@ export default {
       });
     },
     handleDelete() {
-      console.log(11);
       const data = [];
       this.selectionList.forEach(element => {
         data.push(element.cert);
@@ -285,22 +283,17 @@ export default {
 </script>
 
 <style lang="scss">
-.workingCertificateMaintenance {
+.working-certificate-maintenance {
   padding: 0 30px;
   .operate {
     padding: 10px 5px;
   }
   .query {
-    height: 40px;
     padding: 10px;
-    display: flex;
-    justify-content: space-between;
-    .left {
-      width: 300px;
-    }
-    .right {
-      width: 680px;
-      padding: 5px 30px;
+    .el-form {
+      .el-form-item {
+        margin-bottom: 0px;
+      }
     }
   }
 }

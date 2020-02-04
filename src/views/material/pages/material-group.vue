@@ -278,6 +278,11 @@ export default {
   }
   .query {
     padding: 10px;
+    .el-form {
+      .el-form-item {
+        margin-bottom: 0px;
+      }
+    }
   }
 }
 </style>

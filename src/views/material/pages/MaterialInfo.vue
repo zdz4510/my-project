@@ -260,6 +260,11 @@ export default {
   padding: 0 30px;
   .search-bar {
     padding: 10px;
+    .el-form {
+      .el-form-item {
+        margin-bottom: 0px;
+      }
+    }
   }
   .operate {
     padding: 10px 5px;

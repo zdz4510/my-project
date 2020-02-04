@@ -1,23 +1,18 @@
 <template>
-  <div class="workingCertificateMaintenanceEdit">
+  <div class="working-certificate-maintenance-edit">
     <div class="operate">
-      <el-button size="small" type="primary" @click="handleBack">
-        返回
-      </el-button>
+      <el-button size="small" type="primary" @click="handleBack">返回</el-button>
       <el-button
         size="small"
         type="primary"
         @click="checkAdd(['workCertFormOne', 'workCertFormTwo'])"
-      >
-        保存
-      </el-button>
+      >保存</el-button>
       <el-button
         size="small"
         type="primary"
+        v-if="operateType === 'add'"
         @click="handleReset(['workCertFormOne', 'workCertFormTwo'])"
-      >
-        重置
-      </el-button>
+      >重置</el-button>
     </div>
     <div class="showInfo">
       <div class="left" v-if="operateType === 'edit'">
@@ -30,8 +25,8 @@
           height="513"
           @row-click="handleStationCurrentChange"
         >
-          <el-table-column prop="cert" label="上岗证"> </el-table-column>
-          <el-table-column prop="certDes" label="上岗证描述"> </el-table-column>
+          <el-table-column prop="cert" label="上岗证"></el-table-column>
+          <el-table-column prop="certDes" label="上岗证描述"></el-table-column>
         </el-table>
       </div>
       <div class="right">
@@ -49,16 +44,13 @@
             ></el-input>
           </el-form-item>
           <el-form-item label="上岗证描述" prop="certDes">
-            <el-input
-              v-model.trim="workCertificateForm.certDes"
-              placeholder="请输入上岗证描述"
-            ></el-input>
+            <el-input v-model.trim="workCertificateForm.certDes" placeholder="请输入上岗证描述"></el-input>
           </el-form-item>
         </el-form>
 
         <el-tabs type="border-card">
           <el-tab-pane class="baseInfo">
-            <span slot="label"> 基础信息</span>
+            <span slot="label">基础信息</span>
             <el-form
               :model="workCertificateForm"
               ref="workCertFormTwo"
@@ -66,11 +58,7 @@
               :rules="rules"
             >
               <el-form-item label="状态:" prop="status">
-                <el-select
-                  v-model="workCertificateForm.status"
-                  filterable
-                  placeholder="请选择状态"
-                >
+                <el-select v-model="workCertificateForm.status" filterable placeholder="请选择状态">
                   <el-option label="已启用" :value="true">已启用</el-option>
                   <el-option label="未启用" :value="false">未启用</el-option>
                 </el-select>
@@ -86,19 +74,14 @@
                   <el-option label="临时" :value="false">临时</el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item
-                label="上岗证持续截止日期"
-                prop="certTime"
-                v-if="!workCertificateForm.certType"
-              >
+              <el-form-item label="上岗证持续截止日期" prop="certTime" v-if="!workCertificateForm.certType">
                 <el-date-picker
                   v-model="workCertificateForm.certTime"
                   type="datetime"
                   placeholder="选择日期"
                   size="small"
                   value-format="yyyy-MM-dd HH:mm:ss"
-                >
-                </el-date-picker>
+                ></el-date-picker>
               </el-form-item>
             </el-form>
           </el-tab-pane>
@@ -153,21 +136,11 @@ export default {
       };
     }
   },
-  watch: {
-    // workCertificateForm: {
-    //   handler(newName) {
-    //     console.log("watch");
-    //     this.isRequired = newName.certType ? true : false;
-    //   },
-    //   immediate: true,
-    //   deep: true
-    // }
-  },
+  watch: {},
   created() {
     this.deBounceSearch();
     this.operateType = this.$route.query.operateType;
     this.cloneList = JSON.parse(JSON.stringify(this.workingCertificateList));
-    console.log(this.cloneList[0]);
     if (this.operateType === "edit") {
       this.workCertificateForm = this.cloneList[0];
       this.isEditStation = true;
@@ -271,14 +244,6 @@ export default {
         return;
       }
       if (this.operateType === "edit") {
-        // const object = this.workCertificateForm;
-        // for (const key in object) {
-        //   if (object.hasOwnProperty(key)) {
-        //     if (key !== "cert") {
-        //       object[key] = "";
-        //     }
-        //   }
-        // }
         formName.forEach(element => {
           if (element === "workCertFormTwo") {
             this.$refs[element].resetFields();
@@ -293,7 +258,7 @@ export default {
 </script>
 
 <style lang="scss">
-.workingCertificateMaintenanceEdit {
+.working-certificate-maintenance-edit {
   padding: 10px 30px;
   .operate {
     padding: 10px 0;
