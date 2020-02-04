@@ -19,17 +19,17 @@
                     </el-form-item>
                     <el-form-item label="按钮标识：" prop="flag">
                         <el-col :span="12">
-                            <el-input  v-model="ruleForm.flag"></el-input>
+                            <el-input  v-model="ruleForm.flag" style="width:217px"></el-input>
                         </el-col>
                     </el-form-item>
                     <el-form-item label="按钮描述：" prop="description">
                         <el-col :span="12">
-                            <el-input  v-model="ruleForm.description"></el-input>
+                            <el-input  v-model="ruleForm.description" style="width:217px"></el-input>
                         </el-col>
                     </el-form-item>
                     <el-form-item label="按钮图标：" prop="icon">
                         <el-col :span="12">
-                            <el-input  v-model="ruleForm.icon"></el-input>
+                            <el-input  v-model="ruleForm.icon" style="width:217px"></el-input>
                         </el-col>
                         <i class="el-icon-more" style="margin-left:7px;"></i>
                     </el-form-item>
