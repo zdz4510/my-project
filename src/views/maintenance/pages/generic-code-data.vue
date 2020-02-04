@@ -93,10 +93,9 @@
         ref="multipleTable"
         :data="tableData"
         tooltip-effect="dark"
-        style="width: 100%"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column type="selection" width="55"> </el-table-column>
+        <el-table-column type="selection"> </el-table-column>
         <el-table-column
           v-for="(field, index) in usedFieldNames"
           :key="index"
@@ -536,6 +535,11 @@ export default {
   padding: 0 30px;
   .operate {
     padding: 10px 5px;
+  }
+  .showInfo{
+    .el-table{
+      width: 100%;
+    }
   }
   .query {
     height: 40px;
