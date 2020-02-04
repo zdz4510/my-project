@@ -14,8 +14,8 @@ export default {
         }
     },
     created(){
-        const systemId = this.$route.query.systemId;
-        this.getUserInfo(systemId)
+      //  const systemId = this.$route.query.systemId;
+       // this.getUserInfo(systemId)
     },
     methods:{
       ...mapActions([

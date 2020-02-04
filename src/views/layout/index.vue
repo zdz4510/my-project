@@ -16,7 +16,9 @@
 import DsnFooter from "./dsn-footer";
 import DsnHeader from "./dsn-header";
 import DsnLeftMenu from "./dsn-left-menu";
-import { mapGetters, mapMutations } from "vuex";
+import { mapGetters, mapMutations,mapActions } from "vuex";
+import { getResourceList } from "@/api/login.api.js";
+
 export default {
   name: "Layout",
   components: {
@@ -32,12 +34,34 @@ export default {
       isCollapse: true
     };
   },
-  created() {},
+  created() {
+      this.getSystwmId('MES')
+  },
   methods: {
     ...mapMutations(["PUSH", "POP"]),
+      ...mapActions([
+          'getUserInfo'
+      ]),
     handleCollapse(status) {
       this.isCollapse = status == 1 ? true : false;
-    }
+    },
+    getSystwmId(type){
+      getResourceList({
+        type:"SYSTEM"
+      }).then(
+        data=>{
+          const res = data.data;
+          if(res.code==200){
+                const arr = res.data.data;
+               const item = arr.find(item=>{
+                    return item.key==type
+                })
+
+                this.getUserInfo(item.id)
+            }
+        }
+      )
+    },
   }
 };
 </script>
