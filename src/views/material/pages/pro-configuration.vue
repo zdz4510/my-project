@@ -4,15 +4,15 @@
             <div class="left">
                 <el-form label-width="100px" :inline="true">
                     <el-form-item label="生产操作界面:" label-width="150px">
-                        <el-col :span="15">
-                            <el-input  v-model="podConfigName">
+                        <el-col :span="15" style="background: #fff;border-radius: 5px;border: 1px solid rgb(220, 223, 230);;">
+                            <!-- <el-input  v-model="podConfigName">
                                 <i
                                     class="el-icon-document-copy"
                                     slot="append"
                                     @click="handleIconClick">
                                 </i>
-                            </el-input>
-                            <!-- <input v-model="podConfigName" /> -->
+                            </el-input> -->
+                            <input v-model="podConfigName"  style="outline:none;color:#606266;padding:0 15px 0 15px;font-size:14px;box-sizing:border-box;width:100%;"/>
                         </el-col>
                         <!-- <el-select v-model="podConfigName" placeholder="请选择" @change="handlePodConfig">
                             <el-option
