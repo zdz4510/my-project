@@ -2,17 +2,17 @@
     <div class="proCon">
         <div class="query">
             <div class="left">
-                <el-form label-width="100px" class="typeForm">
+                <el-form label-width="100px" :inline="true">
                     <el-form-item label="生产操作界面:" label-width="150px">
                         <el-col :span="15">
-                            <!-- <el-input  v-model="podConfigName">
+                            <el-input  v-model="podConfigName">
                                 <i
                                     class="el-icon-document-copy"
                                     slot="append"
                                     @click="handleIconClick">
                                 </i>
-                            </el-input> -->
-                            <input v-model="podConfigName" />
+                            </el-input>
+                            <!-- <input v-model="podConfigName" /> -->
                         </el-col>
                         <!-- <el-select v-model="podConfigName" placeholder="请选择" @change="handlePodConfig">
                             <el-option
@@ -39,7 +39,7 @@
             <el-button size='small' type="danger" @click="handleMove">移除</el-button>
         </div>
         <!--tab切换-->
-        <el-tabs type="border-card">
+        <el-tabs type="border-card" class="ruleFormStyle">
             <el-tab-pane label="基础维护">
                 <el-form
                 :model="ruleForm"
@@ -298,6 +298,9 @@ export default {
     },
     methods:{
         ...mapMutations(["PROROW"]),
+        handleIconClick(){
+
+        },
         handleSelectionChange(rows){
             this.selectedList = rows;
             this.PROROW(this.selectedList[0])
@@ -443,7 +446,7 @@ export default {
         margin-bottom:20px;
         .left {
             height:41px;
-            width:400px;
+            width:420px;
             margin-right: 7px;
             }
     }
@@ -455,7 +458,7 @@ export default {
     width:100px;
     word-wrap:break-word ;
 }
-.proCon .el-form-item__content{
+.proCon .ruleFormStyle .el-form-item__content{
     width:100%;
     display: flex;
     align-items: center;
