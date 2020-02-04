@@ -65,7 +65,7 @@
       <el-tab-pane label="恢复" name="second">
         <div class="operate ml30 mtb10">
           <el-button class="mr25 pad1025" size="small" type="primary" @click="recover" :disabled="this.checkedList.length===0">恢复删除</el-button>
-          <el-input placeholder="请输入内容" v-model="undeleteDes" class="des">
+          <el-input placeholder="请输入内容" v-model="unDeleteDes" class="des">
             <template slot="prepend">恢复删除描述:</template>
           </el-input>
         </div>
@@ -94,7 +94,7 @@
             <el-table-column prop="deleteDes" label="删除描述"></el-table-column>
             <el-table-column prop="undeleteTime" label="恢复删除时间"></el-table-column>
             <el-table-column prop="undeleteUserName" label="恢复删除人员"></el-table-column>
-            <el-table-column prop="undeleteDes" label="恢复删除描述"></el-table-column>
+            <el-table-column prop="unDeleteDes" label="恢复删除描述"></el-table-column>
           </el-table>
           <el-pagination class="mtb20"
             background
@@ -177,7 +177,7 @@ import {getDeleteList, deleteMark, getRecoverList, recoverMark, getLogList} from
           }
         },
         deleteDes:'',
-        undeleteDes:'',
+        unDeleteDes:'',
       }
     },
     created(){
@@ -264,7 +264,7 @@ import {getDeleteList, deleteMark, getRecoverList, recoverMark, getLogList} from
         let arr = []
         this.checkedList.map(item=>{
           let obj = item
-          obj.undeleteDes = this.undeleteDes
+          obj.unDeleteDes = this.unDeleteDes
           arr.push(obj)
         })
         let params = {
@@ -276,7 +276,7 @@ import {getDeleteList, deleteMark, getRecoverList, recoverMark, getLogList} from
           if(data.data.code == 200){
             this.$message.success('操作成功')
             this.search()
-            this.undeleteDes = ''
+            this.unDeleteDes = ''
           }else{
             this.$message.error(data.data.message)
           }
