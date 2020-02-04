@@ -12,7 +12,7 @@
                                     @click="handleIconClick">
                                 </i>
                             </el-input> -->
-                            <input v-model="podConfigName"  style="outline:none;color:#606266;padding:0 15px 0 15px;font-size:14px;box-sizing:border-box;width:100%;"/>
+                            <input v-model="podConfigName"   style="outline:none;color:#606266;padding:0 15px 0 15px;font-size:14px;box-sizing:border-box;width:100%;"/>
                         </el-col>
                         <!-- <el-select v-model="podConfigName" placeholder="请选择" @change="handlePodConfig">
                             <el-option
