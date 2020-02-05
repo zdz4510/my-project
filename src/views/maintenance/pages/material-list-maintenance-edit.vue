@@ -341,6 +341,7 @@ export default {
           type: code === 200 ? 'success' : 'warning',
           message: code === 200 ? '保存成功！' : message
         })
+        this.$router.push({ name: "materialList" });
       })
     },
     //重置
