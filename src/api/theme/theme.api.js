@@ -47,6 +47,11 @@ export const deleteHttp = data => {
   return request.post(`${window.VUE_APP_URL}/mes/matGroup/delete`, data);
 };
 
+// topic/deleteTopicBatch
+export const deleteTopicBatchHttp = data => {
+  return request.post(`${window.VUE_APP_URL}/mes/topic/deleteTopicBatch`, data);
+};
+
 // mes/topic/addTopic
 // 添加主题维护信息
 export const addTopicHttp = data => {
