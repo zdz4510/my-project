@@ -44,8 +44,8 @@
       >
         保存
       </el-button>
-      <el-button size="small" type="primary" @click="handleExport"
-        >重置</el-button
+      <el-button size="small" type="danger" @click="handleExport"
+        >删除</el-button
       >
     </div>
     <div class="showInfo">
@@ -84,9 +84,9 @@
 
 <script>
 
-import { findTopicPageHttp } from "@/api/theme/theme.api.js";
+import { findTopicPageHttp,deleteTopicBatchHttp } from "@/api/theme/theme.api.js";
 import { mapMutations } from "vuex";
-import { exportExcel } from "@/until/excel.js";
+// import { exportExcel } from "@/until/excel.js";
 
 const tHeader = [
   "主题",
@@ -225,33 +225,49 @@ export default {
     //     });
     //   });
     // },
-    //导出
+    //删除
     handleExport() {
       if (this.selectionList.length === 0) {
-        this.exportHttp();
+        this.$message({
+          message: "请先选择要删除的项",
+          type: "warning"
+        });
       }
       if (this.selectionList.length > 0) {
         const data = this.selectionList;
-        this.exportResult(data);
+        deleteTopicBatchHttp(data).then(data=>{
+          const res =data.data;
+          if(res.code === 200){
+            this.$message({
+              message: "删除成功",
+              type: "success"
+            });
+          }else{
+            this.$message({
+              message: res.message,
+              type: "warning"
+            });
+          }
+        })
       }
     },
     //返回结果，提示信息
-    exportResult(data) {
-      const tipString = exportExcel(tHeader, filterVal, data, this.fileName);
-      if (tipString === undefined) {
-        this.$message({
-          message: "导出成功",
-          type: "success"
-        });
-        return;
-      } else {
-        this.$message({
-          message: tipString,
-          type: "warning"
-        });
-        return;
-      }
-    }
+    // exportResult(data) {
+    //   const tipString = exportExcel(tHeader, filterVal, data, this.fileName);
+    //   if (tipString === undefined) {
+    //     this.$message({
+    //       message: "导出成功",
+    //       type: "success"
+    //     });
+    //     return;
+    //   } else {
+    //     this.$message({
+    //       message: tipString,
+    //       type: "warning"
+    //     });
+    //     return;
+    //   }
+    // }
   }
 };
 </script>
