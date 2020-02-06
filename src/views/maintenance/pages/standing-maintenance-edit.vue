@@ -1,23 +1,17 @@
 <template>
   <div class="standingMaintenanceEdit">
     <div class="operate">
-      <el-button size="small" type="primary" @click="handleBack">
-        返回
-      </el-button>
+      <el-button size="small" type="primary" @click="handleBack">返回</el-button>
       <el-button
         size="small"
         type="primary"
         @click="checkAdd(['standingFormOne', 'standingFormTwo'])"
-      >
-        保存
-      </el-button>
+      >保存</el-button>
       <el-button
         size="small"
         type="primary"
         @click="handleReset(['standingFormOne', 'standingFormTwo'])"
-      >
-        重置
-      </el-button>
+      >重置</el-button>
     </div>
     <div class="showInfo">
       <div class="left" v-if="operateType === 'edit'">
@@ -37,7 +31,7 @@
             :value="item.colorCode"
           >
           </el-option>
-        </el-select> -->
+        </el-select>-->
         <el-table
           ref="editTable"
           :data="cloneList"
@@ -47,9 +41,8 @@
           height="513"
           @row-click="handleStationCurrentChange"
         >
-          <el-table-column prop="station" label="站位"> </el-table-column>
-          <el-table-column prop="stationDes" label="站位描述">
-          </el-table-column>
+          <el-table-column prop="station" label="站位"></el-table-column>
+          <el-table-column prop="stationDes" label="站位描述"></el-table-column>
         </el-table>
       </div>
       <div class="right">
@@ -67,16 +60,13 @@
             ></el-input>
           </el-form-item>
           <el-form-item label="站位描述" prop="stationDes">
-            <el-input
-              v-model.trim="standingForm.stationDes"
-              placeholder="请输入站位描述"
-            ></el-input>
+            <el-input v-model.trim="standingForm.stationDes" placeholder="请输入站位描述"></el-input>
           </el-form-item>
         </el-form>
 
         <el-tabs type="border-card">
           <el-tab-pane class="baseInfo">
-            <span slot="label"> 基础信息</span>
+            <span slot="label">基础信息</span>
             <el-form
               :model="standingForm"
               ref="standingFormTwo"
@@ -84,10 +74,7 @@
               :rules="standingFormRules"
             >
               <el-form-item label="IP地址:" prop="padIp">
-                <el-input
-                  v-model.trim="standingForm.padIp"
-                  placeholder="请输入IP地址"
-                ></el-input>
+                <el-input v-model.trim="standingForm.padIp" placeholder="请输入IP地址"></el-input>
               </el-form-item>
               <el-form-item label="工作中心:" prop="workCenter">
                 <el-autocomplete
@@ -98,26 +85,17 @@
                 ></el-autocomplete>
               </el-form-item>
               <el-form-item label="产线:" prop="workCenterRelation">
-                <el-select
-                  v-model="standingForm.workCenterRelation"
-                  filterable
-                  placeholder="请选择产线"
-                >
+                <el-select v-model="standingForm.workCenterRelation" filterable placeholder="请选择产线">
                   <el-option
                     v-for="(item, index) in workCenterRelations"
                     :key="index"
                     :label="item"
                     :value="item"
-                  >
-                  </el-option>
+                  ></el-option>
                 </el-select>
               </el-form-item>
               <el-form-item label="设备:" prop="resource">
-                <el-input
-                  v-model.trim="standingForm.resource"
-                  placeholder="请输入设备"
-                  class="resource"
-                ></el-input>
+                <el-input v-model.trim="standingForm.resource" placeholder="请输入设备" class="resource"></el-input>
                 <i class="el-icon-document" @click="handleSeleteResource"></i>
               </el-form-item>
 
@@ -132,16 +110,11 @@
                 <el-radio-group v-model="standingForm.stationType">
                   <el-radio label="普通站" value="普通站">普通站</el-radio>
                   <el-radio label="质监站" value="质监站">质监站</el-radio>
-                  <el-radio label="多功能站" value="多功能站"
-                    >多功能站</el-radio
-                  >
+                  <el-radio label="多功能站" value="多功能站">多功能站</el-radio>
                 </el-radio-group>
               </el-form-item>
               <el-form-item label="满站数量:" prop="fullQty">
-                <el-input
-                  v-model.trim="standingForm.fullQty"
-                  placeholder="请输入满站数量"
-                ></el-input>
+                <el-input v-model.trim="standingForm.fullQty" placeholder="请输入满站数量"></el-input>
               </el-form-item>
             </el-form>
           </el-tab-pane>
@@ -156,31 +129,21 @@
               height="200px"
               @current-change="handleCurrentChange"
             >
-              <el-table-column type="index" width="50"> </el-table-column>
-              <el-table-column prop="resource" label="设备编号" width="100">
-              </el-table-column>
-              <el-table-column
-                prop="resourceDes"
-                label="设备描述"
-                show-overflow-tooltip
-              >
-              </el-table-column>
+              <el-table-column type="index" width="50"></el-table-column>
+              <el-table-column prop="resource" label="设备编号" width="100"></el-table-column>
+              <el-table-column prop="resourceDes" label="设备描述" show-overflow-tooltip></el-table-column>
             </el-table>
           </span>
           <span slot="footer" class="dialog-footer">
             <el-button @click="resourceDialog = false">取 消</el-button>
-            <el-button type="primary" @click="handleSelectionResource">
-              确 定
-            </el-button>
+            <el-button type="primary" @click="handleSelectionResource">确 定</el-button>
           </span>
         </el-dialog>
         <el-dialog title="保存" :visible.sync="saveDialog" width="30%">
           <span>是否确认保存该条数据？</span>
           <span slot="footer" class="dialog-footer">
             <el-button @click="saveDialog = false">取 消</el-button>
-            <el-button type="primary" @click="handleSave">
-              确 定
-            </el-button>
+            <el-button type="primary" @click="handleSave">确 定</el-button>
           </span>
         </el-dialog>
       </div>
@@ -368,30 +331,22 @@ export default {
     },
     //重置
     handleReset(formName) {
-      if (this.operateType === "add") {
-        formName.forEach(element => {
-          this.$refs[element].resetFields();
-        });
-        return;
-      }
+      formName.forEach(element => {
+        this.$refs[element].resetFields();
+      });
+      // if (this.operateType === "add") {
+      //   formName.forEach(element => {
+      //     this.$refs[element].resetFields();
+      //   });
+      //   return;
+      // }
 
-      if (this.operateType === "edit") {
-        // const object = this.standingForm;
-        // for (const key in object) {
-        //   if (object.hasOwnProperty(key)) {
-        //     if (key !== "station") {
-        //       object[key] = "";
-        //     }
-        //   }
-        // }
-        formName.forEach(element => {
-          if (element === "standingFormTwo") {
-            this.$refs[element].resetFields();
-          }
-        });
-        this.standingForm.stationDes = "";
-        return;
-      }
+      // if (this.operateType === "edit") {
+      //   formName.forEach(element => {
+      //     this.$refs[element].resetFields();
+      //   });
+      //   return;
+      // }
     },
     //选择设备
     handleCurrentChange(val) {
