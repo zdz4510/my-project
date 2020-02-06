@@ -24,22 +24,14 @@
         type="primary"
         :disabled="selectionList.length <= 0"
         @click="handleEdit"
-      >
-        编辑
-      </el-button>
+      >编辑</el-button>
+      <el-button size="small" type="primary" :disabled="true">保存</el-button>
       <el-button
         size="small"
-        type="primary"
-        :disabled="true"
-      >
-        保存
-      </el-button>
-      <el-button size="small"
         type="danger"
-        :disabled="selectionList.length <= 0" 
-        @click="handleExport"
-      >删除
-      </el-button>
+        :disabled="selectionList.length <= 0"
+        @click="handleDelete"
+      >删除</el-button>
     </div>
     <div class="showInfo">
       <el-table
@@ -221,13 +213,14 @@ export default {
       }
       if (this.selectionList.length > 0) {
         const data = this.selectionList;
-        deleteTopicBatchHttp(data).then(data=>{
-          const res =data.data;
-          if(res.code === 200){
+        deleteTopicBatchHttp(data).then(data => {
+          const res = data.data;
+          if (res.code === 200) {
             this.$message({
               message: "删除成功",
               type: "success"
             });
+            this.init();
           } else {
             this.$message({
               message: res.message,
