@@ -11,7 +11,8 @@ export default {
       path: "tagConfig",
       name: "tagConfig",
       meta: {
-        title: "标签配置"
+        title: "标签配置",
+        requiresAuth: true
       },
       component: () =>
         import(
@@ -23,7 +24,8 @@ export default {
       path: "tagConfigEdit",
       name: "tagConfigEdit",
       meta: {
-        title: "标签配置编辑"
+        title: "标签配置编辑",
+        requiresAuth: true
       },
       component: () =>
         import(
@@ -35,7 +37,8 @@ export default {
       path: "tagPrint",
       name: "tagPrint",
       meta: {
-        title: "标签打印"
+        title: "标签打印",
+        requiresAuth: true
       },
       component: () =>
         import(
@@ -47,7 +50,8 @@ export default {
       path: "tagEdit",
       name: "tagEdit",
       meta: {
-        title: "标签编辑"
+        title: "标签编辑",
+        requiresAuth: true
       },
       component: () =>
         import(

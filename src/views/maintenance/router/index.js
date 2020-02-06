@@ -8,7 +8,8 @@ export default {
       path: "standingMaintenance",
       name: "standingMaintenance",
       meta: {
-        title: "站位维护"
+        title: "站位维护",
+        requiresAuth: true
       },
       component: () =>
         import(
@@ -20,7 +21,8 @@ export default {
       path: "standingMaintenanceEdit",
       name: "standingMaintenanceEdit",
       meta: {
-        title: "站位维护编辑"
+        title: "站位维护编辑",
+        requiresAuth: true
       },
       component: () =>
         import(
@@ -32,7 +34,8 @@ export default {
       path: "workingCertificateMaintenance",
       name: "workingCertificateMaintenance",
       meta: {
-        title: "上岗证维护"
+        title: "上岗证维护",
+        requiresAuth: true
       },
       component: () =>
         import(
@@ -44,7 +47,8 @@ export default {
       path: "workingCertificateMaintenanceEdit",
       name: "workingCertificateMaintenanceEdit",
       meta: {
-        title: "上岗证维护编辑"
+        title: "上岗证维护编辑",
+        requiresAuth: true
       },
       component: () =>
         import(
@@ -56,7 +60,8 @@ export default {
       path: "genericCodeDefinition",
       name: "genericCodeDefinition",
       meta: {
-        title: "通用代码定义维护"
+        title: "通用代码定义维护",
+        requiresAuth: true
       },
       component: () =>
         import(
@@ -68,7 +73,8 @@ export default {
       path: "genericCodeData",
       name: "genericCodeData",
       meta: {
-        title: "通用代码数据维护"
+        title: "通用代码数据维护",
+        requiresAuth: true
       },
       component: () =>
         import(
@@ -80,7 +86,8 @@ export default {
       path: "materialList",
       name: "materialList",
       meta: {
-        title: "物料清单维护"
+        title: "物料清单维护",
+        requiresAuth: true
       },
       component: () =>
         import(
@@ -92,7 +99,8 @@ export default {
       path: "materialListEdit",
       name: "materialListEdit",
       meta: {
-        title: "物料清单维护编辑"
+        title: "物料清单维护编辑",
+        requiresAuth: true
       },
       component: () =>
         import(
@@ -103,7 +111,8 @@ export default {
       path: "themeSafeguard",
       name: "themeSafeguard",
       meta: {
-        title: "主题维护"
+        title: "主题维护",
+        requiresAuth: true
       },
       component: () =>
         import(
@@ -114,7 +123,8 @@ export default {
       path: "themeAdd",
       name: "themeAdd",
       meta: {
-        title: "主题维护新增"
+        title: "主题维护新增",
+        requiresAuth: true
       },
       component: () =>
         import(
@@ -125,7 +135,8 @@ export default {
       path: "themeEdit",
       name: "themeEdit",
       meta: {
-        title: "主题维护修改"
+        title: "主题维护修改",
+        requiresAuth: true
       },
       component: () =>
         import(

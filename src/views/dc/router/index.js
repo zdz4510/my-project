@@ -7,7 +7,8 @@ export default {
       path: "dc-search",
       name: "dc-search",
       meta: {
-        title: "独立数据报表查询"
+        title: "独立数据报表查询",
+        requiresAuth:true
       },
       component: () =>
         import(
@@ -19,7 +20,8 @@ export default {
       path: "data-collection",
       name: "data-collection",
       meta: {
-        title: "数据收集"
+        title: "数据收集",
+        requiresAuth:true
       },
       component: () =>
         import(
@@ -30,7 +32,8 @@ export default {
       path: "add-data-collection",
       name: "add-data-collection",
       meta: {
-        title: "数据收集添加"
+        title: "数据收集添加",
+        requiresAuth:true
       },
       component: () =>
         import(
@@ -41,7 +44,8 @@ export default {
       path: "edit-data-collection",
       name: "edit-data-collection",
       meta: {
-        title: "数据收集编辑"
+        title: "数据收集编辑",
+        requiresAuth: true
       },
       component: () =>
         import(
@@ -53,7 +57,8 @@ export default {
       path: "dc-collection",
       name: "dc-collection",
       meta: {
-        title: "独立数据收集"
+        title: "独立数据收集",
+        requiresAuth: true
       },
       component: () =>
         import(
@@ -65,7 +70,8 @@ export default {
       path: "unpack",
       name: "unpack",
       meta: {
-        title: "包装解包配置"
+        title: "包装解包配置",
+        requiresAuth: true
       },
       component: () =>
         import(/* webpackChunkName: "unpack" */ "@/views/dc/pages/unpack.vue")
@@ -75,7 +81,8 @@ export default {
       path: "edit-dc-unpack",
       name: "edit-dc-unpack",
       meta: {
-        title: "包装解包配置编辑"
+        title: "包装解包配置编辑",
+        requiresAuth: true
       },
       component: () =>
         import(
@@ -87,7 +94,8 @@ export default {
       path: "lotStep",
       name: "lotStep",
       meta: {
-        title: "LOT步骤状态变更"
+        title: "LOT步骤状态变更",
+        requiresAuth: true
       },
       component: () =>
         import(
@@ -99,7 +107,8 @@ export default {
       path: "lotQuery",
       name: "lotQuery",
       meta: {
-        title: "LOT查询"
+        title: "LOT查询",
+        requiresAuth: true
       },
       component: () =>
         import(
@@ -111,7 +120,8 @@ export default {
       path: "lotStepDetail",
       name: "lotStepDetail",
       meta: {
-        title: "LOT步骤状态变更查看详情"
+        title: "LOT步骤状态变更查看详情",
+        requiresAuth: true
       },
       component: () =>
         import(
@@ -123,7 +133,8 @@ export default {
       path: "lotDivestiture",
       name: "lotDivestiture",
       meta: {
-        title: "Lot拆分"
+        title: "Lot拆分",
+        requiresAuth: true
       },
       component: () =>
         import(
@@ -135,7 +146,8 @@ export default {
       path: "lotMerge",
       name: "lotMerge",
       meta: {
-        title: "Lot 合并"
+        title: "Lot 合并",
+        requiresAuth:true
       },
       component: () =>
         import(
@@ -147,7 +159,8 @@ export default {
       path: "productionOperate",
       name: "productionOperate",
       meta: {
-        title: "生产操作"
+        title: "生产操作",
+        requiresAuth: true
       },
       component: () =>
         import(

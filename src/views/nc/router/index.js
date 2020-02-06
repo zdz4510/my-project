@@ -7,7 +7,8 @@ export default {
       path: "ncGroup",
       name: "ncGroup",
       meta:{
-        title:'不合格代码分组'
+        title:'不合格代码分组',
+        requiresAuth: true
       },
       component: () =>
         import(
@@ -18,7 +19,8 @@ export default {
       path: "addNcGroup",
       name: "addNcGroup",
       meta:{
-        title:'不合格代码分组新增'
+        title:'不合格代码分组新增',
+        requiresAuth: true
       },
       component: () =>
         import(
@@ -29,7 +31,8 @@ export default {
       path: "editNcGroup",
       name: "editNcGroup",
       meta:{
-        title:'不合格代码分组编辑'
+        title:'不合格代码分组编辑',
+        requiresAuth: true
       },
       component: () =>
         import(
@@ -40,7 +43,8 @@ export default {
       path: "ncCode",
       name: "ncCode",
       meta:{
-        title:'不合格代码'
+        title:'不合格代码',
+        requiresAuth: true
       },
       component: () =>
         import(
@@ -51,7 +55,8 @@ export default {
       path: "addNcCode",
       name: "addNcCode",
       meta:{
-        title:'不合格代码新增'
+        title:'不合格代码新增',
+        requiresAuth: true
       },
       component: () =>
         import(
@@ -62,7 +67,8 @@ export default {
       path: "editNcCode",
       name: "editNcCode",
       meta:{
-        title:'不合格代码编辑'
+        title:'不合格代码编辑',
+        requiresAuth: true
       },
       component: () =>
         import(
@@ -73,7 +79,8 @@ export default {
       path: "ncLog",
       name: "ncLog",
       meta:{
-        title:'不合格代码编辑'
+        title:'不合格代码编辑',
+        requiresAuth: true
       },
       component: () =>
         import(

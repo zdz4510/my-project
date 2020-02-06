@@ -10,7 +10,8 @@ export default {
       path: "scrapRecover",
       name: "scrapRecover",
       meta: {
-        title: "报废/恢复"
+        title: "报废/恢复",
+        requiresAuth: true
       },
       component: () =>
         import(
@@ -21,14 +22,13 @@ export default {
       path: "deleteRecover",
       name: "deleteRecover",
       meta: {
-        title: "删除/恢复"
+        title: "删除/恢复",
+        requiresAuth: true
       },
       component: () =>
         import(
           /* webpackChunkName: "scrap-delete" */ "@/views/scrap-delete/pages/DeleteRecover.vue"
         )
     },
-
-   
   ]
 };

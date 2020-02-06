@@ -7,7 +7,8 @@ export default {
       path: "customize",
       name: "customize",
       meta:{
-        title:'自定义字段维护'
+        title:'自定义字段维护',
+        requiresAuth:true
       },
       component: () =>
         import(

@@ -7,7 +7,8 @@ export default {
       path: "certUser",
       name: "certUser",
       meta:{
-        title:'用户证明分配'
+        title:'用户证明分配',
+        requiresAuth:true
       },
       component: () =>
         import(
@@ -18,7 +19,8 @@ export default {
       path: "addCertUser",
       name: "addCertUser",
       meta:{
-        title:'用户证明分配新增'
+        title:'用户证明分配新增',
+        requiresAuth:true
       },
       component: () =>
         import(
@@ -29,7 +31,8 @@ export default {
       path: "editCertUser",
       name: "editCertUser",
       meta:{
-        title:'用户证明分配编辑'
+        title:'用户证明分配编辑',
+        requiresAuth:true
       },
       component: () =>
         import(

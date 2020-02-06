@@ -10,7 +10,8 @@ export default {
             path: "materialInfo",
             name: "materialInfo",
             meta: {
-                title: "物料维护"
+                title: "物料维护",
+                requiresAuth: true
             },
             component: () =>
                 import (
@@ -22,7 +23,8 @@ export default {
             path: "addMaterial",
             name: "addMaterial",
             meta: {
-                title: "物料维护添加"
+                title: "物料维护添加",
+                requiresAuth: true
             },
             component: () =>
                 import (
@@ -34,7 +36,8 @@ export default {
             path: "editMaterial",
             name: "editMaterial",
             meta: {
-                title: "物料维护编辑"
+                title: "物料维护编辑",
+                requiresAuth: true
             },
             component: () =>
                 import (
@@ -97,7 +100,8 @@ export default {
             path: "proConfiguration",
             name: "proConfiguration",
             meta: {
-                title: "生产操作界面配置"
+                title: "生产操作界面配置",
+                requiresAuth: true
             },
             component: () =>
                 import (
@@ -110,7 +114,8 @@ export default {
             path: "addProConfig",
             name: "addProConfig",
             meta: {
-                title: "编辑普通按钮(生产操作界面配置)"
+                title: "编辑普通按钮(生产操作界面配置)",
+                requiresAuth: true
             },
             component: () =>
                 import (
@@ -123,7 +128,8 @@ export default {
             path: "addGroupProCon",
             name: "addGroupProCon",
             meta: {
-                title: "编辑按钮组(生产操作界面配置)"
+                title: "编辑按钮组(生产操作界面配置)",
+                requiresAuth: true
             },
             component: () =>
                 import (
@@ -136,7 +142,8 @@ export default {
             path: "newAddGroCon",
             name: "newAddGroCon",
             meta: {
-                title: "新增普通按钮(生产操作界面配置)"
+                title: "新增普通按钮(生产操作界面配置)",
+                requiresAuth: true
             },
             component: () =>
                 import (
@@ -149,7 +156,8 @@ export default {
             path: "newAddGroup",
             name: "newAddGroup",
             meta: {
-                title: "新增按钮组(生产操作界面配置)"
+                title: "新增按钮组(生产操作界面配置)",
+                requiresAuth: true
             },
             component: () =>
                 import (

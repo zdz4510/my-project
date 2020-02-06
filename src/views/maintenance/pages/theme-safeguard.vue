@@ -44,9 +44,12 @@
       >
         保存
       </el-button>
-      <el-button size="small" type="danger" @click="handleExport"
-        >删除</el-button
-      >
+      <el-button size="small"
+        type="danger"
+        :disabled="selectionList.length <= 0" 
+        @click="handleExport"
+      >删除
+      </el-button>
     </div>
     <div class="showInfo">
       <el-table
@@ -235,7 +238,6 @@ export default {
       }
       if (this.selectionList.length > 0) {
         const data = this.selectionList;
-        console.log(data,"苏积极")
         deleteTopicBatchHttp(data).then(data=>{
           const res =data.data;
           if(res.code === 200){

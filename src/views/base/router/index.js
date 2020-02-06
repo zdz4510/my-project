@@ -7,7 +7,8 @@ export default {
       path: "base",
       name: "base",
       meta: {
-        title: "基础库"
+        title: "基础库",
+        requiresAuth:true
       },
       component: () =>
         import(/* webpackChunkName: "base" */ "@/views/base/pages/Base.vue")
@@ -16,7 +17,8 @@ export default {
       path: "addBase",
       name: "addBase",
       meta: {
-        title: "基础库添加"
+        title: "基础库添加",
+        requiresAuth:true
       },
       component: () =>
         import(
@@ -27,7 +29,8 @@ export default {
       path: "editBase",
       name: "editBase",
       meta: {
-        title: "基础库编辑"
+        title: "基础库编辑",
+        requiresAuth:true
       },
       component: () =>
         import(
@@ -39,7 +42,8 @@ export default {
       path: "standingButtonDistribute",
       name: "standingButtonDistribute",
       meta: {
-        title: "站位按钮分配"
+        title: "站位按钮分配",
+        requiresAuth:true
       },
       component: () =>
         import(
@@ -51,7 +55,8 @@ export default {
       path: "standingButtonDistributeEdit",
       name: "standingButtonDistributeEdit",
       meta: {
-        title: "站位按钮分配编辑"
+        title: "站位按钮分配编辑",
+        requiresAuth:true
       },
       component: () =>
         import(
