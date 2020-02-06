@@ -129,6 +129,12 @@
 									this.$router.push({path:'/certUser/certUser'})
 								},1000)
 							}
+							else{
+								this.$message({
+									type: 'warning',
+									message:data.data.message 
+								});
+							}
 						})
 					} else {
 						console.log('error submit!!');

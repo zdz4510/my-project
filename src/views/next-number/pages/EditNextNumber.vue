@@ -254,12 +254,12 @@ export default {
       // this.oldRow = oldRow;
       //  当前编辑的和之前的数据不一样就显示弹窗
       if (JSON.stringify(this.editForm) !== JSON.stringify(this.cloneModify)) {
-        console.log('数据不一样禁用下拉框还有弹出保存')
+        // console.log('数据不一样禁用下拉框还有弹出保存')
         this.saveDialog = true; // 保存弹出框出现
         this.selectIsDisabled = true; // 禁用下拉框
         this.$refs['select'].blur();
       } else {
-         console.log('数据一样不禁用下拉框还有不弹出保存')
+        //  console.log('数据一样不禁用下拉框还有不弹出保存')
         this.saveDialog = false;
         this.selectIsDisabled = false;
       }
