@@ -1,10 +1,22 @@
 <template>
   <div id="layout">
-    <DsnHeader />
-    <DsnLeftMenu @handleCollapse="handleCollapse" />
-    <div class="content" :class="isCollapse?'active':''">
-      <div class="routerHistory"></div>
+    <DsnHeader   @handleCloseOrOpen="handleCloseOrOpen" />
+    <DsnLeftMenu  ref="leftMenu" @handleCollapse="handleCollapse" />
+    <div class="content" :class="isCollapse ? 'active' : ''">
+    
       <div class="pageContent">
+          <div class="routerHistory">
+        <dsn-router-history>
+          <dsn-router-history-item
+            @close="close"
+            v-for="item in historyList"
+            :key="item.name"
+            :item="item"
+            @toPage="toPage"
+          >
+          </dsn-router-history-item>
+        </dsn-router-history>
+      </div>
         <router-view></router-view>
       </div>
     </div>
@@ -18,7 +30,6 @@ import DsnHeader from "./dsn-header";
 import DsnLeftMenu from "./dsn-left-menu";
 import { mapGetters, mapMutations,mapActions } from "vuex";
 import { getResourceList } from "@/api/login.api.js";
-
 export default {
   name: "Layout",
   components: {
@@ -29,23 +40,34 @@ export default {
   computed: {
     ...mapGetters(["historyList"])
   },
+  created(){
+      this.getSystwmId('MES')
+  },
   data() {
     return {
       isCollapse: true
     };
   },
-  created() {
-      this.getSystwmId('MES')
-  },
   methods: {
-    ...mapMutations(["PUSH", "POP"]),
-      ...mapActions([
+    ...mapMutations(["PUSH","POP"]),
+     ...mapActions([
           'getUserInfo'
       ]),
     handleCollapse(status) {
       this.isCollapse = status == 1 ? true : false;
     },
-    getSystwmId(type){
+    handleCloseOrOpen(){
+        this.isCollapse = !this.isCollapse 
+        this.$refs['leftMenu'].toggle();
+    },
+    close(item) {
+       this.POP(item)
+    },
+    toPage(item){
+      
+      this.$router.push({name:item.name})
+    },
+     getSystwmId(type){
       getResourceList({
         type:"SYSTEM"
       }).then(
@@ -68,30 +90,49 @@ export default {
 
 <style lang="scss" scoped>
 #layout {
-  height: 100%;
-  overflow: hidden;
+   position: relative;
   .content {
-    padding: 70px 0 0px 60px;
-    background: yellowgreen;
+    padding: 64px 0px 10px 60px;
+    background: #f5f7f9;
     display: flex;
     box-sizing: border-box;
     flex-direction: column;
-    height: 100%;
-    overflow: hidden;
     &.active {
-      padding-left: 200px;
+      padding-left: 256px;
     }
     .routerHistory {
-      height: 46px;
+      position: fixed;
+      top: 64px;
+      height: 44px;
       width: 100%;
-      background: #006600;
+      white-space: nowrap;
+      background: #fff;
+      z-index: 999;
+      overflow: hidden;
+    
+  
+      // &::-webkit-scrollbar-thumb {
+      //   //滚动条里面小方块/
+      //   border-radius: 1px;
+      //   -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+      //   background: rgb(26, 153, 111);
+      //   //滚动条颜色/
+      //  }
+      // &::-webkit-scrollbar-track {
+      //   //滚动条里面轨道/
+      //   -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+      //   border-radius: 1px;
+      //   background: yellow;
+      // }
     }
 
     .pageContent {
-      flex: 1;
-      overflow: hidden;
-      overflow-y: scroll;
-      background: #f7f7f7;
+      padding: 40px 30px;
+      // flex: 1;
+      // overflow: hidden;
+      // overflow-y: scroll;
+     
+      
     }
   }
 }

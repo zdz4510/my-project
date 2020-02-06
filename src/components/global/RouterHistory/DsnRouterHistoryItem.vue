@@ -1,7 +1,10 @@
 <template>
   <div class="dsn-router-history-item">
     <div class="dsn-router-history-box">
-      <span class="left_com" @click="toPage(item)">{{item.title}}</span> <span class="right_com"><i class="el-icon-close" @click.self="close"></i></span>
+      <span class="left_com" @click="toPage(item)">{{ item.title }}</span>
+      <span class="right_com"
+        ><i class="el-icon-close" @click.self="close"></i
+      ></span>
     </div>
   </div>
 </template>
@@ -20,25 +23,27 @@ export default {
   },
   methods: {
     close() {
-      this.$emit("close",this.item);
+      this.$emit("close", this.item);
     },
-    toPage(item){
-        if(this.$route.name===item.name){
-            return ;
-        }
-       
-        this.$emit('toPage',item)
+    toPage(item) {
+      if (this.$route.name === item.name) {
+        return;
+      }
+
+      this.$emit("toPage", item);
     }
   }
 };
 </script>
-<style lang="scss"  >
+<style lang="scss">
 .dsn-router-history-item {
-  width: 150px;
-  height: 40px;
+  height: 32px;
+  background: #fff;
+  border-radius: 3px;
+  margin-right: 6px;
+  color: #808695;
   display: inline-block;
- //background: green;
-  border: 1px solid #e4e7ed;
+  // border: 1px solid #e4e7ed;
   box-sizing: border-box;
   .dsn-router-history-box {
     position: relative;
@@ -49,26 +54,33 @@ export default {
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    font-size: 12px;
-    .left_com{
-        flex: 1;
-        text-align: center;
-        padding-left: 15px;
+    padding: 5px 16px;
+    .left_com {
+      flex: 1;
+      text-align: center;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #808695;
     }
-    .right_com{
-        width: 20px;
-    }
-  }
-  .dsn-router-history-box  i.el-icon-close {
-    opacity: 0;
-   // position: absolute
-  }
-  .dsn-router-history-box:hover {
-    transition: all 0.3s ease-in-out;
-    padding-left: 10px;
-    i {
-      opacity: 1;
+    .right_com {
+      width: 22px;
+      transform: translateZ(0);
+      margin-right: -6px;
+      font-size: 12px;
+      color: #999;
+      text-align: center;
     }
   }
+  .dsn-router-history-box i.el-icon-close {
+    opacity: 1;
+    // position: absolute
+  }
+  // .dsn-router-history-box:hover {
+  //   transition: all 0.3s ease-in-out;
+  //   padding-left: 10px;
+  //   i {
+  //     opacity: 1;
+  //   }
+  // }
 }
 </style>
