@@ -1,52 +1,32 @@
 <template>
   <div class="topic">
     <div class="query">
-      <div class="left">
-        <el-form
-          :model="themeForm"
-          ref="themeForm"
-          label-width="100px"
-          class="themeForm"
-        >
-          <el-form-item label="主题" prop="topic">
-            <el-input
-              v-model.trim="themeForm.topic"
-              placeholder="请输入主题"
-            ></el-input>
-          </el-form-item>
-        </el-form>
-      </div>
-      <div class="right">
-        <el-button size="small" type="primary" @click="handleQuery">
-          查询
-        </el-button>
-        <el-button size="small" type="primary" @click="handleReset">
-          重置
-        </el-button>
-      </div>
+      <el-form
+        :model="themeForm"
+        ref="themeForm"
+        label-width="100px"
+        class="themeForm"
+        :inline="true"
+      >
+        <el-form-item label="主题" prop="topic">
+          <el-input v-model.trim="themeForm.topic" placeholder="请输入主题"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button size="small" type="primary" @click="handleQuery">查询</el-button>
+          <el-button size="small" type="primary" @click="handleReset">重置</el-button>
+        </el-form-item>
+      </el-form>
     </div>
     <div class="operate">
-      <el-button size="small" type="primary" @click="handleAdd">
-        新增
-      </el-button>
+      <el-button size="small" type="primary" @click="handleAdd">新增</el-button>
       <el-button
         size="small"
         type="primary"
         :disabled="selectionList.length <= 0"
         @click="handleEdit"
-      >
-        编辑
-      </el-button>
-      <el-button
-        size="small"
-        type="primary"
-        :disabled="true"
-      >
-        保存
-      </el-button>
-      <el-button size="small" type="danger" @click="handleExport"
-        >删除</el-button
-      >
+      >编辑</el-button>
+      <el-button size="small" type="primary" :disabled="true">保存</el-button>
+      <el-button size="small" type="danger" @click="handleDelete">删除</el-button>
     </div>
     <div class="showInfo">
       <el-table
@@ -55,15 +35,11 @@
         tooltip-effect="dark"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column type="selection"> </el-table-column>
-        <el-table-column type="index" label="序号">
-        </el-table-column>
-        <el-table-column prop="topic" label="主题">
-        </el-table-column>
-        <el-table-column prop="topicDes" label="主题描述">
-        </el-table-column>
-        <el-table-column prop="catenation" label="地址连接">
-        </el-table-column>
+        <el-table-column type="selection"></el-table-column>
+        <el-table-column type="index" label="序号"></el-table-column>
+        <el-table-column prop="topic" label="主题"></el-table-column>
+        <el-table-column prop="topicDes" label="主题描述"></el-table-column>
+        <el-table-column prop="catenation" label="地址连接"></el-table-column>
       </el-table>
     </div>
     <div class="pagination">
@@ -76,23 +52,20 @@
         :current-page="currentPage"
         @size-change="handlePagesize"
         @current-change="handleCurrentChange"
-      >
-      </el-pagination>
+      ></el-pagination>
     </div>
   </div>
 </template>
 
 <script>
-
-import { findTopicPageHttp,deleteTopicBatchHttp } from "@/api/theme/theme.api.js";
+import {
+  findTopicPageHttp,
+  deleteTopicBatchHttp
+} from "@/api/theme/theme.api.js";
 import { mapMutations } from "vuex";
 // import { exportExcel } from "@/until/excel.js";
 
-const tHeader = [
-  "主题",
-  "主题描述",
-  "地址连接",
-];
+const tHeader = ["主题", "主题描述", "地址连接"];
 const filterVal = [
   "topic",
   "materialTotal",
@@ -117,7 +90,7 @@ export default {
       //分页
       currentPage: 1,
       pagesize: 10,
-      total: 0,
+      total: 0
     };
   },
   created() {
@@ -144,20 +117,20 @@ export default {
           type: "warning"
         });
       });
-    //   findPageHttp(data).then(data => {
-    //     const res = data.data;
-    //     if (res.code === 200) {
-    //       // this.pageShow = true;
-    //       this.total = res.data.total;
-    //       this.tableData = res.data.data;
-    //       // this.themeForm.topic = "";
-    //       return;
-    //     }
-    //     this.$message({
-    //       message: res.message,
-    //       type: "warning"
-    //     });
-    //   });
+      //   findPageHttp(data).then(data => {
+      //     const res = data.data;
+      //     if (res.code === 200) {
+      //       // this.pageShow = true;
+      //       this.total = res.data.total;
+      //       this.tableData = res.data.data;
+      //       // this.themeForm.topic = "";
+      //       return;
+      //     }
+      //     this.$message({
+      //       message: res.message,
+      //       type: "warning"
+      //     });
+      //   });
     },
     toggleSelection(rows) {
       if (rows) {
@@ -188,19 +161,19 @@ export default {
       this.init();
     },
     handleAdd() {
-      this.$router.push({path:'/maintenance/themeAdd'});
+      this.$router.push({ path: "/maintenance/themeAdd" });
     },
     handleEdit() {
       console.log(this.selectionList);
       // this.topicLIST(this.selectionList);
-      this.$router.push({path:'/maintenance/themeEdit'});
+      this.$router.push({ path: "/maintenance/themeEdit" });
     },
     handleQuery() {
       this.init();
     },
     handleReset() {
       this.themeForm.topic = "";
-      this.tableData=[];
+      this.tableData = [];
     },
     //未选择导出请求数据
     // exportHttp() {
@@ -226,7 +199,7 @@ export default {
     //   });
     // },
     //删除
-    handleExport() {
+    handleDelete() {
       if (this.selectionList.length === 0) {
         this.$message({
           message: "请先选择要删除的项",
@@ -235,23 +208,23 @@ export default {
       }
       if (this.selectionList.length > 0) {
         const data = this.selectionList;
-        console.log(data,"苏积极")
-        deleteTopicBatchHttp(data).then(data=>{
-          const res =data.data;
-          if(res.code === 200){
+        console.log(data, "苏积极");
+        deleteTopicBatchHttp(data).then(data => {
+          const res = data.data;
+          if (res.code === 200) {
             this.$message({
               message: "删除成功",
               type: "success"
             });
-          }else{
+          } else {
             this.$message({
               message: res.message,
               type: "warning"
             });
           }
-        })
+        });
       }
-    },
+    }
     //返回结果，提示信息
     // exportResult(data) {
     //   const tipString = exportExcel(tHeader, filterVal, data, this.fileName);
@@ -277,23 +250,18 @@ export default {
 .topic {
   padding: 0 30px;
   .query {
-    height: 40px;
     padding: 10px;
-    display: flex;
-    justify-content: space-between;
-    .left {
-      width: 300px;
-    }
-    .right {
-      width: 380px;
-      padding: 5px 30px;
+    .el-form {
+      .el-form-item {
+        margin-bottom: 0px;
+      }
     }
   }
   .operate {
     padding: 10px 5px;
   }
-  .showInfo{
-    width:100%;
+  .showInfo {
+    width: 100%;
     // .el-table__header{
     //   width: 1000px !important;
     // }
