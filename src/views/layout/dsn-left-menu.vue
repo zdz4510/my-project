@@ -30,7 +30,7 @@
         </template>
          <el-menu-item   :route="{
             name:subitem.key
-         }"  :key="subitem.id" v-for="subitem in item.children"   index="/base/colorLibrary">{{subitem.lable}}</el-menu-item>
+         }"  :key="subitem.id" v-for="subitem in item.children"   :index="subitem.id">{{subitem.lable}}</el-menu-item>
        </el-submenu>
      
     </el-menu>

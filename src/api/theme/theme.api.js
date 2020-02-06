@@ -49,7 +49,7 @@ export const deleteHttp = data => {
 
 // topic/deleteTopicBatch
 export const deleteTopicBatchHttp = data => {
-  return request.post(`${window.VUE_APP_URL}/mes/topic/deleteTopicBatch`, data);
+  return request.delete(`${window.VUE_APP_URL}/mes/topic/deleteTopicBatch`, data);
 };
 
 // mes/topic/addTopic
