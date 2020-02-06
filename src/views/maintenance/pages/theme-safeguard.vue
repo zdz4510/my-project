@@ -235,6 +235,7 @@ export default {
       }
       if (this.selectionList.length > 0) {
         const data = this.selectionList;
+        console.log(data,"苏积极")
         deleteTopicBatchHttp(data).then(data=>{
           const res =data.data;
           if(res.code === 200){
