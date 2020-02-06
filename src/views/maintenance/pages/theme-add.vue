@@ -324,6 +324,7 @@ export default {
     },
     handleReset() {
       this.themeForm = {};
+      this.handleTabClick();
     },
     // 返回
     handleBack() {
@@ -341,6 +342,9 @@ export default {
           this.$message({
             type: "success",
             message: "新增成功"
+          });
+          this.$router.push({
+            name: "themeSafeguard"
           });
         } else {
           this.$message({
