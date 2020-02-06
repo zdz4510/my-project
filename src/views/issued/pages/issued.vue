@@ -133,10 +133,10 @@ export default {
                 shopOrder:this.shopOrder,
                 tenantSiteCode:this.tenantSiteCode
             }
-            if(params.shopOrder !== ""){
+            console.log(this.shopOrder,"111")
+            if(this.shopOrder !== ""){
                 findShopOrderListRequest(params).then(data =>{
                     // console.log('获取工单信息'+JSON.stringify(data))
-  
                     const res = data.data
                     if(res.code == 200){
                         this.shopOrderInfo = res.data
@@ -146,8 +146,12 @@ export default {
                             message:`${res.message}`,
                             type:'warning'
                         })
-                    }
-                    
+                    }  
+                })
+            }else{
+                this.$message({
+                    message: "请输入工单",
+                    type:'warning'
                 })
             }
             

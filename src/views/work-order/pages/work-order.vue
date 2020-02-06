@@ -2,14 +2,22 @@
   <div class="workOrder">
     <div class="query">
       <div class="left">
-        <el-form label-width="100px" class="typeForm">
-          <el-form-item label="工单:">
-            <el-input placeholder="请输入工单" v-model="shopOrder"></el-input>
-          </el-form-item>
+        <el-form label-width="80px">
+          <!-- <el-form-item label="工单:">
+           
+          </el-form-item> -->
+            <el-form-item label="工单:">
+              <el-col :span="16" style="margin-right:7px;">
+                 <el-input placeholder="请输入工单" v-model="shopOrder"></el-input>
+              </el-col>
+              <div class="choiceBox">
+                <i class="el-icon-document-copy"></i>
+              </div>
+            </el-form-item>
         </el-form>
-      </div>
-      <div class="choiceBox">
-        <i class="el-icon-document-copy"></i>
+        <div class="choiceBox">
+          <i class="el-icon-document-copy"></i>
+        </div>
       </div>
       <div class="right">
         <el-button size="small" type="primary" @click="getOrder">查询</el-button>
@@ -161,16 +169,19 @@ export default {
             releasedQuantity: "" ,//已下达数量
             kay_1: "",
             kay_2: "",
-            kay_3: ""
+            kay_3: "",
+            material:"",
+            materialRev:"",
+            router:""
         },
         rules: {
             style: [{ required: true, message: "请选择类型", trigger: "blur" }],
-            state: [{ required: true, message: "请选择状态", trigger: "change" }],
+            state: [{ required: true, message: "请选择状态", trigger: "blur" }],
             material: [
-                { required: true, message: "请输入计划物料", trigger: "change" }
+                { required: true, message: "请输入计划物料", trigger: "blur" }
             ],
-            number: [{ required: true, message: "请输入数量", trigger: "change" }],
-            custom: [{ required: true, message: "请输入自定义字段", trigger: "change" }],
+            number: [{ required: true, message: "请输入数量", trigger: "blur" }],
+            custom: [{ required: true, message: "请输入自定义字段", trigger: "blur" }],
             
         },
         shopOrder:'',//最新工单
@@ -213,7 +224,6 @@ export default {
         findShopOrderRequest(params).then(data =>{
           // console.log('获取工单所有信息'+JSON.stringify(data))
             const res = data.data
-            // console.log('获取工单'+JSON.stringify(data))
             if(res.code == 200){
                 this.getSearchData = res.data.shopOrder//工单信息
                 this.oldShopOrder = this.getSearchData.shopOrder
@@ -226,6 +236,14 @@ export default {
                 this.ruleForm.productQty = this.getSearchData.productQty
                 this.ruleForm.releasedQuantity = this.getSearchData.releasedQuantity
                 this.customizedFieldDefInfoList = res.data.customizedFieldDefInfoList//工单的自定义字段信息
+                this.ruleForm.material = res.data.shopOrder.material
+                this.ruleForm.materialRev = res.data.shopOrder.materialRev
+                this.ruleForm.router = res.data.shopOrder.router
+            }else{
+              this.$message({
+                message:res.message,
+                type:'warning'
+              })
             }
         })
     },
@@ -241,7 +259,7 @@ export default {
           message:'状态未填写,提交失败',
           type:'warning'
         }) 
-      }else if(this.ruleForm.material ==''){
+      }else if(this.ruleForm.plannedMaterial ==''){
         this.$message({
           message:'计划物料未填写,提交失败',
           type:'warning'
@@ -303,7 +321,10 @@ export default {
               plannedRouterRev: this.ruleForm.plannedRouterRev,  //计划工艺路线版本
               productQty: this.ruleForm.productQty, //生产数量
               releasedQuantity: this.ruleForm.releasedQuantity, //已下达数量
-              tenantSiteCode: "test"
+              tenantSiteCode: "test",
+              material:this.ruleForm.material,
+              materialRev:this.ruleForm.materialRev,
+              router:this.ruleForm.router,
             }
         }
         if(this.oldShopOrder == this.shopOrder){
@@ -317,7 +338,7 @@ export default {
               })
             }else{
               this.$message({
-                message:'更新失败',
+                message:res.message,
                 type:'warning'
               })
             }
@@ -371,11 +392,12 @@ export default {
             message:'删除成功！',
             type:'success'
           })
+          this.reset();
           return
         }else{
           this.dialogVisible = false
           this.$message({
-            message:'删除失败！',
+            message:res.message,
             type:'warning'
           })
           return
