@@ -21,7 +21,6 @@
                   :value="item.FIELD_01">
                 </el-option>
               </el-select>
-              <i class="el-icon-document" @click="handleQueryCustomizedItem"></i>
             </el-form-item>
 					</el-col>
 				</el-row>
@@ -156,13 +155,6 @@
         <el-button type="primary" @click="saveSetUp('addSetForm')">确 定</el-button>
       </span>
     </el-dialog>
-    <el-dialog
-      title="自定义项目"
-      :visible.sync="codeDialog"
-      width="30%"
-    >
-      111
-    </el-dialog>
 	</div>
 </template>
 
@@ -237,7 +229,6 @@
         code:[],
         field:[],
         customizedItem:[],
-        codeDialog:false
 			}
     },
     created(){
@@ -268,7 +259,7 @@
         generalCode: 'CUSTOMIZED_FIELD'
       }
       getNames(p3).then(data=>{
-      if(data.data.code == 200){
+        if(data.data.code == 200){
           this.customizedItem = data.data.data.definedData
         }else{
           this.$message.error(data.data.message)
@@ -276,28 +267,18 @@
       })
     },
 		methods: {
-      // 自定义弹框
-      handleQueryCustomizedItem(){
-        this.codeDialog=true
-      },
       search(){
         let params = {}
         params.customizedItem = this.addForm.customizedItem
         params.tenantSiteCode = 'test'
-        if(params.customizedItem.length===0){
-          this.$message({
-              type: 'warning',
-              message: '请先选择自定义项目'
-            });
-        }else{
-          getCustomizeInfo(params).then(data=>{
-            if(data.data.code == 200){
-              this.SetupInfoList = data.data.data.customizedFieldDefInfoList
-            }else{
-              this.$message.error(data.data.message)
-            }
-          })
-        }
+        getCustomizeInfo(params).then(data=>{
+          if(data.data.code == 200){
+            this.SetupInfoList = data.data.data.customizedFieldDefInfoList
+          }else{
+            this.$message.error(data.data.message)
+          }
+          
+        })
       },
 			save(formName){
 				this.$refs[formName].validate((valid) => {

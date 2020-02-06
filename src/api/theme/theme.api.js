@@ -62,7 +62,7 @@ export const addTopicHttp = data => {
 //   分页查询主题维护表
 export const findTopicPageHttp = data => {
   return request.get(`${window.VUE_APP_URL}/mes/topic/findTopicPage`, {
-      params:data
+    params: data
   });
 };
 
@@ -70,7 +70,7 @@ export const findTopicPageHttp = data => {
 // 查询当前主题的分配关系
 export const findStationListHttp = data => {
   return request.get(`${window.VUE_APP_URL}/mes/topic/findStationList`, {
-      params:data
+    params: data
   });
 };
 
