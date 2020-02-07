@@ -16,35 +16,26 @@
         :label-width="formLabelWidth"
       >
         <el-row>
-          <el-col :span="8">
+          <el-col :span="12">
             <!-- <el-form-item label="自定义项目:" prop="FIELD_01" required>
 							<el-input v-model="addForm.FIELD_01"></el-input>
             </el-form-item>-->
-            <el-form-item label="自定义项目:" prop="FIELD_01" required class="FIELD_01">
+            <el-form-item label="自定义项目：" prop="FIELD_01" required class="FIELD_01">
               <el-input v-model="addForm.FIELD_01"></el-input>
-
-              <!-- <el-select v-model="addForm.FIELD_01" filterable placeholder="请选择">
-                <el-option
-                  v-for="item in FIELD_01"
-                  :key="item.FIELD_01"
-                  :label="item.FIELD_01"
-                  :value="item.FIELD_01"
-                ></el-option>
-              </el-select>-->
               <i class="el-icon-document" @click="selectCustomize"></i>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="8">
-            <el-form-item label="对象表" prop="FIELD_02">
+            <el-form-item label="对象表：" prop="FIELD_02" class="FIELD_02">
               <el-input v-model="addForm.FIELD_02" :readonly="true"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="24">
-            <el-form-item label="描述:" prop="FIELD_03">
+            <el-form-item label="描述：" prop="FIELD_03">
               <el-input v-model="addForm.FIELD_03" :readonly="true"></el-input>
             </el-form-item>
             <el-form-item label prop="FIELD_04">
@@ -549,6 +540,9 @@ export default {
         .el-input {
           width: 90%;
         }
+      }
+      .FIELD_02 {
+        margin-right: 0px;
       }
     }
   }

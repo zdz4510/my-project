@@ -251,33 +251,36 @@ export default {
     search(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          let params = this.searchForm;
-          params.pageSize = this.tableData.page.pageSize;
-          params.currentPage = this.tableData.page.currentPage;
-          if (this.searchForm.definedBy == "MATERIAL_GROUP") {
-            params.material = "";
-            params.materialGroup = this.searchForm.value.split("&")[0];
-          } else if (this.searchForm.definedBy == "MATERIAL") {
-            params.materialGroup = "";
-            params.material = this.searchForm.value.split("&")[0];
-          }
-
-          getNextNumberList(params).then(data => {
-            if (data.data.code == 200) {
-              if (!data.data.data) {
-                this.$message({
-                  type: "warning",
-                  message: "暂无数据"
-                });
-              }
-              this.tableData.data = data.data.data && data.data.data.sequences;
-            } else {
-              this.$message.error(data.data.message);
-            }
-          });
+          this.handleQuery();
         } else {
           console.log("error submit!!");
           return false;
+        }
+      });
+    },
+    handleQuery() {
+      let params = this.searchForm;
+      params.pageSize = this.tableData.page.pageSize;
+      params.currentPage = this.tableData.page.currentPage;
+      if (this.searchForm.definedBy == "MATERIAL_GROUP") {
+        params.material = "";
+        params.materialGroup = this.searchForm.value.split("&")[0];
+      } else if (this.searchForm.definedBy == "MATERIAL") {
+        params.materialGroup = "";
+        params.material = this.searchForm.value.split("&")[0];
+      }
+
+      getNextNumberList(params).then(data => {
+        if (data.data.code == 200) {
+          if (!data.data.data) {
+            this.$message({
+              type: "warning",
+              message: "暂无数据"
+            });
+          }
+          this.tableData.data = data.data.data && data.data.data.sequences;
+        } else {
+          this.$message.error(data.data.message);
         }
       });
     },

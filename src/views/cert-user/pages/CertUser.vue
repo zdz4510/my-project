@@ -1,220 +1,248 @@
 <template>
-	<div>
-		<div class="search-bar">
-			<el-form :inline="true" :model="searchForm" ref="searchForm" :rules="rules" class="form-style" :label-width="formLabelWidth">
-				<el-form-item label="用户:" prop="user">
-					<el-input v-model="searchForm.user"></el-input>
-				</el-form-item>
-				<el-form-item label="姓名:" prop="name">
-					<el-input v-model="searchForm.name"></el-input>
-				</el-form-item>
-				<el-form-item label="" prop="">
-					<el-button class="ml15 mr25 pad1025" size="small" type="primary" @click="search">查询</el-button>
-					<el-button class="pad1025" size="small" type="primary" @click="resetForm('searchForm')">重置</el-button>
-				</el-form-item>
-			</el-form>
-		</div>
-		<div class="operate ml30 mtb10">
-			<!-- <el-button class="mr25 pad1025" size="small" type="primary" @click="add" :disabled="this.checkedList.length>0">新增</el-button> 逻辑变更，此功能去掉，注意后面去掉路由配置信息 -->
-			<el-button class="mr25 pad1025" size="small" type="primary" @click="edit" :disabled="this.checkedList.length === 0">编辑</el-button>
-			<el-button class="mr25 pad1025" size="small" type="warning"  @click="del" :disabled="this.checkedList.length === 0">删除</el-button>
-			<el-button class="mr25 pad1025" size="small" type="warning"  @click="handleExport" >导出</el-button>
-		</div>
-		<div class="">
-			<el-table
-			ref="multipleTable"
-			:data="this.tableData.data"
-			tooltip-effect="dark"
-			row-key="user"
-			@selection-change="handleSelectionChange"
-			>
-				<el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
-				<el-table-column type="index" label="序号"></el-table-column>
-				<el-table-column prop="user" label="用户"></el-table-column>
-				<el-table-column prop="name" label="姓名"></el-table-column>
-				<el-table-column prop="cert" label="上岗证"></el-table-column>
-				<el-table-column prop="certDes" label="上岗证描述"></el-table-column>
-				<el-table-column label="状态">
-					<template slot-scope="scope">{{ scope.row.status == true ? '已启用' : '未启用' }}</template>
-				</el-table-column>
-				<el-table-column label="持续时间类型">
-					<template slot-scope="scope">{{ scope.row.certType == true ? '永久' : '临时' }}</template>
-				</el-table-column>
-				<el-table-column prop="certTime" label="上岗证截止日期"></el-table-column>
-			</el-table>
-			<el-pagination class="mtb20"
-				background
-				@size-change="handleSizeChange"
-				@current-change="handleCurrentChange"
-				:current-page="this.tableData.page.currentPage"
-				:page-sizes="[1, 10, 15, 20, 30, 50]"
-				:page-size="this.tableData.page.pageSize"
-				layout="->, total, prev, pager, next, sizes, jumper"
-				:total="this.tableData.page.total">
-			</el-pagination>
-		</div>
-	</div>
+  <div class="cert-user">
+    <div class="search-bar">
+      <el-form
+        :inline="true"
+        :model="searchForm"
+        ref="searchForm"
+        :rules="rules"
+        class="form-style"
+        :label-width="formLabelWidth"
+      >
+        <el-form-item label="用户:" prop="user">
+          <el-input v-model="searchForm.user"></el-input>
+        </el-form-item>
+        <el-form-item label="姓名:" prop="name">
+          <el-input v-model="searchForm.name"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button size="small" type="primary" @click="search">查询</el-button>
+          <el-button size="small" type="primary" @click="resetForm('searchForm')">重置</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+    <div class="operate">
+      <!-- <el-button class="mr25 pad1025" size="small" type="primary" @click="add" :disabled="this.checkedList.length>0">新增</el-button> 逻辑变更，此功能去掉，注意后面去掉路由配置信息 -->
+      <el-button
+        size="small"
+        type="primary"
+        @click="edit"
+        :disabled="this.checkedList.length === 0"
+      >编辑</el-button>
+      <el-button
+        size="small"
+        type="primary"
+        @click="del"
+        :disabled="this.checkedList.length === 0"
+      >删除</el-button>
+      <el-button size="small" type="primary" @click="handleExport">导出</el-button>
+    </div>
+    <div class>
+      <el-table
+        ref="multipleTable"
+        :data="this.tableData.data"
+        tooltip-effect="dark"
+        row-key="user"
+        @selection-change="handleSelectionChange"
+      >
+        <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
+        <el-table-column type="index" label="序号"></el-table-column>
+        <el-table-column prop="user" label="用户"></el-table-column>
+        <el-table-column prop="name" label="姓名"></el-table-column>
+        <el-table-column prop="cert" label="上岗证"></el-table-column>
+        <el-table-column prop="certDes" label="上岗证描述"></el-table-column>
+        <el-table-column label="状态">
+          <template slot-scope="scope">{{ scope.row.status == true ? '已启用' : '未启用' }}</template>
+        </el-table-column>
+        <el-table-column label="持续时间类型">
+          <template slot-scope="scope">{{ scope.row.certType == true ? '永久' : '临时' }}</template>
+        </el-table-column>
+        <el-table-column prop="certTime" label="上岗证截止日期"></el-table-column>
+      </el-table>
+      <el-pagination
+        class="mtb20"
+        background
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="this.tableData.page.currentPage"
+        :page-sizes="[1, 10, 15, 20, 30, 50]"
+        :page-size="this.tableData.page.pageSize"
+        layout="->, total, prev, pager, next, sizes, jumper"
+        :total="this.tableData.page.total"
+      ></el-pagination>
+    </div>
+  </div>
 </template>
 
 <script>
-import {getCertUserList, deleteData} from '../../../api/cert.user.api'
+import { getCertUserList, deleteData } from "../../../api/cert.user.api";
 import { exportExcel } from "@/until/excel.js";
 import { mapMutations } from "vuex";
-	export default {
-		name:'',
-		data() {
-			return {
-				tHeader:['用户','姓名','上岗证','上岗证描述','状态','持续时间类型','上岗证截止日期'],
-				filterVal:['user','name','cert','certDes','status','certType','certTime'],
-				fileName:'用户证明维护表',
-				checkedList:[],
-				formLabelWidth:'120px',
-				searchForm: {
-					user:'',
-					name:'',
-				},
-				rules: {},
-				tableData: {
-					data:[],
-					page:{
-						currentPage:1,
-						pageSize:10,
-						total:0
-					}
-				},
-			}
-		},
-		created(){
-			this.search()
-		},
-		methods: {
-			...mapMutations(["SETCERTUSEREDITLIST"]),
-			resetForm(formName) {
-				this.$refs[formName].resetFields();
-				this.search()
-			},
-			search(){
-				let params = this.searchForm
-				params.pageSize = this.tableData.page.pageSize
-				params.currentPage = this.tableData.page.currentPage
-				getCertUserList(params).then(data => {
-					if(data.data.code == 200){
-						this.tableData.data = data.data.data.data
-						this.tableData.page.total = data.data.data.total
-					}else{
-						this.$message.error(data.data.message)
-					}
-				})
-			},
-			handleSizeChange(pageSize){
-				this.tableData.page.pageSize = pageSize
-				this.search()
-			},
-			handleCurrentChange(currentPage){
-				this.tableData.page.currentPage = currentPage
-				this.search()
-			},
-			handleSelectionChange(val) {
-				this.checkedList = val;
-			},
-			del(){
-				this.$confirm('是否删除所选数据?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-					this.checkedList.map(item=>{
-						item.cert = []
-					})
-					deleteData(this.checkedList).then(data=>{
-						if(data.data.code == 200){
-							this.$message({
-								type: 'success',
-								message: '删除成功!'
-							});
-							this.$refs.multipleTable.clearSelection()
-							this.search()
-						}
-					})
-        }).catch(() => {
+export default {
+  name: "",
+  data() {
+    return {
+      tHeader: [
+        "用户",
+        "姓名",
+        "上岗证",
+        "上岗证描述",
+        "状态",
+        "持续时间类型",
+        "上岗证截止日期"
+      ],
+      filterVal: [
+        "user",
+        "name",
+        "cert",
+        "certDes",
+        "status",
+        "certType",
+        "certTime"
+      ],
+      fileName: "用户证明维护表",
+      checkedList: [],
+      formLabelWidth: "100px",
+      searchForm: {
+        user: "",
+        name: ""
+      },
+      rules: {},
+      tableData: {
+        data: [],
+        page: {
+          currentPage: 1,
+          pageSize: 10,
+          total: 0
+        }
+      }
+    };
+  },
+  created() {
+    this.search();
+  },
+  methods: {
+    ...mapMutations(["SETCERTUSEREDITLIST"]),
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+      this.search();
+    },
+    search() {
+      let params = this.searchForm;
+      params.pageSize = this.tableData.page.pageSize;
+      params.currentPage = this.tableData.page.currentPage;
+      getCertUserList(params).then(data => {
+        if (data.data.code == 200) {
+          this.tableData.data = data.data.data.data;
+          this.tableData.page.total = data.data.data.total;
+        } else {
+          this.$message.error(data.data.message);
+        }
+      });
+    },
+    handleSizeChange(pageSize) {
+      this.tableData.page.pageSize = pageSize;
+      this.search();
+    },
+    handleCurrentChange(currentPage) {
+      this.tableData.page.currentPage = currentPage;
+      this.search();
+    },
+    handleSelectionChange(val) {
+      this.checkedList = val;
+    },
+    del() {
+      this.$confirm("是否删除所选数据?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.checkedList.map(item => {
+            item.cert = [];
+          });
+          deleteData(this.checkedList).then(data => {
+            if (data.data.code == 200) {
+              this.$message({
+                type: "success",
+                message: "删除成功!"
+              });
+              this.$refs.multipleTable.clearSelection();
+              this.search();
+            }
+          });
+        })
+        .catch(() => {
           this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });          
-				});
-			},
-			add(){
-				this.$router.push({path:'/certUser/addCertUser'})
-			},
-			edit(){
-				this.SETCERTUSEREDITLIST(this.checkedList);
-				this.$router.push({path:'/certUser/editCertUser'})
-			},
-			//导出开始
-			handleExport() {
-				if (this.checkedList.length === 0) {
-					this.exportHttp();
-				}
-				if (this.checkedList.length > 0) {
-					this.checkedList.map(item=>{
-						item.status = item.status ? '已启用' : '未启用'
-						item.certType = item.certType ? '永久' : '临时'
-					})
-					this.exportResult(this.checkedList);
-				}
-			},
-			exportHttp() {
-				let params = this.searchForm
-				params.pageSize = 0
-				params.currentPage = this.tableData.page.currentPage
-				getCertUserList(params).then(data => {
-					if(data.data.code == 200){
-						let res = data.data.data.data
-						res.map(item=>{
-							item.status = item.status ? '已启用' : '未启用'
-							item.certType = item.certType ? '永久' : '临时'
-						})
-						this.exportResult(res);
-					}else{
-						this.$message.error(data.data.message)
-					}
-				})
-			},
-			exportResult(data) {
-				const tipString = exportExcel(this.tHeader, this.filterVal, data, this.fileName);
-				if (tipString === undefined) {
-					return;
-				} else {
-					this.$message({
-						message: tipString,
-						type: "warning"
-					});
-					return;
-				}
-			},
-			//导出结束
-		}
-	}
+            type: "info",
+            message: "已取消删除"
+          });
+        });
+    },
+    add() {
+      this.$router.push({ path: "/certUser/addCertUser" });
+    },
+    edit() {
+      this.SETCERTUSEREDITLIST(this.checkedList);
+      this.$router.push({ path: "/certUser/editCertUser" });
+    },
+    //导出开始
+    handleExport() {
+      if (this.checkedList.length === 0) {
+        this.exportHttp();
+      }
+      if (this.checkedList.length > 0) {
+        this.checkedList.map(item => {
+          item.status = item.status ? "已启用" : "未启用";
+          item.certType = item.certType ? "永久" : "临时";
+        });
+        this.exportResult(this.checkedList);
+      }
+    },
+    exportHttp() {
+      let params = this.searchForm;
+      params.pageSize = 0;
+      params.currentPage = this.tableData.page.currentPage;
+      getCertUserList(params).then(data => {
+        if (data.data.code == 200) {
+          let res = data.data.data.data;
+          res.map(item => {
+            item.status = item.status ? "已启用" : "未启用";
+            item.certType = item.certType ? "永久" : "临时";
+          });
+          this.exportResult(res);
+        } else {
+          this.$message.error(data.data.message);
+        }
+      });
+    },
+    exportResult(data) {
+      const tipString = exportExcel(
+        this.tHeader,
+        this.filterVal,
+        data,
+        this.fileName
+      );
+      if (tipString === undefined) {
+        return;
+      } else {
+        this.$message({
+          message: tipString,
+          type: "warning"
+        });
+        return;
+      }
+    }
+    //导出结束
+  }
+};
 </script>
 
 <style scoped lang="scss">
-	.search-bar {
-		background: #FFFFFF;
-		padding-bottom: 20px;
-		.form-style {
-			margin: 0 !important;
-			padding: 0 0 0 30px !important;
-			position: relative;
-			top: 20px;
-		}
-	}
-	.content {
-		background: #FFFFFF;
-	}
-	.add-form {
-		padding-left: 25px;
-	}
-	.dec {
-		width: 400px !important;
-	}
+.cert-user {
+  padding: 10px 0;
+  .search-bar {
+		
+  }
+}
 </style>
