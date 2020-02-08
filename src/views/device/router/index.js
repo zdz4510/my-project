@@ -6,6 +6,10 @@ export default {
     {
       path: "deviceType",
       name: "deviceType",
+      meta: {
+        title: "deviceType",
+        requiresAuth: true
+      },
       component: () =>
         import(
           /* webpackChunkName: "deviceType" */ "@/views/device/pages/device-type.vue"
@@ -14,6 +18,10 @@ export default {
     {
       path: "deviceMaintenance",
       name: "deviceMaintenance",
+      meta: {
+        title: "deviceMaintenance",
+        requiresAuth: true
+      },
       component: () =>
         import(
           /* webpackChunkName: "deviceMaintenance" */ "@/views/device/pages/device-maintenance.vue"
@@ -22,6 +30,10 @@ export default {
     {
       path: "deviceUpkeep",
       name: "deviceUpkeep",
+      meta: {
+        title: "deviceUpkeep",
+        requiresAuth: true
+      },
       component: () =>
         import(
           /* webpackChunkName: "deviceUpkeep" */ "@/views/device/pages/device-upkeep.vue"
@@ -31,6 +43,10 @@ export default {
     {
       path: "deviceTypeEdit",
       name: "deviceTypeEdit",
+      meta: {
+        title: "新增和编辑",
+        requiresAuth: true
+      },
       component: () =>
         import(
           /* webpackChunkName: "deviceTypeEdit" */ "@/views/device/pages/device-type-edit.vue"
@@ -39,6 +55,10 @@ export default {
     {
       path: "deviceMaintenanceEdit",
       name: "deviceMaintenanceEdit",
+      meta: {
+        title: "deviceMaintenanceEdit",
+        requiresAuth: true
+      },
       component: () =>
         import(
           /* webpackChunkName: "deviceMaintenanceEdit" */ "@/views/device/pages/device-maintenance-edit.vue"
@@ -47,6 +67,10 @@ export default {
     {
       path: "test",
       name: "test",
+      meta: {
+        title: "测试",
+        requiresAuth: true
+      },
       component: () =>
         import(/* webpackChunkName: "test" */ "@/views/device/pages/test.vue")
     }

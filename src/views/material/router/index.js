@@ -50,6 +50,10 @@ export default {
         {
             path: "workOrder",
             name: "workOrder",
+            meta: {
+                title: "工单维护",
+                requiresAuth: true
+            },
             component: () =>
                 import (
                     /* webpackChunkName: "work-order" */
@@ -60,6 +64,10 @@ export default {
         {
             path: "issued",
             name: "issued",
+            meta: {
+                title: "工单下达",
+                requiresAuth: true
+            },
             component: () =>
                 import (
                     /* webpackChunkName: "issued" */
@@ -70,6 +78,10 @@ export default {
         {
             path: "materialGroup",
             name: "materialGroup",
+            meta: {
+                title: "物料组维护",
+                requiresAuth: true
+            },
             component: () =>
                 import (
                     /* webpackChunkName: "materialGroup" */
@@ -80,6 +92,10 @@ export default {
         {
             path: "materialGroupEdit",
             name: "materialGroupEdit",
+            meta: {
+                title: "物料组维护编辑",
+                requiresAuth: true
+            },
             component: () =>
                 import (
                     /* webpackChunkName: "materialGroupEdit" */
