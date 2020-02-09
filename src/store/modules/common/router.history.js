@@ -1,4 +1,4 @@
-import router from '@/router/'
+import router from "@/router/";
 const routerHistory = {
   // 初始化状态
   state: {
@@ -8,31 +8,93 @@ const routerHistory = {
   mutations: {
     //进入路由
     PUSH(state, to) {
-        state.historyList=  state.historyList.filter(item=>{
-            return item.name!=to.name
-        })
-      state.historyList.push(to);
+      // console.log('state, to')
+      // console.log(state, to)
+      //   state.historyList=  state.historyList.filter(item=>{
+      //       return item.name!=to.name
+      //   })
+      // 如果是登陆侧不加入
+      if (to.name === "login") {
+        return;
+      }
+      let hasHistoryItem = state.historyList.some(item => {
+        return item.name == to.name;
+      });
+      if (!hasHistoryItem) {
+        state.historyList.push(to);
+      }
     },
     // 删除路由信息
     POP(state, deleteItem) {
-        const len = state.historyList.length; 
-        if(len==1){
-            return ;
-        }
+      const len = state.historyList.length;
+      if (len == 1) {
+        return;
+      }
 
-
-        let flag = false;
-      if(state.historyList[len-1].name==deleteItem.name){
-            flag =true;
+      let flag = false;
+      if (state.historyList[len - 1].name == deleteItem.name) {
+        flag = true;
       }
       state.historyList = state.historyList.filter(item => {
         return item.name != deleteItem.name;
       });
-      if(flag){
-          let arr =state.historyList;
-          let len =state.historyList.length;
-        router.push({name:arr[len-1].name})
+      // 如果删除的是当前的则最后一个高亮
+      if (flag) {
+        let arr = state.historyList;
+        let len = state.historyList.length;
+        router.push({ name: arr[len - 1].name });
       }
+    },
+    /**
+     *  关闭所有
+     */
+    closeAll(state, currentName) {
+      if (state.historyList.length <= 1) {
+        return;
+      }
+      state.historyList = state.historyList.filter(item => {
+        return item.name == currentName.name;
+      });
+    },
+    /**
+     *  关闭左边
+     */
+    closeLeft(state, currentName) {
+      if (state.historyList.length <= 1) {
+        return;
+      }
+      const index = state.historyList.findIndex(item => {
+        return item.name == currentName;
+      });
+      if (index != -1) {
+        state.historyList.splice(index - 1, 1);
+      }
+    },
+    /**
+     *  关闭右边
+     */
+    closeRight(state, currentName) {
+     
+      if (state.historyList.length <= 1) {
+        return;
+      }
+      const index = state.historyList.findIndex(item => {
+        return item.name == currentName;
+      });
+      if (state.historyList.length >= index + 2) {
+         state.historyList.splice(index+1, 1);
+      }
+    },
+    /**
+     *  关闭其他和关闭所有类似
+     */
+    closeOther(state, currentName) {
+      if (state.historyList.length <= 1) {
+        return;
+      }
+      state.historyList = state.historyList.filter(item => {
+        return item.name == currentName;
+      });
     }
   },
   // 取值
