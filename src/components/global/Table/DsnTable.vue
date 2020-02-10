@@ -11,6 +11,7 @@
     @select-all="tableSelectAll"
     @selection-change="tableSelectionChange"
     ref="table"
+   
   >
   <slot></slot>
   </el-table>
@@ -32,7 +33,7 @@ export default {
     //高度
     height: {
       type: [Number, String],
-      default: 540
+      default: "540px"
     },
     select: {
       type: Function,
