@@ -36,16 +36,18 @@ export const setToken = token => {
     VueCookies.set(TOKEN, token, { expires: "8h" });
   } else {
     // 先上环境删除的是顶级的cookie
-    VueCookies.set(TOKEN, token, { expires: "8h", domain: window.TOPLEVEL });
+    VueCookies.set(TOKEN, token, { expires: "8h" });
+   // VueCookies.set(TOKEN, token, { expires: "8h", domain: window.TOPLEVEL });
   }
 };
 
 export const getToken = () => {
   //开发环境删除的是本地的cookie   默认path /
-  if (Window.NODE_ENV == "development") {
-    return  VueCookies.get(TOKEN);
-  } else {
-    // 先上环境删除的是顶级的cookie
-    return  VueCookies.get(TOKEN, { domain: window.TOPLEVEL });
-  }
+  return  VueCookies.get(TOKEN);
+  // if (Window.NODE_ENV == "development") {
+  //   return  VueCookies.get(TOKEN);
+  // } else {
+  //   // 先上环境删除的是顶级的cookie
+  //   return  VueCookies.get(TOKEN, { domain: window.TOPLEVEL });
+  // }
 };
