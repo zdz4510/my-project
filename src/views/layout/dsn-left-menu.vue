@@ -131,7 +131,7 @@ $bg: #515a6e;
     }
   }
   position: fixed;
-  width: 256px;
+  width: 60px;
   height: 100%;
   background: $bg;
   left: 0;
