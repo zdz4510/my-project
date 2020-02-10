@@ -41,7 +41,8 @@ const routes = [
         path: "",
         name: "welcomePage",
         meta: {
-          title: "工序维护"
+          title: "工序维护",
+          requiresAuth:true
         },
         component: Welcome
       }

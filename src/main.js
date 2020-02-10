@@ -11,6 +11,8 @@ import "vue-draggable-resizable/dist/VueDraggableResizable.css";
 
 import "./assets/css/element-variables.scss";
 import "./assets/css/base.css";
+import "./assets/css/customer.scss";
+import './assets/css/resetElement.scss'
 import "@/components";
 import "./registerServiceWorker";
 import router from "./router";
