@@ -5,6 +5,7 @@
     stripe
     :border="border"
     :emptyText="emptyText"
+    :rowKey="rowKey"
     @select="tableSelect"
     @row-click="tableRowClick"
     @cell-click="tableCellClick"
@@ -64,6 +65,10 @@ export default {
     },
     "row-class-name": {
       type: Function,
+      required: false
+    },
+    rowKey: {
+      type: String,
       required: false
     },
     emptyText: {

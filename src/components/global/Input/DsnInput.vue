@@ -3,6 +3,7 @@
     placeholder="请输入内容"
     :size="size"
     :value="value"
+    :type="type"
     @input="input"
     @change="change"
     @blur="blur"
