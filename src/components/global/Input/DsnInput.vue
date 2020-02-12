@@ -4,6 +4,7 @@
     :size="size"
     :value="value"
     :type="type"
+    :disabled="disabled"
     @input="input"
     @change="change"
     @blur="blur"
@@ -37,6 +38,10 @@ export default {
     placeholder: {
       type: String,
       default: "请输入内容"
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
