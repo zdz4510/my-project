@@ -11,7 +11,6 @@
           ref="searchForm"
           :rules="rules"
           class="form-style"
-          :label-width="formLabelWidth"
         >
           <el-form-item label="事件编号:" prop="alarm">
             <dsn-input v-model="searchForm.alarm"></dsn-input>

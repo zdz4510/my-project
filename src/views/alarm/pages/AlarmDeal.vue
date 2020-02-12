@@ -362,7 +362,6 @@ export default {
       checkedList: [],
       undealCheckedList: [],
       dealCheckedList: [],
-      formLabelWidth: "100px",
       searchForm: {
         sequence: "",
         mainNumber: "",
