@@ -11,6 +11,7 @@
     @cell-click="tableCellClick"
     @select-all="tableSelectAll"
     @selection-change="tableSelectionChange"
+     @current-change="currentChange"
     ref="table"
    
   >
