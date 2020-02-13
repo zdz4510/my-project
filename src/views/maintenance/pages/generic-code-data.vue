@@ -12,23 +12,23 @@
         label-width="80px"
       >
         <el-form-item label="代码类型" prop="generalCodeGroup">
-          <el-select
+          <dsn-select
             v-model.trim="genericCodeDataForm.generalCodeGroup"
             filterable
             placeholder="请选择代码类型"
           >
             <el-option label="系统" value="S">系统</el-option>
             <el-option label="用户" value="I">用户</el-option>
-          </el-select>
+          </dsn-select>
         </el-form-item>
         <el-form-item label="代码名" prop="generalCode">
           <el-row>
             <el-col :span="22">
-              <el-input
+              <dsn-input
                 v-model.trim="genericCodeDataForm.generalCode"
                 placeholder="请输入代码名"
                 class="generalCode"
-              ></el-input>
+              ></dsn-input>
             </el-col>
             <el-col :span="2">
               <i class="el-icon-document" @click="handleQueryGeneralCode"></i>
@@ -36,11 +36,21 @@
           </el-row>
         </el-form-item>
         <el-form-item label="描述">
-          <el-input v-model.trim="genericCodeDataForm.generalCodeDes" :readonly="true"></el-input>
+          <dsn-input v-model.trim="genericCodeDataForm.generalCodeDes" :readonly="true"></dsn-input>
         </el-form-item>
         <el-form-item>
-          <el-button size="small" type="primary" @click="handleQuery('genericCodeDataForm')">查询</el-button>
-          <el-button size="small" type="primary" @click="handleReset">重置</el-button>
+          <dsn-button
+            size="small"
+            type="primary"
+            icon="el-icon-search"
+            @click.native="handleQuery('genericCodeDataForm')"
+          >查询</dsn-button>
+          <dsn-button
+            size="small"
+            type="primary"
+            icon="el-icon-refresh"
+            @click.native="handleReset"
+          >重置</dsn-button>
         </el-form-item>
       </el-form>
     </DsnPanel>
@@ -49,29 +59,38 @@
         <span>搜索结果</span>
       </div>
       <div class="operate">
-        <el-button size="small" type="primary" @click="handleAddInit" :disabled="!editable">新增</el-button>
-        <el-button
+        <dsn-button
           size="small"
-          type="primary"
-          :disabled="selectionList.length !== 1 || !editable"
-          @click="handleEdit"
-        >修改</el-button>
-        <el-button size="small" type="primary" :disabled="!editable" @click="handleSave">保存</el-button>
-        <el-button
-          size="small"
-          type="primary"
+          type="success"
+          icon="el-icon-folder-add"
+          @click.native="handleAddInit"
           :disabled="!editable"
-          @click="deleteCodeDialog = true"
-        >删除通用代码</el-button>
-        <el-button
+        >新增</dsn-button>
+        <dsn-button
           size="small"
           type="primary"
+          icon="el-icon-edit"
+          :disabled="selectionList.length !== 1 || !editable"
+          @click.native="handleEdit"
+        >修改</dsn-button>
+        <dsn-button size="small" type="primary" :disabled="!editable" @click.native="handleSave">保存</dsn-button>
+        <dsn-button
+          size="small"
+          type="danger"
+          icon="el-icon-delete"
+          :disabled="!editable"
+          @click.native="deleteCodeDialog = true"
+        >删除通用代码</dsn-button>
+        <dsn-button
+          size="small"
+          type="danger"
+          icon="el-icon-delete"
           :disabled="selectionList.length <= 0 || !editable"
-          @click="deleteDataDialog = true"
-        >删除数据</el-button>
+          @click.native="deleteDataDialog = true"
+        >删除数据</dsn-button>
       </div>
-      <el-table
-        v-show="tableData!==[]"
+      <dsn-table
+        v-show="showTable"
         ref="multipleTable"
         :data="tableData"
         tooltip-effect="dark"
@@ -84,9 +103,9 @@
           :prop="field"
           :label="field"
         ></el-table-column>
-      </el-table>
+      </dsn-table>
     </DsnPanel>
-    <el-dialog title="新增/修改" :visible.sync="addDialog" width="35%" @close="closeAddDialog">
+    <el-dialog title="新增/修改" :visible.sync="addDialog" :width="dialogWidth" @close="closeAddDialog">
       <span>
         <el-form ref="addForm" :model="addForm" label-width="90px" :rules="addFormRules">
           <el-form-item
@@ -95,18 +114,18 @@
             :label="field"
             :prop="field"
           >
-            <el-input v-model.trim="addForm[`${field}`]"></el-input>
+            <dsn-input v-model.trim="addForm[`${field}`]" placeholder="请输入字段数据"></dsn-input>
           </el-form-item>
         </el-form>
       </span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="closeAddDialog">取 消</el-button>
-        <el-button type="primary" @click="checkAddForm('addForm')">确 定</el-button>
+        <dsn-button @click.native="resetAddForm">重 置</dsn-button>
+        <dsn-button type="primary" @click.native="checkAddForm('addForm')">确 定</dsn-button>
       </span>
     </el-dialog>
-    <el-dialog title="代码名" :visible.sync="generalCodeDialog" width="30%">
+    <el-dialog title="代码名" :visible.sync="generalCodeDialog" :width="dialogWidth">
       <span>
-        <el-table
+        <dsn-table
           ref="multipleTable"
           :data="generalCodeData"
           highlight-current-row
@@ -117,16 +136,16 @@
           <el-table-column type="index" width="50"></el-table-column>
           <el-table-column prop="generalCode" label="代码名" width="155"></el-table-column>
           <el-table-column prop="generalCodeDes" label="代码名描述" show-overflow-tooltip></el-table-column>
-        </el-table>
+        </dsn-table>
       </span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="generalCodeDialog = false">取 消</el-button>
-        <el-button type="primary" @click="handleSelectionGeneralCode">确 定</el-button>
+        <dsn-button @click.native="generalCodeDialog = false">取 消</dsn-button>
+        <dsn-button type="primary" @click.native="handleSelectionGeneralCode">确 定</dsn-button>
       </span>
     </el-dialog>
-    <el-dialog title="字段名" :visible.sync="fieldDialog" width="30%">
+    <el-dialog title="字段名" :visible.sync="fieldDialog" :width="dialogWidth">
       <span>
-        <el-table
+        <dsn-table
           ref="multipleTable"
           :data="fieldData"
           highlight-current-row
@@ -137,25 +156,25 @@
           <el-table-column type="index" width="50"></el-table-column>
           <el-table-column prop="fieldName" label="字段名" width="155"></el-table-column>
           <el-table-column prop="fieldLabel" label="标签" show-overflow-tooltip></el-table-column>
-        </el-table>
+        </dsn-table>
       </span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="fieldDialog = false">取 消</el-button>
-        <el-button type="primary" @click="handleSelectionField">确 定</el-button>
+        <dsn-button @click.native="fieldDialog = false">取 消</dsn-button>
+        <dsn-button type="primary" @click.native="handleSelectionField">确 定</dsn-button>
       </span>
     </el-dialog>
-    <el-dialog title="通用代码删除" :visible.sync="deleteCodeDialog" width="30%">
+    <el-dialog title="通用代码删除" :visible.sync="deleteCodeDialog" :width="dialogWidth">
       <span>是否确认{{ genericCodeDataForm.genericCode }}代码名？</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="deleteCodeDialog = false">取 消</el-button>
-        <el-button type="primary" @click="handleCodeDataDelete">确 定</el-button>
+        <dsn-button @click.native="deleteCodeDialog = false">取 消</dsn-button>
+        <dsn-button type="primary" @click.native="handleCodeDataDelete">确 定</dsn-button>
       </span>
     </el-dialog>
-    <el-dialog title="数据删除" :visible.sync="deleteDataDialog" width="30%">
+    <el-dialog title="数据删除" :visible.sync="deleteDataDialog" :width="dialogWidth">
       <span>是否确认删除{{ selectionList.length }}条数据？</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="deleteDataDialog = false">取 消</el-button>
-        <el-button type="primary" @click="handleFieldDelete">确 定</el-button>
+        <dsn-button @click.native="deleteDataDialog = false">取 消</dsn-button>
+        <dsn-button type="primary" @click.native="handleFieldDelete">确 定</dsn-button>
       </span>
     </el-dialog>
   </div>
@@ -171,6 +190,14 @@ import {
 import { mapMutations } from "vuex";
 export default {
   data() {
+    //代码描述验证规则
+    const valiGeneralCodeDes = (rule, value, callback) => {
+      let reg = /^[\u4e00-\u9fa5\w]{1,50}$/;
+      if (!reg.test(value)) {
+        callback("描述字数超出50字");
+      }
+      callback();
+    };
     //代码名验证规则
     const valiGeneralCode = (rule, value, callback) => {
       if (value === "") {
@@ -179,15 +206,7 @@ export default {
       //
       let reg = /^([A-Z]|[0-9]|_|-|\/)+$/;
       if (!reg.test(value)) {
-        callback("代码名格式错误");
-      }
-      callback();
-    };
-    //代码描述验证规则
-    const valiGeneralCodeDes = (rule, value, callback) => {
-      let reg = /^[\u4e00-\u9fa5\w]{1,50}$/;
-      if (!reg.test(value)) {
-        callback("描述字数超出50字");
+        callback("代码名格式应只包含（[A-Z,0-9,_,-,/]）");
       }
       callback();
     };
@@ -240,7 +259,13 @@ export default {
       //通用代码删除
       deleteCodeDialog: false,
       //操作类型
-      operateType: ""
+      operateType: "",
+      //是否显示表格
+      showTable: false,
+      //弹框宽度
+      dialogWidth: "400px",
+      //修改时保存初始数据
+      cloneEditForm: {}
     };
   },
   computed: {},
@@ -269,6 +294,7 @@ export default {
         const res = data.data;
         if (res.code === 200) {
           this.tableData = res.data.definedData;
+          this.showTable = true;
           this.genericCodeDataForm.generalCodeDes = res.data.generalCodeDes;
           //获取出所有已使用的字段名
           res.data.fields.forEach(element => {
@@ -292,7 +318,7 @@ export default {
     setAddFormRules() {
       this.usedFieldNames.forEach(element => {
         this.$set(this.addFormRules, element, [
-          { required: true, message: "请输入必填项", trigger: "blur" }
+          { required: true, message: "请输入字段数据", trigger: "blur" }
         ]);
       });
     },
@@ -306,7 +332,6 @@ export default {
       };
       findRecordHttp(data).then(data => {
         const res = data.data;
-        console.log(res);
         if (res.code === 200) {
           this.generalCodeData = res.data;
           if (!this.flag) {
@@ -366,7 +391,19 @@ export default {
     },
     //关闭弹框
     closeAddDialog() {
+      // this.handleResetAddDialog();
       this.addDialog = false;
+    },
+    //重置新增或修改表单
+    resetAddForm() {
+      if (this.operateType === "add") {
+        this.handleResetAddDialog();
+        return;
+      }
+      if (this.operateType === "edit") {
+        this.addForm = JSON.parse(JSON.stringify(this.cloneEditForm));
+        return;
+      }
     },
     //重置弹出框
     handleResetAddDialog() {
@@ -386,6 +423,7 @@ export default {
       this.addForm = {};
       this.addFormRules = {};
       this.editable = false;
+      this.showTable = false;
     },
     checkAddForm(formName) {
       this.$refs[formName].validate(valid => {
@@ -401,12 +439,9 @@ export default {
       this.addDialog = false;
       //过滤掉编辑确认前表格的原数据
       if (this.operateType === "edit") {
-        this.tableData.forEach((element, index) => {
-          if (
-            JSON.stringify(element) === JSON.stringify(this.selectionList[0])
-          ) {
-            this.tableData.splice(index, 1);
-          }
+        //过滤修改之前的数据
+        this.tableData = this.tableData.filter(item => {
+          return JSON.stringify(item) !== JSON.stringify(this.cloneEditForm);
         });
       }
       this.tableData.push(this.addForm);
@@ -415,7 +450,8 @@ export default {
     handleEdit() {
       this.operateType = "edit";
       this.addDialog = true;
-      this.addForm = this.selectionList[0];
+      this.addForm = JSON.parse(JSON.stringify(this.selectionList[0]));
+      this.cloneEditForm = JSON.parse(JSON.stringify(this.selectionList[0]));
     },
     //保存
     handleSave() {
@@ -430,13 +466,11 @@ export default {
         }
         tempArr.push(tempObj);
       });
-      console.log(tempArr);
       const data = {
         definedData: tempArr,
         generalCode: this.genericCodeDataForm.generalCode,
         generalCodeGroup: this.genericCodeDataForm.generalCodeGroup
       };
-      console.log(JSON.stringify(data));
       saveGeneralCodeDataHttp(data).then(data => {
         const res = data.data;
         if (res.code === 200) {
@@ -505,7 +539,7 @@ export default {
   // .el-dialog {
   //   .el-form {
   //     .el-form-item {
-  //       .el-input {
+  //       .dsn-input {
   //         width: 300px;
   //       }
   //     }
