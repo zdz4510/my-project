@@ -4,6 +4,7 @@
       <div slot="header" class="title clearfix">
         <span>搜索条件</span>
       </div>
+      <!-- 查询条件start -->
       <el-form
         :inline="true"
         :model="genericCodeDefineForm"
@@ -57,11 +58,13 @@
           >重置</dsn-button>
         </el-form-item>
       </el-form>
+      <!-- 查询条件end -->
     </DsnPanel>
     <DsnPanel>
       <div slot="header" class="title clearfix">
         <span>搜索结果</span>
       </div>
+      <!-- 表格操作start -->
       <div class="operate">
         <dsn-button
           size="small"
@@ -93,6 +96,8 @@
           @click.native="deleteFieldDialog = true"
         >删除字段名</dsn-button>
       </div>
+      <!-- 表格操作end -->
+      <!-- 表格数据start -->
       <dsn-table
         ref="multipleTable"
         :data="tableData"
@@ -110,7 +115,9 @@
         <el-table-column prop="limitGeneralCode" label="代码名" width="180"></el-table-column>
         <el-table-column prop="limitGeneralField" label="字段" show-overflow-tooltip></el-table-column>
       </dsn-table>
+      <!-- 表格数据end -->
     </DsnPanel>
+    <!-- 新增模态框start -->
     <el-dialog title="新增/修改" :visible.sync="addDialog" :width="dialogWidth" @close="closeAddDialog">
       <span>
         <el-form ref="addForm" :model="addForm" label-width="70px" :rules="addFormRules">
@@ -128,7 +135,7 @@
             <dsn-input v-model.trim="addForm.fieldLabel" placeholder="请输入标签"></dsn-input>
           </el-form-item>
           <el-form-item label="格式" prop="fieldType">
-            <dsn-select
+            <el-select
               size="small"
               v-model.trim="addForm.fieldType"
               placeholder="请选择格式"
@@ -138,19 +145,19 @@
               <el-option label="本文" value="A"></el-option>
               <el-option label="数字" value="N"></el-option>
               <el-option label="引用" value="C"></el-option>
-            </dsn-select>
+            </el-select>
           </el-form-item>
           <el-form-item
             label="长度"
             v-if="addForm.fieldType === 'A' || addForm.fieldType === 'N'"
             prop="fieldSize"
           >
-            <dsn-input v-model.number="addForm.fieldSize" max="30" placeholder="请输入长度（小于30的数字）"></dsn-input>
+            <dsn-input v-model.trim="addForm.fieldSize" max="30" placeholder="请输入长度（小于30的数字）"></dsn-input>
           </el-form-item>
           <el-form-item label="代码名" v-if="addForm.fieldType === 'C'" prop="limitGeneralCode">
             <el-row>
               <el-col :span="22">
-                <dsn-input v-model.trim="addForm.limitGeneralCode"></dsn-input>
+                <dsn-input v-model.trim="addForm.limitGeneralCode" placeholder="请输入代码名"></dsn-input>
               </el-col>
               <el-col :span="2">
                 <i class="el-icon-document" @click="handleQueryDialogGeneralCode"></i>
@@ -160,7 +167,7 @@
           <el-form-item label="字段" v-if="addForm.fieldType === 'C'" prop="limitGeneralField">
             <el-row>
               <el-col :span="22">
-                <dsn-input v-model.trim="addForm.limitGeneralField"></dsn-input>
+                <dsn-input v-model.trim="addForm.limitGeneralField" placeholder="请输入字段"></dsn-input>
               </el-col>
               <el-col :span="2">
                 <i class="el-icon-document" @click="handleQueryField"></i>
@@ -170,10 +177,12 @@
         </el-form>
       </span>
       <span slot="footer" class="dialog-footer">
-        <dsn-button @click.native="closeAddDialog">取 消</dsn-button>
+        <dsn-button @click.native="resetForm">重 置</dsn-button>
         <dsn-button type="primary" @click.native="checkAddForm('addForm')">确 定</dsn-button>
       </span>
     </el-dialog>
+    <!-- 新增模态框end -->
+    <!-- 代码名弹框start -->
     <el-dialog title="代码名" :visible.sync="generalCodeDialog" :width="dialogWidth">
       <span>
         <dsn-table
@@ -194,6 +203,8 @@
         <dsn-button type="primary" @click.native="handleSelectionGeneralCode">确 定</dsn-button>
       </span>
     </el-dialog>
+    <!-- 代码名弹框end -->
+    <!-- 字段名start -->
     <el-dialog title="字段名" :visible.sync="fieldDialog" :width="dialogWidth">
       <span>
         <dsn-table
@@ -214,6 +225,8 @@
         <dsn-button type="primary" @click.native="handleSelectionField">确 定</dsn-button>
       </span>
     </el-dialog>
+    <!-- 字段名end -->
+    <!-- 通用代码删除start -->
     <el-dialog title="通用代码删除" :visible.sync="deleteCodeDialog" :width="dialogWidth">
       <span>是否确认{{ genericCodeDefineForm.genericCode }}代码名？</span>
       <span slot="footer" class="dialog-footer">
@@ -221,6 +234,8 @@
         <dsn-button type="primary" @click.native="handleCodeDelete">确 定</dsn-button>
       </span>
     </el-dialog>
+    <!-- 通用代码删除end -->
+    <!-- 字段名删除start -->
     <el-dialog title="字段名删除" :visible.sync="deleteFieldDialog" :width="dialogWidth">
       <span>是否确认删除{{ selectionList.length }}条数据？</span>
       <span slot="footer" class="dialog-footer">
@@ -228,6 +243,7 @@
         <dsn-button type="primary" @click.native="handleFieldDelete">确 定</dsn-button>
       </span>
     </el-dialog>
+    <!-- 字段名删除end -->
   </div>
 </template>
 
@@ -442,6 +458,7 @@ export default {
       };
       this.GeneralCodeRequest(data);
     },
+    //获取代码名的请求
     GeneralCodeRequest(data) {
       findRecordHttp(data).then(data => {
         const res = data.data;
@@ -491,6 +508,7 @@ export default {
     handleCurrentChange(val) {
       this.currentGeneralCode = val;
     },
+    //字段名选择
     handleCurrentFieldChange(val) {
       this.currentField = val;
     },
@@ -527,7 +545,20 @@ export default {
     },
     //关闭弹框
     closeAddDialog() {
-      this.addDialog = false;
+      this.handleResetAddDialog();
+    },
+    //重置表单
+    resetForm() {
+      console.log(this.operateType);
+      // this.addDialog = false;
+      if (this.operateType === "add") {
+        this.handleResetAddDialog();
+        return;
+      }
+      if (this.operateType === "edit") {
+        this.addForm = JSON.parse(JSON.stringify(this.cloneEditForm));
+        return;
+      }
     },
     //重置弹出框
     handleResetAddDialog() {
@@ -590,6 +621,7 @@ export default {
       this.usedFieldNames = [];
       this.editable = false;
     },
+    //新增前验证表单
     checkAddForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -622,8 +654,11 @@ export default {
     handleEdit() {
       this.operateType = "edit";
       this.addDialog = true;
-      this.addForm = this.selectionList[0];
+      this.cloneEditForm = JSON.parse(JSON.stringify(this.selectionList[0]));
+      this.addForm = JSON.parse(JSON.stringify(this.cloneEditForm));
+      console.log(this.addForm);
     },
+    //保存前验证表单
     checkSave() {
       this.$refs["genericCodeDefineForm"].validate(valid => {
         if (valid) {
@@ -659,6 +694,7 @@ export default {
         });
       });
     },
+    //删除通用代码
     handleCodeDelete() {
       const data = {
         generalCode: this.genericCodeDefineForm.generalCode,
@@ -677,6 +713,7 @@ export default {
         });
       });
     },
+    //删除字段名
     handleFieldDelete() {
       //计算出删除之后的字段数据
       const tempArr = this.tableData.filter(item => {
