@@ -59,7 +59,7 @@ export default {
     },
     border: {
       type: Boolean,
-      default: true
+      default: false
     },
     "row-class-name": {
       type: Function,

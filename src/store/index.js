@@ -24,6 +24,7 @@ import materiaListlEdit from "./modules/maintenance/materialList.edit"; //物料
 import standingBtnDistributeEdit from "./modules/base/standing.btn.distribute.edit.js"; //站位按钮分配vuex module
 import themeEdit from "./modules/theme/theme.group.edit";
 import userinfo from './modules/base/userinfo'
+import headerMessage from './modules/common/header.message'
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -54,6 +55,7 @@ export default new Vuex.Store({
     materiaListlEdit,
     themeEdit,
     standingBtnDistributeEdit,
-    userinfo
+    userinfo,
+    headerMessage
   }
 });

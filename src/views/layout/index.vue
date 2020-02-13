@@ -1,23 +1,26 @@
 <template>
   <div id="layout">
-    <DsnHeader   @handleCloseOrOpen="handleCloseOrOpen" />
-    <DsnLeftMenu  ref="leftMenu" @handleCollapse="handleCollapse" />
+    <DsnHeader @handleCloseOrOpen="handleCloseOrOpen" @themeLeftMenu="HandlthemeLeftMenu($event)"/>
+    <DsnLeftMenu  ref="leftMenu" @handleCollapse="handleCollapse" :theme='themeLeftMenu'/>
     <div class="content" :class="isCollapse ? 'active' : ''">
-    
       <div class="pageContent">
-          <div class="routerHistory">
-        <dsn-router-history>
-          <dsn-router-history-item
-            @close="close"
-            v-for="item in historyList"
-            :key="item.name"
-            :item="item"
-            @toPage="toPage"
-          >
-          </dsn-router-history-item>
-        </dsn-router-history>
-      </div>
-        <router-view></router-view>
+        <div class="routerHistory">
+          <dsn-router-history :isCollapse = isCollapse>
+            <dsn-router-history-item
+              :class="item.name === $route.name ? 'active' : ''"
+              @close="close"
+              v-for="item in historyList"
+              :key="item.name"
+              :item="item"
+              @toPage="toPage"
+            >
+            </dsn-router-history-item>
+          </dsn-router-history>
+        </div>
+        <div class="well">
+          <router-view></router-view>
+        </div>
+        
       </div>
     </div>
     <DsnFooter v-if="false" />
@@ -45,7 +48,8 @@ export default {
   },
   data() {
     return {
-      isCollapse: true
+      isCollapse: true,
+      themeLeftMenu: 'dark'
     };
   },
   methods: {
@@ -84,6 +88,10 @@ export default {
         }
       )
     },
+    // 设置左侧主题
+    HandlthemeLeftMenu(theme) {
+      this.themeLeftMenu = theme
+    }
   }
 };
 </script>
@@ -91,6 +99,15 @@ export default {
 <style lang="scss" scoped>
 #layout {
    position: relative;
+   height: 100%;
+    background: #f5f7f9;
+  .well {
+    margin: 0 15px;
+    // background: #fff;
+    // padding: 15px;
+    border-radius: 4px;
+    
+  }
   .content {
     padding: 64px 0px 10px 60px;
     background: #f5f7f9;
@@ -101,16 +118,11 @@ export default {
       padding-left: 256px;
     }
     .routerHistory {
-      position: fixed;
-      top: 64px;
-      height: 44px;
       width: 100%;
       white-space: nowrap;
-      background: #fff;
-      z-index: 999;
-      overflow: hidden;
-    
-  
+      overflow: hidden;  
+      height: 44px;
+      position: relative;
       // &::-webkit-scrollbar-thumb {
       //   //滚动条里面小方块/
       //   border-radius: 1px;
@@ -127,7 +139,7 @@ export default {
     }
 
     .pageContent {
-      padding: 40px 30px;
+      // padding:15px;
       // flex: 1;
       // overflow: hidden;
       // overflow-y: scroll;

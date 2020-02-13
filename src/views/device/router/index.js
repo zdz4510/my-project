@@ -7,7 +7,7 @@ export default {
       path: "deviceType",
       name: "deviceType",
       meta: {
-        title: "deviceType",
+        title: "设备类型",
         requiresAuth: true
       },
       component: () =>
@@ -19,7 +19,7 @@ export default {
       path: "deviceMaintenance",
       name: "deviceMaintenance",
       meta: {
-        title: "deviceMaintenance",
+        title: "设备维护",
         requiresAuth: true
       },
       component: () =>
@@ -31,7 +31,7 @@ export default {
       path: "deviceUpkeep",
       name: "deviceUpkeep",
       meta: {
-        title: "deviceUpkeep",
+        title: "设备保养",
         requiresAuth: true
       },
       component: () =>
@@ -44,7 +44,7 @@ export default {
       path: "deviceTypeEdit",
       name: "deviceTypeEdit",
       meta: {
-        title: "新增和编辑",
+        title: "设备类型编辑",
         requiresAuth: true
       },
       component: () =>
@@ -56,7 +56,7 @@ export default {
       path: "deviceMaintenanceEdit",
       name: "deviceMaintenanceEdit",
       meta: {
-        title: "deviceMaintenanceEdit",
+        title: "设备维护编辑",
         requiresAuth: true
       },
       component: () =>
