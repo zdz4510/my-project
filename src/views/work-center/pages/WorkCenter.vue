@@ -1,78 +1,88 @@
 <template>
   <div class="work-center">
-    <div class="search-bar">
-      <el-form
-        :inline="true"
-        :model="searchForm"
-        ref="searchForm"
-        :rules="rules"
-        class="form-style"
-        @submit.native.prevent
-      >
-        <el-form-item label="工作中心:" prop="workCenter">
-          <el-input
-            v-model="searchForm.workCenter"
-            placeholder="请输入内容"
-            @keyup.enter.native="onEnterSearch"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label prop>
-          <el-button size="small" type="primary" @click="search">查询</el-button>
-          <el-button size="small" type="primary" @click="resetForm('searchForm')">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
-    <div class="operate">
-      <el-button size="small" type="primary" @click="add" :disabled="this.checkedList.length>0">新增</el-button>
-      <el-button
-        size="small"
-        type="primary"
-        @click="edit"
-        :disabled="this.checkedList.length === 0 || this.checkedList.length > 1"
-      >编辑</el-button>
-      <el-button
-        size="small"
-        type="primary"
-        @click="del"
-        :disabled="this.checkedList.length === 0"
-      >删除</el-button>
-      <el-button size="small" type="primary" @click="handleExport">导出</el-button>
-    </div>
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索条件</span>
+      </div>
+      <div class="search-bar">
+        <el-form
+          :inline="true"
+          :model="searchForm"
+          ref="searchForm"
+          :rules="rules"
+          class="form-style"
+          @submit.native.prevent
+        >
+          <el-form-item label="工作中心:" prop="workCenter">
+            <dsn-input
+              v-model="searchForm.workCenter"
+              placeholder="请输入内容"
+              @keyup.enter.native="onEnterSearch"
+            ></dsn-input>
+          </el-form-item>
+          <el-form-item label prop>
+            <dsn-button size="small" type="primary" @click.native="search">查询</dsn-button>
+            <dsn-button size="small" type="primary" @click.native="resetForm('searchForm')">重置</dsn-button>
+          </el-form-item>
+        </el-form>
+      </div>
+    </DsnPanel>
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索结果</span>
+      </div>
+      <div class="operate">
+        <dsn-button icon="el-icon-folder-add" size="small" type="success" @click.native="add" :disabled="this.checkedList.length>0">新增</dsn-button>
+        <dsn-button
+          size="small"
+          type="primary"
+          icon="el-icon-edit"
+          @click.native="edit"
+          :disabled="this.checkedList.length === 0 || this.checkedList.length > 1"
+        >编辑</dsn-button>
+        <dsn-button
+          size="small"
+          type="danger"
+          icon="el-icon-delete"
+          @click.native="del"
+          :disabled="this.checkedList.length === 0"
+        >删除</dsn-button>
+        <dsn-button icon="el-icon-upload2" size="small" type="primary" @click.native="handleExport">导出</dsn-button>
+      </div>
 
-    <div>
-      <el-table
-        ref="multipleTable"
-        :data="this.tableData.data"
-        tooltip-effect="dark"
-        row-key="workCenter"
-        @selection-change="handleSelectionChange"
-        @row-dblclick="rowDblClick"
-      >
-        <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
-        <el-table-column type="index" label="序号"></el-table-column>
-        <el-table-column prop="workCenter" label="工作中心"></el-table-column>
-        <el-table-column prop="workCenterDes" label="工作中心描述"></el-table-column>
-        <el-table-column label="类型">
-          <template slot-scope="scope">{{ scope.row.workCenterType == 1 ? '车间' : '产线' }}</template>
-        </el-table-column>
-        <el-table-column label="状态">
-          <template
-            slot-scope="scope"
-          >{{ scope.row.status == 1 ? '已启用' : (scope.row.status == 2 ? '未启用' : '--') }}</template>
-        </el-table-column>
-      </el-table>
-      <el-pagination
-        class="mtb20"
-        background
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="this.tableData.page.currentPage"
-        :page-sizes="[1, 10, 15, 20, 30, 50]"
-        :page-size="this.tableData.page.pageSize"
-        layout="->, total, prev, pager, next, sizes, jumper"
-        :total="this.tableData.page.total"
-      ></el-pagination>
-    </div>
+      <div>
+        <dsn-table
+          ref="multipleTable"
+          :data="this.tableData.data"
+          tooltip-effect="dark"
+          row-key="workCenter"
+          @selection-change="handleSelectionChange"
+          @row-dblclick="rowDblClick"
+        >
+          <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
+          <el-table-column type="index" label="序号"></el-table-column>
+          <el-table-column prop="workCenter" label="工作中心"></el-table-column>
+          <el-table-column prop="workCenterDes" label="工作中心描述"></el-table-column>
+          <el-table-column label="类型">
+            <template slot-scope="scope">{{ scope.row.workCenterType == 1 ? '车间' : '产线' }}</template>
+          </el-table-column>
+          <el-table-column label="状态">
+            <template
+              slot-scope="scope"
+            >{{ scope.row.status == 1 ? '已启用' : (scope.row.status == 2 ? '未启用' : '--') }}</template>
+          </el-table-column>
+        </dsn-table>
+        <dsn-pagination
+          background
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="this.tableData.page.currentPage"
+          :page-size="this.tableData.page.pageSize"
+          layout="->, total, prev, pager, next, sizes"
+          :total="this.tableData.page.total"
+        ></dsn-pagination>
+      </div>
+    </DsnPanel>
   </div>
 </template>
 
@@ -252,7 +262,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.work-center {
+/* .work-center {
   padding: 0 30px;
   .operate {
     padding: 10px 5px;
@@ -265,5 +275,5 @@ export default {
       }
     }
   }
-}
+} */
 </style>

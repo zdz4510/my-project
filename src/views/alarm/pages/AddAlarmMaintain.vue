@@ -1,9 +1,9 @@
 <template>
   <div class="add-alarm-maintain">
     <div class="operate">
-      <el-button size="small" type="primary" @click="goBack">返回</el-button>
-      <el-button size="small" type="primary" @click="save('addForm')">保存</el-button>
-      <el-button size="small" type="primary" @click="resetForm('addForm')">重置</el-button>
+      <dsn-button size="small" type="primary" @click.native="goBack">返回</dsn-button>
+      <dsn-button size="small" type="primary" @click.native="save('addForm')">保存</dsn-button>
+      <dsn-button size="small" type="primary" @click.native="resetForm('addForm')">重置</dsn-button>
     </div>
     <div class="addForm">
       <el-form
@@ -24,7 +24,7 @@
           <el-tab-pane label="预警事件信息维护" name="first">
             <el-row>
               <el-col :span="8">
-                <el-form-item label="预警事件等级:" prop="alarmLevelFlag">
+                <el-form-item label="预警事件等级:" prop="alarmLevelFlag" required>
                   <dsn-select v-model="addForm.alarmLevelFlag">
                     <el-option
                       v-for="item in alarmLevel"
@@ -206,7 +206,8 @@ export default {
       noticeType: [],
       rules: {
         alarm: [{ required: true, message: "请填写事件编号", trigger: "blur" }],
-        theme: [{ required: true, message: "请填写事件主题", trigger: "blur" }]
+        theme: [{ required: true, message: "请填写事件主题", trigger: "blur" }],
+        alarmLevelFlag: [{ required: true, message: "请选择事件等级", trigger: 'change'}]
       },
       addForm: {
         alarm: "",

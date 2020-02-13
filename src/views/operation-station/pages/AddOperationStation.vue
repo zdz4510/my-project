@@ -1,24 +1,25 @@
 <template>
   <div class="add-operation-station">
-    <div class="operate">
-      <el-button size="small" type="primary" @click="goBack">返回</el-button>
-      <el-button size="small" type="primary" @click="save('addForm')">保存</el-button>
-      <el-button size="small" type="primary" @click="resetForm('addForm')">重置</el-button>
-    </div>
+      <div class="operate">
+        <dsn-button size="small" type="primary" @click.native="goBack">返回</dsn-button>
+        <dsn-button size="small" type="primary" @click.native="save('addForm')">保存</dsn-button>
+        <dsn-button size="small" type="primary" @click.native="resetForm('addForm')">重置</dsn-button>
+      </div>
+
     <div class="search-bar">
       <el-form :inline="true" :model="addForm" ref="addForm" :rules="rules" class="form-style">
         <el-form-item label="工序:" prop="operation" required>
-          <el-select v-model="addForm.operation" @change="onChange">
+          <dsn-select v-model="addForm.operation" @change="onChange">
             <el-option
               v-for="item in options"
               :key="item.operation"
               :label="item.operation"
               :value="item.operation"
             ></el-option>
-          </el-select>
+          </dsn-select>
         </el-form-item>
         <el-form-item label="描述:" prop="operationDes" required>
-          <el-input v-model="addForm.operationDes"></el-input>
+          <dsn-input v-model="addForm.operationDes"></dsn-input>
         </el-form-item>
         <el-row>
           <el-col :span="24">
@@ -37,19 +38,19 @@
                     </el-table-column>
                     <el-table-column label>
                       <template slot="header">
-                        <el-input v-model="workCenterRelation1" placeholder="输入产线搜索" />
+                        <dsn-input v-model="workCenterRelation1" placeholder="输入产线搜索" />
                       </template>
                       <el-table-column prop="workCenterRelation" label="产线"></el-table-column>
                     </el-table-column>
                     <el-table-column label>
                       <template slot="header">
-                        <el-input v-model="station1" placeholder="输入站位搜索" />
+                        <dsn-input v-model="station1" placeholder="输入站位搜索" />
                       </template>
                       <el-table-column prop="station" label="站位"></el-table-column>
                     </el-table-column>
                     <el-table-column label>
                       <template slot="header">
-                        <el-input v-model="stationDes1" placeholder="输入站位描述搜索" />
+                        <dsn-input v-model="stationDes1" placeholder="输入站位描述搜索" />
                       </template>
                       <el-table-column prop="stationDes" label="站位描述"></el-table-column>
                     </el-table-column>
@@ -78,19 +79,19 @@
                     </el-table-column>
                     <el-table-column label>
                       <template slot="header">
-                        <el-input v-model="workCenterRelation2" placeholder="输入产线搜索" />
+                        <dsn-input v-model="workCenterRelation2" placeholder="输入产线搜索" />
                       </template>
                       <el-table-column prop="workCenterRelation" label="产线"></el-table-column>
                     </el-table-column>
                     <el-table-column label>
                       <template slot="header">
-                        <el-input v-model="station2" placeholder="输入站位搜索" />
+                        <dsn-input v-model="station2" placeholder="输入站位搜索" />
                       </template>
                       <el-table-column prop="station" label="站位"></el-table-column>
                     </el-table-column>
                     <el-table-column label>
                       <template slot="header">
-                        <el-input v-model="stationDes2" placeholder="输入站位描述搜索" />
+                        <dsn-input v-model="stationDes2" placeholder="输入站位描述搜索" />
                       </template>
                       <el-table-column prop="stationDes" label="站位描述"></el-table-column>
                     </el-table-column>
@@ -237,15 +238,10 @@ export default {
 <style scoped lang="scss">
 .add-operation-station {
   .search-bar {
-    height: 80px;
     background: #ffffff;
-    .form-style {
-      margin: 0 !important;
-      padding: 0 0 0 30px !important;
-      height: 42px !important;
-      position: relative;
-      top: 50%;
-      transform: translateY(-50%);
+    padding: 14px;
+    .el-form--inline .el-form-item {
+      margin-right: 14px;
     }
     .direction {
       color: #409eff;
@@ -258,7 +254,9 @@ export default {
     }
   }
   .operate {
-    padding: 10px;
+    background: #ffffff;
+    padding: 14px 14px 0;
+    margin-bottom: 14px;
   }
 }
 </style>

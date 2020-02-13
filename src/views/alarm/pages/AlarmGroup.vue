@@ -11,7 +11,6 @@
           ref="searchForm"
           :rules="rules"
           class="form-style"
-          :label-width="formLabelWidth"
         >
           <el-form-item label="预警事件分组:" prop="alarmGroup">
             <dsn-input v-model="searchForm.alarmGroup"></dsn-input>
@@ -65,12 +64,10 @@
           <el-table-column prop="modifyTime" label="修改时间"></el-table-column>
         </dsn-table>
         <dsn-pagination
-          class="mtb20"
           background
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="this.tableData.page.currentPage"
-          :page-sizes="[1, 10, 15, 20, 30, 50]"
           :page-size="this.tableData.page.pageSize"
           layout="->, total, prev, pager, next, sizes"
           :total="this.tableData.page.total"
