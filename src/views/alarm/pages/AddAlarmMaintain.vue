@@ -15,10 +15,10 @@
         label-position="right"
       >
         <el-form-item label="事件编号:" prop="alarm" required>
-          <el-input v-model="addForm.alarm"></el-input>
+          <dsn-input v-model="addForm.alarm"></dsn-input>
         </el-form-item>
         <el-form-item label="事件主题:" prop="theme" required>
-          <el-input v-model="addForm.theme"></el-input>
+          <dsn-input v-model="addForm.theme"></dsn-input>
         </el-form-item>
         <el-tabs v-model="activeName" type="border-card">
           <el-tab-pane label="预警事件信息维护" name="first">
@@ -48,36 +48,36 @@
               <el-col :span="15">
                 <el-tabs v-model="activeImputName">
                   <el-tab-pane label="企业微信" name="first">
-                    <el-input
+                    <dsn-input
                       type="textarea"
                       v-model="addForm.weixinInformDetails"
                       :autosize="{ minRows: 6, maxRows: 10}"
                       placeholder="请输入事件内容"
-                    ></el-input>
+                    ></dsn-input>
                   </el-tab-pane>
                   <el-tab-pane label="邮箱" name="second">
-                    <el-input
+                    <dsn-input
                       type="textarea"
                       v-model="addForm.mailInformDetails"
                       :autosize="{ minRows: 6, maxRows: 10}"
                       placeholder="请输入事件内容"
-                    ></el-input>
+                    ></dsn-input>
                   </el-tab-pane>
                   <el-tab-pane label="短信" name="third">
-                    <el-input
+                    <dsn-input
                       type="textarea"
                       v-model="addForm.smsInformDetails"
                       :autosize="{ minRows: 6, maxRows: 10}"
                       placeholder="请输入事件内容"
-                    ></el-input>
+                    ></dsn-input>
                   </el-tab-pane>
                   <el-tab-pane label="系统弹窗" name="fourth">
-                    <el-input
+                    <dsn-input
                       type="textarea"
                       v-model="addForm.systemInformDetails"
                       :autosize="{ minRows: 6, maxRows: 10}"
                       placeholder="请输入事件内容"
-                    ></el-input>
+                    ></dsn-input>
                   </el-tab-pane>
                 </el-tabs>
               </el-col>
@@ -101,7 +101,7 @@
             <el-row>
               <el-col :span="10">
                 <el-form-item label="输入搜索条件:" prop="width">
-                  <el-input
+                  <dsn-input
                     placeholder="请输入内容"
                     v-model="input1"
                     class="input-with-select"
@@ -118,12 +118,12 @@
                       <el-option label="个人" value="10"></el-option>
                       <el-option label="工作中心" value="20"></el-option>
                     </dsn-select>
-                  </el-input>
+                  </dsn-input>
                 </el-form-item>
               </el-col>
               <el-col :span="10">
                 <el-form-item label="输入搜索条件:" prop="width">
-                  <el-input
+                  <dsn-input
                     placeholder="请输入内容"
                     v-model="input2"
                     class="input-with-select"
@@ -140,24 +140,29 @@
                       <el-option label="个人" value="10"></el-option>
                       <el-option label="工作中心" value="20"></el-option>
                     </dsn-select>
-                  </el-input>
+                  </dsn-input>
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row>
-              <el-col :span="9">
-                <el-table :data="allocateData" @select="check1" @select-all="check1">
+              <el-col :span="11">
+                <dsn-table :data="allocateData" @select="check1" @select-all="check1">
                   <el-table-column label="接收信息用户">
-                    <el-table-column type="selection" width="55"></el-table-column>
+                    <el-table-column type="selection" width="100"></el-table-column>
                     <el-table-column prop="informUserId" label="名称"></el-table-column>
-                    <el-table-column label="类型">
+                  </el-table-column>
+                  <el-table-column label>
+                    <template slot="header">
+                      <dsn-input v-model="alarm2" placeholder="输入搜索条件" />
+                    </template>
+                     <el-table-column label="类型">
                       <template
                         slot-scope="scope"
                       >{{ scope.row.userType == 10 ? '个人' : (scope.row.userType == 20 ? '工作中心' : '--') }}</template>
                     </el-table-column>
                     <el-table-column prop label="描述"></el-table-column>
                   </el-table-column>
-                </el-table>
+                </dsn-table>
               </el-col>
               <el-col :span="2">
                 <div class="direction mt70">
@@ -167,19 +172,24 @@
                   <i class="el-icon-caret-left" @click="left"></i>
                 </div>
               </el-col>
-              <el-col :span="9">
-                <el-table :data="unallocateData" @select="check2" @select-all="check2">
-                  <el-table-column label="未接收信息用户">
-                    <el-table-column type="selection" width="55"></el-table-column>
+              <el-col :span="11">
+                <dsn-table :data="unallocateData" @select="check2" @select-all="check2">
+                  <el-table-column label="待收信息用户">
+                    <el-table-column type="selection" width="100"></el-table-column>
                     <el-table-column prop="informUserId" label="名称"></el-table-column>
-                    <el-table-column label="类型">
+                  </el-table-column>
+                  <el-table-column label>
+                    <template slot="header">
+                      <dsn-input v-model="alarm2" placeholder="输入搜索条件" />
+                    </template>
+                     <el-table-column label="类型">
                       <template
                         slot-scope="scope"
                       >{{ scope.row.userType == 10 ? '个人' : (scope.row.userType == 20 ? '工作中心' : '--') }}</template>
                     </el-table-column>
                     <el-table-column prop label="描述"></el-table-column>
                   </el-table-column>
-                </el-table>
+                </dsn-table>
               </el-col>
             </el-row>
           </el-tab-pane>
@@ -395,27 +405,19 @@ export default {
 <style lang="scss">
 .add-alarm-maintain {
   .operate {
-    background: #ffffff;
-    padding: 10px;
+    padding: 14px 14px 0;
+    background: #fff;
+    margin-bottom: 14px;
+		border-radius: 4px;
   }
-  .addForm {
-    background: #ffffff;
-    padding: 10px;
-    .dec {
-      width: 756px !important;
-    }
-    .input-form {
-      margin-left: 20px;
-    }
-    .direction {
-      color: #409eff;
-      font-size: 40px;
-      cursor: pointer;
-      text-align: center;
-    }
-    .mt70 {
-      margin-top: 70px;
-    }
+  .direction {
+    color: #409eff;
+    font-size: 40px;
+    cursor: pointer;
+    text-align: center;
+  }
+  .mt70 {
+    margin-top: 70px;
   }
 }
 </style>
