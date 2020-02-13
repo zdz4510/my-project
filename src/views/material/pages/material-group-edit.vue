@@ -1,9 +1,9 @@
 <template>
   <div class="materialGroupEdit">
     <div class="operate">
-      <el-button size="small" type="primary" @click="handleBack">返回</el-button>
-      <el-button size="small" type="primary" @click="checkAdd('materialGroupForm')">保存</el-button>
-      <el-button size="small" type="primary" @click="handleReset">重置</el-button>
+      <el-button size="small" type="primary" @click.native="handleBack">返回</el-button>
+      <el-button size="small" type="primary" @click.native="checkAdd('materialGroupForm')">保存</el-button>
+      <el-button size="small" type="primary" icon="el-icon-refresh" @click.native="handleReset">重置</el-button>
     </div>
 
     <div class="showInfo">
@@ -50,14 +50,14 @@
           class="materialGroupForm"
         >
           <el-form-item label="物料组" prop="materialGroup">
-            <el-input
+            <dsn-input
               v-model.trim="materialGroupForm.materialGroup"
               placeholder="请输入物料组"
               :disabled="isEditResource"
-            ></el-input>
+            ></dsn-input>
           </el-form-item>
           <el-form-item label="组别描述">
-            <el-input type="textarea" rows="2" v-model.trim="materialGroupForm.groupDes"></el-input>
+            <el-input type="textarea" rows="4" v-model.trim="materialGroupForm.groupDes"></el-input>
           </el-form-item>
         </el-form>
         <el-transfer
@@ -83,11 +83,11 @@
         </el-transfer>
       </div>
     </div>
-    <el-dialog title="删除" :visible.sync="saveDialog" width="30%">
+    <el-dialog title="保存" :visible.sync="saveDialog" :width="defaltDialogWidth">
       <span>是否确认保存该条数据？</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleReset">取 消</el-button>
-        <el-button type="primary" @click="handleSave">确 定</el-button>
+        <el-button @click.native="handleReset">取 消</el-button>
+        <el-button type="primary" @click.native="handleSave">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -101,6 +101,7 @@ import {
 } from "@/api/material/material.group.api.js";
 
 export default {
+  inject: ["defaltDialogWidth"],
   data() {
     return {
       operateType: "",
@@ -166,7 +167,7 @@ export default {
     },
     //重置
     handleReset() {
-      this.saveDialog = false;
+      this.saveDialog=false;
       this.value = [];
       this.unrelatived.forEach(element => {
         this.value.push(element.material);
@@ -186,6 +187,7 @@ export default {
     checkAdd(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
+          // console.log("aaaaa")
           this.saveDialog = true;
         } else {
           this.$message({
@@ -243,7 +245,7 @@ export default {
     .right {
       flex: 1;
       .el-form {
-        width: 40%;
+        width: 30%;
       }
       .el-transfer {
         .el-transfer-panel {
