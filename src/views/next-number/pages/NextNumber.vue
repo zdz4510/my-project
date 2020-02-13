@@ -1,130 +1,142 @@
 <template>
   <div class="next-number">
-    <div class="search-bar">
-      <el-form
-        :inline="true"
-        :model="searchForm"
-        ref="searchForm"
-        :rules="rules"
-        label-width="100px"
-        class="form-style"
-      >
-        <el-form-item label="编号类型:" prop="nextNumberType" required>
-          <el-select v-model="searchForm.nextNumberType" placeholder="请选择">
-            <el-option
-              v-for="item in type"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="定义目标:" prop="definedBy" required>
-          <el-select v-model="searchForm.definedBy" placeholder="请选择" @change="definedChange">
-            <el-option
-              v-for="item in target"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label prop="value" v-if="searchForm.definedBy !== 'MATERIAL_GROUP'">
-          <el-select v-model="searchForm.value" placeholder="请选择" @change="onChange" filterable>
-            <el-option
-              v-for="item in options"
-              :key="item.material+'&'+item.materialRev"
-              :label="item.material"
-              :value="item.material+'&'+item.materialRev"
-            >
-              <span style="float: left">{{ item.material }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.materialRev }}</span>
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label prop="value" v-if="searchForm.definedBy == 'MATERIAL_GROUP'">
-          <el-select v-model="searchForm.value" placeholder="请选择" @change="onChange" filterable>
-            <el-option
-              v-for="item in options"
-              :key="item.materialGroup"
-              :label="item.materialGroup"
-              :value="item.materialGroup"
-            >
-              <!-- <span style="float: left">{{ item.materialGroup }}</span> -->
-              <!-- <span style="float: right; color: #8492a6; font-size: 13px">{{ item.materialRev }}</span> -->
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item
-          label="版本:"
-          prop="materialRev"
-          v-if="searchForm.definedBy !== 'MATERIAL_GROUP'"
-          required
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索信息</span>
+      </div>
+      <div class="search-bar">
+        <el-form
+          :inline="true"
+          :model="searchForm"
+          ref="searchForm"
+          :rules="rules"
+          label-width="100px"
+          class="form-style"
         >
-          <el-input v-model="searchForm.materialRev" disabled></el-input>
-        </el-form-item>
-        <el-form-item label="提交规则:" prop="commitType" required>
-          <el-select v-model="searchForm.commitType" placeholder="请选择">
-            <el-option
-              v-for="item in commitRule"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button size="small" type="primary" @click="search('searchForm')">查询</el-button>
-          <el-button size="small" type="primary" @click="resetForm('searchForm')">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
-    <div class="operate">
-      <el-button
-        size="small"
-        type="primary"
-        @click="add('searchForm')"
-        :disabled="this.checkedList.length>0"
-      >新增</el-button>
-      <el-button
-        size="small"
-        type="primary"
-        @click="save('searchForm')"
-        :disabled="this.checkedList.length===0"
-      >编辑</el-button>
-      <el-button size="small" type="primary" :disabled="this.checkedList.length===0" @click="del">删除</el-button>
-    </div>
-    <div class>
-      <el-table
-        border
-        ref="multipleTable"
-        :data="tableData.data"
-        tooltip-effect="dark"
-        row-key="sequence"
-        @selection-change="handleSelectionChange"
-      >
-        <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
-        <el-table-column prop="sequence" width="55" label="序号"></el-table-column>
-        <el-table-column prop="sequenceType" label="类型"></el-table-column>
-        <el-table-column prop="fixedString" label="固定字符串值"></el-table-column>
-        <el-table-column prop="varType" label="可替换参数值"></el-table-column>
-        <el-table-column prop="dateTimeFormat" label="时间"></el-table-column>
-        <el-table-column prop="length" width="70" label="长度"></el-table-column>
-        <el-table-column prop="numBase" width="70" label="进制"></el-table-column>
-        <el-table-column prop="numIncrease" width="70" label="增量"></el-table-column>
-        <el-table-column prop="initValue" width="70" label="初始值"></el-table-column>
-        <el-table-column prop="finalValue" width="70" label="最终值"></el-table-column>
-        <el-table-column prop="reset" label="循环"></el-table-column>
-        <el-table-column prop="orders" label="顺序"></el-table-column>
-        <el-table-column label="操作">
-          <template slot-scope="scope">
-            <el-button size="mini" type="primary" @click="handleClickUp(scope.row)">↑</el-button>
-            <el-button size="mini" type="primary" @click="handleClickDown(scope.row)">↓</el-button>
-            <el-button size="mini" type="warning" @click="handleClickDelete(scope.row)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
+          <el-form-item label="编号类型:" prop="nextNumberType" required>
+            <dsn-select v-model="searchForm.nextNumberType" placeholder="请选择物料">
+              <el-option
+                v-for="item in type"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
+            </dsn-select>
+          </el-form-item>
+          <el-form-item label="定义目标:" prop="definedBy" required>
+            <dsn-select v-model="searchForm.definedBy" placeholder="请选择" @change="definedChange">
+              <el-option
+                v-for="item in target"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
+            </dsn-select>
+          </el-form-item>
+          <el-form-item label prop="value" v-if="searchForm.definedBy !== 'MATERIAL_GROUP'">
+            <dsn-select v-model="searchForm.value" placeholder="请选择" @change="onChange" filterable>
+              <el-option
+                v-for="item in options"
+                :key="item.material+'&'+item.materialRev"
+                :label="item.material"
+                :value="item.material+'&'+item.materialRev"
+              >
+                <span style="float: left">{{ item.material }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.materialRev }}</span>
+              </el-option>
+            </dsn-select>
+          </el-form-item>
+          <el-form-item label prop="value" v-if="searchForm.definedBy == 'MATERIAL_GROUP'">
+            <dsn-select v-model="searchForm.value" placeholder="请选择" @change="onChange" filterable>
+              <el-option
+                v-for="item in options"
+                :key="item.materialGroup"
+                :label="item.materialGroup"
+                :value="item.materialGroup"
+              >
+                <!-- <span style="float: left">{{ item.materialGroup }}</span> -->
+                <!-- <span style="float: right; color: #8492a6; font-size: 13px">{{ item.materialRev }}</span> -->
+              </el-option>
+            </dsn-select>
+          </el-form-item>
+          <el-form-item
+            label="版本:"
+            prop="materialRev"
+            v-if="searchForm.definedBy !== 'MATERIAL_GROUP'"
+            required
+          >
+            <dsn-input v-model="searchForm.materialRev" disabled></dsn-input>
+          </el-form-item>
+          <el-form-item label="提交规则:" prop="commitType" required>
+            <dsn-select v-model="searchForm.commitType" placeholder="请选择">
+              <el-option
+                v-for="item in commitRule"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
+            </dsn-select>
+          </el-form-item>
+          <el-form-item>
+            <dsn-button size="small" type="primary" @click.native="search('searchForm')">查询</dsn-button>
+            <dsn-button size="small" type="primary" @click.native="resetForm('searchForm')">重置</dsn-button>
+          </el-form-item>
+        </el-form>
+      </div>
+    </DsnPanel>
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索结果</span>
+      </div>
+      <div class="operate">
+        <dsn-button
+          size="small"
+          type="success"
+          icon="el-icon-folder-add"
+          @click.native="add('searchForm')"
+          :disabled="this.checkedList.length>0"
+        >新增</dsn-button>
+        <dsn-button
+          size="small"
+          type="primary"
+          icon="el-icon-edit"
+          @click.native="save('searchForm')"
+          :disabled="this.checkedList.length===0"
+        >编辑</dsn-button>
+        <dsn-button icon="el-icon-delete" size="small" type="danger" :disabled="this.checkedList.length===0" @click.native="del">删除</dsn-button>
+      </div>
+      <div>
+        <dsn-table
+          border
+          ref="multipleTable"
+          :data="tableData.data"
+          tooltip-effect="dark"
+          row-key="sequence"
+          @selection-change="handleSelectionChange"
+        >
+          <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
+          <el-table-column prop="sequence" width="55" label="序号"></el-table-column>
+          <el-table-column prop="sequenceType" label="类型"></el-table-column>
+          <el-table-column prop="fixedString" label="固定字符串值"></el-table-column>
+          <el-table-column prop="varType" label="可替换参数值"></el-table-column>
+          <el-table-column prop="dateTimeFormat" label="时间"></el-table-column>
+          <el-table-column prop="length" width="70" label="长度"></el-table-column>
+          <el-table-column prop="numBase" width="70" label="进制"></el-table-column>
+          <el-table-column prop="numIncrease" width="70" label="增量"></el-table-column>
+          <el-table-column prop="initValue" width="70" label="初始值"></el-table-column>
+          <el-table-column prop="finalValue" width="70" label="最终值"></el-table-column>
+          <el-table-column prop="reset" label="循环"></el-table-column>
+          <el-table-column prop="orders" label="顺序"></el-table-column>
+          <el-table-column label="操作" width="200px">
+            <template slot-scope="scope">
+              <dsn-button size="mini" type="primary" @click.native="handleClickUp(scope.row)">↑</dsn-button>
+              <dsn-button size="mini" type="primary" @click.native="handleClickDown(scope.row)">↓</dsn-button>
+              <dsn-button size="mini" type="warning" @click.native="handleClickDelete(scope.row)">删除</dsn-button>
+            </template>
+          </el-table-column>
+        </dsn-table>
+      </div>
+    </DsnPanel>
   </div>
 </template>
 
@@ -237,7 +249,7 @@ export default {
     ...mapMutations(["SETNEXTNUMBEREDITLIST"]),
     definedChange(val) {
       console.log(val);
-      (this.searchForm.value = ""), (this.searchForm.materialRev = "");
+      // (this.searchForm.value = ""), (this.searchForm.materialRev = "");
       if (val == "MATERIAL") {
         searchMat().then(data => {
           this.options = data.data.data;
@@ -285,7 +297,10 @@ export default {
       });
     },
     resetForm(formName) {
+      sessionStorage.removeItem('searchForm');
       this.$refs[formName].resetFields();
+      Object.keys(this.searchForm).map(item => this.searchForm[item] = '');
+      
       this.tableData.data = [];
     },
     handleSelectionChange(val) {
@@ -505,11 +520,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.next-number {
+/* .next-number {
   padding: 0 30px;
   .search-bar {
     background: #ffffff;
     padding-top: 10px;
   }
-}
+} */
 </style>
