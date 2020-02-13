@@ -19,7 +19,7 @@
                         <div class="choiceBox">
                             <i class="el-icon-document-copy choice"></i>                        
                             <el-button size="small" type="primary" @click="handleGet">获取</el-button>
-                            <el-button size="small" type="primary">清除</el-button>
+                            <el-button size="small" type="primary" @click="reset">清除</el-button>
                         </div>
 
                     </el-form-item>
@@ -115,7 +115,6 @@ import {
 export default {
     data(){
         return{
-            shopOrder:'',//工单
             tenantSiteCode:'',
             shopOrderInfo:'',//工单信息
             workOrderIssued: {
@@ -127,14 +126,17 @@ export default {
         }
     },
     methods:{
+        //清除按钮
+        reset(){
+            this.workOrderIssued = {};
+        },
         //获取工单信息
         handleGet(){
             const params = {
-                shopOrder:this.shopOrder,
+                shopOrder:this.workOrderIssued.shopOrder,
                 tenantSiteCode:this.tenantSiteCode
             }
-            console.log(this.shopOrder,"111")
-            if(this.shopOrder !== ""){
+            if(this.workOrderIssued.shopOrder !== ""){
                 findShopOrderListRequest(params).then(data =>{
                     // console.log('获取工单信息'+JSON.stringify(data))
                     const res = data.data
@@ -159,15 +161,15 @@ export default {
         //点击下达按钮
         handleIssued(){
             const params = {
-                quantity: 2,
-                shopOrder: this.shopOrder
+                quantity: this.workOrderIssued.numIssued,
+                shopOrder: this.workOrderIssued.shopOrder
             }
             releaseRequest(params).then(data=>{
                 const res = data.data
                 if(res.code == 200){
                     this.tableData = res.data.releasedLotList
                     for(let i = 0;i<this.tableData.length;i++){
-                        this.tableData[i].shopOrder = this.shopOrder
+                        this.tableData[i].shopOrder = this.workOrderIssued.shopOrder
                     }
                 }else{
                     this.$message({
@@ -175,7 +177,6 @@ export default {
                         type:'warning'
                     })
                 }
-                console.log('这是工单下达信息'+JSON.stringify(this.tableData))
             })
         }
     }

@@ -1,9 +1,9 @@
 <template>
   <div>
     <div class="operate">
-      <el-button size="small" type="primary" @click="goBack">返回</el-button>
-      <el-button size="small" type="primary" @click="save('addForm')">保存</el-button>
-      <el-button size="small" type="primary" @click="resetForm('addForm')">重置</el-button>
+      <dsn-button size="small" type="primary" @click.native="goBack">返回</dsn-button>
+      <dsn-button size="small" type="primary" @click.native="save('addForm')">保存</dsn-button>
+      <dsn-button size="small" type="primary" @click.native="resetForm('addForm')">重置</dsn-button>
     </div>
     <div class="addForm">
       <el-form
@@ -18,12 +18,12 @@
         <el-row>
           <el-col :span="8">
             <el-form-item label="物料号:" prop="material" required>
-              <el-input v-model="addForm.material"></el-input>
+              <dsn-input v-model="addForm.material"></dsn-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="版本号:" prop="materialRev" required>
-              <el-input v-model="addForm.materialRev"></el-input>
+              <dsn-input v-model="addForm.materialRev"></dsn-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -35,12 +35,12 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="物料描述:" prop="materialDes">
-              <el-input
+              <dsn-input
                 class="dec"
                 type="textarea"
                 :autosize="{ minRows: 2, maxRows: 6}"
                 v-model="addForm.materialDes"
-              ></el-input>
+              ></dsn-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -51,69 +51,69 @@
                 <el-row>
                   <el-col :span="8">
                     <el-form-item label="单位1:" prop="unit1">
-                      <el-select v-model="addForm.unit1">
+                      <dsn-select v-model="addForm.unit1">
                         <el-option
                           v-for="item in units"
                           :key="item.value"
                           :label="item.value"
                           :value="item.value"
                         ></el-option>
-                      </el-select>
+                      </dsn-select>
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
                     <el-form-item label="单位2:" prop="unit2">
-                      <el-select v-model="addForm.unit2">
+                      <dsn-select v-model="addForm.unit2">
                         <el-option
                           v-for="item in units"
                           :key="item.value"
                           :label="item.value"
                           :value="item.value"
                         ></el-option>
-                      </el-select>
+                      </dsn-select>
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
                     <el-form-item label="单位3:" prop="unit3">
-                      <el-select v-model="addForm.unit3">
+                      <dsn-select v-model="addForm.unit3">
                         <el-option
                           v-for="item in units"
                           :key="item.value"
                           :label="item.value"
                           :value="item.value"
                         ></el-option>
-                      </el-select>
+                      </dsn-select>
                     </el-form-item>
                   </el-col>
                 </el-row>
                 <el-row>
                   <el-col :span="8">
                     <el-form-item label="投放数量1:" prop="qtyRequired1">
-                      <el-input v-model="addForm.qtyRequired1"></el-input>
+                      <dsn-input v-model="addForm.qtyRequired1"></dsn-input>
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
                     <el-form-item label="投放数量2:" prop="qtyRequired2">
-                      <el-input v-model="addForm.qtyRequired2"></el-input>
+                      <dsn-input v-model="addForm.qtyRequired2"></dsn-input>
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
                     <el-form-item label="投放数量3:" prop="qtyRequired3">
-                      <el-input v-model="addForm.qtyRequired3"></el-input>
+                      <dsn-input v-model="addForm.qtyRequired3"></dsn-input>
                     </el-form-item>
                   </el-col>
                 </el-row>
                 <el-row>
                   <el-col :span="8">
                     <el-form-item label="材料分类:" prop="materialType" required>
-                      <el-select v-model="addForm.materialType">
+                      <dsn-select v-model="addForm.materialType">
                         <el-option
                           v-for="item in options"
                           :key="item.label"
                           :label="item.label"
                           :value="item.label"
                         ></el-option>
-                      </el-select>
+                      </dsn-select>
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
@@ -122,7 +122,7 @@
                       prop="client"
                       v-if="addForm.materialType=='成品' || addForm.materialType=='半成品'"
                     >
-                      <el-input v-model="addForm.client"></el-input>
+                      <dsn-input v-model="addForm.client"></dsn-input>
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
@@ -131,7 +131,7 @@
                       prop="clientmaterial"
                       v-if="addForm.materialType=='成品' || addForm.materialType=='半成品'"
                     >
-                      <el-input v-model="addForm.clientmaterial"></el-input>
+                      <dsn-input v-model="addForm.clientmaterial"></dsn-input>
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
@@ -140,35 +140,35 @@
                       prop="vebdor"
                       v-if="addForm.materialType=='辅料' || addForm.materialType=='原材料'"
                     >
-                      <el-input v-model="addForm.vebdor"></el-input>
+                      <dsn-input v-model="addForm.vebdor"></dsn-input>
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
                     <el-form-item
                       label="供应商物料号:"
-                      prop="vebdormaterial"
+                      prop="vebdorMaterial"
                       v-if="addForm.materialType=='辅料' || addForm.materialType=='原材料'"
                     >
-                      <el-input v-model="addForm.vebdormaterial"></el-input>
+                      <dsn-input v-model="addForm.vebdorMaterial"></dsn-input>
                     </el-form-item>
                   </el-col>
                 </el-row>
                 <el-row>
                   <el-col :span="8">
                     <el-form-item label="物料状态:" prop="materialStatus" required>
-                      <el-select v-model="addForm.materialStatus">
+                      <dsn-select v-model="addForm.materialStatus">
                         <el-option
                           v-for="item in status"
                           :key="item.value"
                           :label="item.label"
                           :value="item.value"
                         ></el-option>
-                      </el-select>
+                      </dsn-select>
                     </el-form-item>
                   </el-col>
                   <!-- <el-col :span="8">
 										<el-form-item label="创建人/修改人:" prop="modified_user_id">
-											<el-input v-model="addForm.modified_user_id" disabled></el-input>
+											<dsn-input v-model="addForm.modified_user_id" disabled></dsn-input>
 										</el-form-item>
                   </el-col>-->
                 </el-row>
@@ -177,96 +177,96 @@
                 <el-row>
                   <el-col :span="8">
                     <el-form-item label="长度:" prop="length">
-                      <el-input v-model="addForm.length"></el-input>
+                      <dsn-input v-model="addForm.length"></dsn-input>
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
                     <el-form-item label="长度误差:" prop="lengthErrorRange">
-                      <el-input v-model="addForm.lengthErrorRange"></el-input>
+                      <dsn-input v-model="addForm.lengthErrorRange"></dsn-input>
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
                     <el-form-item label="长度单位:" prop="lengthUnit">
-                      <el-select v-model="addForm.lengthUnit">
+                      <dsn-select v-model="addForm.lengthUnit">
                         <el-option
                           v-for="item in lengthUnit"
                           :key="item.label"
                           :label="item.label"
                           :value="item.label"
                         ></el-option>
-                      </el-select>
+                      </dsn-select>
                     </el-form-item>
                   </el-col>
                 </el-row>
                 <el-row>
                   <el-col :span="8">
                     <el-form-item label="宽度:" prop="width">
-                      <el-input v-model="addForm.width"></el-input>
+                      <dsn-input v-model="addForm.width"></dsn-input>
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
                     <el-form-item label="宽度误差:" prop="widthErrorRange">
-                      <el-input v-model="addForm.widthErrorRange"></el-input>
+                      <dsn-input v-model="addForm.widthErrorRange"></dsn-input>
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
                     <el-form-item label="宽度单位:" prop="widthUnit">
-                      <el-select v-model="addForm.widthUnit" placeholder="请选择">
+                      <dsn-select v-model="addForm.widthUnit" placeholder="请选择">
                         <el-option
                           v-for="item in lengthUnit"
                           :key="item.label"
                           :label="item.label"
                           :value="item.label"
                         ></el-option>
-                      </el-select>
+                      </dsn-select>
                     </el-form-item>
                   </el-col>
                 </el-row>
                 <el-row>
                   <el-col :span="8">
                     <el-form-item label="高度:" prop="thickness">
-                      <el-input v-model="addForm.thickness"></el-input>
+                      <dsn-input v-model="addForm.thickness"></dsn-input>
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
                     <el-form-item label="高度误差:" prop="thicknessErrorRange">
-                      <el-input v-model="addForm.thicknessErrorRange"></el-input>
+                      <dsn-input v-model="addForm.thicknessErrorRange"></dsn-input>
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
                     <el-form-item label="高度单位:" prop="thicknessUnit">
-                      <el-select v-model="addForm.thicknessUnit" placeholder="请选择">
+                      <dsn-select v-model="addForm.thicknessUnit" placeholder="请选择">
                         <el-option
                           v-for="item in lengthUnit"
                           :key="item.label"
                           :label="item.label"
                           :value="item.label"
                         ></el-option>
-                      </el-select>
+                      </dsn-select>
                     </el-form-item>
                   </el-col>
                 </el-row>
                 <el-row>
                   <el-col :span="8">
                     <el-form-item label="重量:" prop="weight">
-                      <el-input v-model="addForm.weight"></el-input>
+                      <dsn-input v-model="addForm.weight"></dsn-input>
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
                     <el-form-item label="重量误差:" prop="weightErrorRange">
-                      <el-input v-model="addForm.weightErrorRange"></el-input>
+                      <dsn-input v-model="addForm.weightErrorRange"></dsn-input>
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
                     <el-form-item label="重量单位:" prop="weightUnit">
-                      <el-select v-model="addForm.weightUnit" placeholder="请选择">
+                      <dsn-select v-model="addForm.weightUnit" placeholder="请选择">
                         <el-option
                           v-for="item in weightUnit"
                           :key="item.label"
                           :label="item.label"
                           :value="item.label"
                         ></el-option>
-                      </el-select>
+                      </dsn-select>
                     </el-form-item>
                   </el-col>
                 </el-row>
@@ -437,8 +437,39 @@ export default {
         }
       });
     },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
+    resetForm() {
+      this.addForm={
+        material: "",
+        materialRev: "",
+        currentRev: "",
+        materialDes: "",
+        unit1: "",
+        unit2: "",
+        unit3: "",
+        qtyRequired1: "",
+        qtyRequired2: "",
+        qtyRequired3: "",
+        materialType: "辅料",
+        client: "",
+        clientMaterial: "",
+        vebdor: "",
+        vebdorMaterial: "",
+        materialStatus: "",
+        modified_user_id: "",
+        length: "1",
+        lengthErrorRange: "1",
+        lengthUnit: "MM",
+        width: "1",
+        widthErrorRange: "1",
+        widthUnit: "MM",
+        thickness: "1",
+        thicknessErrorRange: "1",
+        thicknessUnit: "MM",
+        weight: "1",
+        weightErrorRange: "1",
+        weightUnit: "g"
+      }
+      // this.$refs[formName].resetFields();
     },
     goBack() {
       this.$router.push({ path: "/material/materialInfo" });

@@ -1,6 +1,9 @@
 <template>
   <div class="material-info">
-    <div class="search-bar">
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索信息</span>
+      </div>
       <el-form
         :inline="true"
         :model="searchForm"
@@ -9,37 +12,41 @@
         class="form-style"
         :label-width="formLabelWidth"
       >
-        <el-form-item label="物料号:" prop="material">
-          <el-input v-model="searchForm.material"></el-input>
+        <el-form-item label="物料号:" :label-width="formLabelWidth" prop="material">
+          <dsn-input v-model="searchForm.material"></dsn-input>
         </el-form-item>
-        <el-form-item label="版本号:" prop="materialRev">
-          <el-input v-model="searchForm.materialRev"></el-input>
+        <el-form-item label="版本号:" :label-width="formLabelWidth" prop="materialRev">
+          <dsn-input v-model="searchForm.materialRev"></dsn-input>
         </el-form-item>
         <el-form-item label prop>
-          <el-button size="small" type="primary" @click="search">查询</el-button>
-          <el-button size="small" type="primary" @click="resetForm('searchForm')">重置</el-button>
+          <dsn-button size="small" type="primary" icon="el-icon-search" @click.native="search">查询</dsn-button>
+          <dsn-button size="small" type="primary" icon="el-icon-refresh" @click.native="resetForm('searchForm')">重置</dsn-button>
         </el-form-item>
       </el-form>
-    </div>
-    <div class="operate">
-      <el-button size="small" type="primary" @click="add" :disabled="this.checkedList.length>0">新增</el-button>
-      <el-button
+    </DsnPanel>
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索结果</span>
+      </div>
+    <div class="operation">
+      <dsn-button size="small" type="success" @click.native="add" icon="el-icon-folder-add" :disabled="this.checkedList.length>0">新增</dsn-button>
+      <dsn-button
         size="small"
         type="primary"
-        @click="edit"
+        @click.native="edit"
+        icon="el-icon-edit"
         :disabled="this.checkedList.length === 0"
-      >编辑</el-button>
-      <el-button
+      >编辑</dsn-button>
+      <dsn-button
         size="small"
-        type="primary"
-        @click="del"
+        type="danger"
+        @click.native="del"
+        icon="el-icon-delete"
         :disabled="this.checkedList.length === 0"
-      >删除</el-button>
-      <el-button size="small" type="primary" @click="handleExport">导出</el-button>
+      >删除</dsn-button>
+      <dsn-button size="small" type="primary" icon="el-icon-upload2" @click.native="handleExport">导出</dsn-button>
     </div>
-
-    <div>
-      <el-table
+      <dsn-table
         ref="multipleTable"
         :data="this.tableData.data"
         tooltip-effect="dark"
@@ -62,8 +69,8 @@
         <el-table-column prop="client" label="客户"></el-table-column>
         <el-table-column prop="vebdor" label="供应商"></el-table-column>
         <el-table-column prop="materialDes" label="物料描述"></el-table-column>
-      </el-table>
-      <el-pagination
+      </dsn-table>
+      <dsn-pagination
         class="mtb20"
         background
         @size-change="handleSizeChange"
@@ -73,8 +80,8 @@
         :page-size="this.tableData.page.pageSize"
         layout="->, total, prev, pager, next, sizes, jumper"
         :total="this.tableData.page.total"
-      ></el-pagination>
-    </div>
+      ></dsn-pagination>
+    </DsnPanel>
   </div>
 </template>
 
@@ -256,18 +263,18 @@ export default {
 </script>
 
 <style lang="scss">
-.material-info {
-  padding: 0 30px;
-  .search-bar {
-    padding: 10px;
-    .el-form {
-      .el-form-item {
-        margin-bottom: 0px;
-      }
-    }
-  }
-  .operate {
-    padding: 10px 5px;
-  }
-}
+// .material-info {
+//   padding: 0 30px;
+//   .search-bar {
+//     padding: 10px;
+//     .el-form {
+//       .el-form-item {
+//         margin-bottom: 0px;
+//       }
+//     }
+//   }
+//   .operate {
+//     padding: 10px 5px;
+//   }
+// }
 </style>
