@@ -8,8 +8,9 @@ import qs from "qs";
  *  url /mes/customizedFieldDef/findCustomizedFieldDefList
  */
 export const getCustomizeInfo = data => {
+  console.log(data)
   return request.get(
-    `${window.VUE_APP_URL}/mes/customizedFieldDef/findCustomizedFieldDefList?customizedItem=${data.customizedItem}&tenantSiteCode=${data.tenantSiteCode}`
+    `${window.VUE_APP_URL}/mes/customizedFieldDef/findCustomizedFieldDefList?customizedItem=${data.FIELD_01}&tenantSiteCode=${data.tenantSiteCode}`
   );
 };
 
