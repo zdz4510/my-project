@@ -1,76 +1,86 @@
 <template>
   <div class="cert-user">
-    <div class="search-bar">
-      <el-form
-        :inline="true"
-        :model="searchForm"
-        ref="searchForm"
-        :rules="rules"
-        class="form-style"
-        :label-width="formLabelWidth"
-      >
-        <el-form-item label="用户:" prop="user">
-          <el-input v-model="searchForm.user"></el-input>
-        </el-form-item>
-        <el-form-item label="姓名:" prop="name">
-          <el-input v-model="searchForm.name"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button size="small" type="primary" @click="search">查询</el-button>
-          <el-button size="small" type="primary" @click="resetForm('searchForm')">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
-    <div class="operate">
-      <!-- <el-button class="mr25 pad1025" size="small" type="primary" @click="add" :disabled="this.checkedList.length>0">新增</el-button> 逻辑变更，此功能去掉，注意后面去掉路由配置信息 -->
-      <el-button
-        size="small"
-        type="primary"
-        @click="edit"
-        :disabled="this.checkedList.length === 0"
-      >编辑</el-button>
-      <el-button
-        size="small"
-        type="primary"
-        @click="del"
-        :disabled="this.checkedList.length === 0"
-      >删除</el-button>
-      <el-button size="small" type="primary" @click="handleExport">导出</el-button>
-    </div>
-    <div class>
-      <el-table
-        ref="multipleTable"
-        :data="this.tableData.data"
-        tooltip-effect="dark"
-        row-key="user"
-        @selection-change="handleSelectionChange"
-      >
-        <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
-        <el-table-column type="index" label="序号"></el-table-column>
-        <el-table-column prop="user" label="用户"></el-table-column>
-        <el-table-column prop="name" label="姓名"></el-table-column>
-        <el-table-column prop="cert" label="上岗证"></el-table-column>
-        <el-table-column prop="certDes" label="上岗证描述"></el-table-column>
-        <el-table-column label="状态">
-          <template slot-scope="scope">{{ scope.row.status == true ? '已启用' : '未启用' }}</template>
-        </el-table-column>
-        <el-table-column label="持续时间类型">
-          <template slot-scope="scope">{{ scope.row.certType == true ? '永久' : '临时' }}</template>
-        </el-table-column>
-        <el-table-column prop="certTime" label="上岗证截止日期"></el-table-column>
-      </el-table>
-      <el-pagination
-        class="mtb20"
-        background
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="this.tableData.page.currentPage"
-        :page-sizes="[1, 10, 15, 20, 30, 50]"
-        :page-size="this.tableData.page.pageSize"
-        layout="->, total, prev, pager, next, sizes, jumper"
-        :total="this.tableData.page.total"
-      ></el-pagination>
-    </div>
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索信息</span>
+      </div>
+      <div class="search-bar">
+        <el-form
+          :inline="true"
+          :model="searchForm"
+          ref="searchForm"
+          :rules="rules"
+          class="form-style"
+        >
+          <el-form-item label="用户:" prop="user">
+            <dsn-input v-model="searchForm.user"></dsn-input>
+          </el-form-item>
+          <el-form-item label="姓名:" prop="name">
+            <dsn-input v-model="searchForm.name"></dsn-input>
+          </el-form-item>
+          <el-form-item>
+            <dsn-button size="small" type="primary" @click.native="search">查询</dsn-button>
+            <dsn-button size="small" type="primary" @click.native="resetForm('searchForm')">重置</dsn-button>
+          </el-form-item>
+        </el-form>
+      </div>
+    </DsnPanel>
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+          <span>搜索结果</span>
+        </div>
+      <div class="operate">
+        <!-- <dsn-button class="mr25 pad1025" size="small" type="primary" @click="add" :disabled="this.checkedList.length>0">新增</dsn-button> 逻辑变更，此功能去掉，注意后面去掉路由配置信息 -->
+        <dsn-button
+          size="small"
+          type="primary"
+          icon="el-icon-edit"
+          @click.native="edit"
+          :disabled="this.checkedList.length === 0"
+        >编辑</dsn-button>
+        <dsn-button
+          size="small"
+          type="danger"
+          icon="el-icon-delete"
+          @click.native="del"
+          :disabled="this.checkedList.length === 0"
+        >删除</dsn-button>
+        <dsn-button icon="el-icon-upload2" size="small" type="primary" @click.native="handleExport">导出</dsn-button>
+      </div>
+      <div>
+        <dsn-table
+          ref="multipleTable"
+          :data="this.tableData.data"
+          tooltip-effect="dark"
+          row-key="user"
+          @selection-change="handleSelectionChange"
+        >
+          <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
+          <el-table-column type="index" label="序号"></el-table-column>
+          <el-table-column prop="user" label="用户"></el-table-column>
+          <el-table-column prop="name" label="姓名"></el-table-column>
+          <el-table-column prop="cert" label="上岗证"></el-table-column>
+          <el-table-column prop="certDes" label="上岗证描述"></el-table-column>
+          <el-table-column label="状态">
+            <template slot-scope="scope">{{ scope.row.status == true ? '已启用' : '未启用' }}</template>
+          </el-table-column>
+          <el-table-column label="持续时间类型">
+            <template slot-scope="scope">{{ scope.row.certType == true ? '永久' : '临时' }}</template>
+          </el-table-column>
+          <el-table-column prop="certTime" label="上岗证截止日期"></el-table-column>
+        </dsn-table>
+        <dsn-pagination
+          class="mtb20"
+          background
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="this.tableData.page.currentPage"
+          :page-size="this.tableData.page.pageSize"
+          layout="->, total, prev, pager, next, sizes"
+          :total="this.tableData.page.total"
+        ></dsn-pagination>
+      </div>
+    </DsnPanel>
   </div>
 </template>
 

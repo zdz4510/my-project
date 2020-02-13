@@ -1,76 +1,76 @@
 <template>
-  <div>
-		<div class="operate mtb10">
-			<el-button class="mr25 ml30 pad1025" size="small" type="primary" @click="goBack">返回</el-button>
-			<el-button class="mr25 pad1025" size="small" type="primary" @click="handleSave('editForm')">保存</el-button>
+  <div class="edit-cert-user">
+		<div class="operate">
+			<dsn-button size="small" type="primary" @click.native="goBack">返回</dsn-button>
+			<dsn-button size="small" type="primary" @click.native="handleSave('editForm')">保存</dsn-button>
 		</div>
-		<el-row :gutter="20" class="bgw">
+		<el-row :gutter="24">
 			<el-col :span="6">
-				<div>
-					<el-select v-model="value" clearable placeholder="请选择" :disabled="selectIsDisabled" @clear="handleClearSelect" @change="handleChangeOption" @focus="handleSelectFocus" ref="select" >
+				<div class="editList">
+					<dsn-select
+						style="margin-bottom: 30px"
+						v-model="value"
+						clearable
+						placeholder="请选择"
+						:disabled="selectIsDisabled"
+						@clear="handleClearSelect"
+						@change="handleChangeOption"
+						@focus="handleSelectFocus"
+						ref="select"
+					>
 						<el-option
 							v-for="item in cloneList"
 							:key="item.user"
 							:label="item.user"
 							:value="item.user" >
 						</el-option>
-					</el-select>
-					<el-table ref="editTable" :data="cloneList" border highlight-current-row style="width: 100%" height="513" @row-click="handleCurrentChange" >
+					</dsn-select>
+					<dsn-table ref="editTable" :data="cloneList" border highlight-current-row  @row-click="handleCurrentChange" >
 						<el-table-column label="用户" prop="user"> </el-table-column>
 						<el-table-column label="姓名" prop="name"> </el-table-column>
-					</el-table>
+					</dsn-table>
 				</div>
 			</el-col>
 			<el-col :span="18">
-				<div>
-					<el-form :inline="true" :model="editForm" ref="editForm" :rules="rules" class="form-style" label-position="right" :label-width="formLabelWidth">
+				<div class="workList">
+					<el-form :inline="true" :model="editForm" ref="editForm" :rules="rules" class="form-style" label-position="right">
+						<el-form-item label="用户:" prop="user" required>
+							<dsn-input v-model="editForm.user" disabled></dsn-input>
+						</el-form-item>
+						<el-form-item label="姓名:" prop="name" required>
+							<dsn-input v-model="editForm.name" disabled></dsn-input>
+						</el-form-item>
 						<el-row>
-							<el-col :span="8">
-								<el-form-item label="用户:" prop="user" required>
-									<el-input v-model="editForm.user" disabled></el-input>
-								</el-form-item>
+							<el-col :span="11">
+								<dsn-table :data="allocateData.filter(data => !cert1 || data.cert.toLowerCase().includes(cert1.toLowerCase()))" @select="check1" @select-all="check1">
+									<el-table-column label="上岗证:">
+										<el-table-column type="selection" width="100"></el-table-column>
+										<el-table-column prop="cert" label="上岗证"></el-table-column>
+									</el-table-column>
+									<el-table-column label="">
+										<template slot="header">
+											<dsn-input v-model="cert1" placeholder="输入上岗证搜索"/></template>
+										<el-table-column prop="certDes" label="上岗证描述"></el-table-column>
+									</el-table-column>
+								</dsn-table>
 							</el-col>
-							<el-col :span="8">
-								<el-form-item label="姓名:" prop="name" required>
-									<el-input v-model="editForm.name" disabled></el-input>
-								</el-form-item>
+							<el-col :span="2">
+								<div class="direction mt70"><i class="el-icon-caret-right" @click="right"></i></div>
+								<div class="direction"><i class="el-icon-caret-left" @click="left"></i></div>
 							</el-col>
-						</el-row>
-						<el-row>
-							<el-col :span="24">
-								<el-row>
-									<el-col :span="8">
-											<el-table :data="allocateData.filter(data => !cert1 || data.cert.toLowerCase().includes(cert1.toLowerCase()))" @select="check1" @select-all="check1">
-												<el-table-column label="上岗证:">
-													<el-table-column type="selection" width="100"></el-table-column>
-													<el-table-column prop="cert" label="上岗证"></el-table-column>
-												</el-table-column>
-												<el-table-column label="">
-													<template slot="header">
-														<el-input v-model="cert1" placeholder="输入上岗证搜索"/></template>
-													<el-table-column prop="certDes" label="上岗证描述"></el-table-column>
-												</el-table-column>
-											</el-table>
-										</el-col>
-										<el-col :span="2">
-											<div class="direction mt70"><i class="el-icon-caret-right" @click="right"></i></div>
-											<div class="direction"><i class="el-icon-caret-left" @click="left"></i></div>
-										</el-col>
-										<el-col :span="8">
-											<el-table :data="unallocateData.filter(data => !cert2 || data.cert.toLowerCase().includes(cert2.toLowerCase()))" @select="check2" @select-all="check2">
-												<el-table-column label="上岗证:">
-													<el-table-column type="selection" width="100"></el-table-column>
-													<el-table-column prop="cert" label="上岗证"></el-table-column>
-												</el-table-column>
-												<el-table-column label="">
-													<template slot="header">
-														<el-input v-model="cert2" placeholder="输入上岗证搜索" />
-													</template>
-													<el-table-column prop="certDes" label="上岗证描述"></el-table-column>
-												</el-table-column>
-											</el-table>
-										</el-col>
-								</el-row>
+							<el-col :span="11">
+								<dsn-table :data="unallocateData.filter(data => !cert2 || data.cert.toLowerCase().includes(cert2.toLowerCase()))" @select="check2" @select-all="check2">
+									<el-table-column label="上岗证:">
+										<el-table-column type="selection" width="100"></el-table-column>
+										<el-table-column prop="cert" label="上岗证"></el-table-column>
+									</el-table-column>
+									<el-table-column label="">
+										<template slot="header">
+											<dsn-input v-model="cert2" placeholder="输入上岗证搜索" />
+										</template>
+										<el-table-column prop="certDes" label="上岗证描述"></el-table-column>
+									</el-table-column>
+								</dsn-table>
 							</el-col>
 						</el-row>
 					</el-form>
@@ -78,10 +78,10 @@
 					<el-dialog title="保存" :visible.sync="saveDialog" width="30%">
 						<span>是否保存数据？</span>
 						<span slot="footer" class="dialog-footer">
-							<el-button @click="handleCancle">取 消</el-button>
-							<el-button type="primary" @click="handleSave('editForm')">
+							<dsn-button @click="handleCancle">取 消</dsn-button>
+							<dsn-button type="primary" @click="handleSave('editForm')">
 								确 定
-							</el-button>
+							</dsn-button>
 						</span>
 					</el-dialog>
 				</div>
@@ -353,31 +353,18 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.edit-cert-user{
 	.operate {
-		background: #FFFFFF;
-		padding: 10px;
-	}
-	.editForm {
-		background: #FFFFFF;
-		padding: 10px;
-		.dec {
-			width: 756px !important;
-		}
-	}
-	.el-textarea /deep/ .el-textarea__inner{
-		width: 622px;
-	}
-	.el-table /deep/ .success-row {
-		background: #f0f9eb ;
-	}
-	.bgw {
-		background: #FFFFFF;
-	}
-	.input-form {
-		margin-left: 20px;
-	}
-	.el-select /deep/ .el-input {
-    width: 200px;
+    padding: 14px 14px 0;
+    background: #fff;
+    margin-bottom: 14px;
+		border-radius: 4px;
+  }
+	.editList, .workList {
+    background: #fff;
+    min-height: 450px;
+    padding: 10px;
+		border-radius: 4px;
   }
 	.direction {
 		color: #409eff;
@@ -388,4 +375,5 @@ export default {
 	.mt70 {
 		margin-top: 70px;
 	}
+}
 </style>
