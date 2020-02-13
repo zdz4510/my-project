@@ -1,13 +1,13 @@
 <template>
   <div>
     <div class="operate">
-      <el-button size="small" type="primary" @click="goBack">返回</el-button>
-      <el-button size="small" type="primary" @click="handleSave('editForm')">保存</el-button>
+      <dsn-button size="small" type="primary" @click.native="goBack">返回</dsn-button>
+      <dsn-button size="small" type="primary" @click.native="handleSave('editForm')">保存</dsn-button>
     </div>
     <el-row :gutter="20" class="bgw">
       <el-col :span="6">
         <div>
-          <el-select
+          <dsn-select
             v-model="value"
             clearable
             placeholder="请选择"
@@ -26,7 +26,7 @@
               <span style="float: left">{{ item.material }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.materialRev }}</span>
             </el-option>
-          </el-select>
+          </dsn-select>
           <el-table
             ref="editTable"
             :data="cloneList"
@@ -56,12 +56,12 @@
             <el-row>
               <el-col :span="8">
                 <el-form-item label="物料号:" prop="material">
-                  <el-input v-model="editForm.material" disabled></el-input>
+                  <dsn-input v-model="editForm.material" disabled></dsn-input>
                 </el-form-item>
               </el-col>
               <el-col :span="8">
                 <el-form-item label="版本号:" prop="materialRev">
-                  <el-input v-model="editForm.materialRev" disabled></el-input>
+                  <dsn-input v-model="editForm.materialRev" disabled></dsn-input>
                 </el-form-item>
               </el-col>
               <el-col :span="8">
@@ -89,69 +89,69 @@
                     <el-row>
                       <el-col :span="8">
                         <el-form-item label="单位1:" prop="unit1">
-                          <el-select v-model="editForm.unit1">
+                          <dsn-select v-model="editForm.unit1">
                             <el-option
                               v-for="item in units"
                               :key="item.label"
                               :label="item.label"
                               :value="item.label"
                             ></el-option>
-                          </el-select>
+                          </dsn-select>
                         </el-form-item>
                       </el-col>
                       <el-col :span="8">
                         <el-form-item label="单位2:" prop="unit2">
-                          <el-select v-model="editForm.unit2">
+                          <dsn-select v-model="editForm.unit2">
                             <el-option
                               v-for="item in units"
                               :key="item.label"
                               :label="item.label"
                               :value="item.label"
                             ></el-option>
-                          </el-select>
+                          </dsn-select>
                         </el-form-item>
                       </el-col>
                       <el-col :span="8">
                         <el-form-item label="单位3:" prop="unit3">
-                          <el-select v-model="editForm.unit3">
+                          <dsn-select v-model="editForm.unit3">
                             <el-option
                               v-for="item in units"
                               :key="item.label"
                               :label="item.label"
                               :value="item.label"
                             ></el-option>
-                          </el-select>
+                          </dsn-select>
                         </el-form-item>
                       </el-col>
                     </el-row>
                     <el-row>
                       <el-col :span="8">
                         <el-form-item label="投放数量1:" prop="qtyRequired1">
-                          <el-input v-model="editForm.qtyRequired1"></el-input>
+                          <dsn-input v-model="editForm.qtyRequired1"></dsn-input>
                         </el-form-item>
                       </el-col>
                       <el-col :span="8">
                         <el-form-item label="投放数量2:" prop="qtyRequired2">
-                          <el-input v-model="editForm.qtyRequired2"></el-input>
+                          <dsn-input v-model="editForm.qtyRequired2"></dsn-input>
                         </el-form-item>
                       </el-col>
                       <el-col :span="8">
                         <el-form-item label="投放数量3:" prop="qtyRequired3">
-                          <el-input v-model="editForm.qtyRequired3"></el-input>
+                          <dsn-input v-model="editForm.qtyRequired3"></dsn-input>
                         </el-form-item>
                       </el-col>
                     </el-row>
                     <el-row>
                       <el-col :span="8">
                         <el-form-item label="材料分类:" prop="materialType" required>
-                          <el-select v-model="editForm.materialType">
+                          <dsn-select v-model="editForm.materialType">
                             <el-option
                               v-for="item in options"
                               :key="item.label"
                               :label="item.label"
                               :value="item.label"
                             ></el-option>
-                          </el-select>
+                          </dsn-select>
                         </el-form-item>
                       </el-col>
                       <el-col :span="8">
@@ -160,7 +160,7 @@
                           prop="client"
                           v-if="editForm.materialType=='成品' || editForm.materialType=='半成品'"
                         >
-                          <el-input v-model="editForm.client"></el-input>
+                          <dsn-input v-model="editForm.client"></dsn-input>
                         </el-form-item>
                       </el-col>
                       <el-col :span="8">
@@ -169,7 +169,7 @@
                           prop="clientMaterial"
                           v-if="editForm.materialType=='成品' || editForm.materialType=='半成品'"
                         >
-                          <el-input v-model="editForm.clientMaterial"></el-input>
+                          <dsn-input v-model="editForm.clientMaterial"></dsn-input>
                         </el-form-item>
                       </el-col>
                       <el-col :span="8">
@@ -178,7 +178,7 @@
                           prop="vebdor"
                           v-if="editForm.materialType=='辅料' || editForm.materialType=='原材料'"
                         >
-                          <el-input v-model="editForm.vebdor"></el-input>
+                          <dsn-input v-model="editForm.vebdor"></dsn-input>
                         </el-form-item>
                       </el-col>
                       <el-col :span="8">
@@ -187,31 +187,31 @@
                           prop="vebdorMaterial"
                           v-if="editForm.materialType=='辅料' || editForm.materialType=='原材料'"
                         >
-                          <el-input v-model="editForm.vebdorMaterial"></el-input>
+                          <dsn-input v-model="editForm.vebdorMaterial"></dsn-input>
                         </el-form-item>
                       </el-col>
                     </el-row>
                     <el-row>
                       <el-col :span="8">
                         <el-form-item label="物料状态:" prop="materialStatus" required>
-                          <el-select v-model="editForm.materialStatus">
+                          <dsn-select v-model="editForm.materialStatus">
                             <el-option
                               v-for="item in status"
                               :key="item.value"
                               :label="item.label"
                               :value="item.value"
                             ></el-option>
-                          </el-select>
+                          </dsn-select>
                         </el-form-item>
                       </el-col>
                       <el-col :span="8" v-if="editForm.modifyUserId">
                         <el-form-item label="创建人/修改人:" prop="modifyUserId">
-                          <el-input v-model="editForm.modifyUserId" disabled></el-input>
+                          <dsn-input v-model="editForm.modifyUserId" disabled></dsn-input>
                         </el-form-item>
                       </el-col>
                       <el-col :span="8" v-else>
                         <el-form-item label="创建人/修改人:" prop="createUserId">
-                          <el-input v-model="editForm.createUserId" disabled></el-input>
+                          <dsn-input v-model="editForm.createUserId" disabled></dsn-input>
                         </el-form-item>
                       </el-col>
                     </el-row>
@@ -220,96 +220,96 @@
                     <el-row>
                       <el-col :span="8">
                         <el-form-item label="长度:" prop="length">
-                          <el-input v-model="editForm.length"></el-input>
+                          <dsn-input v-model="editForm.length"></dsn-input>
                         </el-form-item>
                       </el-col>
                       <el-col :span="8">
                         <el-form-item label="长度误差:" prop="lengthErrorRange">
-                          <el-input v-model="editForm.lengthErrorRange"></el-input>
+                          <dsn-input v-model="editForm.lengthErrorRange"></dsn-input>
                         </el-form-item>
                       </el-col>
                       <el-col :span="8">
                         <el-form-item label="长度单位:" prop="lengthUnit">
-                          <el-select v-model="editForm.lengthUnit">
+                          <dsn-select v-model="editForm.lengthUnit">
                             <el-option
                               v-for="item in lengthUnit"
                               :key="item.label"
                               :label="item.label"
                               :value="item.label"
                             ></el-option>
-                          </el-select>
+                          </dsn-select>
                         </el-form-item>
                       </el-col>
                     </el-row>
                     <el-row>
                       <el-col :span="8">
                         <el-form-item label="宽度:" prop="width">
-                          <el-input v-model="editForm.width"></el-input>
+                          <dsn-input v-model="editForm.width"></dsn-input>
                         </el-form-item>
                       </el-col>
                       <el-col :span="8">
                         <el-form-item label="宽度误差:" prop="widthErrorRange">
-                          <el-input v-model="editForm.widthErrorRange"></el-input>
+                          <dsn-input v-model="editForm.widthErrorRange"></dsn-input>
                         </el-form-item>
                       </el-col>
                       <el-col :span="8">
                         <el-form-item label="宽度单位:" prop="widthUnit">
-                          <el-select v-model="editForm.widthUnit" placeholder="请选择">
+                          <dsn-select v-model="editForm.widthUnit" placeholder="请选择">
                             <el-option
                               v-for="item in lengthUnit"
                               :key="item.label"
                               :label="item.label"
                               :value="item.label"
                             ></el-option>
-                          </el-select>
+                          </dsn-select>
                         </el-form-item>
                       </el-col>
                     </el-row>
                     <el-row>
                       <el-col :span="8">
                         <el-form-item label="高度:" prop="thickness">
-                          <el-input v-model="editForm.thickness"></el-input>
+                          <dsn-input v-model="editForm.thickness"></dsn-input>
                         </el-form-item>
                       </el-col>
                       <el-col :span="8">
                         <el-form-item label="高度误差:" prop="thicknessErrorRange">
-                          <el-input v-model="editForm.thicknessErrorRange"></el-input>
+                          <dsn-input v-model="editForm.thicknessErrorRange"></dsn-input>
                         </el-form-item>
                       </el-col>
                       <el-col :span="8">
                         <el-form-item label="高度单位:" prop="thicknessUnit">
-                          <el-select v-model="editForm.thicknessUnit" placeholder="请选择">
+                          <dsn-select v-model="editForm.thicknessUnit" placeholder="请选择">
                             <el-option
                               v-for="item in lengthUnit"
                               :key="item.label"
                               :label="item.label"
                               :value="item.label"
                             ></el-option>
-                          </el-select>
+                          </dsn-select>
                         </el-form-item>
                       </el-col>
                     </el-row>
                     <el-row>
                       <el-col :span="8">
                         <el-form-item label="重量:" prop="weight">
-                          <el-input v-model="editForm.weight"></el-input>
+                          <dsn-input v-model="editForm.weight"></dsn-input>
                         </el-form-item>
                       </el-col>
                       <el-col :span="8">
                         <el-form-item label="重量误差:" prop="weightErrorRange">
-                          <el-input v-model="editForm.weightErrorRange"></el-input>
+                          <dsn-input v-model="editForm.weightErrorRange"></dsn-input>
                         </el-form-item>
                       </el-col>
                       <el-col :span="8">
                         <el-form-item label="重量单位:" prop="weightUnit">
-                          <el-select v-model="editForm.weightUnit" placeholder="请选择">
+                          <dsn-select v-model="editForm.weightUnit" placeholder="请选择">
                             <el-option
                               v-for="item in weightUnit"
                               :key="item.label"
                               :label="item.label"
                               :value="item.label"
                             ></el-option>
-                          </el-select>
+                          </dsn-select>
                         </el-form-item>
                       </el-col>
                     </el-row>
@@ -319,11 +319,11 @@
             </el-row>
           </el-form>
           <!-- 确认模态框 -->
-          <el-dialog title="保存" :visible.sync="saveDialog" width="30%">
+          <el-dialog title="保存" :visible.sync="saveDialog" :width="defaltDialogWidth">
             <span>是否保存数据？</span>
             <span slot="footer" class="dialog-footer">
-              <el-button @click="handleCancle">取 消</el-button>
-              <el-button type="primary" @click="handleSave('editForm')">确 定</el-button>
+              <dsn-button @click="handleCancle">取 消</dsn-button>
+              <dsn-button type="primary" @click="handleSave('editForm')">确 定</dsn-button>
             </span>
           </el-dialog>
         </div>
@@ -340,6 +340,7 @@ export default {
   computed: {
     ...mapGetters(["matEditList"])
   },
+  inject: ["defaltDialogWidth"],
   data() {
     var qtyRequired = (rule, value, callback) => {
       var reg = /^\d{1,5}(?:\.\d{1,3})?$/;
@@ -380,7 +381,7 @@ export default {
         vebdor: "",
         vebdorMaterial: "",
         materialStatus: "",
-        modified_user_id: "",
+        modifyUserId:"",
         length: "",
         lengthErrorRange: "",
         lengthUnit: "",
@@ -513,7 +514,7 @@ export default {
           item["material"] == row.split("&")[0] &&
           item["materialRev"] == row.split("&")[1]
       );
-      console.log(tempList);
+      // console.log(tempList);
       // this.cloneList = tempList;
       this.editForm = tempList[0];
       this.cloneModify = JSON.parse(JSON.stringify(this.editForm));

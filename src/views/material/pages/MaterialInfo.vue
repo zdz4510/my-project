@@ -12,39 +12,41 @@
         class="form-style"
         :label-width="formLabelWidth"
       >
-        <el-form-item label="物料号:" prop="material">
+        <el-form-item label="物料号:" :label-width="formLabelWidth" prop="material">
           <dsn-input v-model="searchForm.material"></dsn-input>
         </el-form-item>
-        <el-form-item label="版本号:" prop="materialRev">
+        <el-form-item label="版本号:" :label-width="formLabelWidth" prop="materialRev">
           <dsn-input v-model="searchForm.materialRev"></dsn-input>
         </el-form-item>
         <el-form-item label prop>
-          <dsn-button size="small" type="primary" @click="search">查询</dsn-button>
-          <dsn-button size="small" type="primary" @click="resetForm('searchForm')">重置</dsn-button>
+          <dsn-button size="small" type="primary" icon="el-icon-search" @click.native="search">查询</dsn-button>
+          <dsn-button size="small" type="primary" icon="el-icon-refresh" @click.native="resetForm('searchForm')">重置</dsn-button>
         </el-form-item>
       </el-form>
     </DsnPanel>
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索结果</span>
+      </div>
     <div class="operation">
-      <dsn-button size="small" type="primary" @click="add" :disabled="this.checkedList.length>0">新增</dsn-button>
+      <dsn-button size="small" type="success" @click.native="add" icon="el-icon-folder-add" :disabled="this.checkedList.length>0">新增</dsn-button>
       <dsn-button
         size="small"
         type="primary"
-        @click="edit"
+        @click.native="edit"
         icon="el-icon-edit"
         :disabled="this.checkedList.length === 0"
       >编辑</dsn-button>
       <dsn-button
         size="small"
-        type="primary"
-        @click="del"
+        type="danger"
+        @click.native="del"
         icon="el-icon-delete"
         :disabled="this.checkedList.length === 0"
       >删除</dsn-button>
-      <dsn-button size="small" type="primary" icon="el-icon-upload2" @click="handleExport">导出</dsn-button>
+      <dsn-button size="small" type="primary" icon="el-icon-upload2" @click.native="handleExport">导出</dsn-button>
     </div>
-
-    <div>
-      <el-table
+      <dsn-table
         ref="multipleTable"
         :data="this.tableData.data"
         tooltip-effect="dark"
@@ -67,8 +69,8 @@
         <el-table-column prop="client" label="客户"></el-table-column>
         <el-table-column prop="vebdor" label="供应商"></el-table-column>
         <el-table-column prop="materialDes" label="物料描述"></el-table-column>
-      </el-table>
-      <el-pagination
+      </dsn-table>
+      <dsn-pagination
         class="mtb20"
         background
         @size-change="handleSizeChange"
@@ -78,8 +80,8 @@
         :page-size="this.tableData.page.pageSize"
         layout="->, total, prev, pager, next, sizes, jumper"
         :total="this.tableData.page.total"
-      ></el-pagination>
-    </div>
+      ></dsn-pagination>
+    </DsnPanel>
   </div>
 </template>
 
