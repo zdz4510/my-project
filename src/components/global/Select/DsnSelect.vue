@@ -129,12 +129,11 @@ export default {
     return {};
   },
   methods: {
-      input(v){
-         this.$emit('input',v);
-      },
-    change() {
-        console.log('change',this.value)
-      this.$emit("change", this.value);
+    input(v){
+        this.$emit('input',v);
+    },
+    change(value) {
+      this.$emit("change", value);
     },
     visableChange(flag) {
       this.$emit("visible-change", flag);
