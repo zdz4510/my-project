@@ -93,7 +93,7 @@
               <el-table-column prop="resource" label="设备编号"></el-table-column>
               <el-table-column prop="clearFlag" label="初始化与否"></el-table-column>
               <el-table-column prop="clearTime" label="初始化时间"></el-table-column>
-              <el-table-column prop="clearUserName" label="初始化用户"></el-table-column>
+              <el-table-column prop="clearUserId" label="初始化用户"></el-table-column>
               <el-table-column prop="clearComment" label="初始化注释"></el-table-column>
             </dsn-table>
             <dsn-pagination

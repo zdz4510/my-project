@@ -1,57 +1,57 @@
 <template>
-  <div>
-		<div class="operate mtb10">
-			<el-button class="mr25 ml30 pad1025" size="small" type="primary" @click="goBack">返回</el-button>
-			<el-button class="mr25 pad1025" size="small" type="primary" @click="handleSave('editForm')">保存</el-button>
+  <div class="edit-next-number">
+		<div class="operate">
+			<dsn-button size="small" type="primary" @click.native="goBack">返回</dsn-button>
+			<dsn-button size="small" type="primary" @click.native="handleSave('editForm')">保存</dsn-button>
 		</div>
-		<el-row :gutter="20" class="bgw">
+		<el-row :gutter="20">
 			<el-col :span="6">
-				<div>
-					<el-select v-model="value" clearable placeholder="请选择" :disabled="selectIsDisabled" @clear="handleClearSelect" @change="handleChangeOption" @focus="handleSelectFocus" ref="select" >
+				<div class="editList">
+					<dsn-select style="margin-bottom: 30px" v-model="value" clearable placeholder="请选择" :disabled="selectIsDisabled" @clear="handleClearSelect" @change="handleChangeOption" @focus="handleSelectFocus" ref="select" >
 						<el-option
 							v-for="item in cloneList"
 							:key="item.sequence"
 							:label="item.sequence"
 							:value="item.sequence" >
 						</el-option>
-					</el-select>
-					<el-table ref="editTable" :data="cloneList" row-key="sequence"  border highlight-current-row style="width: 100%" @row-click="handleCurrentChange" >
+					</dsn-select>
+					<dsn-table ref="editTable" :data="cloneList" row-key="sequence"  border highlight-current-row style="width: 100%" @row-click="handleCurrentChange" >
 						<el-table-column label="序号" prop="sequence"> </el-table-column>
 						<el-table-column label="类型" prop="sequenceType"> </el-table-column>
-					</el-table>
+					</dsn-table>
 				</div>
 			</el-col>
 			<el-col :span="18">
-				<div>
+				<div class="workList" style="height: 602px">
 					<el-form :model="editForm" :inline="true" ref="editForm" :label-width="formLabelWidth">
 						<el-form-item label="规则类型:" prop="sequenceType" required>
-							<el-select v-model="editForm.sequenceType" placeholder="请选择" @change=onChange>
+							<dsn-select v-model="editForm.sequenceType" placeholder="请选择" @change=onChange>
 								<el-option
 									v-for="item in ruleTypes"
 									:key="item.value"
 									:label="item.label"
 									:value="item.value">
 								</el-option>
-							</el-select>
+							</dsn-select>
 						</el-form-item>
 						<el-row v-if="editForm.sequenceType == 'F'">
 							<el-col :span="24">
 								<el-form-item label="固定字符串:" prop="fixedString" required>
-									<el-input v-model="editForm.fixedString"></el-input>
+									<dsn-input v-model="editForm.fixedString"></dsn-input>
 								</el-form-item>
 							</el-col>
 						</el-row>
 						<el-row v-if="editForm.sequenceType == 'V'">
 							<el-col :span="24">
 								<el-form-item label="可替换参数:" prop="varType" required>
-									<el-select v-model="editForm.varType" placeholder="请选择">
+									<dsn-select v-model="editForm.varType" placeholder="请选择">
 										<el-option
 											v-for="item in replaceable"
 											:key="item.value"
 											:label="item.label"
 											:value="item.value">
 										</el-option>
-									</el-select>
+									</dsn-select>
 								</el-form-item>
 							</el-col>
 						</el-row>
@@ -70,43 +70,43 @@
 						<el-row v-if="editForm.sequenceType == 'S'">
 							<el-col :span="12">
 								<el-form-item label="长度:" prop="length" required>
-									<el-input v-model="editForm.length"></el-input>
+									<dsn-input v-model="editForm.length"></dsn-input>
 								</el-form-item>
 							</el-col>
 							<el-col :span="12">
 								<el-form-item label="进制:" prop="numBase" required>
-									<el-input-number v-model="editForm.numBase" :min="2" :max="36" label=""></el-input-number>
+									<dsn-input-number v-model="editForm.numBase" :min="2" :max="36" label=""></dsn-input-number>
 								</el-form-item>
 							</el-col>
 						</el-row>
 						<el-row v-if="editForm.sequenceType == 'S'">
 							<el-col :span="12">
 								<el-form-item label="增量:" prop="numIncr" required>
-									<el-input v-model="editForm.numIncr"></el-input>
+									<dsn-input v-model="editForm.numIncr"></dsn-input>
 								</el-form-item>
 							</el-col>
 							<el-col :span="12">
 								<el-form-item label="初始值:" prop="initValue" required>
-									<el-input v-model="editForm.initValue"></el-input>
+									<dsn-input v-model="editForm.initValue"></dsn-input>
 								</el-form-item>
 							</el-col>
 						</el-row>
 						<el-row v-if="editForm.sequenceType == 'S'">
 							<el-col :span="12">
 								<el-form-item label="终值:" prop="finalValue" required>
-									<el-input v-model="editForm.finalValue"></el-input>
+									<dsn-input v-model="editForm.finalValue"></dsn-input>
 								</el-form-item>
 							</el-col>
 							<el-col :span="12">
 								<el-form-item label="循环:" prop="reset" required>
-									<el-select v-model="editForm.reset" placeholder="请选择">
+									<dsn-select v-model="editForm.reset" placeholder="请选择">
 										<el-option
 											v-for="item in circle"
 											:key="item.value"
 											:label="item.label"
 											:value="item.value">
 										</el-option>
-									</el-select>
+									</dsn-select>
 								</el-form-item>
 							</el-col>
 						</el-row>
@@ -125,10 +125,10 @@
 					<el-dialog title="保存" :visible.sync="saveDialog" width="30%">
 						<span>是否保存数据？</span>
 						<span slot="footer" class="dialog-footer">
-							<el-button @click="handleCancle">取 消</el-button>
-							<el-button type="primary" @click="handleSave('editForm')">
+							<dsn-button @click.native="handleCancle">取 消</dsn-button>
+							<dsn-button type="primary" @click.native="handleSave('editForm')">
 								确 定
-							</el-button>
+							</dsn-button>
 						</span>
 					</el-dialog>
 				</div>
@@ -391,33 +391,18 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.edit-next-number{
 	.operate {
-		background: #FFFFFF;
-		padding: 10px;
-	}
-	.editForm {
-		background: #FFFFFF;
-		padding: 10px;
-		.dec {
-			width: 756px !important;
-		}
-	}
-	.el-textarea /deep/ .el-textarea__inner{
-		width: 622px;
-	}
-	.el-table /deep/ .success-row {
-		background: #f0f9eb ;
-	}
-	.bgw {
-		background: #FFFFFF;
-	}
-  .direction {
-    color: #409eff;
-    font-size: 40px;
-    cursor: pointer;
-    text-align: center;
+    padding: 14px 14px 0;
+    background: #fff;
+    margin-bottom: 14px;
+		border-radius: 4px;
   }
-  .mt70 {
-    margin-top: 70px;
+	.editList, .workList {
+    background: #fff;
+    min-height: 450px;
+    padding: 10px;
+		border-radius: 4px;
   }
+}
 </style>

@@ -1,11 +1,14 @@
 <template>
   <div class="customize">
-    <div class="operate">
-      <el-button size="small" type="primary" @click="search">查询</el-button>
-      <el-button size="small" type="primary" @click="add('addForm')">保存</el-button>
-      <el-button size="small" type="primary" @click="resetForm('addForm')">重置</el-button>
-    </div>
-    <div class="addForm">
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索信息</span>
+      </div>
+      <div class="operate">
+        <dsn-button size="small" type="primary" @click.native="search">查询</dsn-button>
+        <dsn-button size="small" type="primary" @click.native="add('addForm')">保存</dsn-button>
+        <dsn-button size="small" type="primary" @click.native="resetForm('addForm')">重置</dsn-button>
+      </div>
       <el-form
         :inline="true"
         :model="addForm"
@@ -18,10 +21,10 @@
         <el-row>
           <el-col :span="12">
             <!-- <el-form-item label="自定义项目:" prop="FIELD_01" required>
-							<el-input v-model="addForm.FIELD_01"></el-input>
+              <dsn-input v-model="addForm.FIELD_01"></dsn-input>
             </el-form-item>-->
             <el-form-item label="自定义项目：" prop="FIELD_01" required class="FIELD_01">
-              <el-input v-model="addForm.FIELD_01"></el-input>
+              <dsn-input style="width: 90%" v-model="addForm.FIELD_01"></dsn-input>
               <i class="el-icon-document" @click="selectCustomize"></i>
             </el-form-item>
           </el-col>
@@ -29,39 +32,49 @@
         <el-row>
           <el-col :span="8">
             <el-form-item label="对象表：" prop="FIELD_02" class="FIELD_02">
-              <el-input v-model="addForm.FIELD_02" :readonly="true"></el-input>
+              <dsn-input v-model="addForm.FIELD_02" :readonly="true"></dsn-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="24">
             <el-form-item label="描述：" prop="FIELD_03">
-              <el-input v-model="addForm.FIELD_03" :readonly="true"></el-input>
+              <dsn-input v-model="addForm.FIELD_03" :readonly="true"></dsn-input>
             </el-form-item>
             <el-form-item label prop="FIELD_04">
-              <el-input v-model="addForm.FIELD_04" :readonly="true"></el-input>
+              <dsn-input v-model="addForm.FIELD_04" :readonly="true"></dsn-input>
             </el-form-item>
           </el-col>
         </el-row>
+      </el-form>
+    </DsnPanel>
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索结果</span>
+      </div>
+      <div class="addForm">
+       
         <el-row>
           <el-col :span="24">
             <div class>
               <div class="operate">
-                <el-button size="small" type="primary" @click="addSet">新增</el-button>
-                <el-button
+                <dsn-button icon="el-icon-folder-add" size="small" type="success" @click.native="addSet">新增</dsn-button>
+                <dsn-button
                   size="small"
                   type="primary"
-                  @click="editSet"
+                  icon="el-icon-edit"
+                  @click.native="editSet"
                   :disabled="this.sCheckedList.length != 1"
-                >编辑</el-button>
-                <el-button
+                >编辑</dsn-button>
+                <dsn-button
                   size="small"
-                  type="primary"
-                  @click="delSet"
+                  type="danger"
+                  icon="el-icon-delete"
+                  @click.native="delSet"
                   :disabled="this.sCheckedList.length === 0"
-                >删除</el-button>
+                >删除</dsn-button>
               </div>
-              <el-table
+              <dsn-table
                 ref="sTable"
                 :data="this.SetupInfoList"
                 tooltip-effect="dark"
@@ -80,12 +93,14 @@
                 <el-table-column label="是否必须">
                   <template slot-scope="scope">{{ scope.row.required ? '是' : '否' }}</template>
                 </el-table-column>
-              </el-table>
+              </dsn-table>
             </div>
           </el-col>
         </el-row>
-      </el-form>
-    </div>
+        
+      </div>
+    </DsnPanel>
+    
     <el-dialog title="添加/编辑" :visible.sync="dialogVisible">
       <el-form
         :inline="true"
@@ -99,19 +114,19 @@
         <el-row>
           <el-col :span="18">
             <el-form-item label="字段名:" prop="fieldName" required>
-              <el-input v-model="addSetForm.fieldName"></el-input>
+              <dsn-input v-model="addSetForm.fieldName"></dsn-input>
             </el-form-item>
           </el-col>
           <!-- <el-col :span="12">
 						<el-form-item label="序号:" prop="sequence" required>
-							<el-input v-model="addSetForm.sequence"></el-input>
+							<dsn-input v-model="addSetForm.sequence"></dsn-input>
 						</el-form-item>
           </el-col>-->
         </el-row>
         <el-row>
           <el-col :span="18">
             <el-form-item label="标签:" prop="fieldLabel" required>
-              <el-input v-model="addSetForm.fieldLabel"></el-input>
+              <dsn-input v-model="addSetForm.fieldLabel"></dsn-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -132,7 +147,7 @@
         <el-row v-if="addSetForm.fieldType != 'C'">
           <el-col :span="24">
             <el-form-item label="长度:" prop="fieldSize" required>
-              <el-input v-model="addSetForm.fieldSize"></el-input>
+              <dsn-input v-model="addSetForm.fieldSize"></dsn-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -171,8 +186,8 @@
         </el-row>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="saveSetUp('addSetForm')">确 定</el-button>
+        <dsn-button @click.native="dialogVisible = false">取 消</dsn-button>
+        <dsn-button type="primary" @click.native="saveSetUp('addSetForm')">确 定</dsn-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -188,8 +203,8 @@
         ></defineProgramModel>
       </span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="defineProgramDialog = false">取 消</el-button>
-        <el-button type="primary" @click="confireSelectDefineProgram">确 定</el-button>
+        <dsn-button @click.native="defineProgramDialog = false">取 消</dsn-button>
+        <dsn-button type="primary" @click.native="confireSelectDefineProgram">确 定</dsn-button>
       </span>
     </el-dialog>
   </div>
@@ -527,7 +542,8 @@ export default {
 </script>
 
 <style lang="scss">
-.customize {
+/* .customize {
+ 
   .operate {
     background: #ffffff;
     padding: 10px;
@@ -537,7 +553,7 @@ export default {
     padding: 10px;
     .el-form {
       .FIELD_01 {
-        .el-input {
+        .dsn-input {
           width: 90%;
         }
       }
@@ -546,5 +562,5 @@ export default {
       }
     }
   }
-}
+} */
 </style>

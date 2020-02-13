@@ -30,7 +30,8 @@ export const getStationList = data => {
  * url /mes/operation_station_assign/save
  */
 export const addStation = data => {
-	return request.post(`${window.VUE_APP_URL}/mes/operation_station_assign/save`, data);
+  const { arr, operation } = data
+	return request.post(`${window.VUE_APP_URL}/mes/operation_station_assign/save?operation=${operation}`, arr);
 };
 
 

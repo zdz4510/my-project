@@ -378,14 +378,15 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           let arr = [];
+          const { operation } = this.editForm;
           this.allocateData.map(item => {
             let obj = {};
-            obj.operation = this.editForm.operation;
+            obj.operation = operation;
             obj.station = item.station;
             obj.workCenterRelation = item.workCenterRelation;
             arr.push(obj);
           });
-          addStation(arr).then(data => {
+          addStation({arr,operation}).then(data => {
             const res = data.data;
             this.saveDialog = false; // 保存的提示框消失
             this.selectIsDisabled = false;

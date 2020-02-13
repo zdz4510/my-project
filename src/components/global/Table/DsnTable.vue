@@ -6,6 +6,7 @@
     :border="border"
     :emptyText="emptyText"
     :rowKey="rowKey"
+    :highlight-current-row="highlightCurrentRow"
     @select="tableSelect"
     @row-click="tableRowClick"
     @cell-click="tableCellClick"
@@ -75,6 +76,10 @@ export default {
     emptyText: {
       type: String,
       default: "没有数据啊"
+    },
+    highlightCurrentRow: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {
