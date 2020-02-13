@@ -5,6 +5,9 @@ export default {
       //console.log('当用户手动勾选全选 Checkbox 时触发的事件')
       this.$emit("select", selection, row);
     },
+    currentChange(row){
+      this.$emit("current-change",row);
+    },
     //当用户手动勾选全选 Checkbox 时触发的事件
     tableSelectAll(selection) {
       // console.log('当用户手动勾选全选 Checkbox 时触发的事件')

@@ -5,12 +5,15 @@
     stripe
     :border="border"
     :emptyText="emptyText"
+    :rowKey="rowKey"
     @select="tableSelect"
     @row-click="tableRowClick"
     @cell-click="tableCellClick"
     @select-all="tableSelectAll"
     @selection-change="tableSelectionChange"
+     @current-change="currentChange"
     ref="table"
+   
   >
   <slot></slot>
   </el-table>
@@ -32,7 +35,7 @@ export default {
     //高度
     height: {
       type: [Number, String],
-      default: 540
+      default: "540px"
     },
     select: {
       type: Function,
@@ -63,6 +66,10 @@ export default {
     },
     "row-class-name": {
       type: Function,
+      required: false
+    },
+    rowKey: {
+      type: String,
       required: false
     },
     emptyText: {

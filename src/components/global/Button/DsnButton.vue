@@ -38,5 +38,6 @@ export default {
 @import url("/@/asserts/css/theme.scss");
 .dsn-button {
   display: inline-block;
+  margin-bottom: 15px;
 }
 </style>

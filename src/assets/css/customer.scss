@@ -1,0 +1,41 @@
+.text-center {
+    text-align: center;
+}
+.text-right {
+    text-align: right;
+}
+.mt-15 {
+    margin-bottom: 15px !important;
+}
+.flex {
+    display: flex;
+    width: 100%;
+}
+.fixed {
+    position: fixed;
+}
+.between {
+    justify-content: space-between;
+}
+.tag-default {
+    line-height: 20px;
+    background: #f7f7f7;
+    border-color: #e8eaec;
+    color: #515a6e;
+}
+.tag-red {
+    line-height: 20px;
+    background: #fff1f0;
+    border-color: #ffa39e;
+}
+.tag-blue {
+    line-height: 20px;
+    background: #e6f7ff;
+    border-color: #91d5ff;
+}
+.header-item {
+    padding: 0 15px;
+    height: 64px;
+    line-height: 64px;
+    cursor: pointer;
+}

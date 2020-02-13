@@ -45,6 +45,12 @@ export default {
   display: inline-block;
   // border: 1px solid #e4e7ed;
   box-sizing: border-box;
+  &.active {
+    color: #2173dc;
+    .left_com {
+      color: #2173dc !important;
+    }
+  }
   .dsn-router-history-box {
     position: relative;
     box-sizing: border-box;
@@ -54,12 +60,14 @@ export default {
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    padding: 5px 16px;
+    padding: 5px 10px;
+    cursor: pointer;
     .left_com {
       flex: 1;
       text-align: center;
-      font-size: 14px;
+      font-size: 12px;
       line-height: 1.5;
+      margin-right: 5px;
       color: #808695;
     }
     .right_com {

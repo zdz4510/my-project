@@ -1,16 +1,20 @@
 <template>
   <div class="edit-operation-maintain">
     <div class="operate">
-      <el-button size="small" type="primary" @click="goBack">返回</el-button>
-      <el-button size="small" type="primary" @click="handleSave('editForm')">保存</el-button>
+      <dsn-button size="small" type="primary" @click.native="goBack">返回</dsn-button>
+      <dsn-button size="small" type="primary" @click.native="handleSave('editForm')">保存</dsn-button>
     </div>
     <el-row :gutter="20" class="bgw">
       <el-col :span="6">
-        <div>
-          <el-select
+        <DsnPanel>
+          <div slot="header" class="title clearfix">
+            <span>修改列表</span>
+          </div>
+          <dsn-select
             v-model="value"
             clearable
             placeholder="请选择"
+            style="margin-bottom: 14px"
             :disabled="selectIsDisabled"
             @clear="handleClearSelect"
             @change="handleChangeOption"
@@ -23,7 +27,7 @@
               :label="item.operation"
               :value="item.operation"
             ></el-option>
-          </el-select>
+          </dsn-select>
           <el-table
             ref="editTable"
             :data="cloneList"
@@ -35,10 +39,13 @@
             <el-table-column label="工序" prop="operation"></el-table-column>
             <el-table-column label="描述" prop="operationDes"></el-table-column>
           </el-table>
-        </div>
+        </DsnPanel>
       </el-col>
       <el-col :span="18">
-        <div>
+        <DsnPanel>
+          <div slot="header" class="title clearfix">
+            <span>修改条件</span>
+          </div>
           <el-form
             :inline="true"
             :model="editForm"
@@ -51,73 +58,73 @@
             <el-row>
               <el-col :span="10">
                 <el-form-item label="工序:" prop="operation">
-                  <el-input v-model="editForm.operation" disabled></el-input>
+                  <dsn-input v-model="editForm.operation" disabled></dsn-input>
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row>
               <el-col :span="24">
                 <el-form-item label="描述:" prop="operationDes">
-                  <el-input
+                  <dsn-input
                     maxlength="80"
                     show-word-limit
                     type="textarea"
                     :autosize="{ minRows: 2, maxRows: 4}"
                     v-model="editForm.operationDes"
-                  ></el-input>
+                  ></dsn-input>
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row>
               <el-col :span="24">
-                <el-tabs v-model="activeName" type="card">
+                <el-tabs v-model="activeName" type="border-card">
                   <el-tab-pane label="基础信息" name="first">
                     <el-row>
                       <el-col :span="24">
                         <el-form-item label="状态:" prop="status">
-                          <el-select v-model="editForm.status">
+                          <dsn-select v-model="editForm.status">
                             <el-option
                               v-for="item in status"
                               :key="item.value"
                               :label="item.label"
                               :value="item.value"
                             ></el-option>
-                          </el-select>
+                          </dsn-select>
                         </el-form-item>
                       </el-col>
                     </el-row>
                     <el-row>
                       <el-col :span="24">
                         <el-form-item label="报告步骤:" prop="reportingStep">
-                          <el-input v-model="editForm.reportingStep"></el-input>
+                          <dsn-input v-model="editForm.reportingStep"></dsn-input>
                         </el-form-item>
                       </el-col>
                     </el-row>
                     <el-row>
                       <el-col :span="24">
                         <el-form-item label="设备组:" prop="resourceGroup">
-                          <el-select v-model="editForm.resourceGroup">
+                          <dsn-select v-model="editForm.resourceGroup">
                             <el-option
                               v-for="item in resourceGroup"
                               :key="item.resourceGroup"
                               :label="item.resourceGroup"
                               :value="item.resourceGroup"
                             ></el-option>
-                          </el-select>
+                          </dsn-select>
                         </el-form-item>
                       </el-col>
                     </el-row>
                     <el-row>
                       <el-col :span="24">
                         <el-form-item label="上岗证:" prop="certOperation" required>
-                          <el-select v-model="editForm.certOperation">
+                          <dsn-select v-model="editForm.certOperation">
                             <el-option
                               v-for="item in certOperation"
                               :key="item.cert"
                               :label="item.cert"
                               :value="item.cert"
                             ></el-option>
-                          </el-select>
+                          </dsn-select>
                         </el-form-item>
                       </el-col>
                     </el-row>
@@ -131,11 +138,11 @@
           <el-dialog title="保存" :visible.sync="saveDialog" width="30%">
             <span>是否保存数据？</span>
             <span slot="footer" class="dialog-footer">
-              <el-button @click="handleCancle">取 消</el-button>
-              <el-button type="primary" @click="handleSave('editForm')">确 定</el-button>
+              <dsn-button @click.native="handleCancle">取 消</dsn-button>
+              <dsn-button type="primary" @click.native="handleSave('editForm')">确 定</dsn-button>
             </span>
           </el-dialog>
-        </div>
+        </DsnPanel>
       </el-col>
     </el-row>
   </div>
@@ -156,7 +163,7 @@ export default {
   data() {
     return {
       //表单左边宽度
-      formLabelWidth: "120px",
+      formLabelWidth: "80px",
       activeName: "first",
       cloneModify: {}, //  克隆的表单的一份副本
       editForm: {
@@ -386,7 +393,9 @@ export default {
 <style scoped lang="scss">
 .edit-operation-maintain {
   .operate {
-    padding: 10px;
+    padding: 14px 14px 0;
+    background: #fff;
+    margin-bottom: 14px;
   }
   .el-form {
     .el-textarea /deep/ .el-textarea__inner {

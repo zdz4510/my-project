@@ -1,77 +1,88 @@
 <template>
   <div class="alarm-maintain">
-    <div class="search-bar">
-      <el-form
-        :inline="true"
-        :model="searchForm"
-        ref="searchForm"
-        :rules="rules"
-        class="form-style"
-        :label-width="formLabelWidth"
-      >
-        <el-form-item label="事件编号:" prop="alarm">
-          <el-input v-model="searchForm.alarm"></el-input>
-        </el-form-item>
-        <el-form-item label="事件主题:" prop="theme">
-          <el-input v-model="searchForm.theme"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button size="small" type="primary" @click="search">查询</el-button>
-          <el-button size="small" type="primary" @click="resetForm('searchForm')">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
-    <div class="operate">
-      <el-button size="small" type="primary" @click="add" :disabled="this.checkedList.length>0">新增</el-button>
-      <el-button
-        size="small"
-        type="primary"
-        @click="edit"
-        :disabled="this.checkedList.length === 0"
-      >编辑</el-button>
-      <el-button
-        size="small"
-        type="primary"
-        @click="del"
-        :disabled="this.checkedList.length === 0"
-      >删除</el-button>
-      <el-button size="small" type="primary" @click="handleExport">导出</el-button>
-    </div>
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索条件</span>
+      </div>
+      <div class="search-bar">
+        <el-form
+          :inline="true"
+          :model="searchForm"
+          ref="searchForm"
+          :rules="rules"
+          class="form-style"
+        >
+          <el-form-item label="事件编号:" prop="alarm">
+            <dsn-input v-model="searchForm.alarm"></dsn-input>
+          </el-form-item>
+          <el-form-item label="事件主题:" prop="theme">
+            <dsn-input v-model="searchForm.theme"></dsn-input>
+          </el-form-item>
+          <el-form-item>
+            <dsn-button size="small" type="primary" @click.native="search">查询</dsn-button>
+            <dsn-button size="small" type="primary" @click.native="resetForm('searchForm')">重置</dsn-button>
+          </el-form-item>
+        </el-form>
+      </div>
+    </DsnPanel>
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索结果</span>
+      </div>
+      <div class="operate">
+        <dsn-button size="small" icon="el-icon-folder-add" type="success" @click.native="add" :disabled="this.checkedList.length>0">新增</dsn-button>
+        <dsn-button
+          size="small"
+          type="primary"
+          icon="el-icon-edit"
+          @click.native="edit"
+          :disabled="this.checkedList.length === 0"
+        >编辑</dsn-button>
+        <dsn-button
+          size="small"
+          type="danger"
+          icon="el-icon-delete"       
+          @click.native="del"
+          :disabled="this.checkedList.length === 0"
+        >删除</dsn-button>
+        <dsn-button size="small" icon="el-icon-upload2" type="primary" @click.native="handleExport">导出</dsn-button>
+      </div>
 
-    <div class>
-      <el-table
-        ref="multipleTable"
-        :data="this.tableData.data"
-        tooltip-effect="dark"
-        row-key="alarm"
-        @selection-change="handleSelectionChange"
-      >
-        <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
-        <el-table-column type="index" label="序号"></el-table-column>
-        <el-table-column prop="alarm" label="事件编号"></el-table-column>
-        <el-table-column prop="theme" label="事件主题"></el-table-column>
-        <el-table-column label="事件等级">
-          <template
-            slot-scope="scope"
-          >{{ scope.row.alarmLevelFlag == 10 ? '提示' : (scope.row.alarmLevelFlag == 20 ? '警告' : '错误') }}</template>
-        </el-table-column>
-        <el-table-column prop="createUserName" label="创建人"></el-table-column>
-        <el-table-column prop="createTime" label="创建时间"></el-table-column>
-        <el-table-column prop="modifyUserName" label="修改人"></el-table-column>
-        <el-table-column prop="modifyTime" label="修改时间"></el-table-column>
-      </el-table>
-      <el-pagination
-        class="mtb20"
-        background
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="this.tableData.page.currentPage"
-        :page-sizes="[1, 10, 15, 20, 30, 50]"
-        :page-size="this.tableData.page.pageSize"
-        layout="->, total, prev, pager, next, sizes, jumper"
-        :total="this.tableData.page.total"
-      ></el-pagination>
-    </div>
+      <div class>
+        <dsn-table
+          ref="multipleTable"
+          :data="this.tableData.data"
+          tooltip-effect="dark"
+          row-key="alarm"
+          @selection-change="handleSelectionChange"
+        >
+          <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
+          <el-table-column type="index" label="序号"></el-table-column>
+          <el-table-column prop="alarm" label="事件编号"></el-table-column>
+          <el-table-column prop="theme" label="事件主题"></el-table-column>
+          <el-table-column label="事件等级">
+            <template
+              slot-scope="scope"
+            >{{ scope.row.alarmLevelFlag == 10 ? '提示' : (scope.row.alarmLevelFlag == 20 ? '警告' : '错误') }}</template>
+          </el-table-column>
+          <el-table-column prop="createUserName" label="创建人"></el-table-column>
+          <el-table-column prop="createTime" label="创建时间"></el-table-column>
+          <el-table-column prop="modifyUserName" label="修改人"></el-table-column>
+          <el-table-column prop="modifyTime" label="修改时间"></el-table-column>
+        </dsn-table>
+        <dsn-pagination
+          class="mtb20"
+          background
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="this.tableData.page.currentPage"
+          :page-sizes="[1, 10, 15, 20, 30, 50]"
+          :page-size="this.tableData.page.pageSize"
+          layout="->, total, prev, pager, next, sizes"
+          :total="this.tableData.page.total"
+        ></dsn-pagination>
+      </div>
+    </DsnPanel>
   </div>
 </template>
 
@@ -258,7 +269,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.alarm-maintain {
+/* .alarm-maintain {
   padding: 0 30px;
   .search-bar {
     padding: 10px 0;
@@ -268,5 +279,5 @@ export default {
       }
     }
   }
-}
+} */
 </style>

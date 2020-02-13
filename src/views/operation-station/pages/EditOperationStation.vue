@@ -1,14 +1,15 @@
 <template>
   <div class="edit-operation-station">
     <div class="operate">
-      <el-button size="small" type="primary" @click="goBack">返回</el-button>
-      <el-button size="small" type="primary" @click="handleSave('editForm')">保存</el-button>
+      <dsn-button size="small" type="primary" @click.native="goBack">返回</dsn-button>
+      <dsn-button size="small" type="primary" @click.native="handleSave('editForm')">保存</dsn-button>
     </div>
-    <el-row :gutter="20" class="bgw">
+    <el-row :gutter="24">
       <el-col :span="6">
-        <div>
-          <el-select
+        <div class="editList">
+          <dsn-select
             v-model="value"
+            style="margin-bottom: 30px"
             clearable
             placeholder="请选择"
             :disabled="selectIsDisabled"
@@ -29,8 +30,8 @@
                 style="float: right; color: #8492a6; font-size: 13px; margin-right:16px"
               >{{ item.workCenterRelation }}</span>
             </el-option>
-          </el-select>
-          <el-table
+          </dsn-select>
+          <dsn-table
             ref="editTable"
             :data="cloneList"
             border
@@ -41,110 +42,105 @@
             <el-table-column label="工序" prop="operation"></el-table-column>
             <el-table-column label="产线" prop="workCenterRelation"></el-table-column>
             <el-table-column label="站位" prop="station"></el-table-column>
-          </el-table>
+          </dsn-table>
         </div>
       </el-col>
       <el-col :span="18">
-        <div>
+        <div class="workList">
           <el-form
             :inline="true"
             :model="editForm"
             ref="editForm"
             :rules="rules"
             class="form-style"
-            :label-width="formLabelWidth"
           >
             <el-form-item label="工序:" prop="operation">
-              <el-select v-model="editForm.operation" disabled>
+              <dsn-select v-model="editForm.operation" disabled>
                 <el-option
                   v-for="item in operation"
                   :key="item.operation"
                   :label="item.operation"
                   :value="item.operation"
                 ></el-option>
-              </el-select>
+              </dsn-select>
             </el-form-item>
             <el-form-item label="描述:" prop="operationDes">
-              <el-input v-model="editForm.operationDes"></el-input>
+              <dsn-input v-model="editForm.operationDes"></dsn-input>
             </el-form-item>
-            <el-row>
-              <el-col :span="24">
-                <el-row>
-                  <el-col :span="10">
-                    <el-table
-                      :data="allocateData.filter(data => (!workCenterRelation1 || data.workCenterRelation.toLowerCase().includes(workCenterRelation1.toLowerCase())) &&
-											(!station1 || data.station.toLowerCase().includes(station1.toLowerCase())) &&
-											(!stationDes1 || data.stationDes.toLowerCase().includes(stationDes1.toLowerCase())) )"
-                      @select="check1"
-                      @select-all="check1"
-                    >
-                      <el-table-column label="已分配站位">
-                        <el-table-column label="选择">
-                          <el-table-column type="selection" width="55"></el-table-column>
-                        </el-table-column>
-                        <el-table-column label>
-                          <template slot="header">
-                            <el-input v-model="workCenterRelation1" placeholder="输入产线搜索" />
-                          </template>
-                          <el-table-column prop="workCenterRelation" label="产线"></el-table-column>
-                        </el-table-column>
-                        <el-table-column label>
-                          <template slot="header">
-                            <el-input v-model="station1" placeholder="输入站位搜索" />
-                          </template>
-                          <el-table-column prop="station" label="站位"></el-table-column>
-                        </el-table-column>
-                        <el-table-column label>
-                          <template slot="header">
-                            <el-input v-model="stationDes1" placeholder="输入站位描述搜索" />
-                          </template>
-                          <el-table-column prop="stationDes" label="站位描述"></el-table-column>
-                        </el-table-column>
-                      </el-table-column>
-                    </el-table>
-                  </el-col>
-                  <el-col :span="2">
-                    <div class="direction mt70">
-                      <i class="el-icon-caret-right" @click="right"></i>
-                    </div>
-                    <div class="direction">
-                      <i class="el-icon-caret-left" @click="left"></i>
-                    </div>
-                  </el-col>
-                  <el-col :span="10">
-                    <el-table
-                      :data="unallocateData.filter(data => (!workCenterRelation2 || data.workCenterRelation.toLowerCase().includes(workCenterRelation2.toLowerCase())) &&
-											(!station2 || data.station.toLowerCase().includes(station2.toLowerCase())) &&
-											(!stationDes2 || data.stationDes.toLowerCase().includes(stationDes2.toLowerCase())) )"
-                      @select="check2"
-                      @select-all="check2"
-                    >
-                      <el-table-column label="未分配站位">
-                        <el-table-column label="选择">
-                          <el-table-column type="selection" width="55"></el-table-column>
-                        </el-table-column>
-                        <el-table-column label>
-                          <template slot="header">
-                            <el-input v-model="workCenterRelation2" placeholder="输入产线搜索" />
-                          </template>
-                          <el-table-column prop="workCenterRelation" label="产线"></el-table-column>
-                        </el-table-column>
-                        <el-table-column label>
-                          <template slot="header">
-                            <el-input v-model="station2" placeholder="输入站位搜索" />
-                          </template>
-                          <el-table-column prop="station" label="站位"></el-table-column>
-                        </el-table-column>
-                        <el-table-column label>
-                          <template slot="header">
-                            <el-input v-model="stationDes2" placeholder="输入站位描述搜索" />
-                          </template>
-                          <el-table-column prop="stationDes" label="站位描述"></el-table-column>
-                        </el-table-column>
-                      </el-table-column>
-                    </el-table>
-                  </el-col>
-                </el-row>
+            <el-row :gutter="14">
+              <el-col :span="11">
+                <dsn-table
+                  :data="allocateData.filter(data => (!workCenterRelation1 || data.workCenterRelation.toLowerCase().includes(workCenterRelation1.toLowerCase())) &&
+                  (!station1 || data.station.toLowerCase().includes(station1.toLowerCase())) &&
+                  (!stationDes1 || data.stationDes.toLowerCase().includes(stationDes1.toLowerCase())) )"
+                  @select="check1"
+                  @select-all="check1"
+                >
+                  <el-table-column label="已分配站位">
+                    <el-table-column label="选择">
+                      <el-table-column type="selection" width="55"></el-table-column>
+                    </el-table-column>
+                    <el-table-column label>
+                      <template slot="header">
+                        <dsn-input v-model="workCenterRelation1" placeholder="输入产线搜索" />
+                      </template>
+                      <el-table-column prop="workCenterRelation" label="产线"></el-table-column>
+                    </el-table-column>
+                    <el-table-column label>
+                      <template slot="header">
+                        <dsn-input v-model="station1" placeholder="输入站位搜索" />
+                      </template>
+                      <el-table-column prop="station" label="站位"></el-table-column>
+                    </el-table-column>
+                    <el-table-column label>
+                      <template slot="header">
+                        <dsn-input v-model="stationDes1" placeholder="输入站位描述搜索" />
+                      </template>
+                      <el-table-column prop="stationDes" label="站位描述"></el-table-column>
+                    </el-table-column>
+                  </el-table-column>
+                </dsn-table>
+              </el-col>
+              <el-col :span="2">
+                <div class="direction mt70">
+                  <i class="el-icon-caret-right" @click="right"></i>
+                </div>
+                <div class="direction">
+                  <i class="el-icon-caret-left" @click="left"></i>
+                </div>
+              </el-col>
+              <el-col :span="11">
+                <dsn-table
+                  :data="unallocateData.filter(data => (!workCenterRelation2 || data.workCenterRelation.toLowerCase().includes(workCenterRelation2.toLowerCase())) &&
+                  (!station2 || data.station.toLowerCase().includes(station2.toLowerCase())) &&
+                  (!stationDes2 || data.stationDes.toLowerCase().includes(stationDes2.toLowerCase())) )"
+                  @select="check2"
+                  @select-all="check2"
+                >
+                  <el-table-column label="未分配站位">
+                    <el-table-column label="选择">
+                      <el-table-column type="selection" width="55"></el-table-column>
+                    </el-table-column>
+                    <el-table-column label>
+                      <template slot="header">
+                        <dsn-input v-model="workCenterRelation2" placeholder="输入产线搜索" />
+                      </template>
+                      <el-table-column prop="workCenterRelation" label="产线"></el-table-column>
+                    </el-table-column>
+                    <el-table-column label>
+                      <template slot="header">
+                        <dsn-input v-model="station2" placeholder="输入站位搜索" />
+                      </template>
+                      <el-table-column prop="station" label="站位"></el-table-column>
+                    </el-table-column>
+                    <el-table-column label>
+                      <template slot="header">
+                        <dsn-input v-model="stationDes2" placeholder="输入站位描述搜索" />
+                      </template>
+                      <el-table-column prop="stationDes" label="站位描述"></el-table-column>
+                    </el-table-column>
+                  </el-table-column>
+                </dsn-table>
               </el-col>
             </el-row>
           </el-form>
@@ -152,8 +148,8 @@
           <el-dialog title="保存" :visible.sync="saveDialog" width="30%">
             <span>是否保存数据？</span>
             <span slot="footer" class="dialog-footer">
-              <el-button @click="handleCancle">取 消</el-button>
-              <el-button type="primary" @click="handleSave('editForm')">确 定</el-button>
+              <dsn-button @click.native="handleCancle">取 消</dsn-button>
+              <dsn-button type="primary" @click.native="handleSave('editForm')">确 定</dsn-button>
             </span>
           </el-dialog>
         </div>
@@ -469,34 +465,23 @@ export default {
 <style scoped lang="scss">
 .edit-operation-station {
   .operate {
-    padding: 10px;
+    padding: 14px 14px 0;
+    background: #fff;
+    margin-bottom: 14px;
   }
-  .el-row {
+  .direction {
+    color: #409eff;
+    font-size: 40px;
+    cursor: pointer;
+    text-align: center;
+  }
+  .mt70 {
+    margin-top: 70px;
+  }
+  .editList, .workList {
+    background: #fff;
+    min-height: 450px;
     padding: 10px;
-    background: #ffffff;
-    .editForm {
-      background: #ffffff;
-      padding: 10px;
-      .dec {
-        width: 756px !important;
-      }
-    }
-    .el-table /deep/ .success-row {
-      background: #f0f9eb;
-    }
-    .el-transfer /deep/ .el-transfer-panel {
-      width: 300px !important;
-      height: 400px !important;
-    }
-    .direction {
-      color: #409eff;
-      font-size: 40px;
-      cursor: pointer;
-      text-align: center;
-    }
-    .mt70 {
-      margin-top: 70px;
-    }
   }
 }
 </style>

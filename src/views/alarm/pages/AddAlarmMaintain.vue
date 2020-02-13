@@ -1,9 +1,9 @@
 <template>
   <div class="add-alarm-maintain">
     <div class="operate">
-      <el-button size="small" type="primary" @click="goBack">返回</el-button>
-      <el-button size="small" type="primary" @click="save('addForm')">保存</el-button>
-      <el-button size="small" type="primary" @click="resetForm('addForm')">重置</el-button>
+      <dsn-button size="small" type="primary" @click.native="goBack">返回</dsn-button>
+      <dsn-button size="small" type="primary" @click.native="save('addForm')">保存</dsn-button>
+      <dsn-button size="small" type="primary" @click.native="resetForm('addForm')">重置</dsn-button>
     </div>
     <div class="addForm">
       <el-form
@@ -13,186 +13,177 @@
         :rules="rules"
         class="form-style"
         label-position="right"
-        :label-width="formLabelWidth"
       >
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="事件编号:" prop="alarm" required>
-              <el-input v-model="addForm.alarm"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="事件主题:" prop="theme" required>
-              <el-input v-model="addForm.theme"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="24">
-            <el-tabs v-model="activeName" type="card">
-              <el-tab-pane label="预警事件信息维护" name="first">
-                <el-row>
-                  <el-col :span="8">
-                    <el-form-item label="预警事件等级:" prop="alarmLevelFlag">
-                      <el-select v-model="addForm.alarmLevelFlag">
-                        <el-option
-                          v-for="item in alarmLevel"
-                          :key="item.value"
-                          :label="item.label"
-                          :value="item.value"
-                        ></el-option>
-                      </el-select>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="10">
-                    <el-form-item label="事件通知方式:" prop>
-                      <el-checkbox v-model="addForm.actionWeixinFlag">企业微信</el-checkbox>
-                      <el-checkbox v-model="addForm.actionMailFlag">邮箱通知</el-checkbox>
-                      <el-checkbox v-model="addForm.actionSmsFlag">短信通知</el-checkbox>
-                      <el-checkbox v-model="addForm.actionSystemFlag">系统弹窗通知</el-checkbox>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-                <el-row class="input-form">
-                  <el-col :span="15">
-                    <el-tabs v-model="activeImputName">
-                      <el-tab-pane label="企业微信" name="first">
-                        <el-input
-                          type="textarea"
-                          v-model="addForm.weixinInformDetails"
-                          :autosize="{ minRows: 6, maxRows: 10}"
-                          placeholder="请输入事件内容"
-                        ></el-input>
-                      </el-tab-pane>
-                      <el-tab-pane label="邮箱" name="second">
-                        <el-input
-                          type="textarea"
-                          v-model="addForm.mailInformDetails"
-                          :autosize="{ minRows: 6, maxRows: 10}"
-                          placeholder="请输入事件内容"
-                        ></el-input>
-                      </el-tab-pane>
-                      <el-tab-pane label="短信" name="third">
-                        <el-input
-                          type="textarea"
-                          v-model="addForm.smsInformDetails"
-                          :autosize="{ minRows: 6, maxRows: 10}"
-                          placeholder="请输入事件内容"
-                        ></el-input>
-                      </el-tab-pane>
-                      <el-tab-pane label="系统弹窗" name="fourth">
-                        <el-input
-                          type="textarea"
-                          v-model="addForm.systemInformDetails"
-                          :autosize="{ minRows: 6, maxRows: 10}"
-                          placeholder="请输入事件内容"
-                        ></el-input>
-                      </el-tab-pane>
-                    </el-tabs>
-                  </el-col>
-                </el-row>
-              </el-tab-pane>
-              <el-tab-pane label="预警事件通知维护" name="second">
-                <el-row>
-                  <el-col :span="10" :offset="10">
-                    <el-form-item label="复制事件通知人员:">
-                      <el-select v-model="alarm" clearable filterable @change="onChange">
-                        <el-option
-                          v-for="item in workers"
-                          :key="item.alarm"
-                          :label="item.alarm"
-                          :value="item.alarm"
-                        ></el-option>
-                      </el-select>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-                <el-row>
-                  <el-col :span="10">
-                    <el-form-item label="输入搜索条件:" prop="width">
-                      <el-input
-                        placeholder="请输入内容"
-                        v-model="input1"
-                        class="input-with-select"
-                        @input="getAllocate"
-                      >
-                        <el-select
-                          v-model="select1"
-                          slot="prepend"
-                          placeholder="请选择"
-                          clearable
-                          @change="getAllocate"
-                        >
-                          <el-option label="个人" value="10"></el-option>
-                          <el-option label="工作中心" value="20"></el-option>
-                        </el-select>
-                      </el-input>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="10">
-                    <el-form-item label="输入搜索条件:" prop="width">
-                      <el-input
-                        placeholder="请输入内容"
-                        v-model="input2"
-                        class="input-with-select"
-                        @input="getUnallocate"
-                      >
-                        <el-select
-                          v-model="select2"
-                          slot="prepend"
-                          placeholder="请选择"
-                          clearable
-                          @change="getUnallocate"
-                        >
-                          <el-option label="个人" value="10"></el-option>
-                          <el-option label="工作中心" value="20"></el-option>
-                        </el-select>
-                      </el-input>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-                <el-row>
-                  <el-col :span="9">
-                    <el-table :data="allocateData" @select="check1" @select-all="check1">
-                      <el-table-column label="接收信息用户">
-                        <el-table-column type="selection" width="55"></el-table-column>
-                        <el-table-column prop="informUserId" label="名称"></el-table-column>
-                        <el-table-column label="类型">
-                          <template
-                            slot-scope="scope"
-                          >{{ scope.row.userType == 10 ? '个人' : (scope.row.userType == 20 ? '工作中心' : '--') }}</template>
-                        </el-table-column>
-                        <el-table-column prop label="描述"></el-table-column>
-                      </el-table-column>
-                    </el-table>
-                  </el-col>
-                  <el-col :span="2">
-                    <div class="direction mt70">
-                      <i class="el-icon-caret-right" @click="right"></i>
-                    </div>
-                    <div class="direction">
-                      <i class="el-icon-caret-left" @click="left"></i>
-                    </div>
-                  </el-col>
-                  <el-col :span="9">
-                    <el-table :data="unallocateData" @select="check2" @select-all="check2">
-                      <el-table-column label="未接收信息用户">
-                        <el-table-column type="selection" width="55"></el-table-column>
-                        <el-table-column prop="informUserId" label="名称"></el-table-column>
-                        <el-table-column label="类型">
-                          <template
-                            slot-scope="scope"
-                          >{{ scope.row.userType == 10 ? '个人' : (scope.row.userType == 20 ? '工作中心' : '--') }}</template>
-                        </el-table-column>
-                        <el-table-column prop label="描述"></el-table-column>
-                      </el-table-column>
-                    </el-table>
-                  </el-col>
-                </el-row>
-              </el-tab-pane>
-            </el-tabs>
-          </el-col>
-        </el-row>
+        <el-form-item label="事件编号:" prop="alarm" required>
+          <el-input v-model="addForm.alarm"></el-input>
+        </el-form-item>
+        <el-form-item label="事件主题:" prop="theme" required>
+          <el-input v-model="addForm.theme"></el-input>
+        </el-form-item>
+        <el-tabs v-model="activeName" type="border-card">
+          <el-tab-pane label="预警事件信息维护" name="first">
+            <el-row>
+              <el-col :span="8">
+                <el-form-item label="预警事件等级:" prop="alarmLevelFlag" required>
+                  <dsn-select v-model="addForm.alarmLevelFlag">
+                    <el-option
+                      v-for="item in alarmLevel"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    ></el-option>
+                  </dsn-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="10">
+                <el-form-item label="事件通知方式:" prop>
+                  <el-checkbox v-model="addForm.actionWeixinFlag">企业微信</el-checkbox>
+                  <el-checkbox v-model="addForm.actionMailFlag">邮箱通知</el-checkbox>
+                  <el-checkbox v-model="addForm.actionSmsFlag">短信通知</el-checkbox>
+                  <el-checkbox v-model="addForm.actionSystemFlag">系统弹窗通知</el-checkbox>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row class="input-form">
+              <el-col :span="15">
+                <el-tabs v-model="activeImputName">
+                  <el-tab-pane label="企业微信" name="first">
+                    <el-input
+                      type="textarea"
+                      v-model="addForm.weixinInformDetails"
+                      :autosize="{ minRows: 6, maxRows: 10}"
+                      placeholder="请输入事件内容"
+                    ></el-input>
+                  </el-tab-pane>
+                  <el-tab-pane label="邮箱" name="second">
+                    <el-input
+                      type="textarea"
+                      v-model="addForm.mailInformDetails"
+                      :autosize="{ minRows: 6, maxRows: 10}"
+                      placeholder="请输入事件内容"
+                    ></el-input>
+                  </el-tab-pane>
+                  <el-tab-pane label="短信" name="third">
+                    <el-input
+                      type="textarea"
+                      v-model="addForm.smsInformDetails"
+                      :autosize="{ minRows: 6, maxRows: 10}"
+                      placeholder="请输入事件内容"
+                    ></el-input>
+                  </el-tab-pane>
+                  <el-tab-pane label="系统弹窗" name="fourth">
+                    <el-input
+                      type="textarea"
+                      v-model="addForm.systemInformDetails"
+                      :autosize="{ minRows: 6, maxRows: 10}"
+                      placeholder="请输入事件内容"
+                    ></el-input>
+                  </el-tab-pane>
+                </el-tabs>
+              </el-col>
+            </el-row>
+          </el-tab-pane>
+          <el-tab-pane label="预警事件通知维护" name="second">
+            <el-row>
+              <el-col :span="10" :offset="10">
+                <el-form-item label="复制事件通知人员:">
+                  <dsn-select v-model="alarm" clearable filterable @change="onChange">
+                    <el-option
+                      v-for="item in workers"
+                      :key="item.alarm"
+                      :label="item.alarm"
+                      :value="item.alarm"
+                    ></el-option>
+                  </dsn-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="10">
+                <el-form-item label="输入搜索条件:" prop="width">
+                  <el-input
+                    placeholder="请输入内容"
+                    v-model="input1"
+                    class="input-with-select"
+                    @input="getAllocate"
+                  >
+                    <dsn-select
+                      style="width: 120px"
+                      v-model="select1"
+                      slot="prepend"
+                      placeholder="请选择"
+                      clearable
+                      @change="getAllocate"
+                    >
+                      <el-option label="个人" value="10"></el-option>
+                      <el-option label="工作中心" value="20"></el-option>
+                    </dsn-select>
+                  </el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="10">
+                <el-form-item label="输入搜索条件:" prop="width">
+                  <el-input
+                    placeholder="请输入内容"
+                    v-model="input2"
+                    class="input-with-select"
+                    @input="getUnallocate"
+                  >
+                    <dsn-select
+                      style="width: 120px"
+                      v-model="select2"
+                      slot="prepend"
+                      placeholder="请选择"
+                      clearable
+                      @change="getUnallocate"
+                    >
+                      <el-option label="个人" value="10"></el-option>
+                      <el-option label="工作中心" value="20"></el-option>
+                    </dsn-select>
+                  </el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="9">
+                <el-table :data="allocateData" @select="check1" @select-all="check1">
+                  <el-table-column label="接收信息用户">
+                    <el-table-column type="selection" width="55"></el-table-column>
+                    <el-table-column prop="informUserId" label="名称"></el-table-column>
+                    <el-table-column label="类型">
+                      <template
+                        slot-scope="scope"
+                      >{{ scope.row.userType == 10 ? '个人' : (scope.row.userType == 20 ? '工作中心' : '--') }}</template>
+                    </el-table-column>
+                    <el-table-column prop label="描述"></el-table-column>
+                  </el-table-column>
+                </el-table>
+              </el-col>
+              <el-col :span="2">
+                <div class="direction mt70">
+                  <i class="el-icon-caret-right" @click="right"></i>
+                </div>
+                <div class="direction">
+                  <i class="el-icon-caret-left" @click="left"></i>
+                </div>
+              </el-col>
+              <el-col :span="9">
+                <el-table :data="unallocateData" @select="check2" @select-all="check2">
+                  <el-table-column label="未接收信息用户">
+                    <el-table-column type="selection" width="55"></el-table-column>
+                    <el-table-column prop="informUserId" label="名称"></el-table-column>
+                    <el-table-column label="类型">
+                      <template
+                        slot-scope="scope"
+                      >{{ scope.row.userType == 10 ? '个人' : (scope.row.userType == 20 ? '工作中心' : '--') }}</template>
+                    </el-table-column>
+                    <el-table-column prop label="描述"></el-table-column>
+                  </el-table-column>
+                </el-table>
+              </el-col>
+            </el-row>
+          </el-tab-pane>
+        </el-tabs>
       </el-form>
     </div>
   </div>
@@ -209,14 +200,14 @@ export default {
   name: "add-alarm-maintain",
   data() {
     return {
-      formLabelWidth: "150px",
       activeName: "first",
       activeImputName: "first",
       alarm: "",
       noticeType: [],
       rules: {
         alarm: [{ required: true, message: "请填写事件编号", trigger: "blur" }],
-        theme: [{ required: true, message: "请填写事件主题", trigger: "blur" }]
+        theme: [{ required: true, message: "请填写事件主题", trigger: "blur" }],
+        alarmLevelFlag: [{ required: true, message: "请选择事件等级", trigger: 'change'}]
       },
       addForm: {
         alarm: "",
@@ -415,9 +406,6 @@ export default {
     }
     .input-form {
       margin-left: 20px;
-    }
-    .el-select /deep/ .el-input {
-      width: 200px;
     }
     .direction {
       color: #409eff;

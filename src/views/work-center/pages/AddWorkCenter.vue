@@ -1,9 +1,9 @@
 <template>
   <div class="add-work-center">
     <div class="operate">
-      <el-button size="small" type="primary" @click="goBack">返回</el-button>
-      <el-button size="small" type="primary" @click="save('addForm')">保存</el-button>
-      <el-button size="small" type="primary" @click="resetForm('addForm')">重置</el-button>
+      <dsn-button size="small" type="primary" @click.native="goBack">返回</dsn-button>
+      <dsn-button size="small" type="primary" @click.native="save('addForm')">保存</dsn-button>
+      <dsn-button size="small" type="primary" @click.native="resetForm('addForm')">重置</dsn-button>
     </div>
     <div class="addForm">
       <el-form
@@ -13,160 +13,141 @@
         :rules="rules"
         class="form-style"
         label-position="right"
-        :label-width="formLabelWidth"
       >
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="工作中心:" prop="workCenter" required>
-              <el-input v-model="addForm.workCenter"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="描述:" prop="workCenterDes">
-              <el-input v-model="addForm.workCenterDes"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="24">
-            <el-tabs v-model="activeName" type="card">
-              <el-tab-pane label="基础信息" name="first">
-                <el-row>
-                  <el-col :span="24">
-                    <el-form-item label="状态:" prop="status" required>
-                      <el-select v-model="addForm.status">
-                        <el-option
-                          v-for="item in status"
-                          :key="item.value"
-                          :label="item.label"
-                          :value="item.value"
-                        ></el-option>
-                      </el-select>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-                <el-row>
-                  <el-col :span="24">
-                    <el-form-item label="类别:" prop="workCenterType" required>
-                      <el-select v-model="addForm.workCenterType">
-                        <el-option
-                          v-for="item in workCenterType"
-                          :key="item.value"
-                          :label="item.label"
-                          :value="item.value"
-                        ></el-option>
-                      </el-select>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-              </el-tab-pane>
-              <el-tab-pane label="工作中心关系维护" name="second">
-                <el-row>
-                  <el-col :span="24">
-                    <el-row>
-                      <el-col :span="8">
-                        <el-table
-                          :data="allocateData.filter(data => !workCenter1 || data.workCenter.toLowerCase().includes(workCenter1.toLowerCase()))"
-                          @select="check1"
-                          @select-all="check1"
-                        >
-                          <el-table-column label="工作中心:">
-                            <el-table-column type="selection" width="55"></el-table-column>
-                            <el-table-column prop="workCenter" label="已分配工作中心"></el-table-column>
-                          </el-table-column>
-                          <el-table-column label>
-                            <template slot="header">
-                              <el-input v-model="workCenter1" placeholder="输入工作中心搜索" />
-                            </template>
-                            <el-table-column prop="workCenterDes" label="工作中心描述"></el-table-column>
-                          </el-table-column>
-                        </el-table>
-                      </el-col>
-                      <el-col :span="2">
-                        <div class="direction mt70">
-                          <i class="el-icon-caret-right" @click="right"></i>
-                        </div>
-                        <div class="direction">
-                          <i class="el-icon-caret-left" @click="left"></i>
-                        </div>
-                      </el-col>
-                      <el-col :span="8">
-                        <el-table
-                          :data="unallocateData.filter(data => !workCenter2 || data.workCenter.toLowerCase().includes(workCenter2.toLowerCase()))"
-                          @select="check2"
-                          @select-all="check2"
-                        >
-                          <el-table-column label="工作中心:">
-                            <el-table-column type="selection" width="55"></el-table-column>
-                            <el-table-column prop="workCenter" label="未分配工作中心"></el-table-column>
-                          </el-table-column>
-                          <el-table-column label>
-                            <template slot="header">
-                              <el-input v-model="workCenter2" placeholder="输入工作中心搜索" />
-                            </template>
-                            <el-table-column prop="workCenterDes" label="工作中心描述"></el-table-column>
-                          </el-table-column>
-                        </el-table>
-                      </el-col>
-                    </el-row>
-                  </el-col>
-                </el-row>
-              </el-tab-pane>
-              <el-tab-pane label="用户" name="three">
-                <el-row>
-                  <el-col :span="24">
-                    <el-row>
-                      <el-col :span="8">
-                        <el-table
-                          :data="allocateUser.filter(data => !name1 || data.name.toLowerCase().includes(name1.toLowerCase()))"
-                          @select="checkUser1"
-                          @select-all="checkUser1"
-                        >
-                          <el-table-column label="用户:">
-                            <el-table-column type="selection" width="55"></el-table-column>
-                            <el-table-column prop="name" label="已分配用户"></el-table-column>
-                          </el-table-column>
-                          <el-table-column label>
-                            <template slot="header">
-                              <el-input v-model="name1" placeholder="输入用户搜索" />
-                            </template>
-                            <el-table-column prop="desc" label="用户描述"></el-table-column>
-                          </el-table-column>
-                        </el-table>
-                      </el-col>
-                      <el-col :span="2">
-                        <div class="direction mt70">
-                          <i class="el-icon-caret-right" @click="rightUser"></i>
-                        </div>
-                        <div class="direction">
-                          <i class="el-icon-caret-left" @click="leftUser"></i>
-                        </div>
-                      </el-col>
-                      <el-col :span="8">
-                        <el-table
-                          :data="unallocateUser.filter(data => !name2 || data.name.toLowerCase().includes(name2.toLowerCase()))"
-                          @select="checkUser2"
-                          @select-all="checkUser2"
-                        >
-                          <el-table-column label="用户:">
-                            <el-table-column type="selection" width="55"></el-table-column>
-                            <el-table-column prop="name" label="未分配用户"></el-table-column>
-                          </el-table-column>
-                          <el-table-column label>
-                            <template slot="header">
-                              <el-input v-model="name2" placeholder="输入用户搜索" />
-                            </template>
-                            <el-table-column prop="desc" label="用户描述"></el-table-column>
-                          </el-table-column>
-                        </el-table>
-                      </el-col>
-                    </el-row>
-                  </el-col>
-                </el-row>
-              </el-tab-pane>
-            </el-tabs>
-          </el-col>
-        </el-row>
+        <el-form-item label="工作中心:" prop="workCenter" required>
+          <dsn-input v-model="addForm.workCenter"></dsn-input>
+        </el-form-item>
+        <el-form-item label="描述:" prop="workCenterDes">
+          <dsn-input v-model="addForm.workCenterDes"></dsn-input>
+        </el-form-item>
+        <dsn-tabs style="padding: 0" v-model="activeName" type="border-card">
+          <el-tab-pane label="基础信息" name="first">
+            <el-row>
+              <el-col :span="24">
+                <el-form-item label="状态:" prop="status" required>
+                  <dsn-select v-model="addForm.status">
+                    <el-option
+                      v-for="item in status"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    ></el-option>
+                  </dsn-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="24">
+                <el-form-item label="类别:" prop="workCenterType" required>
+                  <dsn-select v-model="addForm.workCenterType">
+                    <el-option
+                      v-for="item in workCenterType"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    ></el-option>
+                  </dsn-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-tab-pane>
+          <el-tab-pane label="工作中心关系维护" name="second">
+            <el-row>
+              <el-col :span="11">
+                <dsn-table
+                  :data="allocateData.filter(data => !workCenter1 || data.workCenter.toLowerCase().includes(workCenter1.toLowerCase()))"
+                  @select="check1"
+                  @select-all="check1"
+                >
+                  <el-table-column label="工作中心:">
+                    <el-table-column type="selection" width="55"></el-table-column>
+                    <el-table-column prop="workCenter" label="已分配工作中心"></el-table-column>
+                  </el-table-column>
+                  <el-table-column label>
+                    <template slot="header">
+                      <dsn-input v-model="workCenter1" placeholder="输入工作中心搜索" />
+                    </template>
+                    <el-table-column prop="workCenterDes" label="工作中心描述"></el-table-column>
+                  </el-table-column>
+                </dsn-table>
+              </el-col>
+              <el-col :span="2">
+                <div class="direction mt70">
+                  <i class="el-icon-caret-right" @click="right"></i>
+                </div>
+                <div class="direction">
+                  <i class="el-icon-caret-left" @click="left"></i>
+                </div>
+              </el-col>
+              <el-col :span="11">
+                <dsn-table
+                  :data="unallocateData.filter(data => !workCenter2 || data.workCenter.toLowerCase().includes(workCenter2.toLowerCase()))"
+                  @select="check2"
+                  @select-all="check2"
+                >
+                  <el-table-column label="工作中心:">
+                    <el-table-column type="selection" width="55"></el-table-column>
+                    <el-table-column prop="workCenter" label="未分配工作中心"></el-table-column>
+                  </el-table-column>
+                  <el-table-column label>
+                    <template slot="header">
+                      <dsn-input v-model="workCenter2" placeholder="输入工作中心搜索" />
+                    </template>
+                    <el-table-column prop="workCenterDes" label="工作中心描述"></el-table-column>
+                  </el-table-column>
+                </dsn-table>
+              </el-col>
+            </el-row>
+          </el-tab-pane>
+          <el-tab-pane label="用户" name="three">
+           <el-row>
+              <el-col :span="11">
+                <dsn-table
+                  :data="allocateUser.filter(data => !name1 || data.name.toLowerCase().includes(name1.toLowerCase()))"
+                  @select="checkUser1"
+                  @select-all="checkUser1"
+                >
+                  <el-table-column label="用户:">
+                    <el-table-column type="selection" width="55"></el-table-column>
+                    <el-table-column prop="name" label="已分配用户"></el-table-column>
+                  </el-table-column>
+                  <el-table-column label>
+                    <template slot="header">
+                      <dsn-input v-model="name1" placeholder="输入用户搜索" />
+                    </template>
+                    <el-table-column prop="desc" label="用户描述"></el-table-column>
+                  </el-table-column>
+                </dsn-table>
+              </el-col>
+              <el-col :span="2">
+                <div class="direction mt70">
+                  <i class="el-icon-caret-right" @click="rightUser"></i>
+                </div>
+                <div class="direction">
+                  <i class="el-icon-caret-left" @click="leftUser"></i>
+                </div>
+              </el-col>
+              <el-col :span="11">
+                <dsn-table
+                  :data="unallocateUser.filter(data => !name2 || data.name.toLowerCase().includes(name2.toLowerCase()))"
+                  @select="checkUser2"
+                  @select-all="checkUser2"
+                >
+                  <el-table-column label="用户:">
+                    <el-table-column type="selection" width="55"></el-table-column>
+                    <el-table-column prop="name" label="未分配用户"></el-table-column>
+                  </el-table-column>
+                  <el-table-column label>
+                    <template slot="header">
+                      <dsn-input v-model="name2" placeholder="输入用户搜索" />
+                    </template>
+                    <el-table-column prop="desc" label="用户描述"></el-table-column>
+                  </el-table-column>
+                </dsn-table>
+              </el-col>
+            </el-row>
+          </el-tab-pane>
+        </dsn-tabs>
       </el-form>
     </div>
   </div>
@@ -363,14 +344,12 @@ export default {
 .add-work-center {
   .operate {
     background: #ffffff;
-    padding: 10px;
+    padding: 14px 14px 0;
+    margin-bottom: 14px;
   }
   .addForm {
     background: #ffffff;
     padding: 10px;
-    .el-select /deep/ .el-input {
-      width: 200px;
-    }
     .direction {
       color: #409eff;
       font-size: 40px;
