@@ -469,6 +469,7 @@ export default {
     padding: 14px 14px 0;
     background: #fff;
     margin-bottom: 14px;
+    border-radius: 4px;
   }
   .direction {
     color: #409eff;
@@ -483,6 +484,7 @@ export default {
     background: #fff;
     min-height: 450px;
     padding: 10px;
+    border-radius: 4px;
   }
 }
 </style>
