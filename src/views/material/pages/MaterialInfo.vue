@@ -1,6 +1,9 @@
 <template>
   <div class="material-info">
-    <div class="search-bar">
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索信息</span>
+      </div>
       <el-form
         :inline="true"
         :model="searchForm"
@@ -10,32 +13,34 @@
         :label-width="formLabelWidth"
       >
         <el-form-item label="物料号:" prop="material">
-          <el-input v-model="searchForm.material"></el-input>
+          <dsn-input v-model="searchForm.material"></dsn-input>
         </el-form-item>
         <el-form-item label="版本号:" prop="materialRev">
-          <el-input v-model="searchForm.materialRev"></el-input>
+          <dsn-input v-model="searchForm.materialRev"></dsn-input>
         </el-form-item>
         <el-form-item label prop>
-          <el-button size="small" type="primary" @click="search">查询</el-button>
-          <el-button size="small" type="primary" @click="resetForm('searchForm')">重置</el-button>
+          <dsn-button size="small" type="primary" @click="search">查询</dsn-button>
+          <dsn-button size="small" type="primary" @click="resetForm('searchForm')">重置</dsn-button>
         </el-form-item>
       </el-form>
-    </div>
-    <div class="operate">
-      <el-button size="small" type="primary" @click="add" :disabled="this.checkedList.length>0">新增</el-button>
-      <el-button
+    </DsnPanel>
+    <div class="operation">
+      <dsn-button size="small" type="primary" @click="add" :disabled="this.checkedList.length>0">新增</dsn-button>
+      <dsn-button
         size="small"
         type="primary"
         @click="edit"
+        icon="el-icon-edit"
         :disabled="this.checkedList.length === 0"
-      >编辑</el-button>
-      <el-button
+      >编辑</dsn-button>
+      <dsn-button
         size="small"
         type="primary"
         @click="del"
+        icon="el-icon-delete"
         :disabled="this.checkedList.length === 0"
-      >删除</el-button>
-      <el-button size="small" type="primary" @click="handleExport">导出</el-button>
+      >删除</dsn-button>
+      <dsn-button size="small" type="primary" icon="el-icon-upload2" @click="handleExport">导出</dsn-button>
     </div>
 
     <div>
@@ -256,18 +261,18 @@ export default {
 </script>
 
 <style lang="scss">
-.material-info {
-  padding: 0 30px;
-  .search-bar {
-    padding: 10px;
-    .el-form {
-      .el-form-item {
-        margin-bottom: 0px;
-      }
-    }
-  }
-  .operate {
-    padding: 10px 5px;
-  }
-}
+// .material-info {
+//   padding: 0 30px;
+//   .search-bar {
+//     padding: 10px;
+//     .el-form {
+//       .el-form-item {
+//         margin-bottom: 0px;
+//       }
+//     }
+//   }
+//   .operate {
+//     padding: 10px 5px;
+//   }
+// }
 </style>
