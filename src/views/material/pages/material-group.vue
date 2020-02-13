@@ -1,6 +1,9 @@
 <template>
   <div class="materialGroup">
-    <div class="query">
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索信息</span>
+      </div>
       <el-form
         :model="materialGroupForm"
         ref="materialGroupForm"
@@ -9,71 +12,78 @@
         :inline="true"
       >
         <el-form-item label="物料组" prop="materialGroup">
-          <el-input v-model.trim="materialGroupForm.materialGroup" placeholder="请输入物料组"></el-input>
+          <dsn-input v-model.trim="materialGroupForm.materialGroup" placeholder="请输入物料组"></dsn-input>
         </el-form-item>
         <el-form-item>
-          <el-button size="small" type="primary" @click="handleQuery">查询</el-button>
-          <el-button size="small" type="primary" @click="handleReset">重置</el-button>
+          <dsn-button size="small" type="primary" icon="el-icon-search" @click.native="handleQuery">查询</dsn-button>
+          <dsn-button size="small" type="primary" icon="el-icon-refresh" @click.native="handleReset">重置</dsn-button>
         </el-form-item>
       </el-form>
-    </div>
-    <div class="operate">
-      <el-button size="small" type="primary" @click="handleAdd">新增</el-button>
-      <el-button
+    </DsnPanel>
+    <div class="operation">
+      <dsn-button size="small" type="success" icon="el-icon-add" @click.native="handleAdd">新增</dsn-button>
+      <dsn-button
         size="small"
         type="primary"
+        icon="el-icon-edit"
         :disabled="selectionList.length <= 0"
-        @click="handleEdit"
-      >修改</el-button>
-      <el-button
+        @click.native="handleEdit"
+      >修改</dsn-button>
+      <dsn-button
         size="small"
         type="primary"
+        icon="el-icon-delete"
         :disabled="selectionList.length <= 0"
-        @click="deleteDialog = true"
-      >删除</el-button>
-      <el-button size="small" type="primary" @click="handleExport">导出</el-button>
+        @click.native="deleteDialog = true"
+      >删除</dsn-button>
+      <dsn-button size="small" type="primary" icon="el-icon-upload2" @click.native="handleExport">导出</dsn-button>
     </div>
-    <div class="showInfo">
-      <el-table
-        ref="multipleTable"
-        :data="tableData"
-        tooltip-effect="dark"
-        style="width: 100%"
-        height="350px"
-        @selection-change="handleSelectionChange"
-      >
-        <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column type="index" label="序号" width="50"></el-table-column>
-        <el-table-column prop="materialGroup" label="物料组" width="120"></el-table-column>
-        <el-table-column label="总物料数" width="120">
-          <template slot-scope="scope">
-            <span>{{ scope.row.materialList.length }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="groupDes" label="物料组描述" width="170"></el-table-column>
-        <el-table-column prop="createUserName" label="创建人" width="120"></el-table-column>
-        <el-table-column prop="createTime" label="创建时间" width="170"></el-table-column>
-        <el-table-column prop="modifyUserName" label="修改人" width="120"></el-table-column>
-        <el-table-column prop="modifyTime" label="修改时间" show-overflow-tooltip></el-table-column>
-      </el-table>
-    </div>
-    <div class="pagination">
-      <el-pagination
-        background
-        layout="->,total,prev,pager,next,sizes"
-        :total="total"
-        :page-size="pagesize"
-        :page-sizes="[5, 10, 15, 20]"
-        :current-page="currentPage"
-        @size-change="handlePagesize"
-        @current-change="handleCurrentChange"
-      ></el-pagination>
-    </div>
-    <el-dialog title="删除" :visible.sync="deleteDialog" width="30%">
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索结果</span>
+      </div>
+      <div class="showInfo">
+        <dsn-table
+          ref="multipleTable"
+          :data="tableData"
+          tooltip-effect="dark"
+          style="width: 100%"
+          height="350px"
+          @selection-change="handleSelectionChange"
+        >
+          <el-table-column type="selection" width="55"></el-table-column>
+          <el-table-column type="index" label="序号" width="50"></el-table-column>
+          <el-table-column prop="materialGroup" label="物料组" width="120"></el-table-column>
+          <el-table-column label="总物料数" width="120">
+            <template slot-scope="scope">
+              <span>{{ scope.row.materialList.length }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="groupDes" label="物料组描述" width="170"></el-table-column>
+          <el-table-column prop="createUserName" label="创建人" width="120"></el-table-column>
+          <el-table-column prop="createTime" label="创建时间" width="170"></el-table-column>
+          <el-table-column prop="modifyUserName" label="修改人" width="120"></el-table-column>
+          <el-table-column prop="modifyTime" label="修改时间" show-overflow-tooltip></el-table-column>
+        </dsn-table>
+      </div>
+      <div class="pagination">
+        <dsn-pagination
+          background
+          layout="->,total,prev,pager,next,sizes"
+          :total="total"
+          :page-size="pagesize"
+          :page-sizes="[5, 10, 15, 20]"
+          :current-page="currentPage"
+          @size-change="handlePagesize"
+          @current-change="handleCurrentChange"
+        ></dsn-pagination>
+      </div>
+    </DsnPanel>
+    <el-dialog title="删除" :visible.sync="deleteDialog" :width="defaltDialogWidth">
       <span>是否确认删除{{ selectionList.length }}条数据？</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="deleteDialog = false">取 消</el-button>
-        <el-button type="primary" @click="handleDelete">确 定</el-button>
+        <dsn-button @click.native="deleteDialog = false">取 消</dsn-button>
+        <dsn-button type="primary" @click.native="handleDelete">确 定</dsn-button>
       </span>
     </el-dialog>
   </div>
@@ -104,6 +114,7 @@ const filterVal = [
 ];
 const fileName = "物料组维护表";
 export default {
+  inject: ["defaltDialogWidth"],
   data() {
     return {
       tHeader,
@@ -271,18 +282,18 @@ export default {
 </script>
 
 <style lang="scss">
-.materialGroup {
-  padding: 0 30px;
-  .operate {
-    padding: 10px 5px;
-  }
-  .query {
-    padding: 10px;
-    .el-form {
-      .el-form-item {
-        margin-bottom: 0px;
-      }
-    }
-  }
-}
+// .materialGroup {
+//   padding: 0 30px;
+//   .operate {
+//     padding: 10px 5px;
+//   }
+//   .query {
+//     padding: 10px;
+//     .el-form {
+//       .el-form-item {
+//         margin-bottom: 0px;
+//       }
+//     }
+//   }
+// }
 </style>
