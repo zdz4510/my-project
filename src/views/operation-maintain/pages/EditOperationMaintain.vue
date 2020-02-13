@@ -397,10 +397,5 @@ export default {
     background: #fff;
     margin-bottom: 14px;
   }
-  .el-form {
-    .el-textarea /deep/ .el-textarea__inner {
-      width: 300px;
-    }
-  }
 }
 </style>
