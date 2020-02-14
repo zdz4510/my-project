@@ -34,8 +34,7 @@
             name:subitem.key
          }"  :key="subitem.id"  v-for="subitem in item.children"   :index="subitem.id">{{subitem.lable}}</el-menu-item>
        </el-submenu> -->
-          <DsnMenuTree :data="list" />
-     
+       <DsnMenuTree :data="list" :theme='theme' />
     </el-menu>
   </div>
 </template>
@@ -45,14 +44,16 @@
 import {mapState} from 'vuex';
 import DsnMenuTree from './dsn-menutree'
 export default {
-   components:{
+  components:{
     DsnMenuTree
   },
   data() {
     return {
       isCollapse: true,
       search: "",
-      backgroundColor: '#191a23'
+      backgroundColor: '#191a23',
+      textColor: '#fff',
+      activeTextColor: '#2173dc'
     };
   },
   props: {
@@ -74,7 +75,7 @@ export default {
          return []
         
       }
-    })
+    }),
   },
   methods: {
     handleOpen(key, keyPath) {
@@ -98,6 +99,14 @@ export default {
 @import './Theme.scss';
 $bg: #515a6e;
 #leftMenu {
+  .el-submenu__title {
+      .el-submenu__icon-arrow{
+        display: none;
+      }
+      span {
+        display: none;
+      }
+  }
   &.active {
     .logo {
       img {
@@ -105,7 +114,15 @@ $bg: #515a6e;
         height: 50px;
       }
     }
-  }
+    .el-submenu__title {
+      .el-submenu__icon-arrow{
+        display: initial;
+      }
+      span {
+        display: initial;
+      }
+    }
+  }  
   .header-wrap {
     height: 64px;
     .header{
@@ -183,6 +200,30 @@ $bg: #515a6e;
   .el-menu-item.is-active {
     background-color: #2d8cf0 !important;
     opacity: 1;
+  }
+}
+// 收缩菜单过长
+.el-menu--vertical {
+  top:0 !important;
+  overflow-y: scroll;
+  height: 100%;
+  background: #303133;
+  &::-webkit-scrollbar {
+    /*滚动条整体样式*/
+    width: 5px; /*高宽分别对应横竖滚动条的尺寸*/
+    height: 3px;
+  }
+  &::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
+    border-radius: 10px;
+    box-shadow: inset 0 0 5px #999;
+    background: #999;
+  }
+  &::-webkit-scrollbar-track {
+    /*滚动条里面轨道*/
+    box-shadow: inset 0 0 5px #999;
+    border-radius: 10px;
+    background: #ededed;
   }
 }
 </style>

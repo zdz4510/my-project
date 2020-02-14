@@ -1,7 +1,7 @@
 <template>
   <div class="menu-tree">
     <label :key="item.id" v-for="item in data">
-      <el-submenu :index="item.id" v-if="item.children">
+      <el-submenu :index="item.id" v-if="item.children" :popper-class='theme' >
         <template slot="title">
           <i class="el-icon-location"></i>
           <span slot="title">{{ item.lable }}</span>
@@ -34,6 +34,6 @@ export default {
   components: {
     DsnMenutree: DsnMenutree
   },
-  props: ["data"]
+  props: ["data",'theme']
 };
 </script>

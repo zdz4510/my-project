@@ -102,16 +102,21 @@ export default {
    height: 100%;
     background: #f5f7f9;
   .well {
-    margin: 0 15px;
+    min-height: calc(100% - 44px);
+    width: 100%;
+    box-sizing: border-box;
     // background: #fff;
     // padding: 15px;
     border-radius: 4px;
+   
+    position: relative;
     
   }
   .content {
     padding: 64px 0px 10px 60px;
     background: #f5f7f9;
     display: flex;
+     height: 100%;
     box-sizing: border-box;
     flex-direction: column;
     &.active {
@@ -139,6 +144,7 @@ export default {
     }
 
     .pageContent {
+      height: 100%;
       // padding:15px;
       // flex: 1;
       // overflow: hidden;
