@@ -1,25 +1,36 @@
 <template>
 	<div>
-		<div class="search-bar">
+		<DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索信息</span>
+      </div>
+      <!-- 卡片内容 -->
+		
 			<el-form :inline="true" :model="searchForm" ref="searchForm" :rules="rules" class="form-style" @submit.native.prevent>
 				<el-form-item label="不合格代码组:" prop="ncGroup">
-					<el-input v-model="searchForm.ncGroup" placeholder="请输入内容" @keyup.enter.native="onEnterSearch"></el-input>
+					<dsn-input v-model="searchForm.ncGroup" placeholder="请输入内容" @keyup.enter.native="onEnterSearch"></dsn-input>
 				</el-form-item>
 				<el-form-item label="" prop="">
-					<el-button class="ml15 mr25 pad1025" size="small" type="primary" @click="search">查询</el-button>
-					<el-button class="mr25 pad1025" size="small" type="primary" @click="resetForm('searchForm')">重置</el-button>
+					<dsn-button icon="el-icon-search" size="small" type="primary" @click.native="search">查询</dsn-button>
+					<dsn-button icon="el-icon-refresh" size="small" type="primary" @click.native="resetForm('searchForm')">重置</dsn-button>
 				</el-form-item>
 			</el-form>
-		</div>
-		<div class="operate ml30 mtb10">
-			<el-button class="mr25 pad1025" size="small" type="primary" @click="add" :disabled="this.checkedList.length>0">新增</el-button>
-			<el-button class="mr25 pad1025" size="small" type="primary" @click="edit" :disabled="this.checkedList.length === 0">编辑</el-button>
-			<el-button class="mr25 pad1025" size="small" type="warning"  @click="del" :disabled="this.checkedList.length === 0">删除</el-button>
-			<el-button class="mr25 pad1025" size="small" type="warning"  @click="handleExport" >导出</el-button>
+		
+		</DsnPanel>
+		<!-- 卡片内容 -->
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索结果</span>
+      </div>
+	<div class="operation">
+			<dsn-button icon="el-icon-folder-add" size="small" type="success" @click.native="add" :disabled="this.checkedList.length>0">新增</dsn-button>
+			<dsn-button icon="el-icon-edit" size="small" type="primary" @click.native="edit" :disabled="this.checkedList.length === 0">编辑</dsn-button>
+			<dsn-button icon="el-icon-delete" size="small" type="danger"  @click.native="del" :disabled="this.checkedList.length === 0">删除</dsn-button>
+			<dsn-button icon="el-icon-upload2" size="small" type="primary"  @click.native="handleExport" >导出</dsn-button>
 		</div>
 
-		<div class="">
-			<el-table
+		
+			<dsn-table
 			ref="multipleTable"
 			:data="this.tableData.data"
 			tooltip-effect="dark"
@@ -33,26 +44,40 @@
 				<el-table-column label="状态">
 					<template slot-scope="scope">{{ scope.row.status == 1 ? '已启用' : '未启用' }}</template>
 				</el-table-column>
-			</el-table>
-			<el-pagination class="mtb20"
+			</dsn-table>
+<!-- 分页 -->
+<div class="pagination">
+			<dsn-pagination 
 				background
 				@size-change="handleSizeChange"
 				@current-change="handleCurrentChange"
 				:current-page="this.tableData.page.currentPage"
 				:page-sizes="[1, 10, 15, 20, 30, 50]"
 				:page-size="this.tableData.page.pageSize"
-				layout="->, total, prev, pager, next, sizes, jumper"
+				layout="->, total, prev, pager, next, sizes"
 				:total="this.tableData.page.total">
-			</el-pagination>
+			</dsn-pagination>
 		</div>
+		</DsnPanel>
+		<!-- 底部 div包裹footer高度，避免被底部遮挡 -->
+    <div style="height:49px" v-if="false">
+      <DSNFooter>
+    <dsn-button  size="small" icon="el-icon-search" type="primary" @click.native="search">查询</dsn-button>
+	<dsn-button  size="small" icon="el-icon-refresh" type="primary" @click.native="resetForm('searchForm')">重置</dsn-button>
+      </DSNFooter>
+    </div>
 	</div>
 </template>
 
 <script>
 import {getNcGroupList, deleteNcGroup} from '../../../api/nc.group.api'
 import { exportExcel } from "@/until/excel.js";
+import DSNFooter from "../../layout/dsn-footer";
 import { mapMutations } from "vuex";
 	export default {
+		components: {
+    DSNFooter
+  },
 		name:'nc-group',
 		data() {
 			return {

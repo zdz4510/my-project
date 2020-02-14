@@ -69,8 +69,12 @@
 <script>
 import {getNcCodeList, deleteNcCode} from '../../../api/nc.code.api'
 import { exportExcel } from "@/until/excel.js";
+import DSNFooter from "../../layout/dsn-footer";
 import { mapMutations } from "vuex";
 	export default {
+		components: {
+    DSNFooter
+  },
 		name:'nc-code',
 		data() {
 			return {
@@ -122,12 +126,13 @@ import { mapMutations } from "vuex";
 			},
 			handleSelectionChange(val) {
 				this.checkedList = val;
-				console.log(val)
+				console.log("777777",val)
 			},
 			add(){
 				this.$router.push({path:'/nc/addNcCode'})
 			},
 			edit(){
+				console.log("5888888",this.checkedList)
 				this.SETNCCODEEDITLIST(this.checkedList);
 				this.$router.push({path:'/nc/editNcCode'})
 			},
