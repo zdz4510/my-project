@@ -19,12 +19,12 @@
           </dsn-select>
         </el-form-item>
         <el-form-item label="描述:" prop="operationDes" required>
-          <dsn-input v-model="addForm.operationDes"></dsn-input>
+          <dsn-input v-model="addForm.operationDes" disabled></dsn-input>
         </el-form-item>
         <el-row>
           <el-col :span="24">
             <el-row>
-              <el-col :span="8">
+              <el-col :span="11">
                 <el-table
                   :data="allocateData.filter(data => (!workCenterRelation1 || data.workCenterRelation.toLowerCase().includes(workCenterRelation1.toLowerCase())) &&
 									(!station1 || data.station.toLowerCase().includes(station1.toLowerCase())) &&
@@ -65,7 +65,7 @@
                   <i class="el-icon-caret-left" @click="left"></i>
                 </div>
               </el-col>
-              <el-col :span="8">
+              <el-col :span="11">
                 <el-table
                   :data="unallocateData.filter(data => (!workCenterRelation2 || data.workCenterRelation.toLowerCase().includes(workCenterRelation2.toLowerCase())) &&
 									(!station2 || data.station.toLowerCase().includes(station2.toLowerCase())) &&
@@ -124,6 +124,9 @@ export default {
       rules: {
         operation: [
           { required: true, message: "请选择工序名称", trigger: "change" }
+        ],
+        operationDes: [
+          { required: true, message: "请填写描述", trigger: "change" }
         ]
       },
       options: [],
@@ -161,6 +164,7 @@ export default {
           this.unallocateData = data.data.data.undistributed;
           this.cloneUnallocateData = data.data.data.undistributed;
           this.allocateData = data.data.data.allocated;
+          this.addForm.operationDes = data.data.data.operation[0].operationDes;
           this.cloneAllocateData = data.data.data.allocated;
         } else {
           this.$message.error(data.data.message);
@@ -203,14 +207,15 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           let arr = [];
+          const { operation } = this.addForm;
           this.allocateData.map(item => {
             let obj = {};
-            obj.operation = this.addForm.operation;
+            obj.operation = operation;
             obj.station = item.station;
             obj.workCenterRelation = item.workCenterRelation;
             arr.push(obj);
           });
-          addStation(arr).then(data => {
+          addStation({arr, operation}).then(data => {
             if (data.data.code == 200) {
               this.$message({
                 type: "success",

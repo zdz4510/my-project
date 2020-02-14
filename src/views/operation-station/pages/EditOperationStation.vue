@@ -65,7 +65,7 @@
               </dsn-select>
             </el-form-item>
             <el-form-item label="描述:" prop="operationDes">
-              <dsn-input v-model="editForm.operationDes"></dsn-input>
+              <dsn-input v-model="editForm.operationDes" disabled></dsn-input>
             </el-form-item>
             <el-row :gutter="14">
               <el-col :span="11">
@@ -229,19 +229,20 @@ export default {
     init() {
       if (this.stationEditList.length > 0) {
         this.cloneList = JSON.parse(JSON.stringify(this.stationEditList)); //复制一份副本,保证副本和初始列表数据一致性
-        console.log(this.cloneList, "cloneList");
         this.editForm = this.cloneList[0]; // 默认选中第一行
         this.cloneModify = JSON.parse(JSON.stringify(this.editForm)); // modify 的副本
         this.setCurrent(this.editForm); // 设置选中第一行
         this.currentRow = this.editForm; // 设置初始currentRow 为第一行
         let params = {
-          operation: this.editForm.operation
+          operation: this.editForm.operation,
         };
         getOperationInfo(params).then(data => {
+          console.log('getoperation', data)
           if (data.data.code == 200) {
             this.unallocateData = data.data.data.undistributed;
             this.cloneUnallocateData = data.data.data.undistributed;
             this.allocateData = data.data.data.allocated;
+            this.editForm.operationDes = data.data.data.operation[0].operationDes;
             this.cloneAllocateData = data.data.data.allocated;
           } else {
             this.$message.error(data.data.message);
@@ -278,6 +279,7 @@ export default {
           this.unallocateData = data.data.data.undistributed;
           this.cloneUnallocateData = data.data.data.undistributed;
           this.allocateData = data.data.data.allocated;
+          this.editForm.operationDes = data.data.data.operation[0].operationDes;
           this.cloneAllocateData = data.data.data.allocated;
         } else {
           this.$message.error(data.data.message);
@@ -324,13 +326,14 @@ export default {
       this.editForm = currentRow;
       this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
       let params = {
-        operation: this.editForm.operation
+        operation: this.editForm.operation,
       };
       getOperationInfo(params).then(data => {
         if (data.data.code == 200) {
           this.unallocateData = data.data.data.undistributed;
           this.cloneUnallocateData = data.data.data.undistributed;
           this.allocateData = data.data.data.allocated;
+          this.editForm.operationDes = data.data.data.operation[0].operationDes;
           this.cloneAllocateData = data.data.data.allocated;
         } else {
           this.$message.error(data.data.message);
@@ -469,6 +472,7 @@ export default {
     padding: 14px 14px 0;
     background: #fff;
     margin-bottom: 14px;
+    border-radius: 4px;
   }
   .direction {
     color: #409eff;
@@ -483,6 +487,7 @@ export default {
     background: #fff;
     min-height: 450px;
     padding: 10px;
+    border-radius: 4px;
   }
 }
 </style>

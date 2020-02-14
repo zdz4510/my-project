@@ -1,11 +1,11 @@
 <template>
   <div class="add-alarm-group">
     <div class="operate">
-      <el-button size="small" type="primary" @click="goBack">返回</el-button>
-      <el-button size="small" type="primary" @click="save('addForm')">保存</el-button>
-      <el-button size="small" type="primary" @click="resetForm('addForm')">重置</el-button>
+      <dsn-button size="small" type="primary" @click.native="goBack">返回</dsn-button>
+      <dsn-button size="small" type="primary" @click.native="save('addForm')">保存</dsn-button>
+      <dsn-button size="small" type="primary" @click.native="resetForm('addForm')">重置</dsn-button>
     </div>
-    <div class="addForm">
+    <div class="operate" style="padding-bottom: 14px;">
       <el-form
         :inline="true"
         :model="addForm"
@@ -13,81 +13,78 @@
         :rules="rules"
         class="form-style"
         label-position="right"
-        :label-width="formLabelWidth"
       >
         <el-row>
           <el-col :span="8">
             <el-form-item label="事件分组名称:" prop="alarmGroup" required>
-              <el-input v-model="addForm.alarmGroup"></el-input>
+              <dsn-input v-model="addForm.alarmGroup"></dsn-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="分组描述:" prop="groupDes" required>
-              <el-input v-model="addForm.groupDes"></el-input>
+              <dsn-input v-model="addForm.groupDes"></dsn-input>
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row>
-          <el-col :span="24">
-            <el-row>
-              <el-col :span="8">
-                <el-table
-                  :data="allocateData.filter(data => !alarm1 || data.alarm.toLowerCase().includes(alarm1.toLowerCase()))"
-                  @select="check1"
-                  @select-all="check1"
-                >
-                  <el-table-column label="事件编号:">
-                    <el-table-column type="selection" width="100"></el-table-column>
-                    <el-table-column prop="alarm" label="事件编号"></el-table-column>
-                  </el-table-column>
-                  <el-table-column label>
-                    <template slot="header">
-                      <el-input v-model="alarm1" placeholder="输入事件编号搜索" />
-                    </template>
-                    <el-table-column label="事件等级">
-                      <template
-                        slot-scope="scope"
-                      >{{ scope.row.alarmLevelFlag == 10 ? '提示' : (scope.row.alarmLevelFlag == 20 ? '警告' : '错误') }}</template>
-                    </el-table-column>
-                    <el-table-column prop="theme" label="事件主题"></el-table-column>
-                  </el-table-column>
-                </el-table>
-              </el-col>
-              <el-col :span="2">
-                <div class="direction mt70">
-                  <i class="el-icon-caret-right" @click="right"></i>
-                </div>
-                <div class="direction">
-                  <i class="el-icon-caret-left" @click="left"></i>
-                </div>
-              </el-col>
-              <el-col :span="8">
-                <el-table
-                  :data="unallocateData.filter(data => !alarm2 || data.alarm.toLowerCase().includes(alarm2.toLowerCase()))"
-                  @select="check2"
-                  @select-all="check2"
-                >
-                  <el-table-column label="事件编号:">
-                    <el-table-column type="selection" width="100"></el-table-column>
-                    <el-table-column prop="alarm" label="事件编号"></el-table-column>
-                  </el-table-column>
-                  <el-table-column label>
-                    <template slot="header">
-                      <el-input v-model="alarm2" placeholder="输入事件编号搜索" />
-                    </template>
-                    <el-table-column label="事件等级">
-                      <template
-                        slot-scope="scope"
-                      >{{ scope.row.alarmLevelFlag == 10 ? '提示' : (scope.row.alarmLevelFlag == 20 ? '警告' : '错误') }}</template>
-                    </el-table-column>
-                    <el-table-column prop="theme" label="事件主题"></el-table-column>
-                  </el-table-column>
-                </el-table>
-              </el-col>
-            </el-row>
-          </el-col>
-        </el-row>
       </el-form>
+    </div>
+    <div class="operate" style="padding-bottom: 14px"> 
+      <el-row>
+        <el-col :span="11">
+          <dsn-table
+            :data="allocateData.filter(data => !alarm1 || data.alarm.toLowerCase().includes(alarm1.toLowerCase()))"
+            @select="check1"
+            @select-all="check1"
+          >
+            <el-table-column label="事件编号:">
+              <el-table-column type="selection" width="100"></el-table-column>
+              <el-table-column prop="alarm" label="事件编号"></el-table-column>
+            </el-table-column>
+            <el-table-column label>
+              <template slot="header">
+                <dsn-input v-model="alarm1" placeholder="输入事件编号搜索" />
+              </template>
+              <el-table-column label="事件等级">
+                <template
+                  slot-scope="scope"
+                >{{ scope.row.alarmLevelFlag == 10 ? '提示' : (scope.row.alarmLevelFlag == 20 ? '警告' : '错误') }}</template>
+              </el-table-column>
+              <el-table-column prop="theme" label="事件主题"></el-table-column>
+            </el-table-column>
+          </dsn-table>
+        </el-col>
+        <el-col :span="2">
+          <div class="direction mt70">
+            <i class="el-icon-caret-right" @click="right"></i>
+          </div>
+          <div class="direction">
+            <i class="el-icon-caret-left" @click="left"></i>
+          </div>
+        </el-col>
+        <el-col :span="11">
+          <dsn-table
+            :data="unallocateData.filter(data => !alarm2 || data.alarm.toLowerCase().includes(alarm2.toLowerCase()))"
+            @select="check2"
+            @select-all="check2"
+          >
+            <el-table-column label="事件编号:">
+              <el-table-column type="selection" width="100"></el-table-column>
+              <el-table-column prop="alarm" label="事件编号"></el-table-column>
+            </el-table-column>
+            <el-table-column label>
+              <template slot="header">
+                <dsn-input v-model="alarm2" placeholder="输入事件编号搜索" />
+              </template>
+              <el-table-column label="事件等级">
+                <template
+                  slot-scope="scope"
+                >{{ scope.row.alarmLevelFlag == 10 ? '提示' : (scope.row.alarmLevelFlag == 20 ? '警告' : '错误') }}</template>
+              </el-table-column>
+              <el-table-column prop="theme" label="事件主题"></el-table-column>
+            </el-table-column>
+          </dsn-table>
+        </el-col>
+      </el-row>
     </div>
   </div>
 </template>
@@ -279,21 +276,13 @@ export default {
 <style lang="scss">
 .add-alarm-group {
   .operate {
-    background: #ffffff;
-    padding: 10px;
-  }
-  .addForm {
-    background: #ffffff;
-    padding: 10px;
-    .dec {
-      width: 756px !important;
+    padding: 14px 14px 0;
+    background: #fff;
+    margin-bottom: 14px;
+		border-radius: 4px;
+    .el-form-item {
+      margin-bottom: 0;
     }
-  }
-  .input-form {
-    margin-left: 20px;
-  }
-  .el-select /deep/ .el-input {
-    width: 200px;
   }
   .direction {
     color: #409eff;

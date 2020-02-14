@@ -1,71 +1,81 @@
 <template>
   <div class="deviceType">
-    <div class="query">
-      <div class="left">
-        <el-form :model="typeForm" ref="typeForm" label-width="100px" class="typeForm">
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索信息</span>
+      </div>
+      <div class="query">
+       <el-form :model="typeForm" ref="typeForm" class="typeForm" :inline="true">
           <el-form-item label="设备类型" prop="resourceGroup">
-            <el-input v-model.trim="typeForm.resourceGroup" placeholder="请输入设备类型"></el-input>
+            <dsn-input style="width: 200px" v-model.trim="typeForm.resourceGroup" placeholder="请输入设备类型"></dsn-input>
+          </el-form-item>
+          <el-form-item label prop>
+            <dsn-button size="small" type="primary" @click.native="handleQuery">查询</dsn-button>
+            <dsn-button size="small" type="primary" @click.native="handleReset">重置</dsn-button>
           </el-form-item>
         </el-form>
+        
       </div>
-      <div class="right">
-        <el-button size="small" type="primary" @click="handleQuery">查询</el-button>
-        <el-button size="small" type="primary" @click="handleReset">重置</el-button>
+    </DsnPanel>
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索结果</span>
       </div>
-    </div>
-    <div class="operate">
-      <el-button size="small" type="primary" @click="handleAdd">新增</el-button>
-      <el-button
-        size="small"
-        type="primary"
-        :disabled="selectionList.length <= 0"
-        @click="handleEdit"
-      >修改</el-button>
-      <el-button
-        size="small"
-        type="primary"
-        :disabled="selectionList.length <= 0"
-        @click="deleteDialog = true"
-      >删除</el-button>
-      <el-button size="small" type="primary" @click="handleExport">导出</el-button>
-    </div>
-    <div class="showInfo">
-      <el-table
-        ref="multipleTable"
-        :data="tableData"
-        tooltip-effect="dark"
-        style="width: 100%"
-        height="350px"
-        @selection-change="handleSelectionChange"
-      >
-        <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="resourceGroup" label="设备类型"></el-table-column>
-        <el-table-column prop="resourceCount" label="设备数量"></el-table-column>
-        <el-table-column prop="groupDes" label="设备类型描述" width="170"></el-table-column>
+      <div class="operate">
+        <dsn-button size="small" icon="el-icon-folder-add" type="success" @click.native="handleAdd">新增</dsn-button>
+        <dsn-button
+          size="small"
+          type="primary"
+          icon="el-icon-edit"
+          :disabled="selectionList.length <= 0"
+          @click.native="handleEdit"
+        >修改</dsn-button>
+        <dsn-button
+          size="small"
+          type="danger"
+          icon="el-icon-delete"
+          :disabled="selectionList.length <= 0"
+          @click.native="deleteDialog = true"
+        >删除</dsn-button>
+        <dsn-button icon="el-icon-upload2" size="small" type="primary" @click.native="handleExport">导出</dsn-button>
+      </div>
+      <div class="showInfo">
+        <dsn-table
+          ref="multipleTable"
+          :data="tableData"
+          tooltip-effect="dark"
+          style="width: 100%"
+          height="350px"
+          @selection-change="handleSelectionChange"
+        >
+          <el-table-column type="selection" width="55"></el-table-column>
+          <el-table-column prop="resourceGroup" label="设备类型"></el-table-column>
+          <el-table-column prop="resourceCount" label="设备数量"></el-table-column>
+          <el-table-column prop="groupDes" label="设备类型描述" width="170"></el-table-column>
 
-        <el-table-column prop="createUserName" label="创建人"></el-table-column>
-        <el-table-column prop="createTime" label="创建时间" width="170"></el-table-column>
-        <el-table-column prop="modifyUserName" label="修改人"></el-table-column>
-        <el-table-column prop="modifyTime" label="修改时间" show-overflow-tooltip></el-table-column>
-      </el-table>
-    </div>
-    <div class="pagination">
-      <el-pagination
-        background
-        layout="->,total,prev,pager,next,sizes"
-        :total="total"
-        :page-size="pagesize"
-        :page-sizes="[5, 10, 15, 20]"
-        :current-page="currentPage"
-        @size-change="handlePagesize"
-        @current-change="handleCurrentChange"
-      ></el-pagination>
-    </div>
+          <el-table-column prop="createUserName" label="创建人"></el-table-column>
+          <el-table-column prop="createTime" label="创建时间" width="170"></el-table-column>
+          <el-table-column prop="modifyUserName" label="修改人"></el-table-column>
+          <el-table-column prop="modifyTime" label="修改时间" show-overflow-tooltip></el-table-column>
+        </dsn-table>
+      </div>
+      <div class="pagination">
+        <dsn-pagination
+          background
+          layout="->,total,prev,pager,next,sizes"
+          :total="total"
+          :page-size="pagesize"
+          :current-page="currentPage"
+          @size-change="handlePagesize"
+          @current-change="handleCurrentChange"
+        ></dsn-pagination>
+      </div>
+    </DsnPanel>
     <el-dialog title="删除" :visible.sync="deleteDialog" width="30%">
       <span>是否确认删除{{ selectionList.length }}条数据？</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="deleteDialog = false">取 消</el-button>
-        <el-button type="primary" @click="handleDelete">确 定</el-button>
+        <dsn-button @click.native="deleteDialog = false">取 消</dsn-button>
+        <dsn-button type="primary" @click.native="handleDelete">确 定</dsn-button>
       </span>
     </el-dialog>
   </div>
@@ -273,7 +283,7 @@ export default {
 </script>
 
 <style lang="scss">
-.deviceType {
+/* .deviceType {
   padding: 0 30px;
   .operate {
     padding: 10px 5px;
@@ -286,5 +296,5 @@ export default {
       padding: 5px 30px;
     }
   }
-}
+} */
 </style>

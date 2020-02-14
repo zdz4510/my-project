@@ -25,7 +25,7 @@
       @close="handleClose"
       :collapse="!isCollapse"
     >
-       <el-submenu  :index="item.id" :key="item.id" v-for="item in list">
+       <!-- <el-submenu  :index="item.id" :key="item.id" v-for="item in list">
         <template slot="title">
           <i class="el-icon-location"></i>
           <span slot="title">{{item.lable}}</span>
@@ -33,7 +33,8 @@
          <el-menu-item   :route="{
             name:subitem.key
          }"  :key="subitem.id"  v-for="subitem in item.children"   :index="subitem.id">{{subitem.lable}}</el-menu-item>
-       </el-submenu>
+       </el-submenu> -->
+          <DsnMenuTree :data="list" />
      
     </el-menu>
   </div>
@@ -42,8 +43,11 @@
 
 <script>
 import {mapState} from 'vuex';
-
+import DsnMenuTree from './dsn-menutree'
 export default {
+   components:{
+    DsnMenuTree
+  },
   data() {
     return {
       isCollapse: true,

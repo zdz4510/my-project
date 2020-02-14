@@ -233,8 +233,9 @@ export default {
       paramsDialogVisible: false,
       dialogVisible: false,
       rules: {
+        
         FIELD_01: [
-          { required: true, message: "请填写自定义项目名称", trigger: "change" }
+          { required: true, message: "请填写自定义项目名称", trigger: "blur" }
         ]
       },
       srules: {

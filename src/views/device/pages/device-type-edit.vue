@@ -1,32 +1,33 @@
 <template>
   <div class="typeEdit">
     <div class="operate">
-      <el-button size="small" type="primary" @click="handleBack">返回</el-button>
-      <el-button size="small" type="primary" @click="checkAdd('typeForm')">保存</el-button>
-      <el-button size="small" type="primary" @click="handleReset">重置</el-button>
+      <dsn-button size="small" type="primary" @click.native="handleBack">返回</dsn-button>
+      <dsn-button size="small" type="primary" @click.native="checkAdd('typeForm')">保存</dsn-button>
+      <dsn-button size="small" type="primary" @click.native="handleReset">重置</dsn-button>
     </div>
 
-    <div class="showInfo">
+    <div class="operate" style="padding-bottom: 14px">
       <div class="right">
         <el-form
+          :inline="true"
           :model="typeForm"
           :rules="rules"
           ref="typeForm"
-          label-width="100px"
           class="typeForm"
         >
           <el-form-item label="设备类型" prop="resourceGroup">
-            <el-input
+            <dsn-input
               v-model.trim="typeForm.resourceGroup"
               placeholder="请输入设备类型"
               :disabled="isEditResource"
-            ></el-input>
+            ></dsn-input>
           </el-form-item>
           <el-form-item label="组别描述">
-            <el-input type="textarea" rows="2" v-model.trim="typeForm.groupDes"></el-input>
+            <dsn-input type="textarea" rows="2" v-model.trim="typeForm.groupDes"></dsn-input>
           </el-form-item>
         </el-form>
         <el-transfer
+          style="width: 100%"
           ref="transfer"
           filterable
           filter-placeholder="请输入设备编号"
@@ -46,8 +47,8 @@
     <el-dialog title="保存" :visible.sync="saveDialog" width="30%">
       <span>是否确认保存该条数据？</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="saveDialog = false">取 消</el-button>
-        <el-button type="primary" @click="handleSave">确 定</el-button>
+        <dsn-button @click.native="saveDialog = false">取 消</dsn-button>
+        <dsn-button type="primary" @click.native="handleSave">确 定</dsn-button>
       </span>
     </el-dialog>
   </div>
@@ -262,11 +263,18 @@ export default {
 
 <style lang="scss">
 .typeEdit {
-  padding: 0 30px;
   .operate {
-    padding: 10px 5px;
+    padding: 14px 14px 0;
+    background: #fff;
+    margin-bottom: 14px;
+		border-radius: 4px;
+    .el-transfer {
+      .el-transfer-panel {
+        width: 40%;
+      }
+    }
   }
-  .showInfo {
+/*   .showInfo {
     .right {
       flex: 1;
       .el-form {
@@ -278,6 +286,6 @@ export default {
         }
       }
     }
-  }
+  } */
 }
 </style>
