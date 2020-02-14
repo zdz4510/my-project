@@ -1,6 +1,9 @@
 <template>
   <div class="workingCertificateMaintenance">
-    <div class="query">
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索信息</span>
+      </div>
       <el-form
         :inline="true"
         :model="workCertificateForm"
@@ -8,45 +11,52 @@
         label-width="100px"
       >
         <el-form-item label="物料清单">
-          <el-input
+          <dsn-input
             v-model="bom"
             placeholder="请输入物料清单"
-          ></el-input>
+          ></dsn-input>
         </el-form-item>
         <el-form-item>
-          <el-button size="small" type="primary" @click="handleQuery">
+          <dsn-button size="small" type="primary" icon="el-icon-search" @click="handleQuery">
             查询
-          </el-button>
-          <el-button size="small" type="primary" @click="handleReset">
+          </dsn-button>
+          <dsn-button size="small" type="primary" icon="el-icon-refresh" @click="handleReset">
             重置
-          </el-button>
+          </dsn-button>
         </el-form-item>
       </el-form>
-    </div>
-    <div class="operate">
-      <el-button size="small" type="primary" @click="handleAdd">
-        新增
-      </el-button>
-      <el-button
+    </DsnPanel>
+    <div class="operation">
+      <dsn-button 
+        size="small" 
+        type="success" 
+        icon="el-icon-add"
+        :disabled="false"
+        @click.native="handleAdd">新增</dsn-button>
+      <dsn-button
         size="small"
         type="primary"
+        icon="el-icon-edit"
         :disabled="selectionList.length !== 1"
         @click="handleEdit"
       >
         修改
-      </el-button>
-      <el-button
+      </dsn-button>
+      <dsn-button
         size="small"
-        type="primary"
+        type="danger"
+        icon="el-icon-delete"
         :disabled="selectionList.length <= 0"
         @click="deleteDialog = true"
       >
         删除
-      </el-button>
-  
+      </dsn-button>
     </div>
-    <div class="showInfo">
-      <el-table
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索结果</span>
+      </div>
+      <dsn-table
         ref="multipleTable"
         :data="tableData"
         tooltip-effect="dark"
@@ -66,10 +76,9 @@
             <!-- {{ scope.row.status | filterStatus }} -->
           </template>
         </el-table-column>
-      </el-table>
-    </div>
+      </dsn-table>
     <div class="pagination">
-      <el-pagination
+      <dsn-pagination
         background
         layout="->,total,prev,pager,next,sizes"
         :total="total"
@@ -79,15 +88,16 @@
         @size-change="handlePagesize"
         @current-change="handleCurrentChange"
       >
-      </el-pagination>
+      </dsn-pagination>
     </div>
-    <el-dialog title="删除" :visible.sync="deleteDialog" width="30%">
+    </DsnPanel>
+    <el-dialog title="删除" :visible.sync="deleteDialog" :width="defaltDialogWidth">
       <span>是否确认删除{{ selectionList.length }}条数据？</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="deleteDialog = false">取 消</el-button>
-        <el-button type="primary" @click="handleDelete">
+        <dsn-button @click="deleteDialog = false">取 消</dsn-button>
+        <dsn-button type="primary" @click="handleDelete">
           确 定
-        </el-button>
+        </dsn-button>
       </span>
     </el-dialog>
   </div>
@@ -101,6 +111,7 @@ import {
 import { mapMutations } from "vuex";
 // import { filter } from "minimatch";
 export default {
+  inject:['defaltDialogWidth'],
   data() {
     return {
       workCertificateForm: {
@@ -248,22 +259,22 @@ export default {
 
 <style lang="scss">
 .workingCertificateMaintenance {
-  padding: 0 30px;
-  .operate {
-    padding: 10px 5px;
-  }
-  .query {
-    height: 40px;
-    padding: 10px;
-    display: flex;
-    justify-content: space-between;
-    .left {
-      width: 300px;
-    }
-    .right {
-      width: 680px;
-      padding: 5px 30px;
-    }
-  }
+  // padding: 0 30px;
+  // .operate {
+  //   padding: 10px 5px;
+  // }
+  // .query {
+  //   height: 40px;
+  //   padding: 10px;
+  //   display: flex;
+  //   justify-content: space-between;
+  //   .left {
+  //     width: 300px;
+  //   }
+  //   .right {
+  //     width: 680px;
+  //     padding: 5px 30px;
+  //   }
+  // }
 }
 </style>

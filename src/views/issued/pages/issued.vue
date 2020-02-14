@@ -4,38 +4,43 @@
         <div class="issudTop">
             <!--顶部左边-->
             <div class="topLeft">
-                <el-form  ref="workOrderIssued" label-width="100px" class="demo-ruleForm" :model="workOrderIssued">
-                    <el-form-item
-                        label="工单:"
-                        prop="shopOrder"
-                        :rules="[
-                        { required: true, message: '工单不能为空'}
-                        ]"
-                    >
-                        <el-col :span="9">
-                            <el-input  autocomplete="off" v-model='workOrderIssued.shopOrder'></el-input>
-                        </el-col>
-                        
-                        <div class="choiceBox">
-                            <i class="el-icon-document-copy choice"></i>                        
-                            <el-button size="small" type="primary" @click="handleGet">获取</el-button>
-                            <el-button size="small" type="primary" @click="reset">清除</el-button>
-                        </div>
+                <DsnPanel>
+                    <div slot="header" class="title clearfix">
+                        <span>搜索信息</span>
+                    </div>
+                    <el-form  ref="workOrderIssued" label-width="100px" class="demo-ruleForm" :model="workOrderIssued">
+                        <el-form-item
+                            label="工单:"
+                            prop="shopOrder"
+                            :rules="[
+                            { required: true, message: '工单不能为空'}
+                            ]"
+                        >
+                            <el-col :span="9">
+                                <dsn-input  autocomplete="off" v-model='workOrderIssued.shopOrder'></dsn-input>
+                            </el-col>
+                            
+                            <div class="choiceBox">
+                                <i class="el-icon-document-copy choice"></i>                        
+                                <dsn-button size="small" type="primary" @click.native="handleGet">获取</dsn-button>
+                                <dsn-button size="small" type="primary" @click.native="reset">清除</dsn-button>
+                            </div>
 
-                    </el-form-item>
-                    <el-form-item
-                        label="下达数量:"
-                        prop="numIssued"
-                        :rules="[
-                        { required: true, message: '下达数量不能为空'}
-                        ]"
-                    >
-                        <el-col :span="9">
-                            <el-input  autocomplete="off" v-model='workOrderIssued.numIssued'></el-input>
-                        </el-col>
-                        <el-button size="small" type="primary" style="margin-left:26px;" @click="handleIssued">下达</el-button>
-                    </el-form-item>
-                </el-form>
+                        </el-form-item>
+                        <el-form-item
+                            label="下达数量:"
+                            prop="numIssued"
+                            :rules="[
+                            { required: true, message: '下达数量不能为空'}
+                            ]"
+                        >
+                            <el-col :span="9">
+                                <dsn-input  autocomplete="off" v-model='workOrderIssued.numIssued'></dsn-input>
+                            </el-col>
+                            <dsn-button size="small" type="primary" style="margin-left:26px;" @click.native="handleIssued">下达</dsn-button>
+                        </el-form-item>
+                    </el-form>
+                </DsnPanel>
             </div>
             <div class="topRigt">
                 <div class="showData">
@@ -55,7 +60,7 @@
         <!--下达列表-->
         <div class="height48">
             <div>工单下达</div>
-            <el-button type="primary" size="small">导出</el-button>
+            <dsn-button type="primary" size="small" icon="el-icon-upload2">导出</dsn-button>
         </div>
         <div class="issuedTable">
             <el-table
@@ -195,11 +200,11 @@ export default {
             width:50%;
         }
         .topRigt{
-            height:auto;
+            height:200px;
             width:40%;
             background:#fff;
             box-sizing: border-box;
-            padding:10px 5px;
+            margin:0 10px;
             .showData{
                 display: flex;
                 justify-content:space-between;

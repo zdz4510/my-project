@@ -1,23 +1,24 @@
 <template>
   <div class="materialListEdit">
     <div class="operate">
-      <el-button size="small" type="primary" @click="handleBack">
+      <dsn-button size="small" type="primary" @click="handleBack">
         返回
-      </el-button>
-      <el-button
+      </dsn-button>
+      <dsn-button
         size="small"
         type="primary"
         @click="checkAdd(['baseInfoOne', 'baseInfoTwo'])"
       >
         保存
-      </el-button>
-      <el-button
+      </dsn-button>
+      <dsn-button
         size="small"
         type="primary"
+        icon="el-icon-refresh"
         @click="handleReset(['baseInfoOne', 'baseInfoTwo'])"
       >
         重置
-      </el-button>
+      </dsn-button>
     </div>
     <div class="showInfo">
       <div class="right">
@@ -28,17 +29,17 @@
           :rules="rules"
         >
           <el-form-item label="物料清单" prop="bom">
-            <el-input
+            <dsn-input
               v-model.trim="baseInfo.bom"
               placeholder="物料清单"
               :disabled="isEditStation"
-            ></el-input>
+            ></dsn-input>
           </el-form-item>
           <el-form-item label="物料清单描述" prop="bomDes">
-            <el-input
+            <dsn-input
               v-model.trim="baseInfo.bomDes"
               placeholder="请输入物料清单描述"
-            ></el-input>
+            ></dsn-input>
           </el-form-item>
         </el-form>
 
@@ -52,47 +53,48 @@
               :rules="rules"
             >
               <el-form-item label="当前版本" prop="bomRev">
-                <el-input 
+                <dsn-input 
                   v-model="baseInfo.bomRev"
                 />
               </el-form-item>
               <el-form-item label="版本号" prop="currentRev">
-                <el-checkbox v-model="baseInfo.currentRev">当前版本</el-checkbox>
+                <el-checkbox v-model="baseInfo.currentRev">当前版本:</el-checkbox>
               </el-form-item>
               <el-form-item label="状态:" prop="status">
-                <el-select
+                <dsn-select
                   v-model="baseInfo.status"
                   filterable
                   placeholder="请选择状态"
                 >
                   <el-option label="已启用" :value="true">已启用</el-option>
                   <el-option label="未启用" :value="false">未启用</el-option>
-                </el-select>
+                </dsn-select>
               </el-form-item>
               <el-form-item label="物料清单类型:" prop="bomType">
-                <el-select
+                <dsn-select
                   v-model="baseInfo.bomType"
                   placeholder="请选择清单类型"
                 >
                   <el-option label="主数据" value="MATERIAL">主数据</el-option>
                   <el-option label="工单" value="ORDER">工单</el-option>
-                </el-select>
+                </dsn-select>
               </el-form-item>
             </el-form>
           </el-tab-pane>
           <el-tab-pane class="materialDetail">
             <span slot="label">物料清单详情</span>
-            <el-button size="small" type="primary" @click="handleInsert">
+            <dsn-button size="small" type="primary" @click="handleInsert">
               插入
-            </el-button>
-            <el-button
+            </dsn-button>
+            <dsn-button
               size="small"
               type="danger"
+              icon="el-icon-delete"
               :disabled="selectionList.length <= 0"
               @click="deleteDialog = true"
             >
               删除
-            </el-button>
+            </dsn-button>
             <div class="showInfo">
               <el-table
                 ref="multipleTable"
@@ -104,34 +106,34 @@
                 <el-table-column type="selection" width="55" />
                 <el-table-column type="sequence" label="装配顺序">
                   <template slot-scope="scope">
-                    <el-input v-model="scope.row.sequence" />
+                    <dsn-input v-model="scope.row.sequence" />
                   </template>
                 </el-table-column>
                 <el-table-column prop="material" label="组件/版本">
                   <template slot-scope="scope">
-                    <el-select v-model="scope.row.material" filterable placeholder="请选择">
+                    <dsn-select v-model="scope.row.material" filterable placeholder="请选择">
                       <el-option
                         v-for="item in materialAll"
                         :key="`${item.material}/${item.materialRev}`"
                         :label="`${item.material}/${item.materialRev}`"
                         :value="`${item.material}/${item.materialRev}`">
                       </el-option>
-                    </el-select>
+                    </dsn-select>
                   </template>
                 </el-table-column>
                 <el-table-column  label="组件描述">
                   <template slot-scope="scope">
-                    <el-input :value="getMaterialInfo(scope.row.material, 'materialDes')" disabled=""/>
+                    <dsn-input :value="getMaterialInfo(scope.row.material, 'materialDes')" disabled=""/>
                   </template>
                 </el-table-column>
                 <el-table-column prop="assemQty" label="装配数量">
                   <template slot-scope="scope">
-                    <el-input v-model="scope.row.assemQty" />
+                    <dsn-input v-model="scope.row.assemQty" />
                   </template>
                 </el-table-column>
                 <el-table-column  label="组件类型">
                   <template slot-scope="scope">
-                    <el-input :value="getMaterialInfo(scope.row.material, 'materialType')" disabled=""/>
+                    <dsn-input :value="getMaterialInfo(scope.row.material, 'materialType')" disabled=""/>
                   </template>
                 </el-table-column>
               </el-table>
@@ -147,10 +149,10 @@
     <el-dialog title="删除" :visible.sync="deleteDialog" width="30%">
       <span>是否确认删除{{ selectionList.length }}条数据？</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="deleteDialog = false">取 消</el-button>
-        <el-button type="primary" @click="handleDelete">
+        <dsn-button @click="deleteDialog = false">取 消</dsn-button>
+        <dsn-button type="primary" @click="handleDelete">
           确 定
-        </el-button>
+        </dsn-button>
       </span>
     </el-dialog>
   </div>
