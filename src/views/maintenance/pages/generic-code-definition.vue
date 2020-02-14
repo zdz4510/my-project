@@ -293,16 +293,16 @@ export default {
       }
       callback();
     };
-    //代码描述验证规则
-    const valiGeneralCodeDes = (rule, value, callback) => {
-      // let reg = /^[\u4e00-\u9fa5\w]{1,50}$/;
-      // let reg = /^\w{,50}$/;
-      let reg = /^.{1,50}$/g;
-      if (!reg.test(value)) {
-        callback("描述字数超出50字");
-      }
-      callback();
-    };
+    // //代码描述验证规则
+    // const valiGeneralCodeDes = (rule, value, callback) => {
+    //   // let reg = /^[\u4e00-\u9fa5\w]{1,50}$/;
+    //   // let reg = /^\w{,50}$/;
+    //   let reg = /^.{1,50}$/g;
+    //   if (!reg.test(value)) {
+    //     callback("描述字数超出50字");
+    //   }
+    //   callback();
+    // };
     const valiFieldSize = (rule, value, callback) => {
       if (value === "") {
         callback("长度不能为空");
@@ -340,7 +340,8 @@ export default {
           { validator: valiGeneralCode, trigger: "change" }
         ],
         generalCodeDes: [
-          { validator: valiGeneralCodeDes, max: 50, trigger: "blur" }
+          // { validator: valiGeneralCodeDes, max: 50, trigger: "blur" },
+          { min: 3, max: 5, message: "长度 50 以内", trigger: "blur" }
         ]
       },
       addForm: {
@@ -419,7 +420,6 @@ export default {
       };
       findGeneralCodeHttp(data).then(data => {
         const res = data.data;
-        console.log(res);
         if (res.code === 200) {
           this.tableData = res.data.fields;
           this.genericCodeDefineForm.generalCodeDes = res.data.generalCodeDes;
@@ -489,7 +489,6 @@ export default {
       findFieldHttp(data).then(data => {
         const res = data.data;
         if (res.code === 200) {
-          console.log(res.data);
           this.fieldDialog = true;
           this.fieldData = res.data;
           return;
@@ -514,7 +513,7 @@ export default {
     },
     //代码名弹出框确认选择
     handleSelectionGeneralCode() {
-      console.log(this.currentGeneralCode.generalCode);
+      // console.log(this.currentGeneralCode.generalCode);
       if (this.flag) {
         this.genericCodeDefineForm.generalCode = this.currentGeneralCode.generalCode;
       } else {
@@ -549,8 +548,6 @@ export default {
     },
     //重置表单
     resetForm() {
-      console.log(this.operateType);
-      // this.addDialog = false;
       if (this.operateType === "add") {
         this.handleResetAddDialog();
         return;
@@ -656,14 +653,12 @@ export default {
       this.addDialog = true;
       this.cloneEditForm = JSON.parse(JSON.stringify(this.selectionList[0]));
       this.addForm = JSON.parse(JSON.stringify(this.cloneEditForm));
-      console.log(this.addForm);
     },
     //保存前验证表单
     checkSave() {
       this.$refs["genericCodeDefineForm"].validate(valid => {
         if (valid) {
-          console.log(valid, "valid");
-          // this.handleSave();
+          this.handleSave();
         } else {
           return false;
         }
@@ -683,7 +678,7 @@ export default {
         if (res.code === 200) {
           this.$message({
             message: "保存成功",
-            type: "warning"
+            type: "success"
           });
           this.handleReset();
           return;
