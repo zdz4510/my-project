@@ -1,14 +1,13 @@
 <template>
   <el-input
-    placeholder="请输入内容"
+    :placeholder="placeholder"
     :size="size"
     :value="value"
-    :type="type"
-    :disabled="disabled"
     @input="input"
     @change="change"
     @blur="blur"
     @clear="clear"
+    :disabled="disabled"
     clearable
   >
     <slot></slot>
@@ -28,20 +27,20 @@ export default {
       default: true
     },
     value: {
-      type: String,
+      type: [String,Number],
       required: true
     },
     type: {
-      type: [String,Number],
+      type: String,
       default: "text"
     },
     placeholder: {
       type: String,
       default: "请输入内容"
     },
-    disabled: {
-      type: Boolean,
-      default: false
+    disabled:{
+      type:Boolean,
+      default:false
     }
   },
   data() {

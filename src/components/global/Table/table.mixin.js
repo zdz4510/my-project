@@ -5,9 +5,6 @@ export default {
       //console.log('当用户手动勾选全选 Checkbox 时触发的事件')
       this.$emit("select", selection, row);
     },
-    currentChange(row){
-      this.$emit("current-change",row);
-    },
     //当用户手动勾选全选 Checkbox 时触发的事件
     tableSelectAll(selection) {
       // console.log('当用户手动勾选全选 Checkbox 时触发的事件')
@@ -18,10 +15,16 @@ export default {
       // console.log('当选择项发生变化时会触发该事件')
       this.$emit("selection-change", selection);
     },
+    currentChange(row){
+      this.$emit("current-change",row);
+    },
     //当某个单元格被双击击时会触发该事件
     tableCellClick(row, column, cell, event) {
       // console.log('当某个单元格被双击击时会触发该事件')
       this.$emit("cell-click", row, column, cell, event);
+    },
+    tableRowDblclick(row, column, event){
+       this.$emit("row-dblclick",row, column, event);
     },
     // 表格某一行被点击后
     tableRowClick(row, column, event) {
@@ -51,5 +54,6 @@ export default {
     setCurrentRow(row) {
       this.$refs["table"].setCurrentRow(row);
     },
+  
   }
 };

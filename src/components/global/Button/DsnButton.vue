@@ -1,9 +1,17 @@
 <template>
-    <el-button class="dsn-button" :type="type" :icon="icon" :size="size" :disabled="disabled">
-      <slot></slot>
-    </el-button>
+  <el-button
+    @click="click"
+    class="dsn-button"
+    :type="type"
+    :icon="icon"
+    :size="size"
+    :disabled="disabled"
+  >
+    <slot></slot>
+  </el-button>
 </template>
 <script>
+
 export default {
   name: "dsnButton",
   props: {
@@ -24,13 +32,18 @@ export default {
       type: Boolean,
       default: false
     },
-    icon:{
-      type:String,
-      required:false,
+    icon: {
+      type: String,
+      required: false
     }
   },
   components: {},
-  created() {}
+  created() {},
+  methods: {
+    click: function() {
+      this.$emit("click");
+    }
+  }
 };
 </script>
 

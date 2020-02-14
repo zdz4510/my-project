@@ -5,14 +5,16 @@
     stripe
     :border="border"
     :emptyText="emptyText"
-    :rowKey="rowKey"
-    :highlight-current-row="highlightCurrentRow"
+    :row-key="rowKey"
+    style="width:100%"
     @select="tableSelect"
     @row-click="tableRowClick"
+    @row-dblclick="tableRowDblclick"
     @cell-click="tableCellClick"
     @select-all="tableSelectAll"
     @selection-change="tableSelectionChange"
-     @current-change="currentChange"
+    @current-change="currentChange"
+    :highlight-current-row="highlightCurrentRow"
     ref="table"
    
   >
@@ -32,6 +34,15 @@ export default {
       default: () => {
         return [];
       }
+    },
+    "highlight-current-row":{
+          type:Boolean,
+          default:false
+    },
+    //  key
+    "rowKey":{
+        type:String,
+        required:false
     },
     //高度
     height: {
@@ -69,17 +80,9 @@ export default {
       type: Function,
       required: false
     },
-    rowKey: {
-      type: String,
-      required: false
-    },
     emptyText: {
       type: String,
       default: "没有数据啊"
-    },
-    highlightCurrentRow: {
-      type: Boolean,
-      default: false
     }
   },
   methods: {

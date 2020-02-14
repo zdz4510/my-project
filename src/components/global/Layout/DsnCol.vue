@@ -21,7 +21,7 @@ export default {
   props: {
     span: {
       type: Number,
-      default: 24
+      default: 12
     },
     offset: {
       type: Number,
@@ -42,19 +42,19 @@ export default {
     },
     sm: {
       type: [Number,Object],
-      default: 8
+      required:false
     },
     md: {
       type: [Number,Object],
-       default: 8
+      required:false
     },
     lg: {
       type: [Number,Object],
-       default: 6
+      required:false,
     },
     xl: {
       type: [Number,Object],
-       default: 6
+      required:false,
     },
     tag: {
       type: String,
