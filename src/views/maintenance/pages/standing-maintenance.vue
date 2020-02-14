@@ -1,96 +1,76 @@
 <template>
   <div class="standingMaintenance">
-    <div class="query">
-      <el-form
-        :inline="true"
-        :model="standingForm"
-        ref="standingForm"
-        label-width="70px"
-      >
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索条件</span>
+      </div>
+      <!-- 查询条件start -->
+      <el-form :inline="true" :model="standingForm" ref="standingForm" label-width="70px">
         <el-form-item label="产线">
-          <el-input
-            v-model="standingForm.workCenterRelation"
-            placeholder="请输入产线"
-          ></el-input>
+          <dsn-input v-model="standingForm.workCenterRelation" placeholder="请输入产线"></dsn-input>
         </el-form-item>
         <el-form-item label="站位">
-          <el-input
-            v-model="standingForm.station"
-            placeholder="请输入站位"
-          ></el-input>
+          <dsn-input v-model="standingForm.station" placeholder="请输入站位"></dsn-input>
         </el-form-item>
         <el-form-item>
-          <el-button size="small" type="primary" @click="handleQuery">
-            查询
-          </el-button>
-          <el-button size="small" type="primary" @click="handleReset">
-            重置
-          </el-button>
+          <dsn-button size="small" type="primary" icon="el-icon-search" @click="handleQuery">查询</dsn-button>
+          <dsn-button size="small" type="primary" icon="el-icon-refresh" @click="handleReset">重置</dsn-button>
         </el-form-item>
       </el-form>
-    </div>
-    <div class="operate">
-      <el-button size="small" type="primary" @click="handleAdd">
-        新增
-      </el-button>
-      <el-button
-        size="small"
-        type="primary"
-        :disabled="selectionList.length < 1"
-        @click="handleEdit"
-      >
-        修改
-      </el-button>
-      <el-button
-        size="small"
-        type="primary"
-        :disabled="selectionList.length < 1"
-        @click="handleDelete"
-      >
-        删除
-      </el-button>
-      <el-button size="small" type="primary" @click="importDialog = true">
-        导入
-      </el-button>
-      <el-button size="small" type="primary" @click="handleExport">
-        导出
-      </el-button>
-    </div>
-    <div class="showInfo">
-      <el-table
+      <!-- 查询条件end -->
+    </DsnPanel>
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索结果</span>
+      </div>
+      <!-- 表格操作start -->
+      <div class="operate">
+        <dsn-button size="small" type="success" icon="el-icon-folder-add" @click="handleAdd">新增</dsn-button>
+        <dsn-button
+          size="small"
+          type="primary"
+          icon="el-icon-edit"
+          :disabled="selectionList.length < 1"
+          @click="handleEdit"
+        >修改</dsn-button>
+        <dsn-button
+          size="small"
+          type="danger"
+          icon="el-icon-delete"
+          :disabled="selectionList.length < 1"
+          @click="handleDelete"
+        >删除</dsn-button>
+        <dsn-button
+          size="small"
+          type="primary"
+          icon="el-icon-download"
+          @click="importDialog = true"
+        >导入</dsn-button>
+        <dsn-button size="small" type="primary" icon="el-icon-upload2" @click="handleExport">导出</dsn-button>
+      </div>
+      <!-- 表格操作end -->
+      <!-- 表格数据start -->
+      <dsn-table
         ref="multipleTable"
         :data="tableData"
         tooltip-effect="dark"
         style="width: 100%"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column type="selection" width="55"> </el-table-column>
-        <el-table-column prop="station" label="站位" width="60">
-        </el-table-column>
-        <el-table-column prop="stationDes" label="站位描述" width="100">
-        </el-table-column>
-        <el-table-column prop="padIp" label="IP地址" width="120">
-        </el-table-column>
-        <el-table-column prop="resource" label="设备" width="100">
-        </el-table-column>
-        <el-table-column prop="workCenter" label="工作中心" width="100">
-        </el-table-column>
-        <el-table-column prop="workCenterRelation" label="产线" width="80">
-        </el-table-column>
-        <el-table-column prop="status" label="状态" width="60">
-        </el-table-column>
-        <el-table-column prop="stationType" label="站位类型" width="100">
-        </el-table-column>
-        <el-table-column prop="fullQty" label="满站数量" width="100">
-        </el-table-column>
-        <el-table-column prop="name" label="总在制" width="100">
-        </el-table-column>
-        <el-table-column prop="address" label="站内在制" show-overflow-tooltip>
-        </el-table-column>
-      </el-table>
-    </div>
-    <div class="pagination">
-      <el-pagination
+        <el-table-column type="selection" width="55"></el-table-column>
+        <el-table-column prop="station" label="站位" width="60"></el-table-column>
+        <el-table-column prop="stationDes" label="站位描述" width="100"></el-table-column>
+        <el-table-column prop="padIp" label="IP地址" width="120"></el-table-column>
+        <el-table-column prop="resource" label="设备" width="100"></el-table-column>
+        <el-table-column prop="workCenter" label="工作中心" width="100"></el-table-column>
+        <el-table-column prop="workCenterRelation" label="产线" width="80"></el-table-column>
+        <el-table-column prop="status" label="状态" width="60"></el-table-column>
+        <el-table-column prop="stationType" label="站位类型" width="100"></el-table-column>
+        <el-table-column prop="fullQty" label="满站数量" width="100"></el-table-column>
+        <el-table-column prop="name" label="总在制" width="100"></el-table-column>
+        <el-table-column prop="address" label="站内在制" show-overflow-tooltip></el-table-column>
+      </dsn-table>
+      <dsn-pagination
         background
         layout="->,total,prev,pager,next,sizes"
         :total="total"
@@ -99,38 +79,47 @@
         :current-page="currentPage"
         @size-change="handlePagesize"
         @current-change="handleCurrentChange"
-      >
-      </el-pagination>
-    </div>
+      ></dsn-pagination>
+      <!-- 表格数据end -->
+    </DsnPanel>
+    <!-- 导入模态框start -->
     <el-dialog title="导入" :visible.sync="importDialog" width="30%">
       <span>
         <div class="import">
-          <el-button size="small" type="primary" @click="downLoad">
-            下载导入模板
-          </el-button>
+          <dsn-button size="small" type="primary" @click="downLoad">下载导入模板</dsn-button>
         </div>
         <div class="import">
-          <el-button size="small" type="primary" @click="upLoad">
-            上传导入文件
-          </el-button>
+          <!-- <dsn-button size="small" type="primary" @click="upLoad">上传导入文件</dsn-button> -->
+          <el-upload
+            ref="upload"
+            :action="`${host}/mes/station/station/import`"
+            :on-preview="handlePreview"
+            :on-remove="handleRemove"
+            :on-success="handleSuccess"
+            :on-error="handleError"
+            :file-list="fileList"
+            :auto-upload="false"
+          >
+            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+          </el-upload>
         </div>
       </span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="importDialog = false">取消上传</el-button>
-        <el-button type="primary" @click="handleImport">
-          确定上传
-        </el-button>
+        <dsn-button @click="importDialog = false">取消上传</dsn-button>
+        <dsn-button type="primary" @click="handleImport">确定上传</dsn-button>
       </span>
     </el-dialog>
+    <!-- 导入模态框end -->
+    <!-- 删除模态框start -->
     <el-dialog title="删除" :visible.sync="deleteDialog" width="30%">
       <span>是否确认删除{{ selectionList.length }}条数据？</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="deleteDialog = false">取 消</el-button>
-        <el-button type="primary" @click="handleDelete">
-          确 定
-        </el-button>
+        <dsn-button @click="deleteDialog = false">取 消</dsn-button>
+        <dsn-button type="primary" @click="handleDelete">确 定</dsn-button>
       </span>
     </el-dialog>
+    <!-- 删除模态框end -->
   </div>
 </template>
 
@@ -139,6 +128,7 @@ import {
   findPageHttp,
   deleteStationBatchHttp,
   findResourceGroupListHttp
+  // importHttp
 } from "@/api/maintenance/standing.api.js";
 import { mapMutations } from "vuex";
 import { exportExcel } from "@/until/excel.js";
@@ -190,7 +180,9 @@ export default {
       selectionList: [],
       stations: [],
       deleteDialog: false,
-      importDialog: false
+      importDialog: false,
+      host: `${window.VUE_APP_URL}`,
+      fileList: []
     };
   },
   created() {
@@ -287,7 +279,9 @@ export default {
       });
     },
     //确认上传
-    handleImport() {},
+    handleImport() {
+      this.$refs.upload.submit();
+    },
     //下载模板
     downLoad() {
       findResourceGroupListHttp();
@@ -342,34 +336,45 @@ export default {
         });
         return;
       }
+    },
+    //上传文件start
+    handleRemove(file, fileList) {
+      console.log(file, fileList);
+    },
+    handlePreview(file) {
+      console.log(file);
+    },
+    //上传成功的返回值
+    handleSuccess(response) {
+      if (response.code === 200) {
+        this.$message({
+          message: "上传成功",
+          type: "success"
+        });
+        this.importDialog = false;
+        this.init();
+        return;
+      }
+      this.$message({
+        message: response.message,
+        type: "warning"
+      });
+      console.log(response);
+    },
+    //上传失败
+    handleError(err) {
+      console.log(err);
     }
+    //上传文件end
   }
 };
 </script>
 
 <style lang="scss">
 .standingMaintenance {
-  padding: 0 30px;
-  .operate {
-    padding: 10px 5px;
-  }
-  .query {
-    height: 40px;
-    padding: 10px;
-    display: flex;
-    justify-content: space-between;
-    .left {
-      width: 300px;
-    }
-    .right {
-      width: 680px;
-      padding: 5px 30px;
-    }
-  }
   .el-dialog {
+    text-align: center;
     .import {
-      text-align: center;
-      margin: 20px;
     }
   }
 }
