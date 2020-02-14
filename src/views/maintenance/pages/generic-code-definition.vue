@@ -28,7 +28,8 @@
               <dsn-input
                 v-model.trim="genericCodeDefineForm.generalCode"
                 placeholder="请输入代码名（[A-Z,0-9,_,-,/]）"
-                class="generalCode"
+                @input="inputGeneralCode"
+                @clear="clearGeneralCode"
               ></dsn-input>
             </el-col>
             <el-col :span="2">
@@ -71,7 +72,7 @@
           type="success"
           icon="el-icon-folder-add"
           @click.native="handleAddInit"
-          :disabled="genericCodeDefineForm.generalCode === ''"
+          :disabled="!editable || genericCodeDefineForm.generalCode === '' "
         >新增</dsn-button>
         <dsn-button
           size="small"
@@ -80,7 +81,7 @@
           :disabled="selectionList.length !== 1 || !editable"
           @click.native="handleEdit"
         >修改</dsn-button>
-        <dsn-button size="small" type="primary" @click.native="checkSave">保存</dsn-button>
+        <dsn-button size="small" type="primary" :disabled="!editable" @click.native="checkSave">保存</dsn-button>
         <dsn-button
           size="small"
           type="danger"
@@ -142,7 +143,7 @@
               @change="changeFieldType"
               style="width:100%"
             >
-              <el-option label="本文" value="A"></el-option>
+              <el-option label="文本" value="A"></el-option>
               <el-option label="数字" value="N"></el-option>
               <el-option label="引用" value="C"></el-option>
             </el-select>
@@ -432,6 +433,7 @@ export default {
             return this.usedFieldNames.indexOf(item) === -1;
           });
           this.editable = res.data.editable;
+          console.log(res.data.editable);
           return;
         }
         this.$message({
@@ -680,6 +682,7 @@ export default {
             message: "保存成功",
             type: "success"
           });
+          this.editable = false;
           this.handleReset();
           return;
         }
@@ -706,6 +709,7 @@ export default {
           message: res.message,
           type: "warning"
         });
+        this.deleteCodeDialog = false;
       });
     },
     //删除字段名
@@ -716,6 +720,18 @@ export default {
       });
       this.tableData = tempArr;
       this.deleteFieldDialog = false;
+    },
+    //代码名输入框值变化
+    inputGeneralCode(val) {
+      if (val !== "") {
+        this.editable = true;
+      } else {
+        this.editable = false;
+      }
+    },
+    //代码名清除时清空表格数据
+    clearGeneralCode() {
+      this.tableData = [];
     }
   }
 };
