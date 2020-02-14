@@ -15,6 +15,7 @@
     @selection-change="tableSelectionChange"
     @current-change="currentChange"
     :highlight-current-row="highlightCurrentRow"
+    
     ref="table"
    
   >

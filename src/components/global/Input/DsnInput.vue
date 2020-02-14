@@ -7,6 +7,7 @@
     @change="change"
     @blur="blur"
     @clear="clear"
+    :type="type"
     :disabled="disabled"
     clearable
   >
@@ -41,7 +42,8 @@ export default {
     disabled:{
       type:Boolean,
       default:false
-    }
+    },
+   
   },
   data() {
     return {};
