@@ -1,30 +1,26 @@
 <template>
   <div class="workOrder">
-    <div class="query">
-      <div class="left">
-        <el-form label-width="90px" :inline="true" class="typeForm">
-          <el-form-item label="工艺路线:">
-            <el-input placeholder="请输入工艺路线" v-model="form.router">
-              <i slot="append" class="el-icon-document-copy"></i>
-            </el-input>
-          </el-form-item>
-          <el-form-item label="版本:">
-            <el-input
-              placeholder="请输入版本"
-              v-model="form.revision"
-            ></el-input>
-          </el-form-item>
-        </el-form>
-      </div>
-      <div class="right">
-        <el-button size="small" type="primary" @click="handleQuery">查询</el-button>
-        <el-button size="small" type="primary" @click="reset">重置</el-button>
-      </div>
-    </div>
-    <div class="operate">
-      <el-button size="small" type="primary" @click="handleSave">保存</el-button>
-      <el-button size="small" type="danger">清除</el-button>
-    </div>
+    <dsnPanel class="query">
+      <el-form :inline="true" class="typeForm" ref="form">
+        <el-form-item label="工艺路线:">
+          <dsn-input placeholder="请输入工艺路线" v-model="form.router">
+            <i slot="append" class="el-icon-document-copy"></i>
+          </dsn-input>
+        </el-form-item>
+        <el-form-item label="版本:">
+          <dsn-input
+            placeholder="请输入版本"
+            v-model="form.revision"
+          ></dsn-input>
+        </el-form-item>
+        <el-form-item>
+        <dsn-button size="small" type="primary" icon='el-icon-search' @click="handleQuery">查询</dsn-button>
+        <dsn-button size="small" type="primary" icon='el-icon-refresh' @click.native="reset">重置</dsn-button>
+        <dsn-button size="small" type="danger" icon='el-icon-delete'>清除</dsn-button>
+        <dsn-button size="small" type="success" icon='el-icon-check' @click="handleSave">保存</dsn-button>
+        </el-form-item>
+      </el-form>
+    </dsnPanel>
     <div class="showInfo">
       <el-tabs type="border-card">
         <el-tab-pane>
@@ -170,7 +166,10 @@ export default {
       });
     },
     //重置
-    reset() {},
+    reset() {
+      console.log('reset')
+      this.$refs['form'].resetFields();
+    },
 
     //保存
     handleSave() {
@@ -297,24 +296,29 @@ export default {
 
 <style lang="scss">
 .workOrder {
-  padding: 0 30px;
-  .query {
-    height: 40px;
-    padding: 10px;
-    display: flex;
-    justify-content: space-between;
-    .left {
-      flex: 1;
-      margin-right: 7px;
-    }
-
-    .right {
-      width: 200px;
-      padding: 5px 30px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  .showInfo {
+    flex: 1;
+    overflow: hidden;
+    .el-tabs {
+      height: 100%;
+      box-sizing: border-box;
+      .el-tabs__content {
+        height: 100%;
+            box-sizing: border-box;
+        .el-tab-pane {
+          height: 100%;
+              box-sizing: border-box;
+        }
+      }
     }
   }
-  .operate {
-    padding: 10px 5px;
+  .el-tabs--border-card > .el-tabs__header {
+    background: #Fff;
   }
 }
 //选择弹框

@@ -53,7 +53,20 @@
         <el-row style="height:100%">
           <!--画布-->
           <el-col :span="24" style="height:100%" class="pannerBox">
-            <div id="flowContainer" class="container">
+            <div class="scale-wrap">
+              <el-button @click="hanldscale('plus')" circle>+</el-button>
+               <el-slider
+                v-model="scale"
+                @input='changeScale'
+                vertical
+                :step='0.05'
+                :min="0.1"
+                :max="2"
+                height="200px">
+              </el-slider>
+              <el-button @click="hanldscale('minus')" circle>-</el-button>
+            </div>
+            <div id="flowContainer"  ref="flowContainer" class="container">
               <template v-for="(node,index) in rightData.nodeList">
                 <flow-node
                   
@@ -106,6 +119,7 @@ export default {
   },
   data() {
     return {
+      scale:1, // 画布比例
       menuList: [],
       // jsPlumb 实例
       jsPlumb: null,
@@ -196,6 +210,22 @@ export default {
   },
   mounted() {},
   methods: {
+    // 进度缩放
+    changeScale(val) {
+      this.$refs.flowContainer.setAttribute('style', `transform:scale(${val})`);
+      console.log(val)
+    },
+    // 按钮缩放
+    hanldscale(attr){
+      if(attr == 'plus') {
+        this.scale = this.scale + 0.05
+        this.$refs.flowContainer.setAttribute('style', `transform:scale(${this.scale})`);
+      }
+      if(attr == 'minus') {
+        this.scale = this.scale - 0.05
+        this.$refs.flowContainer.setAttribute('style', `transform:scale(${this.scale})`);
+      }
+    },
     init() {
       if (!this.jsPlumb) {
         this.jsPlumb = jsPlumb.getInstance();
@@ -756,20 +786,34 @@ export default {
 
 <style lang="scss" scoped>
 .pannel {
-  height: 1000px;
+  height: 100%;
+}
+.scale-wrap {
+  position: fixed;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  padding: 5px;
+  background: rgba(158, 158, 158, 0.44);
+  border-radius: 40px;
+  margin: 10px
 }
 #flowContainer {
-  background-image: linear-gradient(
-      90deg,
-      rgba(0, 0, 0, 0.15) 10%,
-      rgba(0, 0, 0, 0) 10%
-    ),
-    linear-gradient(rgba(0, 0, 0, 0.15) 10%, rgba(0, 0, 0, 0) 10%);
-  background-size: 10px 10px;
-  background-color: rgb(251, 251, 251);
-  min-height: 500%;
+  // background-image: linear-gradient(
+  //     90deg,
+  //     rgba(0, 0, 0, 0.15) 10%,
+  //     rgba(0, 0, 0, 0) 10%
+  //   ),
+  //   linear-gradient(rgba(0, 0, 0, 0.15) 10%, rgba(0, 0, 0, 0) 10%);
+  // background-size: 10px 10px;
+  // // background-color: rgb(251, 251, 251);
+  // min-height: 500%;
   /*background-color: #42b983;*/
+  overflow: hidden;;
   position: relative;
+  transform-origin: 0 0; // transform 基点为左上角
+  min-height: 100%;
 }
 
 .labelClass {
@@ -785,19 +829,27 @@ export default {
   user-select: none;
 }
 .pannerBox {
-  overflow: hidden;
-  overflow-y: scroll;
+  overflow: scroll;
+  background-image: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.15) 10%,
+      rgba(0, 0, 0, 0) 10%
+    ),
+    linear-gradient(rgba(0, 0, 0, 0.15) 10%, rgba(0, 0, 0, 0) 10%);
+  background-size: 10px 10px;
+  background-color: rgb(251, 251, 251);
 }
 .leftMenuBox {
   overflow: hidden;
-
   height: 100%;
   overflow-y: scroll;
   .title {
     padding: 10px 0;
     text-align: center;
-    border: 1px solid #eee;
     text-overflow: clip;
+    font-size: 14px;
+    color: #333;
+    font-weight: normal;
   }
 }
 .panel-container {

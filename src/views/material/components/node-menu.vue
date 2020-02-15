@@ -1,5 +1,5 @@
 <template>
-  <div style="background-color: #66a6e0;" ref="tool">
+  <div  class="node-menu" style="background-color: #66a6e0;" ref="tool">
     <el-menu :default-openeds="defaultOpeneds">
       <el-submenu :index="menu.id" v-for="(menu,index) in menuList" :key="menu.id">
         <!--一级菜单名称、不可拖拽 -->
@@ -147,5 +147,54 @@ export default {
   line-height: 50px;
   vertical-align: middle;
   border-bottom: 1px solid #d3d3d3;
+}
+.node-menu {
+  box-shadow: 0 5px 5px #eee;
+  /deep/ .el-menu-item-group__title{
+    padding: 0
+  }
+  /deep/ .el-submenu__title {
+    padding-left: 5px !important;
+    height: auto;
+    line-height: 40px;
+    font-size: 13px;
+    color: #666;
+    &:hover {
+      i{
+        color: #2d8cf0 !important;
+      }
+      color: #2d8cf0 !important;
+      background: #f0faff !important;
+    }  
+  }
+  /deep/ .el-menu-item{
+    color: #aaa;
+    &:hover {
+      i{
+        color: #2d8cf0 !important;
+      }
+      color: #2d8cf0 !important;
+      background: #f0faff !important;
+    }
+  }
+  /deep/ .el-menu {
+    border: none;
+    i{
+      font-size: 14px;
+    }
+    li {
+      margin-bottom: 5px;
+    }
+  }
+  /deep/ .el-menu-item {
+    padding:0 10px !important;
+    height: auto;
+    line-height: 40px;
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 100px;;
+    }
 }
 </style>
