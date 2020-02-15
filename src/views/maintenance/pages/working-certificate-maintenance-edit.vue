@@ -10,86 +10,86 @@
       <el-button
         size="small"
         type="primary"
-        v-if="operateType === 'add'"
         @click="handleReset(['workCertFormOne', 'workCertFormTwo'])"
       >重置</el-button>
     </div>
-    <div class="showInfo">
-      <div class="left" v-if="operateType === 'edit'">
-        <el-table
-          ref="editTable"
-          :data="cloneList"
-          border
-          highlight-current-row
-          style="width: 100%"
-          height="513"
-          @row-click="handleStationCurrentChange"
-        >
-          <el-table-column prop="cert" label="上岗证"></el-table-column>
-          <el-table-column prop="certDes" label="上岗证描述"></el-table-column>
-        </el-table>
-      </div>
-      <div class="right">
-        <el-form
-          :model="workCertificateForm"
-          ref="workCertFormOne"
-          label-width="120px"
-          :rules="rules"
-        >
-          <el-form-item label="上岗证" prop="cert">
-            <el-input
-              v-model.trim="workCertificateForm.cert"
-              placeholder="请输入上岗证"
-              :disabled="isEditStation"
-            ></el-input>
-          </el-form-item>
-          <el-form-item label="上岗证描述" prop="certDes">
-            <el-input v-model.trim="workCertificateForm.certDes" placeholder="请输入上岗证描述"></el-input>
-          </el-form-item>
-        </el-form>
-
-        <el-tabs type="border-card">
-          <el-tab-pane class="baseInfo">
-            <span slot="label">基础信息</span>
-            <el-form
-              :model="workCertificateForm"
-              ref="workCertFormTwo"
-              label-width="150px"
-              :rules="rules"
-            >
-              <el-form-item label="状态:" prop="status">
-                <el-select v-model="workCertificateForm.status" filterable placeholder="请选择状态">
-                  <el-option label="已启用" :value="true">已启用</el-option>
-                  <el-option label="未启用" :value="false">未启用</el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item label="站位类型:" prop="certType">
-                <el-select
-                  v-model="workCertificateForm.certType"
-                  filterable
-                  placeholder="请选择持续时间类型"
-                  @change="selectCertType"
+    <div class="operate">
+      <el-form
+        :model="workCertificateForm"
+        ref="workCertFormOne"
+        class="workCertificateFormTop"
+        :rules="rules"
+        :inline="true"
+      >
+        <el-form-item label="上岗证" prop="cert">
+          <dsn-input
+            v-model.trim="workCertificateForm.cert"
+            placeholder="请输入上岗证"
+            :disabled="isEditStation"
+          ></dsn-input>
+        </el-form-item>
+        <el-form-item label="上岗证描述" prop="certDes">
+          <dsn-input v-model.trim="workCertificateForm.certDes" placeholder="请输入上岗证描述"></dsn-input>
+        </el-form-item>
+      </el-form>
+    </div>
+    <div class="operate">
+      <el-tabs type="border-card">
+        <el-tab-pane class="baseInfo">
+          <span slot="label">基础信息</span>
+          <el-row>
+            <el-col :span="12">
+              <el-form
+                :model="workCertificateForm"
+                ref="workCertFormTwo"
+                label-width="150px"
+                :rules="rules"
+              >
+                <el-form-item label="状态:" prop="status">
+                  <dsn-select
+                    v-model="workCertificateForm.status"
+                    filterable
+                    placeholder="请选择状态"
+                    style="width:100%"
+                  >
+                    <el-option label="已启用" :value="true">已启用</el-option>
+                    <el-option label="未启用" :value="false">未启用</el-option>
+                  </dsn-select>
+                </el-form-item>
+                <el-form-item label="站位类型:" prop="certType">
+                  <dsn-select
+                    v-model="workCertificateForm.certType"
+                    filterable
+                    placeholder="请选择持续时间类型"
+                    @change="selectCertType"
+                    style="width:100%"
+                  >
+                    <el-option label="永久" :value="true">永久</el-option>
+                    <el-option label="临时" :value="false">临时</el-option>
+                  </dsn-select>
+                </el-form-item>
+                <el-form-item
+                  label="上岗证持续截止日期"
+                  prop="certTime"
+                  v-if="!workCertificateForm.certType"
                 >
-                  <el-option label="永久" :value="true">永久</el-option>
-                  <el-option label="临时" :value="false">临时</el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item label="上岗证持续截止日期" prop="certTime" v-if="!workCertificateForm.certType">
-                <el-date-picker
-                  v-model="workCertificateForm.certTime"
-                  type="datetime"
-                  placeholder="选择日期"
-                  size="small"
-                  value-format="yyyy-MM-dd HH:mm:ss"
-                ></el-date-picker>
-              </el-form-item>
-            </el-form>
-          </el-tab-pane>
-          <el-tab-pane class="defineData">
-            <span slot="label">自定义数据</span>
-          </el-tab-pane>
-        </el-tabs>
-      </div>
+                  <el-date-picker
+                    v-model="workCertificateForm.certTime"
+                    type="datetime"
+                    placeholder="选择日期"
+                    size="small"
+                    value-format="yyyy-MM-dd HH:mm:ss"
+                    style="width:100%"
+                  ></el-date-picker>
+                </el-form-item>
+              </el-form>
+            </el-col>
+          </el-row>
+        </el-tab-pane>
+        <el-tab-pane class="defineData">
+          <span slot="label">自定义数据</span>
+        </el-tab-pane>
+      </el-tabs>
     </div>
   </div>
 </template>
@@ -142,7 +142,7 @@ export default {
     this.operateType = this.$route.query.operateType;
     this.cloneList = JSON.parse(JSON.stringify(this.workingCertificateList));
     if (this.operateType === "edit") {
-      this.workCertificateForm = this.cloneList[0];
+      this.workCertificateForm = JSON.parse(JSON.stringify(this.cloneList[0]));
       this.isEditStation = true;
     }
   },
@@ -205,7 +205,20 @@ export default {
         });
       });
       if (count >= 2) {
-        this.handleSave();
+        this.$confirm("是否保存所选数据?", "保存", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "success"
+        })
+          .then(() => {
+            this.handleSave();
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已取消保存"
+            });
+          });
         return;
       }
     },
@@ -244,12 +257,9 @@ export default {
         return;
       }
       if (this.operateType === "edit") {
-        formName.forEach(element => {
-          if (element === "workCertFormTwo") {
-            this.$refs[element].resetFields();
-          }
-        });
-        this.workCertificateForm.certDes = "";
+        this.workCertificateForm = JSON.parse(
+          JSON.stringify(this.cloneList[0])
+        );
         return;
       }
     }
@@ -259,42 +269,54 @@ export default {
 
 <style lang="scss">
 .working-certificate-maintenance-edit {
-  padding: 10px 30px;
   .operate {
-    padding: 10px 0;
-  }
-  .showInfo {
-    display: flex;
-    .left {
-      width: 200px;
-    }
-    .right {
-      flex: 1;
-      .el-form {
-        .el-form-item {
-          .el-form-item__content {
-            width: 250px;
-          }
-        }
-      }
-      .el-tabs {
-        .el-form {
-          .el-form-item {
-            .el-form-item__content {
-              width: 250px;
-              .el-radio-group {
-                .el-radio {
-                  margin-right: 12px;
-                }
-              }
-              .resource {
-                width: 90%;
-              }
-            }
-          }
-        }
+    padding: 14px 14px 0;
+    background: #fff;
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+    border-radius: 4px;
+    .workCertificateFormTop {
+      .el-form-item {
+        margin-bottom: 0;
       }
     }
   }
+  // padding: 10px 30px;
+  // .operate {
+  //   padding: 10px 0;
+  // }
+  // .showInfo {
+  //   display: flex;
+  //   .left {
+  //     width: 200px;
+  //   }
+  //   .right {
+  //     flex: 1;
+  //     .el-form {
+  //       .el-form-item {
+  //         .el-form-item__content {
+  //           width: 250px;
+  //         }
+  //       }
+  //     }
+  //     .el-tabs {
+  //       .el-form {
+  //         .el-form-item {
+  //           .el-form-item__content {
+  //             width: 250px;
+  //             .el-radio-group {
+  //               .el-radio {
+  //                 margin-right: 12px;
+  //               }
+  //             }
+  //             .resource {
+  //               width: 90%;
+  //             }
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
 }
 </style>
