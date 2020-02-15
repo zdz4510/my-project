@@ -425,8 +425,8 @@ export default {
     queryCite(fieldName, limitGeneralCode, limitGeneralField) {
       console.log(fieldName, limitGeneralCode, limitGeneralField);
       const data = {
-        limitGeneralCode: limitGeneralCode,
-        limitGeneralField: limitGeneralField
+        limitGeneralCode,
+        limitGeneralField
       };
       findReferenceHttp(data).then(data => {
         const res = data.data;

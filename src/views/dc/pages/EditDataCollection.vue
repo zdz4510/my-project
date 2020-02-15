@@ -1,13 +1,12 @@
 <template>
   <div class="edit-data-collection">
     <div class="operate">
-      <el-button size="small" type="primary" @click="goBack">返回</el-button>
-      <el-button size="small" type="primary" @click="handleSave('editForm')">保存</el-button>
+      <dsn-button size="small" type="primary" @click="goBack">返回</dsn-button>
+      <dsn-button size="small" type="primary" @click="handleSave('editForm')">保存</dsn-button>
+      <dsn-button size="small" type="primary" @click="resetForm">重置</dsn-button>
     </div>
-    <el-row :gutter="20" class="bgw">
-      <el-col :span="6">
-        <div>
-          <el-select
+    <!-- <div>
+          <dsn-select
             v-model="value"
             clearable
             placeholder="请选择"
@@ -23,7 +22,7 @@
               :label="item.dcGroup"
               :value="item.dcGroup"
             ></el-option>
-          </el-select>
+          </dsn-select>
           <el-table
             ref="editTable"
             :data="cloneList"
@@ -38,351 +37,336 @@
               <template slot-scope="scope">{{ getFormat(scope.row.collectionType) }}</template>
             </el-table-column>
           </el-table>
-        </div>
-      </el-col>
-      <el-col :span="18">
-        <div>
+    </div>-->
+    <div class="operate">
+      <el-row>
+        <el-col :span="12">
           <el-form
-            :inline="true"
             :model="editForm"
             ref="editForm"
             :rules="rules"
-            class="form-style"
-            label-position="right"
+            class="dataCollectionFormTop"
             :label-width="formLabelWidth"
           >
-            <el-row>
-              <el-col :span="8">
-                <el-form-item label="数据收集组名称" prop="dcGroup" required>
-                  <el-input v-model="editForm.dcGroup" disabled></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="数据收集组类型:" prop="collectionType" required>
-                  <el-select v-model="editForm.collectionType" disabled>
-                    <el-option
-                      v-for="item in collectionType"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    ></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="数据收集组描述:" prop="dcGroupDes">
-                  <el-input
-                    class="dec"
-                    type="textarea"
-                    :autosize="{ minRows: 2, maxRows: 6}"
-                    v-model="editForm.dcGroupDes"
-                  ></el-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="24">
-                <el-tabs v-model="activeName" type="card">
-                  <el-tab-pane label="参数配置" name="first">
-                    <div class>
-                      <div class="operate ml30 mtb10">
-                        <el-button class="mr25 pad1025" size="small" type="primary" @click="add">新增</el-button>
-                        <el-button
-                          class="mr25 pad1025"
-                          size="small"
-                          type="primary"
-                          @click="edit"
-                          :disabled="this.pCheckedList.length != 1"
-                        >编辑</el-button>
-                        <el-button
-                          class="mr25 pad1025"
-                          size="small"
-                          type="warning"
-                          @click="del"
-                          :disabled="this.pCheckedList.length === 0"
-                        >删除</el-button>
-                      </div>
-                      <el-table
-                        ref="pTable"
-                        :data="this.MeasureInfoList"
-                        tooltip-effect="dark"
-                        row-key="dcGroup"
-                        @selection-change="handleSelectionChange"
-                      >
-                        <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
-                        <el-table-column type="index" label="序号"></el-table-column>
-                        <el-table-column prop="parameter" label="参数名称"></el-table-column>
-                        <el-table-column label="软检查">
-                          <template slot-scope="scope">{{ scope.row.softCheck ? '启用' : '不启用' }}</template>
-                        </el-table-column>
-                        <el-table-column prop="valueType" label="值类型"></el-table-column>
-                        <el-table-column prop="targetValue" label="标准值"></el-table-column>
-                        <el-table-column prop="upperSpecLimit" label="标准值上限"></el-table-column>
-                        <el-table-column prop="lowerSpecLimit" label="标准值下限"></el-table-column>
-                        <el-table-column prop="upperWarnLimit" label="警告发生上限"></el-table-column>
-                        <el-table-column prop="lowerWarnLimit" label="警告发生下限"></el-table-column>
-                        <el-table-column label="参数状态">
-                          <template
-                            slot-scope="scope"
-                          >{{ scope.row.parameterStatus ? '启用' : '不启用' }}</template>
-                        </el-table-column>
-                        <el-table-column prop="alarm" label="预警事件"></el-table-column>
-                        <el-table-column prop="createTime" label="创建时间"></el-table-column>
-                        <el-table-column prop="createUserId" label="创建人"></el-table-column>
-                      </el-table>
-                    </div>
-                  </el-tab-pane>
-                  <el-tab-pane label="数据收集配置" name="second">
-                    <div class="operate ml30 mtb10">
-                      <el-button class="mr25 pad1025" size="small" type="primary" @click="addSet">新增</el-button>
-                      <el-button
-                        class="mr25 pad1025"
-                        size="small"
-                        type="primary"
-                        @click="editSet"
-                        :disabled="this.sCheckedList.length != 1"
-                      >编辑</el-button>
-                      <el-button
-                        class="mr25 pad1025"
-                        size="small"
-                        type="warning"
-                        @click="delSet"
-                        :disabled="this.sCheckedList.length === 0"
-                      >删除</el-button>
-                    </div>
-                    <el-table
-                      ref="sTable"
-                      :data="this.SetupInfoList"
-                      tooltip-effect="dark"
-                      row-key="dcGroup"
-                      @selection-change="handleSelectionChange2"
-                    >
-                      <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
-                      <el-table-column type="index" label="序号"></el-table-column>
-                      <el-table-column label="条件明细">
-                        <template
-                          slot-scope="scope"
-                        >{{ scope.row.mat+','+scope.row.matGroup+','+scope.row.shopOrder+','+scope.row.workCenter+','+scope.row.resourceGroup+','+scope.row.shopOrder }}</template>
-                      </el-table-column>
-                    </el-table>
-                  </el-tab-pane>
-                </el-tabs>
-              </el-col>
-            </el-row>
+            <el-form-item label="数据收集组名称" prop="dcGroup" required>
+              <dsn-input v-model="editForm.dcGroup" disabled></dsn-input>
+            </el-form-item>
+            <el-form-item label="数据收集组类型:" prop="collectionType" required>
+              <dsn-select v-model="editForm.collectionType" disabled style="width:100%">
+                <el-option
+                  v-for="item in collectionType"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </dsn-select>
+            </el-form-item>
+            <el-form-item label="数据收集组描述:" prop="dcGroupDes">
+              <dsn-input
+                class="dec"
+                type="textarea"
+                :autosize="{ minRows: 2, maxRows: 6}"
+                v-model="editForm.dcGroupDes"
+                style="width:100%"
+              ></dsn-input>
+            </el-form-item>
           </el-form>
-          <!-- 确认模态框 -->
-          <el-dialog title="保存" :visible.sync="saveDialog" width="30%">
-            <span>是否保存数据？</span>
-            <span slot="footer" class="dialog-footer">
-              <el-button @click="handleCancle">取 消</el-button>
-              <el-button type="primary" @click="handleSave('editForm')">确 定</el-button>
-            </span>
-          </el-dialog>
-          <el-dialog title="参数配置" :visible.sync="paramsDialogVisible">
-            <el-form
-              :inline="true"
-              :model="addParamForm"
-              ref="addParamForm"
-              :rules="prules"
-              class="form-style"
-              label-position="right"
-              :label-width="formLabelWidth"
-            >
-              <el-row>
-                <el-col :span="12">
-                  <el-form-item label="参数名称:" prop="parameter" required>
-                    <el-input
-                      v-model="addParamForm.parameter"
-                      :disabled="this.currentOperation == 'edit'"
-                    ></el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12" v-if="addParamForm.valueType != '布尔'">
-                  <el-form-item label="标准值:" prop="targetValue" required>
-                    <el-input v-model="addParamForm.targetValue"></el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12" v-if="addParamForm.valueType == '布尔'">
-                  <el-form-item label="标准值:" prop="targetValue" required>
-                    <el-select v-model="addParamForm.targetValue">
-                      <el-option
-                        v-for="item in status"
-                        :key="item.value"
-                        :label="item.valueType"
-                        :value="item.value"
-                      ></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-              <el-row>
-                <el-col :span="12">
-                  <el-form-item label="参数描述:" prop="parameterDes">
-                    <el-input v-model="addParamForm.parameterDes"></el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="标准值上限:" prop="upperSpecLimit">
-                    <el-input
-                      v-model="addParamForm.upperSpecLimit"
-                      :disabled="addParamForm.valueType != '数值'"
-                    ></el-input>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-              <el-row>
-                <el-col :span="12">
-                  <el-form-item label="参数状态:" prop="parameterStatus" required>
-                    <el-select v-model="addParamForm.parameterStatus">
-                      <el-option
-                        v-for="item in status"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      ></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="标准值下限:" prop="lowerSpecLimit">
-                    <el-input
-                      v-model="addParamForm.lowerSpecLimit"
-                      :disabled="addParamForm.valueType != '数值'"
-                    ></el-input>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-              <el-row>
-                <el-col :span="12">
-                  <el-form-item label="值类型:" prop="valueType" required>
-                    <el-select v-model="addParamForm.valueType" @change="onChange">
-                      <el-option
-                        v-for="item in valueType"
-                        :key="item.value"
-                        :label="item.value"
-                        :value="item.value"
-                      ></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="预警发生上限值:" prop="upperWarnLimit">
-                    <el-input
-                      v-model="addParamForm.upperWarnLimit"
-                      :disabled="addParamForm.valueType != '数值'"
-                    ></el-input>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-              <el-row>
-                <el-col :span="12">
-                  <el-form-item label="必须值:" prop="required" required>
-                    <el-select v-model="addParamForm.required">
-                      <el-option
-                        v-for="item in status"
-                        :key="item.value"
-                        :label="item.bool"
-                        :value="item.value"
-                      ></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="预警发生下限值:" prop="lowerWarnLimit">
-                    <el-input
-                      v-model="addParamForm.lowerWarnLimit"
-                      :disabled="addParamForm.valueType != '数值'"
-                    ></el-input>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-              <el-row>
-                <el-col :span="12">
-                  <el-form-item label="软检查:" prop="softCheck" required>
-                    <el-select v-model="addParamForm.softCheck">
-                      <el-option
-                        v-for="item in status"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      ></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="预警事件编号:" prop="alarm">
-                    <el-select v-model="addParamForm.alarm">
-                      <el-option
-                        v-for="item in alarmList"
-                        :key="item.alarm"
-                        :label="item.alarm"
-                        :value="item.alarm"
-                      ></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-              <el-button @click="paramsDialogVisible = false">取 消</el-button>
-              <el-button type="primary" @click="saveParams('addParamForm')">确 定</el-button>
-            </span>
-          </el-dialog>
-          <el-dialog title="数据收集配置" :visible.sync="setUpDialogVisible">
-            <el-form
-              :inline="true"
-              :model="addSetUpForm"
-              ref="addSetUpForm"
-              :rules="srules"
-              class="form-style"
-              label-position="right"
-              :label-width="formLabelWidth"
-            >
-              <el-row>
-                <el-col :span="12">
-                  <el-form-item label="物料组:" prop="matGroup">
-                    <el-input v-model="addSetUpForm.matGroup"></el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="工序:" prop="operation">
-                    <el-input v-model="addSetUpForm.operation"></el-input>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-              <el-row>
-                <el-col :span="12">
-                  <el-form-item label="物料号:" prop="mat">
-                    <el-input v-model="addSetUpForm.mat"></el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="工作中心:" prop="workCenter">
-                    <el-input v-model="addSetUpForm.workCenter"></el-input>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-              <el-row>
-                <el-col :span="12">
-                  <el-form-item label="工单:" prop="shopOrder">
-                    <el-input v-model="addSetUpForm.shopOrder"></el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="设备类型:" prop="resourceGroup">
-                    <el-input v-model="addSetUpForm.resourceGroup"></el-input>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-              <el-button @click="setUpDialogVisible = false">取 消</el-button>
-              <el-button type="primary" @click="saveSetUp('addSetUpForm')">确 定</el-button>
-            </span>
-          </el-dialog>
-        </div>
-      </el-col>
-    </el-row>
+        </el-col>
+      </el-row>
+    </div>
+    <div class="operate">
+      <el-tabs v-model="activeName" type="card">
+        <el-tab-pane label="参数配置" name="first">
+          <div>
+            <dsn-button size="small" type="success" icon="el-icon-folder-add" @click="add">新增</dsn-button>
+            <dsn-button
+              size="small"
+              type="primary"
+              icon="el-icon-edit"
+              @click="edit"
+              :disabled="this.pCheckedList.length != 1"
+            >编辑</dsn-button>
+            <dsn-button
+              size="small"
+              type="danger"
+              icon="el-icon-delete"
+              @click="del"
+              :disabled="this.pCheckedList.length === 0"
+            >删除</dsn-button>
+          </div>
+          <dsn-table
+            ref="pTable"
+            :data="this.MeasureInfoList"
+            tooltip-effect="dark"
+            row-key="dcGroup"
+            @selection-change="handleSelectionChange"
+          >
+            <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
+            <el-table-column type="index" label="序号"></el-table-column>
+            <el-table-column prop="parameter" label="参数名称"></el-table-column>
+            <el-table-column label="软检查">
+              <template slot-scope="scope">{{ scope.row.softCheck ? '启用' : '不启用' }}</template>
+            </el-table-column>
+            <el-table-column prop="valueType" label="值类型"></el-table-column>
+            <el-table-column prop="targetValue" label="标准值"></el-table-column>
+            <el-table-column prop="upperSpecLimit" label="标准值上限"></el-table-column>
+            <el-table-column prop="lowerSpecLimit" label="标准值下限"></el-table-column>
+            <el-table-column prop="upperWarnLimit" label="警告发生上限"></el-table-column>
+            <el-table-column prop="lowerWarnLimit" label="警告发生下限"></el-table-column>
+            <el-table-column label="参数状态">
+              <template slot-scope="scope">{{ scope.row.parameterStatus ? '启用' : '不启用' }}</template>
+            </el-table-column>
+            <el-table-column prop="alarm" label="预警事件"></el-table-column>
+            <el-table-column prop="createTime" label="创建时间"></el-table-column>
+            <el-table-column prop="createUserId" label="创建人"></el-table-column>
+          </dsn-table>
+        </el-tab-pane>
+        <el-tab-pane label="数据收集配置" name="second">
+          <div>
+            <dsn-button size="small" type="success" icon="el-icon-folder-add" @click="addSet">新增</dsn-button>
+            <dsn-button
+              size="small"
+              type="primary"
+              icon="el-icon-edit"
+              @click="editSet"
+              :disabled="this.sCheckedList.length != 1"
+            >编辑</dsn-button>
+            <dsn-button
+              size="small"
+              type="danger"
+              icon="el-icon-delete"
+              @click="delSet"
+              :disabled="this.sCheckedList.length === 0"
+            >删除</dsn-button>
+          </div>
+          <el-table
+            ref="sTable"
+            :data="this.SetupInfoList"
+            tooltip-effect="dark"
+            row-key="dcGroup"
+            @selection-change="handleSelectionChange2"
+          >
+            <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
+            <el-table-column type="index" label="序号"></el-table-column>
+            <el-table-column label="条件明细">
+              <template
+                slot-scope="scope"
+              >{{ scope.row.mat+','+scope.row.matGroup+','+scope.row.shopOrder+','+scope.row.workCenter+','+scope.row.resourceGroup+','+scope.row.shopOrder }}</template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
+      </el-tabs>
+    </div>
+    <!-- 确认模态框 -->
+    <el-dialog title="保存" :visible.sync="saveDialog" width="30%">
+      <span>是否保存数据？</span>
+      <span slot="footer" class="dialog-footer">
+        <dsn-button @click="handleCancle">取 消</dsn-button>
+        <dsn-button type="primary" @click="handleSave('editForm')">确 定</dsn-button>
+      </span>
+    </el-dialog>
+    <el-dialog title="参数配置" :visible.sync="paramsDialogVisible" width="800px">
+      <el-form
+        :inline="true"
+        :model="addParamForm"
+        ref="addParamForm"
+        :rules="prules"
+        class="form-style"
+        label-position="right"
+        :label-width="formLabelWidth"
+      >
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="参数名称:" prop="parameter" required>
+              <dsn-input
+                v-model="addParamForm.parameter"
+                :disabled="this.currentOperation == 'edit'"
+              ></dsn-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" v-if="addParamForm.valueType != '布尔'">
+            <el-form-item label="标准值:" prop="targetValue" required>
+              <dsn-input v-model="addParamForm.targetValue"></dsn-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" v-if="addParamForm.valueType == '布尔'">
+            <el-form-item label="标准值:" prop="targetValue" required>
+              <dsn-select v-model="addParamForm.targetValue">
+                <el-option
+                  v-for="item in status"
+                  :key="item.value"
+                  :label="item.valueType"
+                  :value="item.value"
+                ></el-option>
+              </dsn-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="参数描述:" prop="parameterDes">
+              <dsn-input v-model="addParamForm.parameterDes"></dsn-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="标准值上限:" prop="upperSpecLimit">
+              <dsn-input
+                v-model="addParamForm.upperSpecLimit"
+                :disabled="addParamForm.valueType != '数值'"
+              ></dsn-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="参数状态:" prop="parameterStatus" required>
+              <dsn-select v-model="addParamForm.parameterStatus">
+                <el-option
+                  v-for="item in status"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </dsn-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="标准值下限:" prop="lowerSpecLimit">
+              <dsn-input
+                v-model="addParamForm.lowerSpecLimit"
+                :disabled="addParamForm.valueType != '数值'"
+              ></dsn-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="值类型:" prop="valueType" required>
+              <dsn-select v-model="addParamForm.valueType" @change="onChange">
+                <el-option
+                  v-for="item in valueType"
+                  :key="item.value"
+                  :label="item.value"
+                  :value="item.value"
+                ></el-option>
+              </dsn-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="预警发生上限值:" prop="upperWarnLimit">
+              <dsn-input
+                v-model="addParamForm.upperWarnLimit"
+                :disabled="addParamForm.valueType != '数值'"
+              ></dsn-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="必须值:" prop="required" required>
+              <dsn-select v-model="addParamForm.required">
+                <el-option
+                  v-for="item in status"
+                  :key="item.value"
+                  :label="item.bool"
+                  :value="item.value"
+                ></el-option>
+              </dsn-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="预警发生下限值:" prop="lowerWarnLimit">
+              <dsn-input
+                v-model="addParamForm.lowerWarnLimit"
+                :disabled="addParamForm.valueType != '数值'"
+              ></dsn-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="软检查:" prop="softCheck" required>
+              <dsn-select v-model="addParamForm.softCheck">
+                <el-option
+                  v-for="item in status"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </dsn-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="预警事件编号:" prop="alarm">
+              <dsn-select v-model="addParamForm.alarm">
+                <el-option
+                  v-for="item in alarmList"
+                  :key="item.alarm"
+                  :label="item.alarm"
+                  :value="item.alarm"
+                ></el-option>
+              </dsn-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <dsn-button @click="paramsDialogVisible = false">取 消</dsn-button>
+        <dsn-button type="primary" @click="saveParams('addParamForm')">确 定</dsn-button>
+      </span>
+    </el-dialog>
+    <el-dialog title="数据收集配置" :visible.sync="setUpDialogVisible" width="800px">
+      <el-form
+        :inline="true"
+        :model="addSetUpForm"
+        ref="addSetUpForm"
+        :rules="srules"
+        class="form-style"
+        label-position="right"
+        :label-width="formLabelWidth"
+      >
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="物料组:" prop="matGroup">
+              <dsn-input v-model="addSetUpForm.matGroup"></dsn-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="工序:" prop="operation">
+              <dsn-input v-model="addSetUpForm.operation"></dsn-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="物料号:" prop="mat">
+              <dsn-input v-model="addSetUpForm.mat"></dsn-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="工作中心:" prop="workCenter">
+              <dsn-input v-model="addSetUpForm.workCenter"></dsn-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="工单:" prop="shopOrder">
+              <dsn-input v-model="addSetUpForm.shopOrder"></dsn-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="设备类型:" prop="resourceGroup">
+              <dsn-input v-model="addSetUpForm.resourceGroup"></dsn-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <dsn-button @click="setUpDialogVisible = false">取 消</dsn-button>
+        <dsn-button type="primary" @click="saveSetUp('addSetUpForm')">确 定</dsn-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -555,7 +539,7 @@ export default {
         ); //复制一份副本,保证副本和初始列表数据一致性
         this.editForm = this.cloneList[0]; // 默认选中第一行
         this.cloneModify = JSON.parse(JSON.stringify(this.editForm)); // modify 的副本
-        this.setCurrent(this.editForm); // 设置选中第一行
+        // this.setCurrent(this.editForm); // 设置选中第一行
         this.currentRow = this.editForm; // 设置初始currentRow 为第一行
       }
     },
@@ -574,7 +558,7 @@ export default {
       this.cloneList = tempList;
       this.editForm = tempList[0];
       this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
-      this.setCurrent(tempList[0]);
+      // this.setCurrent(tempList[0]);
       let p = {
         dcGroup: this.editForm.dcGroup,
         tenantSiteCode: "test"
@@ -596,10 +580,10 @@ export default {
         this.selectIsDisabled = false;
       }
     },
-    //设置某一行被选中
-    setCurrent(row) {
-      this.$refs.editTable.setCurrentRow(row);
-    },
+    // //设置某一行被选中
+    // setCurrent(row) {
+    //   this.$refs.editTable.setCurrentRow(row);
+    // },
 
     findItemByKey(arr, keyV, kerStr) {
       let temp = arr.filter(item => item[kerStr] == keyV);
@@ -654,7 +638,7 @@ export default {
         let code = this.currentRow.dcGroup;
         let item = this.findItemByKey(this.cloneList, code, "dcGroup");
         if (item) {
-          this.setCurrent(item);
+          // this.setCurrent(item);
         }
         this.editForm = item;
       }
@@ -663,11 +647,16 @@ export default {
     handleSave(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
+          const tempDcSetupInfoList = this.SetupInfoList;
+          tempDcSetupInfoList.forEach(element => {
+            element.material = element.mat;
+            element.materialGroup = element.matGroup;
+          });
           let params = this.editForm;
           params.tenantSiteCode = "test";
           params.type = "edit";
           params.dcParameterMeasureInfoList = this.MeasureInfoList;
-          params.dcSetupInfoList = this.SetupInfoList;
+          params.dcSetupInfoList = tempDcSetupInfoList;
           saveDataCollection(params).then(data => {
             const res = data.data;
             this.saveDialog = false; // 保存的提示框消失
@@ -708,11 +697,11 @@ export default {
               }
             } else {
               this.$message({
-                message: res.data,
+                message: res.message,
                 type: "error"
               });
               this.saveDialog = false;
-              this.setCurrent(this.oldRow);
+              // this.setCurrent(this.oldRow);
             }
           });
         }
@@ -894,7 +883,8 @@ export default {
       getSetupList(params).then(data => {
         this.SetupInfoList = data.data.data;
       });
-    }
+    },
+    resetForm() {}
   },
   created() {
     this.$nextTick(() => {
@@ -920,24 +910,12 @@ export default {
 <style lang="scss">
 .edit-data-collection {
   .operate {
-    background: #ffffff;
-    padding: 10px;
-  }
-  .editForm {
-    background: #ffffff;
-    padding: 10px;
-    .dec {
-      width: 756px !important;
-    }
-  }
-  // .el-textarea /deep/ .el-textarea__inner{
-  // 	width: 622px;
-  // }
-  .el-table /deep/ .success-row {
-    background: #f0f9eb;
-  }
-  .bgw {
-    background: #ffffff;
+    padding: 14px 14px 0;
+    background: #fff;
+    padding-bottom: 10px;
+    margin-bottom: 14px;
+    // padding-bottom: 14px;
+    border-radius: 4px;
   }
 }
 </style>
