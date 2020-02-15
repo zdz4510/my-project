@@ -9,9 +9,10 @@
            
           </el-form-item> -->
             <el-form-item label="工单:">
-              <dsn-input placeholder="请输入工单" v-model="shopOrder">
-                <i slot="append" class="el-icon-document-copy"></i>
-              </dsn-input>
+              <el-input size="small" placeholder="请输入工单" v-model="shopOrder">
+                <!-- <i slot="append" class="el-icon-document-copy"></i> -->
+                <el-button slot="append" icon="el-icon-document-copy" @click="orderHandler"></el-button>
+              </el-input>
             </el-form-item>
             <el-form-item>
                 <dsn-button size="small"  type="primary" icon="el-icon-search" @click.native="getOrder">查询</dsn-button>
@@ -67,7 +68,7 @@
             </el-form-item>
             <el-form-item label="计划物料:" prop="material">
               <el-col :span="9" style="margin-right:7px;">
-                <dsn-input placeholder="请输入计划物料" v-model="ruleForm.plannedMaterial"></dsn-input>
+                <el-input placeholder="请输入计划物料" v-model="ruleForm.plannedMaterial"><el-button slot="append" icon="el-icon-document-copy" @click="materialHandler"></el-button></el-input>
               </el-col>
               <div class="choiceBox">
                 <i class="el-icon-document-copy"></i>
@@ -148,10 +149,78 @@
       title="删除"
       :visible.sync="dialogVisible"
       :width="defaltDialogWidth">
-      <span>确定删除此工单吗？</span>
+      <el-form :rules="rules">
+            <el-form-item :label="item.fieldName" v-for="(item,index) in customizedFieldDefInfoList" :key="index" v-show="item.fieldType =='C'" prop="custom">
+              <el-col :span="14">
+                <dsn-input v-model="item.fieldValue"></dsn-input>
+              </el-col>
+            </el-form-item>
+            <el-form-item :label="item.fieldName" v-for="(item,index) in customizedFieldDefInfoList" :key="index+item" v-show="item.fieldType !=='C'">
+              <el-col :span="14">
+                <el-input v-model="item.fieldValue"></el-input>
+              </el-col>
+            </el-form-item>
+            <el-form-item label="Kay_自定义字段3：">
+              <el-col :span="14" style="margin-right:7px;">
+                <dsn-input v-model="ruleForm.kays_3" :disabled="true"></dsn-input>
+              </el-col>
+              <div class="choiceBox">
+                <i class="el-icon-document-copy"></i>
+              </div>
+            </el-form-item>
+          </el-form>
       <span slot="footer" class="dialog-footer">
         <dsn-button @click="dialogVisible = false">取 消</dsn-button>
         <dsn-button type="primary" @click="sureDelete">确 定</dsn-button>
+      </span>
+    </el-dialog>
+    <!--工单选择-->
+    <el-dialog
+      title="工单"
+      :visible.sync="orderDialog"
+      width="500px">
+      <dsn-table
+          ref="multipleTable"
+          :data="orderTable"
+          tooltip-effect="dark"
+          style="width: 100%"
+          height="350px"
+          @selection-change="handleSelectionMaterial"
+        >
+          <el-table-column type="selection" width="55"></el-table-column>
+          <el-table-column type="index" label="序号" width="50"></el-table-column>
+          <el-table-column prop="shopOrder" label="工单" width="120"></el-table-column>
+          <el-table-column label="状态" prop="status" width="120"></el-table-column>
+          <el-table-column prop="shopOrderType" label="类型" show-overflow-tooltip></el-table-column>
+        </dsn-table>
+      <span slot="footer" class="dialog-footer">
+        <dsn-button @click="orderDialog = false">取 消</dsn-button>
+        <dsn-button type="primary" @click="sureOrder">确 定</dsn-button>
+      </span>
+    </el-dialog>
+    <!--物料选择-->
+    <el-dialog
+      title="物料选择"
+      :visible.sync="materialDialog"
+      width="500px">
+      <dsn-table
+          ref="multipleTable"
+          :data="materialTable"
+          tooltip-effect="dark"
+          style="width: 100%"
+          height="350px"
+          @selection-change="handleSelectionChange"
+        >
+          <el-table-column type="selection" width="55"></el-table-column>
+          <el-table-column type="index" label="序号" width="50"></el-table-column>
+          <el-table-column prop="materialDes" label="物料" width="120"></el-table-column>
+          <el-table-column label="版本" prop="aterialRev" width="120"></el-table-column>
+          <el-table-column prop="currentRev" label="当前版本" show-overflow-tooltip></el-table-column>
+          <el-table-column label="描述" prop="materialDes" width="120"></el-table-column>
+        </dsn-table>
+      <span slot="footer" class="dialog-footer">
+        <dsn-button @click="materialDialog = false">取 消</dsn-button>
+        <dsn-button type="primary" @click="sureMaterial">确 定</dsn-button>
       </span>
     </el-dialog>
   </div>
@@ -163,7 +232,9 @@ import{
     updateShopOrderRequest,
     saveShopOrderRequest,
     // findFieldRequest,
-    deleteRequest
+    deleteRequest,
+    findShopOrderListHttp,
+    listAllRequest
 } from '@/api/work-order/work-order.api.js' 
 export default {
   inject:['defaltDialogWidth'],
@@ -203,10 +274,81 @@ export default {
         allOrders:[],//获取到的所有工单
         getSearchData:'',//查询获取的工单数据
         customizedFieldDefInfoList:[],//自定义字段信息
-        dialogVisible:false,//删除工单提示框
+        dialogVisible:false,//删除工单提示框,
+        orderDialog:false,//工单选择模态框
+        orderTable:[],
+        orderChoice:[],//选中的行
+        // 物料、版本、当前版本、描述
+        materialTable:[],
+        materialDialog:false,
+        materialChoice:[],
     };
   },
   methods:{
+    materialHandler(){
+      // alert("111")
+      listAllRequest().then(data =>{
+          const res = data.data
+          if(res.code == 200){
+            console.log(res,"shuju ")
+            this.materialTable=res.data
+          }else{
+            this.$message({
+              message:res.message,
+              type:'warning'
+            })
+          }
+        })
+      this.materialDialog=true;
+    },
+    orderHandler(){
+      findShopOrderListHttp().then(data =>{
+            const res = data.data
+            if(res.code == 200){
+              // console.log(res,"shuju ")
+              this.orderTable=res.data
+              // this.$message({
+              //   message:'更新成功',
+              //   type:'success'
+              // })
+            }else{
+              this.$message({
+                message:res.message,
+                type:'warning'
+              })
+            }
+          })
+      this.orderDialog=true;
+    },
+    sureOrder(){
+      if(this.orderChoice.length>1){
+        this.$message({
+            message:"只能选择一行数据",
+            type:'warning'
+          })
+      }else{
+        this.shopOrder=this.orderChoice[0].shopOrder;
+        this.orderDialog=false;
+      }
+    },
+    sureMaterial(){
+      if(this.materialChoice.length>1){
+        this.$message({
+            message:"只能选择一行数据",
+            type:'warning'
+          })
+      }else{
+        this.ruleForm.plannedMaterial=this.materialChoice[0].material;
+        this.materialDialog=false;
+      }
+    },
+    handleSelectionMaterial(row){
+      this.materialChoice=row;
+    },
+    handleSelectionChange(row){
+      // console.log(row,"hahah")
+      this.orderChoice=row
+    },
     //初始化获取自定义字段
     // getCustom(){
     //     const params ={

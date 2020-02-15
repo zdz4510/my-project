@@ -17,11 +17,10 @@
                             ]"
                         >
                             <el-col :span="9">
-                                <dsn-input  autocomplete="off" v-model='workOrderIssued.shopOrder'></dsn-input>
+                                <el-input  autocomplete="off" v-model='workOrderIssued.shopOrder'><el-button slot="append" icon="el-icon-document-copy" @click="orderHandler"></el-button></el-input>
                             </el-col>
                             
-                            <div class="choiceBox">
-                                <i class="el-icon-document-copy choice"></i>                        
+                            <div class="choiceBox">                       
                                 <dsn-button size="small" type="primary" @click.native="handleGet">获取</dsn-button>
                                 <dsn-button size="small" type="primary" @click.native="reset">清除</dsn-button>
                             </div>
@@ -60,15 +59,16 @@
         <!--下达列表-->
         <div class="height48">
             <div>工单下达</div>
-            <dsn-button type="primary" size="small" icon="el-icon-upload2">导出</dsn-button>
+            <dsn-button type="primary" size="small" icon="el-icon-upload2" @click.native="exportExcelUndeal" >导出</dsn-button>
         </div>
         <div class="issuedTable">
-            <el-table
+            <dsn-table
                 ref="multipleTable"
                 :data="tableData"
                 tooltip-effect="dark"
                 style="width: 100%"
-                height="514">
+                height="514px"
+                @selection-change="handleTableChange">
                 <el-table-column
                 type="selection"
                 width="55">
@@ -108,8 +108,32 @@
                 label="工艺路线版本"
                 show-overflow-tooltip>
                 </el-table-column>
-            </el-table>
+            </dsn-table>
         </div>
+        <!--工单选择-->
+        <el-dialog
+        title="工单"
+        :visible.sync="orderDialog"
+        width="500px">
+        <dsn-table
+            ref="multipleTable"
+            :data="orderTable"
+            tooltip-effect="dark"
+            style="width: 100%"
+            height="350px"
+            @selection-change="handleSelectionChange"
+            >
+            <el-table-column type="selection" width="55"></el-table-column>
+            <el-table-column type="index" label="序号" width="50"></el-table-column>
+            <el-table-column prop="shopOrder" label="工单" width="120"></el-table-column>
+            <el-table-column label="状态" prop="status" width="120"></el-table-column>
+            <el-table-column prop="shopOrderType" label="类型" show-overflow-tooltip></el-table-column>
+            </dsn-table>
+        <span slot="footer" class="dialog-footer">
+            <dsn-button @click="orderDialog = false">取 消</dsn-button>
+            <dsn-button type="primary" @click="sureOrder">确 定</dsn-button>
+        </span>
+        </el-dialog>
     </div>
 </template>
 <script>
@@ -117,9 +141,35 @@ import {
     findShopOrderListRequest,
     releaseRequest
 } from '@/api/issued/issued.api.js' 
+import{
+    findShopOrderListHttp
+} from '@/api/work-order/work-order.api.js'
+import { exportExcel } from "@/until/excel.js";
+const tHeader = [
+  "工单",
+  "Lot",
+  "数量",
+  "物料",
+  "物料版本",
+  "工艺路线",
+  "工艺路线版本"
+];
+const filterVal = [
+  "shopOrder",
+  "lot",
+  "quantity",
+  "material",
+  "materialRev",
+  "router",
+  "routerRev"
+];
+const fileName="工单下达表"
 export default {
     data(){
         return{
+            tHeader,
+            filterVal,
+            fileName,
             tenantSiteCode:'',
             shopOrderInfo:'',//工单信息
             workOrderIssued: {
@@ -127,13 +177,107 @@ export default {
                 numIssued:'',
             },
             tableData:[],//工单下达列表
-            multipleSelection: []
+            multipleSelection: [],
+            orderTable:[],
+            orderDialog:false,
+            orderChoice:[],
+            handleTableChangeList:[],
+            currentPage: 1,
+            pageSize: 10,
+            total: 0,
         }
     },
     methods:{
+        // 工单表格
+        handleTableChange(row){
+            this.handleTableChangeList=row;
+        },
+        // 导出操作
+        exportExcelUndeal(){
+            if (this.handleTableChangeList.length === 0) {
+                this.exportHttpUndeal();
+            }
+            if (this.handleTableChangeList.length > 0) {
+                this.exportResult(this.handleTableChangeList);
+            }
+        },
+        exportHttpUndeal(){
+            findShopOrderListHttp().then(data => {
+            const res = data.data;
+            if (res.code === 200) {
+            data = res.data.data;
+            data.forEach(element => {
+                element.shopOrderTotal = element.shopOrderList.length;
+            });
+            this.exportResult(data);
+            return;
+            }
+            this.$message({
+                message: res.message,
+                type: "warning"
+                });
+            });
+        },
+        //返回结果，提示信息
+        exportResult(data) {
+        const tipString = exportExcel(tHeader, filterVal, data, this.fileName);
+        if (tipString === undefined) {
+            this.$message({
+            message: "导出成功",
+            type: "success"
+            });
+            return;
+        } else {
+            this.$message({
+            message: tipString,
+            type: "warning"
+            });
+            return;
+        }
+        },
+        
+        orderHandler(){
+            // alert("1111");
+            findShopOrderListHttp().then(data =>{
+            const res = data.data
+            if(res.code == 200){
+              // console.log(res,"shuju ")
+              this.orderTable=res.data
+              // this.$message({
+              //   message:'更新成功',
+              //   type:'success'
+              // })
+            }else{
+              this.$message({
+                message:res.message,
+                type:'warning'
+              })
+            }
+          })
+            this.orderDialog=true;
+        },
+        sureOrder(){
+            if(this.orderChoice.length>1){
+                this.$message({
+                    message:"只能选择一行数据",
+                    type:'warning'
+                })
+            }else{
+                this.workOrderIssued.shopOrder=this.orderChoice[0].shopOrder;
+                this.workOrderIssued.numIssued="";
+                this.orderDialog=false;
+            }
+        },
+        handleSelectionChange(row){
+            // console.log(row,"hahah")
+            this.orderChoice=row
+        },
         //清除按钮
         reset(){
-            this.workOrderIssued = {};
+            this.workOrderIssued ={
+                shopOrder: '',
+                numIssued:'',
+            };
         },
         //获取工单信息
         handleGet(){

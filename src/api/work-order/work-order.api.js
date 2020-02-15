@@ -58,3 +58,17 @@ export const deleteRequest = data => {
     return request.delete(
         `${window.VUE_APP_URL}/mes/shopOrder/deleteShopOrderBatch?shopOrder=${data.shopOrder}`, data);
 };
+
+// shopOrder/findShopOrderList
+// 查询所有工单
+export const findShopOrderListHttp = data => {
+    return request.get(
+        `${window.VUE_APP_URL}/mes/shopOrder/findShopOrderList`, data);
+};
+
+// /material/listAll
+// 查询所有物料
+export const listAllRequest = data => {
+    return request.post(
+        `${window.VUE_APP_URL}/mes/material/listAll`, data);
+};
