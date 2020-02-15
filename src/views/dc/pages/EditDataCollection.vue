@@ -103,7 +103,7 @@
           >
             <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
             <el-table-column type="index" label="序号"></el-table-column>
-            <el-table-column prop="parameter" label="参数名称"></el-table-column>
+            <el-table-column prop="parameter" label="参数名称" sortable></el-table-column>
             <el-table-column label="软检查">
               <template slot-scope="scope">{{ scope.row.softCheck ? '启用' : '不启用' }}</template>
             </el-table-column>
@@ -111,13 +111,13 @@
             <el-table-column prop="targetValue" label="标准值"></el-table-column>
             <el-table-column prop="upperSpecLimit" label="标准值上限"></el-table-column>
             <el-table-column prop="lowerSpecLimit" label="标准值下限"></el-table-column>
-            <el-table-column prop="upperWarnLimit" label="警告发生上限"></el-table-column>
-            <el-table-column prop="lowerWarnLimit" label="警告发生下限"></el-table-column>
+            <el-table-column prop="upperWarnLimit" label="警告发生上限" width="100"></el-table-column>
+            <el-table-column prop="lowerWarnLimit" label="警告发生下限" width="100"></el-table-column>
             <el-table-column label="参数状态">
               <template slot-scope="scope">{{ scope.row.parameterStatus ? '启用' : '不启用' }}</template>
             </el-table-column>
             <el-table-column prop="alarm" label="预警事件"></el-table-column>
-            <el-table-column prop="createTime" label="创建时间"></el-table-column>
+            <el-table-column prop="createTime" label="创建时间" width="120"></el-table-column>
             <el-table-column prop="createUserId" label="创建人"></el-table-column>
           </dsn-table>
         </el-tab-pane>
@@ -405,6 +405,8 @@ export default {
       callback();
     };
     return {
+      //克隆一份初始数据
+      cloneDataCollectionEditList: [],
       formLabelWidth: "130px",
       activeName: "first",
       paramsDialogVisible: false,
@@ -695,14 +697,15 @@ export default {
                   this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
                 }
               }
-            } else {
-              this.$message({
-                message: res.message,
-                type: "error"
-              });
-              this.saveDialog = false;
-              // this.setCurrent(this.oldRow);
+              this.goBack();
+              return;
             }
+            this.$message({
+              message: res.message,
+              type: "error"
+            });
+            this.saveDialog = false;
+            // this.setCurrent(this.oldRow);
           });
         }
       });
@@ -884,12 +887,19 @@ export default {
         this.SetupInfoList = data.data.data;
       });
     },
-    resetForm() {}
+    resetForm() {
+      this.editForm = JSON.parse(
+        JSON.stringify(this.cloneDataCollectionEditList[0])
+      );
+    }
   },
   created() {
     this.$nextTick(() => {
       this.init();
     });
+    this.cloneDataCollectionEditList = JSON.parse(
+      JSON.stringify(this.dataCollectionEditList)
+    );
     let params = {
       alarm: ""
     };
