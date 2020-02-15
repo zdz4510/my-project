@@ -36,3 +36,16 @@ export const deleteGeneralCodeDataHttp = data => {
     }
   );
 };
+
+/**
+ * 通过limitGeneralCode和limitGeneralField查询引用的字段信息
+ *  url /generalCodeDataService/findReference
+ */
+export const findReferenceHttp = data => {
+  return request.get(
+    `${window.VUE_APP_URL}/mes/generalCodeDataService/findReference`,
+    {
+      params: data
+    }
+  );
+};

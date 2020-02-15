@@ -4,7 +4,7 @@
     <div class="loginForm">
       <div class="text-center">
         <img class="logo" src="./../../assets/logo.7b8cc895.png" alt="" />
-        <h3 class="login-desc">SYS 企业级中台前端/设计解决方案</h3>
+        <h3 class="login-desc">MES 企业级中台前端/设计解决方案</h3>
       </div>
       <el-form
         :model="loginForm"

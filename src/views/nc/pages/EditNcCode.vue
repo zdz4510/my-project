@@ -77,8 +77,8 @@
 												</dsn-table>
 											</el-col>
 											<el-col :span="2">
-												<div class="direction mt70"><i class="el-icon-caret-right" @click.native="right"></i></div>
-												<div class="direction"><i class="el-icon-caret-left" @click.native="left"></i></div>
+												<div class="direction mt70"><i class="el-icon-caret-right" @click="right"></i></div>
+												<div class="direction"><i class="el-icon-caret-left" @click="left"></i></div>
 											</el-col>
 											<el-col :span="8">
 												<dsn-table :data="undistributed.filter(data => !ncGroup2 || data.ncGroup.toLowerCase().includes(ncGroup2.toLowerCase()))" @select="check2" @select-all="check2">
@@ -140,7 +140,7 @@ export default {
 				ncCode:'',
 				ncCodeDes:'',
 				status:'',
-				ncGroupList:[],
+				ncCodeGroupList:[],
 			},
 			rules: {
 				
@@ -164,6 +164,7 @@ export default {
 			selectedList2:[],
 			ncGroup1:'',
 			ncGroup2:'',
+			
 			cloneUnallocateData:[],
 			cloneAllocateData:[],
     };
@@ -177,14 +178,21 @@ export default {
     ...mapMutations(["SETNCCODEEDITLIST"]),
     //初始化的操作
     init() {
+		console.log("12121",this.ncCodeEditList)
       if (this.ncCodeEditList.length > 0) {
         this.cloneList = JSON.parse(JSON.stringify(this.ncCodeEditList)); //复制一份副本,保证副本和初始列表数据一致性
-        this.editForm = this.cloneList[0]; // 默认选中第一行
-        this.cloneModify = JSON.parse(JSON.stringify(this.editForm)); // modify 的副本
-        this.setCurrent(this.editForm); // 设置选中第一行
+	
+		this.editForm = this.cloneList[0]; // 默认选中第一行
+		
+		this.cloneModify = JSON.parse(JSON.stringify(this.editForm)); // modify 的副本
+		
+		this.setCurrent(this.editForm); // 设置选中第一行
+		
 				this.currentRow = this.editForm; // 设置初始currentRow 为第一行
-				this.allocated = this.editForm.ncGroupList.allocated
-				this.undistributed = this.editForm.ncGroupList.undistributed
+				console.log("2222",this.editForm)
+				this.allocated = this.editForm.ncCodeGroupList.allocated;
+				
+				this.undistributed = this.editForm.ncCodeGroupList.undistributed;
       }
     },
     //清除下拉列表时触发
@@ -203,8 +211,8 @@ export default {
       this.editForm = tempList[0];
       this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
 			this.setCurrent(tempList[0]);
-			this.allocated = this.editForm.ncGroupList.allocated
-			this.undistributed = this.editForm.ncGroupList.undistributed
+			this.allocated = this.editForm.ncCodeGroupList.allocated
+			this.undistributed = this.editForm.ncCodeGroupList.undistributed
     },
     //下拉列表获取到焦点时触发
     handleSelectFocus() {
@@ -246,8 +254,8 @@ export default {
       }
       this.editForm = currentRow;
 			this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
-			this.allocated = this.editForm.ncGroupList.allocated
-			this.undistributed = this.editForm.ncGroupList.undistributed
+			this.allocated = this.editForm.ncCodeGroupList.allocated
+			this.undistributed = this.editForm.ncCodeGroupList.undistributed
     },
     //选中某一行
     //返回操作
@@ -290,7 +298,7 @@ export default {
 					this.allocated.map(item=>{
 						arr.push(item.ncGroup)
 					})
-					this.editForm.ncGroupList = arr
+					this.editForm.ncCodeGroupList = arr
 					params.updateList = [this.editForm]
 					saveNcCode(params).then(data => {
 						const res = data.data;

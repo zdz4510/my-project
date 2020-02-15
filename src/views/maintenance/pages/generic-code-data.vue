@@ -28,7 +28,7 @@
               <dsn-input
                 v-model.trim="genericCodeDataForm.generalCode"
                 placeholder="请输入代码名"
-                class="generalCode"
+                @clear="clearGeneralCode"
               ></dsn-input>
             </el-col>
             <el-col :span="2">
@@ -37,7 +37,7 @@
           </el-row>
         </el-form-item>
         <el-form-item label="描述">
-          <dsn-input v-model.trim="genericCodeDataForm.generalCodeDes" :readonly="true"></dsn-input>
+          <dsn-input v-model.trim="genericCodeDataForm.generalCodeDes" :disabled="true"></dsn-input>
         </el-form-item>
         <el-form-item>
           <dsn-button
@@ -77,13 +77,13 @@
           @click.native="handleEdit"
         >修改</dsn-button>
         <dsn-button size="small" type="primary" :disabled="!editable" @click.native="handleSave">保存</dsn-button>
-        <dsn-button
+        <!-- <dsn-button
           size="small"
           type="danger"
           icon="el-icon-delete"
           :disabled="!editable"
           @click.native="deleteCodeDialog = true"
-        >删除通用代码</dsn-button>
+        >删除通用代码</dsn-button>-->
         <dsn-button
           size="small"
           type="danger"
@@ -121,7 +121,7 @@
             :label="field"
             :prop="field"
           >
-            <dsn-input v-model.trim="addForm[`${field}`]" placeholder="请输入字段数据"></dsn-input>
+            <dsn-input v-model.number="addForm[`${field}`]" placeholder="请输入字段数据"></dsn-input>
           </el-form-item>
         </el-form>
       </span>
@@ -199,7 +199,8 @@ import { findRecordHttp } from "@/api/maintenance/code.definition.api.js";
 import {
   findGeneralCodeHttp,
   saveGeneralCodeDataHttp,
-  deleteGeneralCodeDataHttp
+  deleteGeneralCodeDataHttp,
+  findReferenceHttp
 } from "@/api/maintenance/code.data.api.js";
 import { mapMutations } from "vuex";
 export default {
@@ -279,7 +280,10 @@ export default {
       //弹框宽度
       dialogWidth: "400px",
       //修改时保存初始数据
-      cloneEditForm: {}
+      cloneEditForm: {},
+      //字段格式
+      fields: [],
+      tempField: {}
     };
   },
   computed: {},
@@ -310,6 +314,7 @@ export default {
           this.tableData = res.data.definedData;
           this.showTable = true;
           this.genericCodeDataForm.generalCodeDes = res.data.generalCodeDes;
+          this.fields = res.data.fields;
           //获取出所有已使用的字段名
           res.data.fields.forEach(element => {
             this.usedFieldNames.push(element.fieldName);
@@ -330,12 +335,155 @@ export default {
     },
     //动态设置弹出框验证规则
     setAddFormRules() {
-      this.usedFieldNames.forEach(element => {
-        if (element === "FIELD_01") {
-          this.$set(this.addFormRules, element, [
-            { required: true, message: "字段FIELD_01为必填项", trigger: "blur" }
+      // element数据
+      // generalCode: "CUSTOMIZED_FIELD_01";
+      // fieldName: "FIELD_01";
+      // fieldLabel: "FIELD_01";
+      // fieldType: "A";
+      // fieldSize: "2";
+      // limitGeneralCode: null;
+      // limitGeneralField: null;
+      this.fields.forEach(element => {
+        if (element.fieldName === "FIELD_01") {
+          this.$set(this.addFormRules, element.fieldName, [
+            {
+              required: true,
+              message: "字段FIELD_01为必填项",
+              trigger: "blur"
+            }
+          ]);
+          console.log(element.fieldType);
+          //引用型
+          if (element.fieldType === "C") {
+            this.queryCite(
+              element.fieldName,
+              element.limitGeneralCode,
+              element.limitGeneralField
+            );
+          }
+          //文本型
+          if (element.fieldType === "A") {
+            this.addFormRules[`${element.fieldName}`].push({
+              max: element.fieldSize,
+              message: `长度在${element.fieldSize}以内`,
+              trigger: "blur"
+            });
+          }
+          //数字型
+          if (element.fieldType === "N") {
+            this.tempField = element;
+            this.addFormRules[`${element.fieldName}`].push({
+              validator: this.valiNumber.bind(element),
+              trigger: "blur"
+            });
+          }
+          return;
+        }
+        //引用型
+        if (element.fieldType === "C") {
+          console.log(111);
+          this.queryCite(
+            element.fieldName,
+            element.limitGeneralCode,
+            element.limitGeneralField
+          );
+        }
+        //文本型
+        if (element.fieldType === "A") {
+          this.$set(this.addFormRules, element.fieldName, [
+            {
+              max: element.fieldSize,
+              message: `长度在${element.fieldSize}以内`,
+              trigger: "blur"
+            }
           ]);
         }
+        //数字型
+        if (element.fieldType === "N") {
+          this.tempField = element;
+          this.$set(this.addFormRules, element.fieldName, [
+            { validator: this.valiNumber.bind(element), trigger: "blur" }
+          ]);
+        }
+      });
+    },
+    //设置文本型得规则
+    setTextRules() {},
+    //设置数字型得规则
+    setNumberRules() {},
+    //数字型的验证规则
+    valiNumber(rule, value, callback) {
+      let reg = new RegExp("^\\d{1," + this.tempField.fieldSize + "}$", "gim"); // re为/^\d+bl$/gim
+      if (!reg.test(value)) {
+        callback(
+          new Error(`该字段是数字型且最长为${this.tempField.fieldSize}`)
+        );
+      } else {
+        callback();
+      }
+    },
+    queryCite(fieldName, limitGeneralCode, limitGeneralField) {
+      console.log(fieldName, limitGeneralCode, limitGeneralField);
+      const data = {
+        limitGeneralCode: limitGeneralCode,
+        limitGeneralField: limitGeneralField
+      };
+      findReferenceHttp(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          const field = res.data;
+          if (field.fieldType === "C") {
+            this.queryCite(
+              field.fieldName,
+              field.limitGeneralCode,
+              field.limitGeneralField
+            );
+          }
+          console.log(fieldName);
+          if (fieldName === "FIELD_01") {
+            //文本型
+            if (field.fieldType === "A") {
+              this.addFormRules[`${field.fieldName}`].push({
+                max: field.fieldSize,
+                message: `长度在${field.fieldSize}以内`,
+                trigger: "blur"
+              });
+            }
+            //数字型
+            if (field.fieldType === "N") {
+              this.tempField = field;
+              this.addFormRules[`${field.fieldName}`].push({
+                validator: this.valiNumber.bind(field),
+                trigger: "blur"
+              });
+            }
+          } else {
+            console.log(field.fieldType);
+            //文本型
+            if (field.fieldType === "A") {
+              this.$set(this.addFormRules, field.fieldName, [
+                {
+                  max: field.fieldSize,
+                  message: `长度在${field.fieldSize}以内`,
+                  trigger: "blur"
+                }
+              ]);
+            }
+            //数字型
+            if (field.fieldType === "N") {
+              this.tempField = field;
+              this.$set(this.addFormRules, field.fieldName, [
+                { validator: this.valiNumber.bind(field), trigger: "blur" }
+              ]);
+            }
+          }
+
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
       });
     },
     //根据代码类型查询代码名
@@ -539,8 +687,20 @@ export default {
             message: "已取消删除"
           });
         });
-
-      // this.deleteDataDialog = false;
+    },
+    // //代码名输入框值变化
+    // inputGeneralCode(val) {
+    //   if (val !== "") {
+    //     this.editable = true;
+    //   } else {
+    //     this.editable = false;
+    //   }
+    // },
+    //代码名清除时清空表格数据
+    clearGeneralCode() {
+      this.tableData = [];
+      this.editable = false;
+      this.showTable = false;
     }
   }
 };
