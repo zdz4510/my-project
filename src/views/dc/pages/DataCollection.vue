@@ -11,12 +11,14 @@
         </el-form-item>
         <el-form-item label="数据收集组类型:" prop="collectionType">
           <dsn-select v-model="searchForm.collectionType">
-            <el-option
+            <!-- <el-option
               v-for="item in collectionType"
               :key="item.value"
               :label="item.label"
               :value="item.value"
-            ></el-option>
+            ></el-option>-->
+            <el-option label="LOT" :value="10"></el-option>
+            <el-option label="资源" :value="20"></el-option>
           </dsn-select>
         </el-form-item>
         <el-form-item>
@@ -71,10 +73,12 @@
         <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
         <el-table-column type="index" label="序号"></el-table-column>
         <el-table-column prop="dcGroup" label="数据收集组"></el-table-column>
-        <el-table-column label="数据收集组类型">
+        <el-table-column label="数据收集组类型" width="110">
           <template slot-scope="scope">{{ getFormat(scope.row.collectionType) }}</template>
         </el-table-column>
-        <el-table-column prop="dcGroupDes" label="数据收集描述"></el-table-column>
+        <el-table-column prop="dcGroupDes" label="数据收集描述" width="100"></el-table-column>
+        <el-table-column prop="paramNum" label="参数数量"></el-table-column>
+        <el-table-column prop="conditionNum" label="条件数量"></el-table-column>
         <el-table-column prop="createUserName" label="创建人"></el-table-column>
         <el-table-column prop="createTime" label="创建时间" width="135"></el-table-column>
         <el-table-column prop="modifyUserName" label="修改人"></el-table-column>
@@ -237,7 +241,7 @@ export default {
     },
     getFormat(collectionType) {
       if (collectionType == "10") {
-        return "物料";
+        return "LOT";
       } else if (collectionType == "20") {
         return "资源";
       } else if (collectionType == "30") {
@@ -259,7 +263,7 @@ export default {
         this.checkedList.map(item => {
           item.collectionType =
             item.collectionType == 10
-              ? "物料"
+              ? "LOT"
               : item.collectionType == 20
               ? "资源"
               : item.collectionType == 30
@@ -282,7 +286,7 @@ export default {
           res.map(item => {
             item.collectionType =
               item.collectionType == 10
-                ? "物料"
+                ? "LOT"
                 : item.collectionType == 20
                 ? "资源"
                 : item.collectionType == 30
@@ -319,17 +323,5 @@ export default {
 
 <style lang="scss">
 .data-collection {
-  // padding: 0 30px;
-  // .search-bar {
-  //   padding: 10px 0;
-  //   .el-form {
-  //     .el-form-item {
-  //       margin-bottom: 0px;
-  //     }
-  //   }
-  // }
-  // .operate {
-  //   padding: 10px 0;
-  // }
 }
 </style>
