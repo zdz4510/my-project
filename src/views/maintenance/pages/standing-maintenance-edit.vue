@@ -292,9 +292,23 @@ export default {
           }
         });
       });
-      console.log(count);
+      // console.log(count);
       if (count >= 2) {
-        this.saveDialog = true;
+        // this.saveDialog = true;
+        this.$confirm("是否保存所选数据?", "保存", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "success"
+        })
+          .then(() => {
+            this.handleSave();
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已取消保存"
+            });
+          });
         return;
       }
     },

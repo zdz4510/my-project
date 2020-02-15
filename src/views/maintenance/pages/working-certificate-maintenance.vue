@@ -1,42 +1,50 @@
 <template>
   <div class="working-certificate-maintenance">
-    <div class="query">
-      <el-form
-        :inline="true"
-        :model="workCertificateForm"
-        ref="workCertificateForm"
-        label-width="100px"
-      >
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索条件</span>
+      </div>
+      <!-- 查询条件start -->
+      <el-form :inline="true" :model="workCertificateForm" ref="workCertificateForm">
         <el-form-item label="上岗证">
-          <el-input v-model="workCertificateForm.cert" placeholder="请输入上岗证"></el-input>
+          <dsn-input v-model="workCertificateForm.cert" placeholder="请输入上岗证"></dsn-input>
         </el-form-item>
         <el-form-item>
-          <el-button size="small" type="primary" @click="handleQuery">查询</el-button>
-          <el-button size="small" type="primary" @click="handleReset">重置</el-button>
+          <dsn-button size="small" type="primary" icon="el-icon-search" @click="handleQuery">查询</dsn-button>
+          <dsn-button size="small" type="primary" icon="el-icon-refresh" @click="handleReset">重置</dsn-button>
         </el-form-item>
       </el-form>
-    </div>
-    <div class="operate">
-      <el-button size="small" type="primary" @click="handleAdd">新增</el-button>
-      <el-button
-        size="small"
-        type="primary"
-        :disabled="selectionList.length <= 0"
-        @click="handleEdit"
-      >修改</el-button>
-      <el-button
-        size="small"
-        type="primary"
-        :disabled="selectionList.length <= 0"
-        @click="deleteDialog = true"
-      >删除</el-button>
-      <!-- <el-button size="small" type="primary" @click="handleExport"
-        >导出</el-button
-      >-->
-      <el-button size="small" type="primary" @click="handleExport">导出</el-button>
-    </div>
-    <div class="showInfo">
-      <el-table
+      <!-- 查询条件end -->
+    </DsnPanel>
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索结果</span>
+      </div>
+      <!-- 表格操作start -->
+      <div class="operate">
+        <dsn-button size="small" type="success" icon="el-icon-folder-add" @click="handleAdd">新增</dsn-button>
+        <dsn-button
+          size="small"
+          type="primary"
+          icon="el-icon-edit"
+          :disabled="selectionList.length <= 0"
+          @click="handleEdit"
+        >修改</dsn-button>
+        <dsn-button
+          size="small"
+          type="danger"
+          icon="el-icon-delete"
+          :disabled="selectionList.length <= 0"
+          @click="deleteInfo"
+        >删除</dsn-button>
+        <!-- <dsn-button size="small" type="primary" @click="handleExport"
+        >导出</dsn-button
+        >-->
+        <dsn-button size="small" type="primary" icon="el-icon-upload2" @click="handleExport">导出</dsn-button>
+      </div>
+      <!-- 表格操作end -->
+      <!-- 表格数据start -->
+      <dsn-table
         ref="multipleTable"
         :data="tableData"
         tooltip-effect="dark"
@@ -59,10 +67,8 @@
           </template>
         </el-table-column>
         <el-table-column prop="certTime" label="上岗证持续截止时间" show-overflow-tooltip></el-table-column>
-      </el-table>
-    </div>
-    <div class="pagination">
-      <el-pagination
+      </dsn-table>
+      <dsn-pagination
         background
         layout="->,total,prev,pager,next,sizes"
         :total="total"
@@ -71,13 +77,14 @@
         :current-page="currentPage"
         @size-change="handlePagesize"
         @current-change="handleCurrentChange"
-      ></el-pagination>
-    </div>
+      ></dsn-pagination>
+      <!-- 表格数据end -->
+    </DsnPanel>
     <el-dialog title="删除" :visible.sync="deleteDialog" width="30%">
       <span>是否确认删除{{ selectionList.length }}条数据？</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="deleteDialog = false">取 消</el-button>
-        <el-button type="primary" @click="handleDelete">确 定</el-button>
+        <dsn-button @click="deleteDialog = false">取 消</dsn-button>
+        <dsn-button type="primary" @click="handleDelete">确 定</dsn-button>
       </span>
     </el-dialog>
   </div>
@@ -203,6 +210,29 @@ export default {
         query: { operateType: "edit" }
       });
     },
+    deleteInfo() {
+      if (this.selectionList.length == 0) {
+        this.$message({
+          message: "请先选中需要删除的行",
+          type: "warning"
+        });
+        return;
+      }
+      this.$confirm("是否删除所选数据?", "删除", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.handleDelete();
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
+    },
     handleDelete() {
       const data = [];
       this.selectionList.forEach(element => {
@@ -284,17 +314,5 @@ export default {
 
 <style lang="scss">
 .working-certificate-maintenance {
-  padding: 0 30px;
-  .operate {
-    padding: 10px 5px;
-  }
-  .query {
-    padding: 10px;
-    .el-form {
-      .el-form-item {
-        margin-bottom: 0px;
-      }
-    }
-  }
 }
 </style>

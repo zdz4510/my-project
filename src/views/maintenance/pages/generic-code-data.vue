@@ -199,7 +199,8 @@ import { findRecordHttp } from "@/api/maintenance/code.definition.api.js";
 import {
   findGeneralCodeHttp,
   saveGeneralCodeDataHttp,
-  deleteGeneralCodeDataHttp
+  deleteGeneralCodeDataHttp,
+  findReferenceHttp
 } from "@/api/maintenance/code.data.api.js";
 import { mapMutations } from "vuex";
 export default {
@@ -224,18 +225,6 @@ export default {
       }
       callback();
     };
-    // const valiText = (rule, value, callback) => {
-    //   console.log(rule, value, callback);
-    //   // if (value === "") {
-    //   //   callback("代码名不能为空");
-    //   // }
-    //   // //
-    //   // let reg = /^([A-Z]|[0-9]|_|-|\/)+$/;
-    //   // if (!reg.test(value)) {
-    //   //   callback("代码名格式应只包含（[A-Z,0-9,_,-,/]）");
-    //   // }
-    //   // callback();
-    // };
     return {
       //已使用的字段名
       usedFieldNames: [],
@@ -297,20 +286,7 @@ export default {
       tempField: {}
     };
   },
-  computed: {
-    // valiText: (rule, value, callback) => {
-    //   console.log(rule, value, callback);
-    //   // if (value === "") {
-    //   //   callback("代码名不能为空");
-    //   // }
-    //   // //
-    //   // let reg = /^([A-Z]|[0-9]|_|-|\/)+$/;
-    //   // if (!reg.test(value)) {
-    //   //   callback("代码名格式应只包含（[A-Z,0-9,_,-,/]）");
-    //   // }
-    //   // callback();
-    // }
-  },
+  computed: {},
   filters: {
     filterFieldType(value) {
       if (value === "A") {
@@ -368,6 +344,50 @@ export default {
       // limitGeneralCode: null;
       // limitGeneralField: null;
       this.fields.forEach(element => {
+        if (element.fieldName === "FIELD_01") {
+          this.$set(this.addFormRules, element.fieldName, [
+            {
+              required: true,
+              message: "字段FIELD_01为必填项",
+              trigger: "blur"
+            }
+          ]);
+          console.log(element.fieldType);
+          //引用型
+          if (element.fieldType === "C") {
+            this.queryCite(
+              element.fieldName,
+              element.limitGeneralCode,
+              element.limitGeneralField
+            );
+          }
+          //文本型
+          if (element.fieldType === "A") {
+            this.addFormRules[`${element.fieldName}`].push({
+              max: element.fieldSize,
+              message: `长度在${element.fieldSize}以内`,
+              trigger: "blur"
+            });
+          }
+          //数字型
+          if (element.fieldType === "N") {
+            this.tempField = element;
+            this.addFormRules[`${element.fieldName}`].push({
+              validator: this.valiNumber.bind(element),
+              trigger: "blur"
+            });
+          }
+          return;
+        }
+        //引用型
+        if (element.fieldType === "C") {
+          console.log(111);
+          this.queryCite(
+            element.fieldName,
+            element.limitGeneralCode,
+            element.limitGeneralField
+          );
+        }
         //文本型
         if (element.fieldType === "A") {
           this.$set(this.addFormRules, element.fieldName, [
@@ -382,31 +402,17 @@ export default {
         if (element.fieldType === "N") {
           this.tempField = element;
           this.$set(this.addFormRules, element.fieldName, [
-            // { type: "number", message: "该字段必须为数字值" },
-            // {
-            //   max: element.fieldSize,
-            //   message: `长度在${element.fieldSize}以内`,
-            //   trigger: "blur"
-            // }
-            { validator: this.valiText.bind(element), trigger: "blur" }
+            { validator: this.valiNumber.bind(element), trigger: "blur" }
           ]);
-        }
-        //引用型
-        if (element.fieldType === "C") {
-          // this.$set(this.addFormRules, element.fieldName, [
-          //   { validator: this.validateText(element), trigger: "blur" }
-          // ]);
-        }
-        if (element.fieldName === "FIELD_01") {
-          this.addFormRules[`${element.fieldName}`].push({
-            required: true,
-            message: "字段FIELD_01为必填项",
-            trigger: "blur"
-          });
         }
       });
     },
-    valiText(rule, value, callback) {
+    //设置文本型得规则
+    setTextRules() {},
+    //设置数字型得规则
+    setNumberRules() {},
+    //数字型的验证规则
+    valiNumber(rule, value, callback) {
       let reg = new RegExp("^\\d{1," + this.tempField.fieldSize + "}$", "gim"); // re为/^\d+bl$/gim
       if (!reg.test(value)) {
         callback(
@@ -415,6 +421,70 @@ export default {
       } else {
         callback();
       }
+    },
+    queryCite(fieldName, limitGeneralCode, limitGeneralField) {
+      console.log(fieldName, limitGeneralCode, limitGeneralField);
+      const data = {
+        limitGeneralCode: limitGeneralCode,
+        limitGeneralField: limitGeneralField
+      };
+      findReferenceHttp(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          const field = res.data;
+          if (field.fieldType === "C") {
+            this.queryCite(
+              field.fieldName,
+              field.limitGeneralCode,
+              field.limitGeneralField
+            );
+          }
+          console.log(fieldName);
+          if (fieldName === "FIELD_01") {
+            //文本型
+            if (field.fieldType === "A") {
+              this.addFormRules[`${field.fieldName}`].push({
+                max: field.fieldSize,
+                message: `长度在${field.fieldSize}以内`,
+                trigger: "blur"
+              });
+            }
+            //数字型
+            if (field.fieldType === "N") {
+              this.tempField = field;
+              this.addFormRules[`${field.fieldName}`].push({
+                validator: this.valiNumber.bind(field),
+                trigger: "blur"
+              });
+            }
+          } else {
+            console.log(field.fieldType);
+            //文本型
+            if (field.fieldType === "A") {
+              this.$set(this.addFormRules, field.fieldName, [
+                {
+                  max: field.fieldSize,
+                  message: `长度在${field.fieldSize}以内`,
+                  trigger: "blur"
+                }
+              ]);
+            }
+            //数字型
+            if (field.fieldType === "N") {
+              this.tempField = field;
+              this.$set(this.addFormRules, field.fieldName, [
+                { validator: this.valiNumber.bind(field), trigger: "blur" }
+              ]);
+            }
+          }
+
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
     },
     //根据代码类型查询代码名
     handleQueryGeneralCode() {

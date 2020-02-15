@@ -5,7 +5,7 @@
         <span>搜索条件</span>
       </div>
       <!-- 查询条件start -->
-      <el-form :inline="true" :model="standingForm" ref="standingForm" label-width="70px">
+      <el-form :inline="true" :model="standingForm" ref="standingForm">
         <el-form-item label="产线">
           <dsn-input v-model="standingForm.workCenterRelation" placeholder="请输入产线"></dsn-input>
         </el-form-item>
@@ -38,7 +38,7 @@
           type="danger"
           icon="el-icon-delete"
           :disabled="selectionList.length < 1"
-          @click="handleDelete"
+          @click="deleteInfo"
         >删除</dsn-button>
         <dsn-button
           size="small"
@@ -101,12 +101,12 @@
             :auto-upload="false"
           >
             <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+            <div slot="tip" class="el-upload__tip">只能上传导入模板文件</div>
           </el-upload>
         </div>
       </span>
       <span slot="footer" class="dialog-footer">
-        <dsn-button @click="importDialog = false">取消上传</dsn-button>
+        <dsn-button @click="handleCancleUpload">取消上传</dsn-button>
         <dsn-button type="primary" @click="handleImport">确定上传</dsn-button>
       </span>
     </el-dialog>
@@ -258,6 +258,29 @@ export default {
         query: { operateType: "edit" }
       });
     },
+    deleteInfo() {
+      if (this.selectionList.length == 0) {
+        this.$message({
+          message: "请先选中需要删除的行",
+          type: "warning"
+        });
+        return;
+      }
+      this.$confirm("是否删除所选数据?", "删除", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.handleDelete();
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
+    },
     handleDelete() {
       const data = this.selectionList;
       deleteStationBatchHttp(data).then(data => {
@@ -364,6 +387,10 @@ export default {
     //上传失败
     handleError(err) {
       console.log(err);
+    },
+    handleCancleUpload() {
+      this.importDialog = false;
+      this.fileList = [];
     }
     //上传文件end
   }
