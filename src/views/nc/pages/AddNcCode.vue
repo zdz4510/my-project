@@ -60,8 +60,8 @@
 										</dsn-table>
 									</el-col>
 									<el-col :span="2">
-										<div class="direction mt70"><i class="el-icon-caret-right" @click.native="right"></i></div>
-										<div class="direction"><i class="el-icon-caret-left" @click.native="left"></i></div>
+										<div class="direction mt70"><i class="el-icon-caret-right" @click="right"></i></div>
+										<div class="direction"><i class="el-icon-caret-left" @click="left"></i></div>
 									</el-col>
 									<el-col :span="8">
 										<dsn-table :data="undistributed.filter(data => !ncGroup2 || data.ncGroup.toLowerCase().includes(ncGroup2.toLowerCase()))" @select="check2" @select-all="check2">

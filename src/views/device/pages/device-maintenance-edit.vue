@@ -1,26 +1,26 @@
 <template>
   <div class="maintenanceEdit">
     <div class="operate">
-      <el-button size="small" type="primary" @click="handleBack">返回</el-button>
-      <el-button size="small" type="primary" @click="checkTabCurrentStatus">保存</el-button>
-      <el-button size="small" type="primary" @click="handleReset(resetFormInfo)">重置</el-button>
+      <dsn-button size="small" type="primary" @click.native="handleBack">返回</dsn-button>
+      <dsn-button size="small" type="primary" @click.native="checkTabCurrentStatus">保存</dsn-button>
+      <dsn-button size="small" type="primary" @click.native="handleReset(resetFormInfo)">重置</dsn-button>
     </div>
-    <div class="showInfo">
+    <div class="operate" style="padding-bottom: 14px;">
       <div class="right">
         <div class="resource">
           <el-form
+            :inline="true"
             :model="maintenanceForm"
             ref="maintenanceFormOne"
             :rules="rules"
-            label-width="100px"
             class="demo-maintenanceForm"
           >
             <el-form-item label="设备编号" prop="resource">
-              <el-input
+              <dsn-input
                 v-model.trim="maintenanceForm.resource"
                 placeholder="请输入设备编号"
                 :disabled="isEditResource"
-              ></el-input>
+              ></dsn-input>
             </el-form-item>
           </el-form>
         </div>
@@ -36,7 +36,7 @@
               class="demo-maintenanceForm"
             >
               <el-form-item label="设备描述:">
-                <el-input type="textarea" v-model.trim="maintenanceForm.resourceDes"></el-input>
+                <dsn-input style="width: 200px" type="textarea" v-model.trim="maintenanceForm.resourceDes"></dsn-input>
               </el-form-item>
               <el-form-item label="状态:" prop="resourceStatus">
                 <el-radio-group v-model="maintenanceForm.resourceStatus" @change="selectStatus">
@@ -47,7 +47,7 @@
                 </el-radio-group>
               </el-form-item>
               <el-form-item label="所在工作中心:" prop="workCenter">
-                <el-input v-model.trim="maintenanceForm.workCenter" class="workCenter"></el-input>
+                <dsn-input style="width: 200px" v-model.trim="maintenanceForm.workCenter" class="workCenter"></dsn-input>
                 <i class="el-icon-document" @click="queryWorkCenter"></i>
                 <!-- <div slot="error" slot-scope="error">{{error}}</div> -->
               </el-form-item>
@@ -63,11 +63,11 @@
               label-width="110px"
             >
               <el-form-item label="保养条件名称" prop="conditionName" inline-message="true">
-                <el-input
+                <dsn-input
                   v-model.trim="upkeepConfigForm.conditionName"
                   placeholder="请输入保养条件名称"
                   size="small"
-                ></el-input>
+                ></dsn-input>
               </el-form-item>
               <el-form-item label="保养起始时间" prop="startTime">
                 <el-date-picker
@@ -79,39 +79,38 @@
                 ></el-date-picker>
               </el-form-item>
               <el-form-item label="保养条件描述" prop="conditionDes">
-                <el-input
+                <dsn-input
                   v-model.trim="upkeepConfigForm.conditionDes"
                   placeholder="请输入保养条件描述"
                   size="small"
-                ></el-input>
+                ></dsn-input>
               </el-form-item>
               <el-form-item label="保养人员" prop="maintenanceUserId">
-                <el-input
+                <dsn-input
                   v-model.trim="upkeepConfigForm.maintenanceUserId"
                   placeholder="请输入保养人员"
                   size="small"
-                  class="maintenanceUserId"
-                ></el-input>
-                <i class="el-icon-document"></i>
+                ></dsn-input>
               </el-form-item>
               <el-form-item label="预警事件" prop="alarm">
                 <el-autocomplete
+                  style="width: 220px;"
                   v-model.trim="upkeepConfigForm.alarm"
                   :fetch-suggestions="querySearch"
                   placeholder="请输入预警事件"
                   @select="handleSelectAlarm"
                   size="small"
                 ></el-autocomplete>
-                <i class="el-icon-document"></i>
               </el-form-item>
               <el-form-item label="保养周期" prop="maintenancePeriod">
-                <el-input
+                <dsn-input
                   v-model.number="upkeepConfigForm.maintenancePeriod"
+                  style="width: 120px"
                   placeholder="保养周期"
                   class="upkeepCycle"
                   size="small"
-                ></el-input>
-                <el-select
+                ></dsn-input>
+                <dsn-select
                   v-model="upkeepConfigForm.periodUnit"
                   label="upkeepConfigForm.periodUnit"
                   class="upkeepCycle"
@@ -122,7 +121,7 @@
                   <el-option label="季度" :value="90">季度</el-option>
                   <el-option label="半年" :value="180">半年</el-option>
                   <el-option label="年" :value="365">年</el-option>
-                </el-select>
+                </dsn-select>
               </el-form-item>
               <el-form-item label="启用预警功能" prop="warningFunction">
                 <el-radio-group v-model="upkeepConfigForm.warningFunction" @change="selectWarnFunc">
@@ -139,17 +138,16 @@
               </el-form-item>
             </el-form>
             <div class="upkeep">
-              <el-button size="small" type="primary" @click="handleLocalAdd(refArrUpkeepConfig)">新增</el-button>
-              <el-button size="small" type="primary" @click="handleLocalSave">提交</el-button>
-              <el-button size="small" type="primary" @click="handleLocalDelete">删除</el-button>
+              <dsn-button size="small" type="primary" @click="handleLocalAdd(refArrUpkeepConfig)">新增</dsn-button>
+              <dsn-button size="small" type="primary" @click="handleLocalSave">提交</dsn-button>
+              <dsn-button size="small" type="primary" @click="handleLocalDelete">删除</dsn-button>
             </div>
-            <el-table
+            <dsn-table
               ref="multipleTable"
               :data="tableData"
               tooltip-effect="dark"
               style="width: 100%;"
               :header-cell-style="{ 'background-color': '#F5F7FA' }"
-              height="200px"
               @selection-change="handleSelectionChange"
             >
               <el-table-column type="selection" width="55"></el-table-column>
@@ -164,7 +162,7 @@
               <el-table-column prop="maintenanceLocation" label="保养地址" width="120"></el-table-column>
               <el-table-column prop="maintenanceUserId" label="保养人员" width="120"></el-table-column>
               <el-table-column prop="conditionDes" label="保养条件描述" show-overflow-tooltip></el-table-column>
-            </el-table>
+            </dsn-table>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -174,8 +172,8 @@
         <workCenterModel :workCenterData="workCenterData" @selectWorkCenter="selectWorkCenter"></workCenterModel>
       </span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="workCenterDialog = false">取 消</el-button>
-        <el-button type="primary" @click="handleSelectWorkCenter">确 定</el-button>
+        <dsn-button @click="workCenterDialog = false">取 消</dsn-button>
+        <dsn-button type="primary" @click="handleSelectWorkCenter">确 定</dsn-button>
       </span>
     </el-dialog>
   </div>
@@ -646,53 +644,25 @@ export default {
 
 <style lang="scss">
 .maintenanceEdit {
-  padding: 0 30px;
   .operate {
-    padding: 10px 5px;
+    padding: 14px 14px 0;
+    background: #fff;
+    margin-bottom: 14px;
+		border-radius: 4px;
   }
-  .showInfo {
-    .right {
-      flex: 1;
-      .resource {
-        width: 25%;
-      }
-      .baseInfo {
-        width: 50%;
-        .el-form {
-          // text-align: center;
-          .el-form-item {
-            .workCenter {
-              width: 94%;
+  .deviceUpkeepSetting {
+    .el-form {
+      // text-align: center;
+      .el-form-item {
+        width: 32%;
+        .el-form-item__content {
+          .el-radio-group {
+            .el-radio {
+              width: 30px;
             }
           }
         }
-      }
-      .deviceUpkeepSetting {
-        .el-form {
-          // text-align: center;
-          .el-form-item {
-            width: 32%;
-            .el-form-item__content {
-              .el-radio-group {
-                .el-radio {
-                  width: 30px;
-                }
-              }
-            }
-            .upkeepCycle {
-              width: 100px;
-            }
-            .el-icon-document {
-              font-size: 20px;
-            }
-            .maintenanceUserId {
-              width: 80%;
-            }
-          }
-        }
-        .upkeep {
-          text-align: center;
-        }
+
       }
     }
   }

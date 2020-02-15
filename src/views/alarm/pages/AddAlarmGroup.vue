@@ -285,7 +285,7 @@ export default {
     }
   }
   .direction {
-    color: #409eff;
+    color: #182027;
     font-size: 40px;
     cursor: pointer;
     text-align: center;

@@ -13,141 +13,136 @@
         @click="handleReset(['standingFormOne', 'standingFormTwo'])"
       >重置</el-button>
     </div>
-    <div class="showInfo">
-      <div class="left" v-if="operateType === 'edit'">
-        <!-- <el-select
-          v-model="value"
-          clearable
-          placeholder="请选择"
-          @clear="handleClearSelect"
-          @change="handleChangeOption"
-          @focus="handleSelectFocus"
-          ref="select"
-        >
-          <el-option
-            v-for="item in cloneList"
-            :key="item.colorCode"
-            :label="item.colorName"
-            :value="item.colorCode"
-          >
-          </el-option>
-        </el-select>-->
+    <div class="operate">
+      <el-form
+        :model="standingForm"
+        ref="standingFormOne"
+        :inline="true"
+        :rules="standingFormRules"
+        class="standingFormTop"
+      >
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="站位" prop="station">
+              <dsn-input
+                v-model.trim="standingForm.station"
+                placeholder="请输入站位"
+                :disabled="isEditStation"
+              ></dsn-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="站位描述" prop="stationDes">
+              <dsn-input v-model.trim="standingForm.stationDes" placeholder="请输入站位描述"></dsn-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+    </div>
+    <div class="operate">
+      <el-tabs type="border-card">
+        <el-tab-pane class="baseInfo">
+          <span slot="label">基础信息</span>
+          <el-row>
+            <el-col :span="12">
+              <el-form
+                :model="standingForm"
+                ref="standingFormTwo"
+                label-width="120px"
+                :rules="standingFormRules"
+              >
+                <el-form-item label="IP地址:" prop="padIp">
+                  <dsn-input v-model.trim="standingForm.padIp" placeholder="请输入IP地址"></dsn-input>
+                </el-form-item>
+                <el-form-item label="工作中心:" prop="workCenter">
+                  <el-autocomplete
+                    size="small"
+                    v-model="standingForm.workCenter"
+                    :fetch-suggestions="querySearch"
+                    placeholder="请输入工作中心"
+                    @select="handleSelectWorkCenter"
+                    style="width:100%"
+                  ></el-autocomplete>
+                </el-form-item>
+                <el-form-item label="产线:" prop="workCenterRelation">
+                  <dsn-select
+                    v-model="standingForm.workCenterRelation"
+                    style="width:100%"
+                    filterable
+                    placeholder="请选择产线"
+                  >
+                    <el-option
+                      v-for="(item, index) in workCenterRelations"
+                      :key="index"
+                      :label="item"
+                      :value="item"
+                    ></el-option>
+                  </dsn-select>
+                </el-form-item>
+                <el-form-item label="设备:" prop="resource">
+                  <el-row>
+                    <el-col :span="22">
+                      <dsn-input
+                        v-model.trim="standingForm.resource"
+                        placeholder="请输入设备"
+                        class="resource"
+                      ></dsn-input>
+                    </el-col>
+                    <el-col :span="2">
+                      <i class="el-icon-document" @click="handleSeleteResource"></i>
+                    </el-col>
+                  </el-row>
+                </el-form-item>
+                <el-form-item label="状态:" prop="status">
+                  <el-radio-group v-model="standingForm.status">
+                    <el-radio label="正常" value="正常">正常</el-radio>
+                    <el-radio label="满站" value="满站">满站</el-radio>
+                    <el-radio label="故障" value="故障">故障</el-radio>
+                  </el-radio-group>
+                </el-form-item>
+                <el-form-item label="站位类型:" prop="stationType">
+                  <el-radio-group v-model="standingForm.stationType">
+                    <el-radio label="普通站" value="普通站">普通站</el-radio>
+                    <el-radio label="质监站" value="质监站">质监站</el-radio>
+                    <el-radio label="多功能站" value="多功能站">多功能站</el-radio>
+                  </el-radio-group>
+                </el-form-item>
+                <el-form-item label="满站数量:" prop="fullQty">
+                  <dsn-input v-model.trim="standingForm.fullQty" placeholder="请输入满站数量"></dsn-input>
+                </el-form-item>
+              </el-form>
+            </el-col>
+          </el-row>
+        </el-tab-pane>
+      </el-tabs>
+    </div>
+    <el-dialog title="设备" :visible.sync="resourceDialog" width="30%">
+      <span>
         <el-table
-          ref="editTable"
-          :data="cloneList"
-          border
+          ref="multipleTable"
+          :data="resourceData"
           highlight-current-row
           style="width: 100%"
-          height="513"
-          @row-click="handleStationCurrentChange"
+          height="200px"
+          @current-change="handleCurrentChange"
         >
-          <el-table-column prop="station" label="站位"></el-table-column>
-          <el-table-column prop="stationDes" label="站位描述"></el-table-column>
+          <el-table-column type="index" width="50"></el-table-column>
+          <el-table-column prop="resource" label="设备编号" width="100"></el-table-column>
+          <el-table-column prop="resourceDes" label="设备描述" show-overflow-tooltip></el-table-column>
         </el-table>
-      </div>
-      <div class="right">
-        <el-form
-          :model="standingForm"
-          ref="standingFormOne"
-          label-width="100px"
-          :rules="standingFormRules"
-        >
-          <el-form-item label="站位" prop="station">
-            <el-input
-              v-model.trim="standingForm.station"
-              placeholder="请输入站位"
-              :disabled="isEditStation"
-            ></el-input>
-          </el-form-item>
-          <el-form-item label="站位描述" prop="stationDes">
-            <el-input v-model.trim="standingForm.stationDes" placeholder="请输入站位描述"></el-input>
-          </el-form-item>
-        </el-form>
-
-        <el-tabs type="border-card">
-          <el-tab-pane class="baseInfo">
-            <span slot="label">基础信息</span>
-            <el-form
-              :model="standingForm"
-              ref="standingFormTwo"
-              label-width="120px"
-              :rules="standingFormRules"
-            >
-              <el-form-item label="IP地址:" prop="padIp">
-                <el-input v-model.trim="standingForm.padIp" placeholder="请输入IP地址"></el-input>
-              </el-form-item>
-              <el-form-item label="工作中心:" prop="workCenter">
-                <el-autocomplete
-                  v-model="standingForm.workCenter"
-                  :fetch-suggestions="querySearch"
-                  placeholder="请输入工作中心"
-                  @select="handleSelectWorkCenter"
-                ></el-autocomplete>
-              </el-form-item>
-              <el-form-item label="产线:" prop="workCenterRelation">
-                <el-select v-model="standingForm.workCenterRelation" filterable placeholder="请选择产线">
-                  <el-option
-                    v-for="(item, index) in workCenterRelations"
-                    :key="index"
-                    :label="item"
-                    :value="item"
-                  ></el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item label="设备:" prop="resource">
-                <el-input v-model.trim="standingForm.resource" placeholder="请输入设备" class="resource"></el-input>
-                <i class="el-icon-document" @click="handleSeleteResource"></i>
-              </el-form-item>
-
-              <el-form-item label="状态:" prop="status">
-                <el-radio-group v-model="standingForm.status">
-                  <el-radio label="正常" value="正常">正常</el-radio>
-                  <el-radio label="满站" value="满站">满站</el-radio>
-                  <el-radio label="故障" value="故障">故障</el-radio>
-                </el-radio-group>
-              </el-form-item>
-              <el-form-item label="站位类型:" prop="stationType">
-                <el-radio-group v-model="standingForm.stationType">
-                  <el-radio label="普通站" value="普通站">普通站</el-radio>
-                  <el-radio label="质监站" value="质监站">质监站</el-radio>
-                  <el-radio label="多功能站" value="多功能站">多功能站</el-radio>
-                </el-radio-group>
-              </el-form-item>
-              <el-form-item label="满站数量:" prop="fullQty">
-                <el-input v-model.trim="standingForm.fullQty" placeholder="请输入满站数量"></el-input>
-              </el-form-item>
-            </el-form>
-          </el-tab-pane>
-        </el-tabs>
-        <el-dialog title="设备" :visible.sync="resourceDialog" width="30%">
-          <span>
-            <el-table
-              ref="multipleTable"
-              :data="resourceData"
-              highlight-current-row
-              style="width: 100%"
-              height="200px"
-              @current-change="handleCurrentChange"
-            >
-              <el-table-column type="index" width="50"></el-table-column>
-              <el-table-column prop="resource" label="设备编号" width="100"></el-table-column>
-              <el-table-column prop="resourceDes" label="设备描述" show-overflow-tooltip></el-table-column>
-            </el-table>
-          </span>
-          <span slot="footer" class="dialog-footer">
-            <el-button @click="resourceDialog = false">取 消</el-button>
-            <el-button type="primary" @click="handleSelectionResource">确 定</el-button>
-          </span>
-        </el-dialog>
-        <el-dialog title="保存" :visible.sync="saveDialog" width="30%">
-          <span>是否确认保存该条数据？</span>
-          <span slot="footer" class="dialog-footer">
-            <el-button @click="saveDialog = false">取 消</el-button>
-            <el-button type="primary" @click="handleSave">确 定</el-button>
-          </span>
-        </el-dialog>
-      </div>
-    </div>
+      </span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="resourceDialog = false">取 消</el-button>
+        <el-button type="primary" @click="handleSelectionResource">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog title="保存" :visible.sync="saveDialog" width="30%">
+      <span>是否确认保存该条数据？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="saveDialog = false">取 消</el-button>
+        <el-button type="primary" @click="handleSave">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -183,7 +178,7 @@ export default {
         resource: "",
         status: "",
         stationType: "",
-        fullQty: ""
+        fullQty: "0"
       },
       standingFormRules: {
         station: [{ required: true, message: "请输入站位", trigger: "change" }],
@@ -240,12 +235,12 @@ export default {
               element.value = element.workCenter;
             });
             cb(this.workCenters);
-          } else {
-            this.$message({
-              message: res.message,
-              type: "warning"
-            });
+            return;
           }
+          this.$message({
+            message: res.message,
+            type: "warning"
+          });
         });
       }, 150);
     },
@@ -273,7 +268,7 @@ export default {
         if (res.code === 200) {
           this.resourceData = res.data;
           this.resourceDialog = true;
-          console.log(this.resourceData);
+          return;
         }
         this.$message({
           message: res.message,
@@ -316,7 +311,7 @@ export default {
         if (res.code === 200) {
           this.$message({
             message: res.message,
-            type: "warning"
+            type: "success"
           });
           this.saveDialog = false;
           this.handleBack();
@@ -363,42 +358,15 @@ export default {
 
 <style lang="scss">
 .standingMaintenanceEdit {
-  padding: 10px 30px;
   .operate {
-    padding: 10px 0;
-  }
-  .showInfo {
-    display: flex;
-    .left {
-      width: 200px;
-      height: 100px;
-      background-color: red;
-    }
-    .right {
-      flex: 1;
-      .el-form {
-        .el-form-item {
-          .el-form-item__content {
-            width: 250px;
-          }
-        }
-      }
-      .el-tabs {
-        .el-form {
-          .el-form-item {
-            .el-form-item__content {
-              width: 250px;
-              .el-radio-group {
-                .el-radio {
-                  margin-right: 12px;
-                }
-              }
-              .resource {
-                width: 90%;
-              }
-            }
-          }
-        }
+    padding: 14px 14px 0;
+    background: #fff;
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+    border-radius: 4px;
+    .standingFormTop {
+      .el-form-item {
+        margin-bottom: 0;
       }
     }
   }

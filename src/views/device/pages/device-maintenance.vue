@@ -1,78 +1,89 @@
 <template>
   <div class="deviceMaintenance">
-    <div class="query">
-      <div class="left">
-        <el-form
-          :model="maintenanceForm"
-          ref="maintenanceForm"
-          label-width="100px"
-          class="maintenanceForm"
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索信息</span>
+      </div>
+      <div class="query">
+        <div class="left">
+          <el-form
+            :inline="true"
+            :model="maintenanceForm"
+            ref="maintenanceForm"
+            class="maintenanceForm"
+          >
+            <el-form-item label="设备编号">
+              <dsn-input v-model="maintenanceForm.resource" placeholder="请输入设备设备编号"></dsn-input>
+            </el-form-item>
+            <el-form-item>
+              <dsn-button size="small" type="primary" @click.native="handleQuery">查询</dsn-button>
+              <dsn-button size="small" type="primary" @click.native="handleReset">重置</dsn-button>
+            </el-form-item>
+          </el-form>
+        </div>
+      </div>
+    </DsnPanel>
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索结果</span>
+      </div>
+      <div class="operate">
+        <dsn-button icon="el-icon-folder-add" size="small" type="success" @click.native="handleAdd">新增</dsn-button>
+        <dsn-button
+          size="small"
+          type="primary"
+          icon="el-icon-edit"
+          :disabled="selectionList.length !== 1"
+          @click.native="handleEdit"
+        >修改</dsn-button>
+        <dsn-button
+          size="small"
+          type="danger"
+          icon="el-icon-delete"
+          :disabled="selectionList.length <= 0"
+          @click.native="handleDelete"
+        >删除</dsn-button>
+        <dsn-button icon="el-icon-upload2" size="small" type="primary" @click.native="handleExport">导出</dsn-button>
+      </div>
+      <div class="showInfo">
+        <dsn-table
+          ref="multipleTable"
+          :data="tableData"
+          tooltip-effect="dark"
+          style="width: 100%"
+          height="350px"
+          @selection-change="handleSelectionChange"
         >
-          <el-form-item label="设备编号">
-            <el-input v-model="maintenanceForm.resource" placeholder="请输入设备设备编号"></el-input>
-          </el-form-item>
-        </el-form>
+          <el-table-column type="selection" width="55"></el-table-column>
+          <el-table-column prop="resource" label="设备编号"></el-table-column>
+          <el-table-column prop="resourceDes" label="设备名称"></el-table-column>
+          <!-- <el-table-column prop="workCenterRelation" label="线体" width="160">
+          </el-table-column>
+          <el-table-column prop="station" label="工站" width="160">
+          </el-table-column>-->
+          <el-table-column prop="workCenter" label="工作中心"></el-table-column>
+          <el-table-column label="状态" show-overfslow-tooltip>
+            <template slot-scope="scope">
+              <span>{{ scope.row.resourceStatus | filterStatus }}</span>
+            </template>
+          </el-table-column>
+        </dsn-table>
+        <dsn-pagination
+          background
+          layout="->,total,prev,pager,next,sizes"
+          :total="total"
+          :page-size="pageSize"
+          :current-page="currentPage"
+          @size-change="handlePagesize"
+          @current-change="handleCurrentChange"
+        ></dsn-pagination>
       </div>
-      <div class="right">
-        <el-button size="small" type="primary" @click="handleQuery">查询</el-button>
-        <el-button size="small" type="primary" @click="handleReset">重置</el-button>
-      </div>
-    </div>
-    <div class="operate">
-      <el-button size="small" type="primary" @click="handleAdd">新增</el-button>
-      <el-button
-        size="small"
-        type="primary"
-        :disabled="selectionList.length !== 1"
-        @click="handleEdit"
-      >修改</el-button>
-      <el-button
-        size="small"
-        type="primary"
-        :disabled="selectionList.length <= 0"
-        @click="handleDelete"
-      >删除</el-button>
-      <el-button size="small" type="primary" @click="handleExport">导出</el-button>
-    </div>
-    <div class="showInfo">
-      <el-table
-        ref="multipleTable"
-        :data="tableData"
-        tooltip-effect="dark"
-        style="width: 100%"
-        height="350px"
-        @selection-change="handleSelectionChange"
-      >
-        <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="resource" label="设备编号"></el-table-column>
-        <el-table-column prop="resourceDes" label="设备名称"></el-table-column>
-        <!-- <el-table-column prop="workCenterRelation" label="线体" width="160">
-        </el-table-column>
-        <el-table-column prop="station" label="工站" width="160">
-        </el-table-column>-->
-        <el-table-column prop="workCenter" label="工作中心"></el-table-column>
-        <el-table-column label="状态" show-overfslow-tooltip>
-          <template slot-scope="scope">
-            <span>{{ scope.row.resourceStatus | filterStatus }}</span>
-          </template>
-        </el-table-column>
-      </el-table>
-      <el-pagination
-        background
-        layout="->,total,prev,pager,next,sizes"
-        :total="total"
-        :page-size="pageSize"
-        :page-sizes="[5, 10, 15, 20]"
-        :current-page="currentPage"
-        @size-change="handlePagesize"
-        @current-change="handleCurrentChange"
-      ></el-pagination>
-    </div>
+    </DsnPanel>
     <el-dialog title="删除" :visible.sync="deleteDialog" width="30%">
       <span>是否确认删除{{ selectionList.length }}条数据？</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="deleteDialog = false">取 消</el-button>
-        <el-button type="primary" @click="handleDelete">确 定</el-button>
+        <dsn-button @click.native="deleteDialog = false">取 消</dsn-button>
+        <dsn-button type="primary" @click.native="handleDelete">确 定</dsn-button>
       </span>
     </el-dialog>
   </div>
@@ -324,7 +335,7 @@ export default {
 </script>
 
 <style lang="scss">
-.deviceMaintenance {
+/* .deviceMaintenance {
   padding: 0 30px;
   .operate {
     padding: 10px 5px;
@@ -337,5 +348,5 @@ export default {
       padding: 5px 30px;
     }
   }
-}
+} */
 </style>

@@ -31,7 +31,7 @@
       >修改</dsn-button>
       <dsn-button
         size="small"
-        type="primary"
+        type="danger"
         icon="el-icon-delete"
         :disabled="selectionList.length <= 0"
         @click.native="deleteDialog = true"

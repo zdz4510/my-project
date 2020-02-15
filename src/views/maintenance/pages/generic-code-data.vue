@@ -4,6 +4,7 @@
       <div slot="header" class="title clearfix">
         <span>搜索条件</span>
       </div>
+      <!-- 查询条件start -->
       <el-form
         :inline="true"
         :model="genericCodeDataForm"
@@ -27,7 +28,7 @@
               <dsn-input
                 v-model.trim="genericCodeDataForm.generalCode"
                 placeholder="请输入代码名"
-                class="generalCode"
+                @clear="clearGeneralCode"
               ></dsn-input>
             </el-col>
             <el-col :span="2">
@@ -36,7 +37,7 @@
           </el-row>
         </el-form-item>
         <el-form-item label="描述">
-          <dsn-input v-model.trim="genericCodeDataForm.generalCodeDes" :readonly="true"></dsn-input>
+          <dsn-input v-model.trim="genericCodeDataForm.generalCodeDes" :disabled="true"></dsn-input>
         </el-form-item>
         <el-form-item>
           <dsn-button
@@ -53,11 +54,13 @@
           >重置</dsn-button>
         </el-form-item>
       </el-form>
+      <!-- 查询条件end -->
     </DsnPanel>
     <DsnPanel>
       <div slot="header" class="title clearfix">
         <span>搜索结果</span>
       </div>
+      <!-- 表格操作start -->
       <div class="operate">
         <dsn-button
           size="small"
@@ -74,21 +77,23 @@
           @click.native="handleEdit"
         >修改</dsn-button>
         <dsn-button size="small" type="primary" :disabled="!editable" @click.native="handleSave">保存</dsn-button>
-        <dsn-button
+        <!-- <dsn-button
           size="small"
           type="danger"
           icon="el-icon-delete"
           :disabled="!editable"
           @click.native="deleteCodeDialog = true"
-        >删除通用代码</dsn-button>
+        >删除通用代码</dsn-button>-->
         <dsn-button
           size="small"
           type="danger"
           icon="el-icon-delete"
           :disabled="selectionList.length <= 0 || !editable"
-          @click.native="deleteDataDialog = true"
+          @click.native="handleFieldDelete"
         >删除数据</dsn-button>
       </div>
+      <!-- 表格操作end -->
+      <!-- 表格数据start -->
       <dsn-table
         v-show="showTable"
         ref="multipleTable"
@@ -104,7 +109,9 @@
           :label="field"
         ></el-table-column>
       </dsn-table>
+      <!-- 表格数据end -->
     </DsnPanel>
+    <!-- 新增或修改弹框start -->
     <el-dialog title="新增/修改" :visible.sync="addDialog" :width="dialogWidth" @close="closeAddDialog">
       <span>
         <el-form ref="addForm" :model="addForm" label-width="90px" :rules="addFormRules">
@@ -114,7 +121,7 @@
             :label="field"
             :prop="field"
           >
-            <dsn-input v-model.trim="addForm[`${field}`]" placeholder="请输入字段数据"></dsn-input>
+            <dsn-input v-model.number="addForm[`${field}`]" placeholder="请输入字段数据"></dsn-input>
           </el-form-item>
         </el-form>
       </span>
@@ -123,6 +130,8 @@
         <dsn-button type="primary" @click.native="checkAddForm('addForm')">确 定</dsn-button>
       </span>
     </el-dialog>
+    <!-- 新增或修改弹框end -->
+    <!-- 代码名弹框start -->
     <el-dialog title="代码名" :visible.sync="generalCodeDialog" :width="dialogWidth">
       <span>
         <dsn-table
@@ -143,6 +152,8 @@
         <dsn-button type="primary" @click.native="handleSelectionGeneralCode">确 定</dsn-button>
       </span>
     </el-dialog>
+    <!-- 代码名弹框ebd -->
+    <!-- 字段名弹框start -->
     <el-dialog title="字段名" :visible.sync="fieldDialog" :width="dialogWidth">
       <span>
         <dsn-table
@@ -163,6 +174,8 @@
         <dsn-button type="primary" @click.native="handleSelectionField">确 定</dsn-button>
       </span>
     </el-dialog>
+    <!-- 字段名弹框end -->
+    <!-- 通用代码删除弹框start -->
     <el-dialog title="通用代码删除" :visible.sync="deleteCodeDialog" :width="dialogWidth">
       <span>是否确认{{ genericCodeDataForm.genericCode }}代码名？</span>
       <span slot="footer" class="dialog-footer">
@@ -177,6 +190,7 @@
         <dsn-button type="primary" @click.native="handleFieldDelete">确 定</dsn-button>
       </span>
     </el-dialog>
+    <!-- 通用代码删除弹框end -->
   </div>
 </template>
 
@@ -210,6 +224,18 @@ export default {
       }
       callback();
     };
+    // const valiText = (rule, value, callback) => {
+    //   console.log(rule, value, callback);
+    //   // if (value === "") {
+    //   //   callback("代码名不能为空");
+    //   // }
+    //   // //
+    //   // let reg = /^([A-Z]|[0-9]|_|-|\/)+$/;
+    //   // if (!reg.test(value)) {
+    //   //   callback("代码名格式应只包含（[A-Z,0-9,_,-,/]）");
+    //   // }
+    //   // callback();
+    // };
     return {
       //已使用的字段名
       usedFieldNames: [],
@@ -265,10 +291,26 @@ export default {
       //弹框宽度
       dialogWidth: "400px",
       //修改时保存初始数据
-      cloneEditForm: {}
+      cloneEditForm: {},
+      //字段格式
+      fields: [],
+      tempField: {}
     };
   },
-  computed: {},
+  computed: {
+    // valiText: (rule, value, callback) => {
+    //   console.log(rule, value, callback);
+    //   // if (value === "") {
+    //   //   callback("代码名不能为空");
+    //   // }
+    //   // //
+    //   // let reg = /^([A-Z]|[0-9]|_|-|\/)+$/;
+    //   // if (!reg.test(value)) {
+    //   //   callback("代码名格式应只包含（[A-Z,0-9,_,-,/]）");
+    //   // }
+    //   // callback();
+    // }
+  },
   filters: {
     filterFieldType(value) {
       if (value === "A") {
@@ -296,6 +338,7 @@ export default {
           this.tableData = res.data.definedData;
           this.showTable = true;
           this.genericCodeDataForm.generalCodeDes = res.data.generalCodeDes;
+          this.fields = res.data.fields;
           //获取出所有已使用的字段名
           res.data.fields.forEach(element => {
             this.usedFieldNames.push(element.fieldName);
@@ -316,11 +359,62 @@ export default {
     },
     //动态设置弹出框验证规则
     setAddFormRules() {
-      this.usedFieldNames.forEach(element => {
-        this.$set(this.addFormRules, element, [
-          { required: true, message: "请输入字段数据", trigger: "blur" }
-        ]);
+      // element数据
+      // generalCode: "CUSTOMIZED_FIELD_01";
+      // fieldName: "FIELD_01";
+      // fieldLabel: "FIELD_01";
+      // fieldType: "A";
+      // fieldSize: "2";
+      // limitGeneralCode: null;
+      // limitGeneralField: null;
+      this.fields.forEach(element => {
+        //文本型
+        if (element.fieldType === "A") {
+          this.$set(this.addFormRules, element.fieldName, [
+            {
+              max: element.fieldSize,
+              message: `长度在${element.fieldSize}以内`,
+              trigger: "blur"
+            }
+          ]);
+        }
+        //数字型
+        if (element.fieldType === "N") {
+          this.tempField = element;
+          this.$set(this.addFormRules, element.fieldName, [
+            // { type: "number", message: "该字段必须为数字值" },
+            // {
+            //   max: element.fieldSize,
+            //   message: `长度在${element.fieldSize}以内`,
+            //   trigger: "blur"
+            // }
+            { validator: this.valiText.bind(element), trigger: "blur" }
+          ]);
+        }
+        //引用型
+        if (element.fieldType === "C") {
+          // this.$set(this.addFormRules, element.fieldName, [
+          //   { validator: this.validateText(element), trigger: "blur" }
+          // ]);
+        }
+        if (element.fieldName === "FIELD_01") {
+          this.addFormRules[`${element.fieldName}`].push({
+            required: true,
+            message: "字段FIELD_01为必填项",
+            trigger: "blur"
+          });
+        }
       });
+    },
+    valiText(rule, value, callback) {
+      let reg = new RegExp("^\\d{1," + this.tempField.fieldSize + "}$", "gim"); // re为/^\d+bl$/gim
+      if (!reg.test(value)) {
+        callback(
+          new Error(`该字段是数字型且最长为${this.tempField.fieldSize}`)
+        );
+      } else {
+        callback();
+      }
     },
     //根据代码类型查询代码名
     handleQueryGeneralCode() {
@@ -476,9 +570,10 @@ export default {
         if (res.code === 200) {
           this.$message({
             message: "保存成功",
-            type: "warning"
+            type: "success"
           });
           this.handleReset();
+          return;
         }
         this.$message({
           message: res.message,
@@ -495,6 +590,7 @@ export default {
         if (res.code === 200) {
           this.deleteCodeDialog = false;
           this.handleReset();
+          return;
         }
         this.$message({
           message: res.message,
@@ -503,12 +599,38 @@ export default {
       });
     },
     handleFieldDelete() {
-      //计算出删除之后的字段数据
-      const tempArr = this.tableData.filter(item => {
-        return this.selectionList.indexOf(item) === -1;
-      });
-      this.tableData = tempArr;
-      this.deleteDataDialog = false;
+      this.$confirm("是否删除所选数据?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          //计算出删除之后的字段数据
+          const tempArr = this.tableData.filter(item => {
+            return this.selectionList.indexOf(item) === -1;
+          });
+          this.tableData = tempArr;
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
+    },
+    // //代码名输入框值变化
+    // inputGeneralCode(val) {
+    //   if (val !== "") {
+    //     this.editable = true;
+    //   } else {
+    //     this.editable = false;
+    //   }
+    // },
+    //代码名清除时清空表格数据
+    clearGeneralCode() {
+      this.tableData = [];
+      this.editable = false;
+      this.showTable = false;
     }
   }
 };
@@ -516,43 +638,5 @@ export default {
 
 <style lang="scss">
 .genericCodeData {
-  // padding: 0 30px;
-  // .operate {
-  //   padding: 10px 5px;
-  // }
-  // .showInfo {
-  //   .el-table {
-  //     width: 100%;
-  //   }
-  // }
-  // .query {
-  //   height: 40px;
-  //   padding: 10px;
-  //   .el-form {
-  //     .el-form-item {
-  //       .generalCode {
-  //         width: 92%;
-  //       }
-  //     }
-  //   }
-  // }
-  // .el-dialog {
-  //   .el-form {
-  //     .el-form-item {
-  //       .dsn-input {
-  //         width: 300px;
-  //       }
-  //     }
-  //   }
-  // }
-  // .el-dialog {
-  //   input::-webkit-outer-spin-button,
-  //   input::-webkit-inner-spin-button {
-  //     -webkit-appearance: none;
-  //   }
-  //   input[type="number"] {
-  //     -moz-appearance: textfield;
-  //   }
-  // }
 }
 </style>

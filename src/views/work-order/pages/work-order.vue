@@ -1,34 +1,44 @@
 <template>
   <div class="workOrder">
-    <div class="query">
-      <div class="left">
-        <el-form label-width="80px">
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索信息</span>
+      </div>
+      <el-form label-width="100px" :inline="true">
           <!-- <el-form-item label="工单:">
            
           </el-form-item> -->
             <el-form-item label="工单:">
-              <el-col :span="16" style="margin-right:7px;">
-                 <el-input placeholder="请输入工单" v-model="shopOrder"></el-input>
-              </el-col>
-              <div class="choiceBox">
-                <i class="el-icon-document-copy"></i>
-              </div>
+              <dsn-input placeholder="请输入工单" v-model="shopOrder">
+                <i slot="append" class="el-icon-document-copy"></i>
+              </dsn-input>
+            </el-form-item>
+            <el-form-item>
+                <dsn-button size="small"  type="primary" icon="el-icon-search" @click.native="getOrder">查询</dsn-button>
+              <dsn-button size="small" type="primary" icon="el-icon-refresh" @click.native='reset'>重置</dsn-button>
             </el-form-item>
         </el-form>
+    </DsnPanel>
+    <!-- <div class="query">
+      <div class="left">
+        
         <div class="choiceBox">
           <i class="el-icon-document-copy"></i>
         </div>
       </div>
       <div class="right">
-        <el-button size="small" type="primary" @click="getOrder">查询</el-button>
-        <el-button size="small" type="primary" @click='reset'>重置</el-button>
+        <dsn-button size="small" type="primary" @click="getOrder">查询</dsn-button>
+        <dsn-button size="small" type="primary" @click='reset'>重置</dsn-button>
       </div>
-    </div>
+    </div> -->
     <div class="operate">
-      <el-button size="small" type="primary" @click="handleSave">保存</el-button>
-      <el-button size="small" type="danger" @click="handleDelete">删除</el-button>
+      <dsn-button size="small" type="primary" @click.native="handleSave">保存</dsn-button>
+      <dsn-button size="small" type="danger" icon="el-icon-delete" @click.native="handleDelete">删除</dsn-button>
     </div>
-
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索结果</span>
+      </div>
     <div class="showInfo">
       <el-tabs type="border-card">
         <el-tab-pane>
@@ -43,21 +53,21 @@
             class="demo-ruleForm"
           >
             <el-form-item label="类型：" prop="style">
-              <el-select v-model="ruleForm.shopOrderType" placeholder="生产">
+              <dsn-select v-model="ruleForm.shopOrderType" placeholder="生产">
                 <el-option label="生产" value="PRODUCTION"></el-option>
                 <el-option label="返工" value="REWORK"></el-option>
-              </el-select>
+              </dsn-select>
             </el-form-item>
             <el-form-item label="状态：" prop="state">
-              <el-select v-model="ruleForm.status" placeholder="可下达/完成/关闭">
+              <dsn-select v-model="ruleForm.status" placeholder="可下达/完成/关闭">
                 <el-option label="可下达" value="RELEASABLE"></el-option>
                 <el-option label="完成" value="DONE"></el-option>
                 <el-option label="关闭" value="CLOSE"></el-option>
-              </el-select>
+              </dsn-select>
             </el-form-item>
             <el-form-item label="计划物料:" prop="material">
               <el-col :span="9" style="margin-right:7px;">
-                <el-input placeholder="请输入计划物料" v-model="ruleForm.plannedMaterial"></el-input>
+                <dsn-input placeholder="请输入计划物料" v-model="ruleForm.plannedMaterial"></dsn-input>
               </el-col>
               <div class="choiceBox">
                 <i class="el-icon-document-copy"></i>
@@ -65,9 +75,9 @@
               <!--物料版本-->
               <div class="version">
                 <el-form>
-                  <el-form-item label="版本：">
-                    <el-col :span="12">
-                      <el-input v-model="ruleForm.plannedMaterialRev"></el-input>
+                  <el-form-item label="版本：" style="margin-left:50px;">
+                    <el-col :span="14">
+                      <el-input v-model="ruleForm.plannedMaterialRev" placeholder="请输入物料版本"></el-input>
                     </el-col>
                   </el-form-item>
                 </el-form>
@@ -75,7 +85,7 @@
             </el-form-item>
             <el-form-item label="计划工艺路线:" label-width="150">
               <el-col :span="9" style="margin-right:7px;">
-                <el-input placeholder="计划工艺路线" v-model="ruleForm.plannedRouter"></el-input>
+                <dsn-input placeholder="计划工艺路线" v-model="ruleForm.plannedRouter"></dsn-input>
               </el-col>
               <div class="choiceBox">
                 <i class="el-icon-document-copy"></i>
@@ -83,9 +93,9 @@
               <!--计划工艺路线版本-->
               <div class="version">
                 <el-form>
-                  <el-form-item label="版本：">
-                    <el-col :span="12">
-                      <el-input v-model="ruleForm.plannedRouterRev"></el-input>
+                  <el-form-item label="版本：" style="margin-left:50px;">
+                    <el-col :span="14">
+                      <dsn-input v-model="ruleForm.plannedRouterRev" placeholder="请输入计划工艺路线版本"></dsn-input>
                     </el-col>
                   </el-form-item>
                 </el-form>
@@ -93,14 +103,14 @@
             </el-form-item>
             <el-form-item label="生产数量:" prop="number">
               <el-col :span="9" style="margin-right:31px;">
-                <el-input placeholder="请输入生产数量" v-model="ruleForm.productQty"></el-input>
+                <dsn-input placeholder="请输入生产数量" v-model="ruleForm.productQty"></dsn-input>
               </el-col>
               <!--已下达数量-->
               <div>
                 <el-form>
                   <el-form-item label="已下达数量：">
                     <el-col :span="14">
-                      <el-input v-model="ruleForm.releasedQuantity" :disabled="true"></el-input>
+                      <dsn-input v-model="ruleForm.releasedQuantity" :disabled="true"></dsn-input>
                     </el-col>
                   </el-form-item>
                 </el-form>
@@ -112,7 +122,7 @@
           <el-form :rules="rules">
             <el-form-item :label="item.fieldName" v-for="(item,index) in customizedFieldDefInfoList" :key="index" v-show="item.fieldType =='C'" prop="custom">
               <el-col :span="14">
-                <el-input v-model="item.fieldValue"></el-input>
+                <dsn-input v-model="item.fieldValue"></dsn-input>
               </el-col>
             </el-form-item>
             <el-form-item :label="item.fieldName" v-for="(item,index) in customizedFieldDefInfoList" :key="index+item" v-show="item.fieldType !=='C'">
@@ -122,7 +132,7 @@
             </el-form-item>
             <el-form-item label="Kay_自定义字段3：">
               <el-col :span="14" style="margin-right:7px;">
-                <el-input v-model="ruleForm.kays_3" :disabled="true"></el-input>
+                <dsn-input v-model="ruleForm.kays_3" :disabled="true"></dsn-input>
               </el-col>
               <div class="choiceBox">
                 <i class="el-icon-document-copy"></i>
@@ -131,16 +141,17 @@
           </el-form>
         </el-tab-pane>
       </el-tabs>
-    </div>  
+    </div>
+    </DsnPanel> 
     <!--删除提醒-->
     <el-dialog
       title="删除"
       :visible.sync="dialogVisible"
-      width="30%">
+      :width="defaltDialogWidth">
       <span>确定删除此工单吗？</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="sureDelete">确 定</el-button>
+        <dsn-button @click="dialogVisible = false">取 消</dsn-button>
+        <dsn-button type="primary" @click="sureDelete">确 定</dsn-button>
       </span>
     </el-dialog>
   </div>
@@ -155,6 +166,7 @@ import{
     deleteRequest
 } from '@/api/work-order/work-order.api.js' 
 export default {
+  inject:['defaltDialogWidth'],
   data() {
     return {
       //工单表信息
@@ -172,7 +184,8 @@ export default {
             kay_3: "",
             material:"",
             materialRev:"",
-            router:""
+            router:"",
+            kays_3:""
         },
         rules: {
             style: [{ required: true, message: "请选择类型", trigger: "blur" }],
@@ -213,7 +226,7 @@ export default {
       this.shopOrder = ''
       //重置oldShopOrder
       this.oldShopOrder = ''
-
+      this.getOrder();
     },
       //查询指定工单
     getOrder(){
@@ -414,40 +427,40 @@ export default {
 
 <style lang="scss">
 .workOrder {
-  padding: 0 30px;
-  .query {
-    height: 40px;
-    padding: 10px;
-    display: flex;
-    justify-content: space-between;
-    .left {
-      width: 300px;
-      margin-right: 7px;
-    }
+  // padding: 0 30px;
+  // .query {
+  //   height: 40px;
+  //   padding: 10px;
+  //   display: flex;
+  //   justify-content: space-between;
+  //   .left {
+  //     width: 300px;
+  //     margin-right: 7px;
+  //   }
 
-    .right {
-      width: 680px;
-      padding: 5px 30px;
-    }
-  }
-  .operate {
-    padding: 10px 5px;
-  }
+  //   .right {
+  //     width: 680px;
+  //     padding: 5px 30px;
+  //   }
+  // }
+  // .operate {
+  //   padding: 10px 5px;
+  // }
 }
 //选择弹框
-.workOrder .choiceBox {
-  width: 15px;
-  height: 41px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-right: 50px;
-}
+// .workOrder .choiceBox {
+//   width: 15px;
+//   height: 41px;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   margin-right: 50px;
+// }
 .workOrder .version {
   width: 300px;
   display: inline-block;
 }
-.workOrder .el-form-item__content {
+.workOrder .showInfo .el-form-item__content {
   display: flex;
 }
 </style>

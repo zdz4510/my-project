@@ -4,7 +4,7 @@
       <div slot="header" class="title clearfix">
         <span>搜索信息</span>
       </div>
-      <div class="operate">
+      <div class="operation">
         <dsn-button size="small" type="primary" @click.native="search">查询</dsn-button>
         <dsn-button size="small" type="primary" @click.native="add('addForm')">保存</dsn-button>
         <dsn-button size="small" type="primary" @click.native="resetForm('addForm')">重置</dsn-button>
@@ -233,8 +233,9 @@ export default {
       paramsDialogVisible: false,
       dialogVisible: false,
       rules: {
+        
         FIELD_01: [
-          { required: true, message: "请填写自定义项目名称", trigger: "change" }
+          { required: true, message: "请填写自定义项目名称", trigger: "blur" }
         ]
       },
       srules: {
