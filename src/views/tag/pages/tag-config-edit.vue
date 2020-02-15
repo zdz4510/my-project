@@ -1,34 +1,37 @@
 <template>
   <div class="maintenanceEdit">
-    <div class="operate">
-      <el-button size="small" type="primary" @click="handleBack">
-        返回
-      </el-button>
-      <el-button size="small" type="primary" @click="handleSave">
-        保存
-      </el-button>
-      <el-button size="small" type="primary" @click="handleReset">
-        重置
-      </el-button>
-    </div>
+    <dsnPanel>
+      <div class="operate mt-15">
+        <el-button size="small" type="primary" @click="handleBack">
+          返回
+        </el-button>
+        <el-button size="small" type="primary" @click="handleSave">
+          保存
+        </el-button>
+        <el-button size="small" type="primary" @click="handleReset">
+          重置
+        </el-button>
+      </div>
+      <el-form
+        :model="tagConfigForm"
+        ref="tagConfigFormOne"
+        :rules="rules"
+        class="demo-tagConfigForm"
+        :inline="true"
+      >
+        <el-form-item label="标签ID" prop="label">
+          <dsn-input
+            v-model.trim="tagConfigForm.label"
+            placeholder="请输入标签ID"
+            :disabled="isEditResource"
+          ></dsn-input>
+        </el-form-item>
+      </el-form>
+    </dsnPanel>
     <div class="showInfo">
       <div class="right">
         <div class="tag">
-          <el-form
-            :model="tagConfigForm"
-            ref="tagConfigFormOne"
-            :rules="rules"
-            label-width="100px"
-            class="demo-tagConfigForm"
-          >
-            <el-form-item label="标签ID" prop="label">
-              <el-input
-                v-model.trim="tagConfigForm.label"
-                placeholder="请输入标签ID"
-                :disabled="isEditResource"
-              ></el-input>
-            </el-form-item>
-          </el-form>
+          
         </div>
 
         <el-tabs type="border-card" @tab-click="handleTabClick">
@@ -498,9 +501,8 @@ export default {
 
 <style lang="scss">
 .maintenanceEdit {
-  padding: 0 30px;
   .operate {
-    padding: 10px 5px;
+    // padding: 10px 5px;
   }
   .showInfo {
     .right {

@@ -1,88 +1,73 @@
 <template>
   <div class="tagConfig">
-    <div class="query">
-      <div class="left">
-        <el-form
-          :model="tagConfigForm"
-          ref="tagConfigForm"
-          label-width="100px"
-          class="tagConfigForm"
+    <dsnPanel class="query">
+      <div slot="header" class="title clearfix">
+        <span>搜索信息</span>
+      </div>
+      <el-form
+        :inline="true" 
+        :model="tagConfigForm"
+        ref="tagConfigForm"
+        label-width="100px"
+        class="tagConfigForm"
+      >
+        <el-form-item label="标签ID" prop="label">
+          <dsn-input
+            v-model.trim="tagConfigForm.label"
+            placeholder="请输入标签ID"
+          ></dsn-input>
+        </el-form-item>
+        <el-form-item>
+          <dsn-button icon="el-icon-search" size="small" type="primary" @click="handleQuery"> 查询 </dsn-button>
+          <dsn-button icon="el-icon-refresh" size="small" type="primary" @click="handleReset"> 重置 </dsn-button>
+        </el-form-item>
+      </el-form>        
+    </dsnPanel>
+    <dsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索结果</span>
+      </div>
+      <div class="operate">
+        <el-button size="small" type="success" icon="el-icon-folder-add" @click="handleAdd"> 新增 </el-button>
+        <el-button size="small" type="primary" icon="el-icon-edit" @click="handleEdit" :disabled="selectionList.length != 1"> 修改</el-button>
+        <el-button size="small" type="danger" icon="el-icon-delete" :disabled="selectionList.length <= 0" @click="deleteDialog = true">删除</el-button>
+        <el-button size="small" type="primary" icon="el-icon-upload2" @click="handleExport">导出</el-button>
+      </div>
+      <div class="showInfo">
+        <dsn-advance-table
+          ref="multipleTable"
+          :paramData="params"
+          tooltip-effect="dark"
+          style="width: 100%"
+          :httpFn="httpFn"
+          height="350px"
+          @selection-change="handleSelectionChange"
         >
-          <el-form-item label="标签ID" prop="label">
-            <el-input
-              v-model.trim="tagConfigForm.label"
-              placeholder="请输入标签ID"
-            ></el-input>
-          </el-form-item>
-        </el-form>
-      </div>
-      <div class="right">
-        <el-button size="small" type="primary" @click="handleQuery">
-          查询
-        </el-button>
-        <el-button size="small" type="primary" @click="handleReset">
-          重置
-        </el-button>
-      </div>
-    </div>
-    <div class="operate">
-      <el-button size="small" type="primary" @click="handleAdd">
-        新增
-      </el-button>
-      <el-button
-        size="small"
-        type="primary"
-        :disabled="selectionList.length != 1"
-        @click="handleEdit"
-      >
-        修改
-      </el-button>
-      <el-button
-        size="small"
-        type="primary"
-        :disabled="selectionList.length <= 0"
-        @click="deleteDialog = true"
-      >
-        删除
-      </el-button>
-      <el-button size="small" type="primary" @click="handleExport"
-        >导出</el-button
-      >
-    </div>
-    <div class="showInfo">
-      <dsn-advance-table
-        ref="multipleTable"
-        :paramData="params"
-        tooltip-effect="dark"
-        style="width: 100%"
-        :httpFn="httpFn"
-        height="350px"
-        @selection-change="handleSelectionChange"
-      >
-        <el-table-column type="selection" width="55"> </el-table-column>
-        <el-table-column prop="label" label="标签ID" width="120">
-        </el-table-column>
-        <el-table-column prop="resourceCount" label="标签描述" width="120">
-        </el-table-column>
-        <el-table-column prop="groupDes" label="标签内存大小" width="170">
-        </el-table-column>
+          <el-table-column type="selection" width="55"> </el-table-column>
+          <el-table-column prop="label" label="标签ID" width="120">
+          </el-table-column>
+          <el-table-column prop="resourceCount" label="标签描述" width="120">
+          </el-table-column>
+          <el-table-column prop="groupDes" label="标签内存大小" width="170">
+          </el-table-column>
 
-        <el-table-column prop="createUserName" label="命令行打印" width="120">
-        </el-table-column>
-        <el-table-column prop="createTime" label="创建人" width="170">
-        </el-table-column>
-        <el-table-column prop="modifyUserName" label="创建时间" width="120">
-        </el-table-column>
-        <el-table-column prop="createTime" label="修改人" width="170">
-        </el-table-column>
-        <el-table-column
-          prop="modifyTime"
-          label="修改时间"
-          show-overflow-tooltip
-        >
-        </el-table-column>
-      </dsn-advance-table>
-    </div>
+          <el-table-column prop="createUserName" label="命令行打印" width="120">
+          </el-table-column>
+          <el-table-column prop="createTime" label="创建人" width="170">
+          </el-table-column>
+          <el-table-column prop="modifyUserName" label="创建时间" width="120">
+          </el-table-column>
+          <el-table-column prop="createTime" label="修改人" width="170">
+          </el-table-column>
+          <el-table-column
+            prop="modifyTime"
+            label="修改时间"
+            show-overflow-tooltip
+          >
+          </el-table-column>
+        </dsn-advance-table>
+      </div>
+    </dsnPanel>
     <el-dialog title="删除" :visible.sync="deleteDialog" width="30%">
       <span>是否确认删除{{ selectionList.length }}条数据？</span>
       <span slot="footer" class="dialog-footer">
@@ -223,22 +208,10 @@ export default {
 
 <style lang="scss">
 .tagConfig {
-  padding: 0 30px;
   .operate {
     padding: 10px 5px;
   }
   .query {
-    height: 40px;
-    padding: 10px;
-    display: flex;
-    justify-content: space-between;
-    .left {
-      width: 300px;
-    }
-    .right {
-      width: 680px;
-      padding: 5px 30px;
-    }
   }
 }
 </style>
