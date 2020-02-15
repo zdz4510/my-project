@@ -54,7 +54,7 @@
   </div>
 </template>
 <script>
-import { login, getResourceList } from "@/api/login.api.js";
+import { login, getSystemList } from "@/api/login.api.js";
 export default {
   name: "login",
   data() {
@@ -74,10 +74,10 @@ export default {
   },
   methods: {
     handleGetSystemId() {
-      getResourceList({ type: "SYSTEM" }).then(data => {
+      getSystemList().then(data => {
         const res = data.data;
         if (res.code == 200) {
-          this.list = res.data.data;
+          this.list = res.data;
         }
       });
     },
