@@ -35,9 +35,6 @@
      <template slot="prepend">
        <slot name="prepend"></slot>
     </template>
-     <template slot="append">
-       <slot name="append"></slot>
-    </template>
      <template slot="prefix">
        <slot name="prefix"></slot>
     </template>

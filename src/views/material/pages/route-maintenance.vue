@@ -1,26 +1,28 @@
 <template>
-  <div class="workOrder">
-    <dsnPanel class="query">
+  <div class="route-maintenance">
+    <DsnPanel >
       <el-form :inline="true" class="typeForm"  :model="form"  :rules="searchrules" ref="form">
         <el-form-item label="工艺路线:" prop="router">
           <dsn-input placeholder="请输入工艺路线" v-model="form.router">
-            <i slot="append" class="el-icon-document-copy"></i>
+             <i slot="append" class="el-icon-document-copy"></i>
           </dsn-input>
         </el-form-item>
         <el-form-item label="版本:" prop="revision">
           <dsn-input
             placeholder="请输入版本"
             v-model="form.revision"
-          ></dsn-input>
+          >
+         
+          </dsn-input>
         </el-form-item>
-        <el-form-item>
+        <el-form-item >
         <dsn-button size="small" type="primary" icon='el-icon-search' @click="handleQuery">查询</dsn-button>
         <dsn-button size="small" type="primary" icon='el-icon-refresh' @click.native="reset">重置</dsn-button>
         <dsn-button size="small" type="danger" icon='el-icon-delete'>清除</dsn-button>
         <dsn-button size="small" type="success" icon='el-icon-check' @click="handleSave">保存</dsn-button>
         </el-form-item>
       </el-form>
-    </dsnPanel>
+    </DsnPanel>
     <div class="showInfo">
       <el-tabs type="border-card">
         <el-tab-pane>
@@ -295,7 +297,7 @@ export default {
 </script>
 
 <style lang="scss">
-.workOrder {
+.route-maintenance {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -317,24 +319,24 @@ export default {
       }
     }
   }
-  .el-tabs--border-card > .el-tabs__header {
-    background: #Fff;
-  }
+  // .el-tabs--border-card > .el-tabs__header {
+  //   background: #Fff;
+  // }
 }
 //选择弹框
-.choiceBox {
-  width: 15px;
-  height: 41px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-right: 50px;
-}
-.version {
-  width: 300px;
-  display: inline-block;
-}
-.el-form-item__content {
-  display: flex;
-}
+// .choiceBox {
+//   width: 15px;
+//   height: 41px;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   margin-right: 50px;
+// }
+// .version {
+//   width: 300px;
+//   display: inline-block;
+// }
+// .el-form-item__content {
+//   display: flex;
+// }
 </style>
