@@ -26,8 +26,8 @@
                 style="width:100%"
               >
                 <el-option
-                  v-for="item in collectionType"
-                  :key="item.value"
+                  v-for="(item,index) in collectionType"
+                  :key="index"
                   :label="item.label"
                   :value="item.value"
                 ></el-option>
@@ -75,7 +75,7 @@
           >
             <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
             <el-table-column type="index" label="序号"></el-table-column>
-            <el-table-column prop="parameter" label="参数名称" sortable></el-table-column>
+            <el-table-column prop="parameter" label="参数名称" sortable width="100"></el-table-column>
             <el-table-column label="软检查">
               <template slot-scope="scope">{{ scope.row.softCheck ? '启用' : '不启用' }}</template>
             </el-table-column>
@@ -157,24 +157,32 @@
             </el-form-item>
           </el-col>
           <el-col :span="12" v-if="addParamForm.valueType == 30">
-            <el-form-item label="标准值:" prop="targetValue" required>
-              <!-- <dsn-select v-model="addParamForm.targetValue">
+            <!-- <dsn-select v-model="addParamForm.targetValue">
                 <el-option
                   v-for="item in status"
                   :key="item.value"
                   :label="item.valueType"
                   :value="item.value"
                 ></el-option>
-              </dsn-select>-->
-              <el-row :gutter="20">
-                <el-col :span="12">
-                  <div class="grid-content bg-purple"></div>
-                </el-col>
-                <el-col :span="12">
-                  <div class="grid-content bg-purple"></div>
-                </el-col>
-              </el-row>
-            </el-form-item>
+            </dsn-select>-->
+            <el-row>
+              <el-col>
+                <el-form-item label="标准值:" prop="targetValue" required>
+                  <dsn-input
+                    placeholder="true的命名"
+                    v-model="addParamForm.trueValue"
+                    clearable
+                    style="width:100px"
+                  ></dsn-input>
+                  <dsn-input
+                    placeholder="false的命名"
+                    v-model="addParamForm.falseValue"
+                    clearable
+                    style="width:100px"
+                  ></dsn-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
           </el-col>
         </el-row>
         <el-row>
@@ -187,7 +195,7 @@
             <el-form-item label="标准值上限:" prop="upperSpecLimit">
               <dsn-input
                 v-model="addParamForm.upperSpecLimit"
-               :disabled="addParamForm.valueType !== 10 || !addParamForm.targetValue"
+                :disabled="addParamForm.valueType !== 10 || !addParamForm.targetValue"
               ></dsn-input>
             </el-form-item>
           </el-col>
@@ -197,8 +205,8 @@
             <el-form-item label="参数状态:" prop="parameterStatus" required>
               <dsn-select v-model="addParamForm.parameterStatus">
                 <el-option
-                  v-for="item in status"
-                  :key="item.value"
+                  v-for="(item,index) in status"
+                  :key="index"
                   :label="item.label"
                   :value="item.value"
                 ></el-option>
@@ -219,8 +227,8 @@
             <el-form-item label="值类型:" prop="valueType" required>
               <dsn-select v-model="addParamForm.valueType" @change="onChange">
                 <el-option
-                  v-for="item in valueType"
-                  :key="item.value"
+                  v-for="(item,index) in valueType"
+                  :key="index"
                   :label="item.label"
                   :value="item.value"
                 ></el-option>
@@ -241,8 +249,8 @@
             <el-form-item label="必须值:" prop="required" required>
               <dsn-select v-model="addParamForm.required">
                 <el-option
-                  v-for="item in status"
-                  :key="item.value"
+                  v-for="(item,index) in status"
+                  :key="index"
                   :label="item.bool"
                   :value="item.value"
                 ></el-option>
@@ -263,8 +271,8 @@
             <el-form-item label="软检查:" prop="softCheck" required>
               <dsn-select v-model="addParamForm.softCheck">
                 <el-option
-                  v-for="item in status"
-                  :key="item.value"
+                  v-for="(item,index) in status"
+                  :key="index"
                   :label="item.label"
                   :value="item.value"
                 ></el-option>
@@ -275,8 +283,8 @@
             <el-form-item label="预警事件编号:" prop="alarm">
               <dsn-select v-model="addParamForm.alarm">
                 <el-option
-                  v-for="item in alarmList"
-                  :key="item.alarm"
+                  v-for="(item,index) in alarmList"
+                  :key="index"
                   :label="item.alarm"
                   :value="item.alarm"
                 ></el-option>
@@ -353,11 +361,12 @@ import {
 export default {
   name: "add-data-collection",
   data() {
-    var targetValueRequired = (rule, value, callback) => {
+    console.log(11);
+    let targetValueRequired = (rule, value, callback) => {
       if (this.addParamForm.valueType == 10) {
-        var reg = /^[0-9]*$/;
+        let reg = /^((\d{1,5}\.\d{0,3})||(\d{1,5}))$/g;
         if (!reg.test(value)) {
-          return callback(new Error("只能输入数字"));
+          return callback(new Error("只能输入整数5位以内，小数3位以内"));
         }
       } else {
         if (!value) {
@@ -366,14 +375,48 @@ export default {
       }
       callback();
     };
-    var numberRequired = (rule, value, callback) => {
-      var reg = /^((\d{1,5}\.\d{0,3})||(\d{1,5}))$/g;
-      if (!reg.test(value) && !!value) {
-        return callback(new Error("只能输入整数5位以内，小数3位以内"));
+    let validatorUpper = (rule, value, callback) => {
+      if (this.addParamForm.valueType == 10) {
+        let reg = /^((\d{1,5}\.\d{0,3})||(\d{1,5}))$/g;
+        if (!reg.test(value)) {
+          return callback(new Error("只能输入整数5位以内，小数3位以内"));
+        }
+        if (value < this.addParamForm.targetValue) {
+          return callback(new Error("只能输入比标准值大的数字"));
+        }
+        this.addParamForm.upperSpecLimit = Number(
+          this.addParamForm.upperSpecLimit
+        ).toFixed(3);
+        this.addParamForm.upperWarnLimit = Number(
+          this.addParamForm.upperWarnLimit
+        ).toFixed(3);
+        callback();
+      }
+      callback();
+    };
+    let validatorLower = (rule, value, callback) => {
+      if (this.addParamForm.valueType == 10) {
+        let reg = /^((\d{1,5}\.\d{0,3})||(\d{1,5}))$/g;
+        if (!reg.test(value)) {
+          return callback(new Error("只能输入整数5位以内，小数3位以内"));
+        }
+        if (value > this.addParamForm.targetValue) {
+          return callback(new Error("只能输入比标准值小的数字"));
+        }
+        this.addParamForm.lowerSpecLimit = Number(
+          this.addParamForm.lowerSpecLimit
+        ).toFixed(3);
+        this.addParamForm.lowerWarnLimit = Number(
+          this.addParamForm.lowerWarnLimit
+        ).toFixed(3);
+        callback();
       }
       callback();
     };
     return {
+      targetValueRequired,
+      validatorUpper,
+      validatorLower,
       formLabelWidth: "120px",
       activeName: "first",
       paramsDialogVisible: false,
@@ -384,36 +427,6 @@ export default {
         ],
         collectionType: [
           { required: true, message: "请选择数据收集类型", trigger: "change" }
-        ]
-      },
-      prules: {
-        parameter: [
-          { required: true, message: "请填写参数名称", trigger: "blur" }
-        ],
-        targetValue: [{ validator: targetValueRequired, trigger: "blur" }],
-        parameterStatus: [
-          { required: true, message: "请选择参数状态", trigger: "change" }
-        ],
-        valueType: [
-          { required: true, message: "请选择值类型", trigger: "change" }
-        ],
-        required: [
-          { required: true, message: "请选择必须值", trigger: "change" }
-        ],
-        softCheck: [
-          { required: true, message: "请选择软检查", trigger: "change" }
-        ],
-        upperSpecLimit: [
-          { required: false, validator: numberRequired, trigger: "blur" }
-        ],
-        lowerSpecLimit: [
-          { required: false, validator: numberRequired, trigger: "blur" }
-        ],
-        upperWarnLimit: [
-          { required: false, validator: numberRequired, trigger: "blur" }
-        ],
-        lowerWarnLimit: [
-          { required: false, validator: numberRequired, trigger: "blur" }
         ]
       },
       srules: {},
@@ -438,7 +451,9 @@ export default {
         softCheck: "",
         alarm: "",
         dcGroup: "",
-        tenantSiteCode: "test"
+        tenantSiteCode: "test",
+        falseValue: "",
+        trueValue: ""
       },
       addSetUpForm: {
         matGroup: "",
@@ -453,19 +468,11 @@ export default {
       collectionType: [
         {
           value: "10",
-          label: "物料"
+          label: "LOT"
         },
         {
           value: "20",
           label: "资源"
-        },
-        {
-          value: "30",
-          label: "工序"
-        },
-        {
-          value: "40",
-          label: "工单"
         }
       ],
       status: [
@@ -524,15 +531,108 @@ export default {
       this.alarmList = data.data.data;
     });
   },
+  computed: {
+    prules: () => {
+      setTimeout(() => {
+        if (this.addParamForm.valueType && this.addParamForm.valueType === 30) {
+          return {
+            parameter: [
+              { required: true, message: "请填写参数名称", trigger: "blur" }
+            ],
+            parameterStatus: [
+              { required: true, message: "请选择参数状态", trigger: "change" }
+            ],
+            valueType: [
+              { required: true, message: "请选择值类型", trigger: "change" }
+            ],
+            trueValue: [
+              { required: true, message: "请输入真值名称", trigger: "blur" }
+            ],
+            falseValue: [
+              { required: true, message: "请输入假值名称", trigger: "blur" }
+            ],
+            required: [
+              { required: true, message: "请选择必须值", trigger: "change" }
+            ],
+            softCheck: [
+              { required: true, message: "请选择软检查", trigger: "change" }
+            ],
+            upperSpecLimit: [
+              { validator: this.validatorUpper, trigger: "blur" }
+            ],
+            lowerSpecLimit: [
+              { validator: this.validatorLower, trigger: "blur" }
+            ],
+            upperWarnLimit: [
+              { validator: this.validatorUpper, trigger: "blur" }
+            ],
+            lowerWarnLimit: [
+              { validator: this.validatorLower, trigger: "blur" }
+            ]
+          };
+        } else {
+          return {
+            parameter: [
+              { required: true, message: "请填写参数名称", trigger: "blur" }
+            ],
+            targetValue: [
+              { validator: this.targetValueRequired, trigger: "blur" }
+            ],
+            parameterStatus: [
+              { required: true, message: "请选择参数状态", trigger: "change" }
+            ],
+            valueType: [
+              { required: true, message: "请选择值类型", trigger: "change" }
+            ],
+            required: [
+              { required: true, message: "请选择必须值", trigger: "change" }
+            ],
+            softCheck: [
+              { required: true, message: "请选择软检查", trigger: "change" }
+            ],
+            upperSpecLimit: [
+              { validator: this.validatorUpper, trigger: "blur" }
+            ],
+            lowerSpecLimit: [
+              { validator: this.validatorLower, trigger: "blur" }
+            ],
+            upperWarnLimit: [
+              { validator: this.validatorUpper, trigger: "blur" }
+            ],
+            lowerWarnLimit: [
+              { validator: this.validatorLower, trigger: "blur" }
+            ]
+          };
+        }
+      }, 0);
+    }
+  },
   methods: {
     save(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          let params = this.addForm;
-          params.tenantSiteCode = "test";
-          params.type = "add";
-          params.dcParameterMeasureInfoList = this.MeasureInfoList;
-          params.dcSetupInfoList = this.SetupInfoList;
+          const tempDcSetupInfoList = this.SetupInfoList;
+          tempDcSetupInfoList.forEach(element => {
+            element.material = element.mat;
+            element.materialGroup = element.matGroup;
+          });
+          const tempMeasureInfoList = this.MeasureInfoList;
+          tempMeasureInfoList.forEach(element => {
+            element.lowerSpecLimit = parseFloat(element.lowerSpecLimit);
+            element.lowerWarnLimit = parseFloat(element.lowerWarnLimit);
+            element.upperSpecLimit = parseFloat(element.upperSpecLimit);
+            element.upperWarnLimit = parseFloat(element.upperWarnLimit);
+          });
+          console.log(tempMeasureInfoList);
+          const params = {
+            collectionType: this.addForm.collectionType,
+            dcGroup: this.addForm.dcGroup,
+            dcGroupDes: this.addForm.dcGroupDes,
+            tenantSiteCode: "test",
+            type: "add",
+            dcParameterMeasureInfoList: this.MeasureInfoList,
+            dcSetupInfoList: tempDcSetupInfoList
+          };
           saveDataCollection(params).then(data => {
             if (data.data.code == 200) {
               this.$message({
@@ -547,7 +647,6 @@ export default {
             }
           });
         } else {
-          console.log("error submit!!");
           return false;
         }
       });
@@ -584,12 +683,10 @@ export default {
             );
             this.$message.success("操作成功");
           }
-          console.log(this.MeasureInfoList);
           this.$refs.pTable.clearSelection();
           this.paramsDialogVisible = false;
           this.$refs[formName].resetFields();
         } else {
-          console.log("error submit!!");
           return false;
         }
       });
@@ -713,6 +810,9 @@ export default {
             message: "已取消删除"
           });
         });
+    },
+    sortChange(column, prop, order) {
+      console.log(column, prop, order);
     }
   }
 };
