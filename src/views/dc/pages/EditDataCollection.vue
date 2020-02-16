@@ -213,6 +213,7 @@
               <dsn-input
                 v-model="addParamForm.upperSpecLimit"
                 :disabled="addParamForm.valueType !== 10 || !addParamForm.targetValue"
+                placeholder="请输入输入比标准值大的数字（整数5位以内，小数3位以内）"
               ></dsn-input>
             </el-form-item>
           </el-col>
@@ -257,6 +258,7 @@
               <dsn-input
                 v-model="addParamForm.upperWarnLimit"
                 :disabled="addParamForm.valueType !== 10 || !addParamForm.targetValue"
+                placeholder="请输入输入比标准值大的数字（整数5位以内，小数3位以内）"
               ></dsn-input>
             </el-form-item>
           </el-col>
@@ -384,11 +386,11 @@ export default {
     ...mapGetters(["dataCollectionEditList"])
   },
   data() {
-    var targetValueRequired = (rule, value, callback) => {
+    let targetValueRequired = (rule, value, callback) => {
       if (this.addParamForm.valueType == 10) {
-        var reg = /^[0-9]*$/;
+        let reg = /^((\d{1,5}\.\d{0,3})||(\d{1,5}))$/g;
         if (!reg.test(value)) {
-          return callback(new Error("只能输入数字"));
+          return callback(new Error("只能输入整数5位以内，小数3位以内"));
         }
       } else {
         if (!value) {
@@ -397,11 +399,36 @@ export default {
       }
       callback();
     };
-    var numberRequired = (rule, value, callback) => {
-      var reg = /^[0-9]*$/;
-      if (!reg.test(value) && !!value) {
-        return callback(new Error("只能输入数字"));
+    let validatorUpper = (rule, value, callback) => {
+      let reg = /^((\d{1,5}\.\d{0,3})||(\d{1,5}))$/g;
+      if (!reg.test(value)) {
+        return callback(new Error("只能输入整数5位以内，小数3位以内"));
       }
+      if (value < this.addParamForm.targetValue) {
+        return callback(new Error("只能输入比标准值大的数字"));
+      }
+      this.addParamForm.upperSpecLimit = Number(
+        this.addParamForm.upperSpecLimit
+      ).toFixed(3);
+      this.addParamForm.upperWarnLimit = Number(
+        this.addParamForm.upperWarnLimit
+      ).toFixed(3);
+      callback();
+    };
+    let validatorLower = (rule, value, callback) => {
+      let reg = /^((\d{1,5}\.\d{0,3})||(\d{1,5}))$/g;
+      if (!reg.test(value)) {
+        return callback(new Error("只能输入整数5位以内，小数3位以内"));
+      }
+      if (value > this.addParamForm.targetValue) {
+        return callback(new Error("只能输入比标准值小的数字"));
+      }
+      this.addParamForm.lowerSpecLimit = Number(
+        this.addParamForm.lowerSpecLimit
+      ).toFixed(3);
+      this.addParamForm.lowerWarnLimit = Number(
+        this.addParamForm.lowerWarnLimit
+      ).toFixed(3);
       callback();
     };
     return {
@@ -436,10 +463,10 @@ export default {
         softCheck: [
           { required: true, message: "请选择软检查", trigger: "change" }
         ],
-        upperSpecLimit: [{ validator: numberRequired, trigger: "blur" }],
-        lowerSpecLimit: [{ validator: numberRequired, trigger: "blur" }],
-        upperWarnLimit: [{ validator: numberRequired, trigger: "blur" }],
-        lowerWarnLimit: [{ validator: numberRequired, trigger: "blur" }]
+        upperSpecLimit: [{ validator: validatorUpper, trigger: "blur" }],
+        lowerSpecLimit: [{ validator: validatorLower, trigger: "blur" }],
+        upperWarnLimit: [{ validator: validatorUpper, trigger: "blur" }],
+        lowerWarnLimit: [{ validator: validatorLower, trigger: "blur" }]
       },
       srules: {},
       MeasureInfoList: [],
@@ -652,16 +679,39 @@ export default {
     handleSave(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
+          // const tempDcSetupInfoList = this.SetupInfoList;
+          // tempDcSetupInfoList.forEach(element => {
+          //   element.material = element.mat;
+          //   element.materialGroup = element.matGroup;
+          // });
+          // let params = this.editForm;
+          // params.tenantSiteCode = "test";
+          // params.type = "edit";
+          // params.dcParameterMeasureInfoList = this.MeasureInfoList;
+          // params.dcSetupInfoList = tempDcSetupInfoList;
+
           const tempDcSetupInfoList = this.SetupInfoList;
           tempDcSetupInfoList.forEach(element => {
             element.material = element.mat;
             element.materialGroup = element.matGroup;
           });
-          let params = this.editForm;
-          params.tenantSiteCode = "test";
-          params.type = "edit";
-          params.dcParameterMeasureInfoList = this.MeasureInfoList;
-          params.dcSetupInfoList = tempDcSetupInfoList;
+          const tempMeasureInfoList = this.MeasureInfoList;
+          tempMeasureInfoList.forEach(element => {
+            element.lowerSpecLimit = parseFloat(element.lowerSpecLimit);
+            element.lowerWarnLimit = parseFloat(element.lowerWarnLimit);
+            element.upperSpecLimit = parseFloat(element.upperSpecLimit);
+            element.upperWarnLimit = parseFloat(element.upperWarnLimit);
+          });
+          const params = {
+            collectionType: this.editForm.collectionType,
+            dcGroup: this.editForm.dcGroup,
+            dcGroupDes: this.editForm.dcGroupDes,
+            tenantSiteCode: "test",
+            type: "edit",
+            dcParameterMeasureInfoList: this.MeasureInfoList,
+            dcSetupInfoList: tempDcSetupInfoList
+          };
+
           saveDataCollection(params).then(data => {
             const res = data.data;
             this.saveDialog = false; // 保存的提示框消失
