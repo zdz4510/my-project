@@ -305,6 +305,9 @@ export default {
   height: 100%;
   width: 100%;
   position: absolute;
+  .el-form-item__content .el-input-group {
+    vertical-align: initial;
+  }
   .showInfo {
     flex: 1;
     overflow: hidden;
