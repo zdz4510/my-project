@@ -1,13 +1,13 @@
 <template>
   <div class="workOrder">
     <dsnPanel class="query">
-      <el-form :inline="true" class="typeForm" ref="form">
-        <el-form-item label="工艺路线:">
+      <el-form :inline="true" class="typeForm"  :model="form"  :rules="searchrules" ref="form">
+        <el-form-item label="工艺路线:" prop="router">
           <dsn-input placeholder="请输入工艺路线" v-model="form.router">
             <i slot="append" class="el-icon-document-copy"></i>
           </dsn-input>
         </el-form-item>
-        <el-form-item label="版本:">
+        <el-form-item label="版本:" prop="revision">
           <dsn-input
             placeholder="请输入版本"
             v-model="form.revision"
@@ -33,18 +33,18 @@
             class="demo-ruleForm"
           >
             <el-form-item label="描述：" prop="description">
-              <el-input
+              <dsn-input
                 style="width:194px"
                 v-model="form.description"
                 placeholder="描述"
               >
-              </el-input>
+              </dsn-input>
             </el-form-item>
             <el-form-item label="当前版本：" prop="currentRevision">
               <el-checkbox v-model="form.currentRevision"></el-checkbox>
             </el-form-item>
             <el-form-item label="类型" prop="routerType">
-              <el-select v-model="form.routerType" placeholder="请选择">
+              <dsn-select v-model="form.routerType" placeholder="请选择">
                 <el-option
                   v-for="item in options"
                   :key="item.value"
@@ -52,10 +52,10 @@
                   :value="item.value"
                 >
                 </el-option>
-              </el-select>
+              </dsn-select>
             </el-form-item>
             <el-form-item label="状态" prop="status">
-              <el-select v-model="form.status" placeholder="请选择">
+              <dsn-select v-model="form.status" placeholder="请选择">
                 <el-option
                   v-for="item in options2"
                   :key="item.value"
@@ -63,7 +63,7 @@
                   :value="item.value"
                 >
                 </el-option>
-              </el-select>
+              </dsn-select>
             </el-form-item>
           </el-form>
         </el-tab-pane>
@@ -98,7 +98,7 @@ export default {
         description: "", // 描述
         currentRevision: false, // 当前版本
         routerType: "",
-        status: "",
+        status: "Releasable",
         router: "AAAAAA",
         revision: "BBBBBB"
       },
@@ -136,16 +136,16 @@ export default {
       ],
       value: "",
       //工单表信息
-      rules: {
-        style: [{ required: true, message: "请选择类型", trigger: "blur" }],
-        state: [{ required: true, message: "请选择状态", trigger: "change" }],
-        material: [
-          { required: true, message: "请输入计划物料", trigger: "change" }
-        ],
-        number: [{ required: true, message: "请输入数量", trigger: "change" }],
-        custom: [
-          { required: true, message: "请输入自定义字段", trigger: "change" }
-        ]
+      searchrules: {
+        router: [{ required: true, message: "工艺路线不能为空", trigger: "blur" }],
+        revision: [{ required: true, message: "版本不能为空", trigger: "blur" }],
+       
+      },
+       rules: {
+        description: [{ required: false, message: "请选择类型", trigger: "blur" }],
+        currentRevision: [{ required: false, message: "请选择状态", trigger: "change" }],
+         routerType: [{ required: true, message: "类型不能为空", trigger: "blur" }],
+        status: [{ required: true, message: "状态不能为空", trigger: "blur" }]
       },
       shopOrder: "", //最新工单
       oldShopOrder: "", //旧工单(也就是搜索的工单)
