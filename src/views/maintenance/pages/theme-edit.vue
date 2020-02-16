@@ -1,26 +1,27 @@
 <template>
   <div class="maintenanceEdit">
     <div class="operate">
-      <el-button size="small" type="primary" @click.native="handleBack">
+      <dsn-button size="small" type="primary" @click.native="handleBack">
         返回
-      </el-button>
-      <el-button size="small" type="primary" @click.native="saveHandle">
+      </dsn-button>
+      <dsn-button size="small" type="primary" @click.native="saveHandle">
         保存
-      </el-button>
-      <el-button size="small" type="primary" @click.native="handleReset">
+      </dsn-button>
+      <dsn-button size="small" type="primary" @click.native="handleReset">
         重置
-      </el-button>
+      </dsn-button>
     </div>
     <div class="showInfo">
       <div class="right">
         <div class="tag">
           <el-form
+            :rules="rules"
             :model="themeForm"
             ref="themeForm"
             label-width="100px"
             class="demo-themeForm"
           >
-            <el-form-item label="主题" prop="label">
+            <el-form-item label="主题" prop="topic">
               <el-input
                 v-model.trim="themeForm.topic"
                 placeholder="请输入主题"
@@ -38,22 +39,24 @@
         </div>
 
         <el-tabs type="border-card" @tab-click="handleTabClick">
-          <el-tab-pane class="design">
+          <el-tab-pane class="design"> 
             <span slot="label">基础信息</span>
-            <el-form
+            <div class="container">
+              <el-form
               :model="themeForm"
               :inline="true"
               ref="themeFormTwo"
               label-width="120px"
               class="demo-themeForm"
-            >
-              <el-form-item label="主题地址:">
-                <el-input
-                  v-model.trim="themeForm.catenation"
-                  placeholder="请输入标签描述"
-                ></el-input>
-              </el-form-item>
-            </el-form>
+              >
+                <el-form-item label="主题地址:">
+                  <el-input
+                    v-model.trim="themeForm.catenation"
+                    placeholder="请输入标签描述"
+                  ></el-input>
+                </el-form-item>
+              </el-form>
+            </div> 
           </el-tab-pane>
           <el-tab-pane label="主题与站位关系维护" class="relationManage">
             <div class="container">
@@ -114,17 +117,17 @@
                 </el-table>
               </div>
               <div class="ope">
-                <el-button
+                <dsn-button
                   type="primary"
                   icon="el-icon-arrow-left"
                   @click.native="toLeft"
                 >
-                </el-button>
-                <el-button
+                </dsn-button>
+                <dsn-button
                   type="primary"
                   icon="el-icon-arrow-right"
                   @click.native="toRight"
-                ></el-button>
+                ></dsn-button>
               </div>
               <div class="right">
                 <el-table
@@ -216,6 +219,9 @@ export default {
         //主题
         topic: "",
         checked: true
+      },
+      rules:{
+        topic: [{ required: true, message: "主题不能为空", trigger: "blur" }],
       },
       //验证基础信息表单ref
       refArrBaseInfo: ["themeForm", "themeFormTwo"],
@@ -435,6 +441,8 @@ export default {
   }
 
   .container {
+    height:500px;
+    overflow-y:scroll;
     display: flex;
     .left,
     .right {
@@ -460,7 +468,7 @@ export default {
       justify-content: center;
       align-items: center;
       padding: 10px;
-      .el-button + .el-button {
+      .dsn-button + .dsn-button {
         margin-left: 0px;
         margin-top: 20px;
       }

@@ -72,3 +72,10 @@ export const listAllRequest = data => {
     return request.post(
         `${window.VUE_APP_URL}/mes/material/listAll`, data);
 };
+
+// /router/listRouterPage
+// 查询工艺路线列表: 分页和不分页
+export const listRouterPageHttp = data => {
+    return request.get(
+        `${window.VUE_APP_URL}/mes/router/listRouterPage`, data);
+};

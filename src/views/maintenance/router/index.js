@@ -143,6 +143,5 @@ export default {
           /* webpackChunkName: "standingMaintenanceEdit" */ "@/views/maintenance/pages/theme-edit.vue"
         )
     },
-
   ]
 };
