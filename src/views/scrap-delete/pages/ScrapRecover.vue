@@ -1,5 +1,10 @@
 <template>
   <div>
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索信息</span>
+      </div>
+      <!-- 卡片内容 -->
     <div class="search-bar">
       <el-form :inline="true" :model="searchForm" ref="searchForm" :rules="rules" class="form-style" :label-width="formLabelWidth">
         <el-form-item label="输入搜索条件:" prop="width">
@@ -11,21 +16,27 @@
           </el-input>
         </el-form-item>
         <el-form-item label="" prop="">
-          <el-button class="ml15 mr25 pad1025" size="small" type="primary" @click="search">查询</el-button>
-          <el-button class="pad1025" size="small" type="primary" @click="resetForm">重置</el-button>
+          <dsn-button  size="small" icon="el-icon-search" type="primary" @click.native="search">查询</dsn-button>
+          <dsn-button  size="small" icon="el-icon-refresh" type="primary" @click.native="resetForm">重置</dsn-button>
         </el-form-item>
       </el-form>
     </div>
+    </DsnPanel>
+    <!-- 卡片内容 -->
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索结果</span>
+      </div>
     <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
       <el-tab-pane label="报废" name="first">
         <div class="operate ml30 mtb10">
-          <el-button class="mr25 pad1025" size="small" type="primary" @click="mark" :disabled="this.checkedList.length===0">报废标记</el-button>
+          <dsn-button class="mr25 pad1025" size="small" type="primary" @click.native="mark" :disabled="this.checkedList.length===0">报废标记</dsn-button>
           <el-input placeholder="请输入内容" v-model="deleteDes" class="des">
             <template slot="prepend">报废描述:</template>
           </el-input>
         </div>
         <div class="">
-          <el-table
+          <dsn-table
           ref="deleteTable"
           :data="this.tableData.data"
           tooltip-effect="dark"
@@ -49,28 +60,28 @@
             <el-table-column prop="clearTime" label="恢复删除时间"></el-table-column>
             <el-table-column prop="clearUserId" label="恢复删除人员"></el-table-column>
             <el-table-column prop="clearComment" label="恢复删除描述"></el-table-column> -->
-          </el-table>
-          <el-pagination class="mtb20"
+          </dsn-table>
+          <dsn-pagination class="mtb20"
             background
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page="this.tableData.page.currentPage"
             :page-sizes="[1, 10, 15, 20, 30, 50]"
             :page-size="this.tableData.page.pageSize"
-            layout="->, total, prev, pager, next, sizes, jumper"
+            layout="->, total, prev, pager, next, sizes"
             :total="this.tableData.page.total">
-          </el-pagination>
+          </dsn-pagination>
         </div>
       </el-tab-pane>
       <el-tab-pane label="恢复" name="second">
         <div class="operate ml30 mtb10">
-          <el-button class="mr25 pad1025" size="small" type="primary" @click="recover" :disabled="this.checkedList.length===0">恢复报废</el-button>
+          <dsn-button class="mr25 pad1025" size="small" type="primary" @click.native="recover" :disabled="this.checkedList.length===0">恢复报废</dsn-button>
           <el-input placeholder="请输入内容" v-model="undeleteDes" class="des">
             <template slot="prepend">恢复报废描述:</template>
           </el-input>
         </div>
         <div class="">
-          <el-table
+          <dsn-table
           ref="recoverTable"
           :data="this.tableData.data"
           tooltip-effect="dark"
@@ -95,22 +106,22 @@
             <el-table-column prop="unscrapTime" label="恢复报废时间"></el-table-column>
             <el-table-column prop="unscrapUserName" label="恢复报废人员"></el-table-column>
             <el-table-column prop="unscrapDes" label="恢复报废描述"></el-table-column>
-          </el-table>
-          <el-pagination class="mtb20"
+          </dsn-table>
+          <dsn-pagination class="mtb20"
             background
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page="this.tableData.page.currentPage"
             :page-sizes="[1, 10, 15, 20, 30, 50]"
             :page-size="this.tableData.page.pageSize"
-            layout="->, total, prev, pager, next, sizes, jumper"
+            layout="->, total, prev, pager, next, sizes"
             :total="this.tableData.page.total">
-          </el-pagination>
+          </dsn-pagination>
         </div>
       </el-tab-pane>
       <el-tab-pane label="记录" name="third">
         <div class="">
-          <el-table
+          <dsn-table
           ref="multipleTable"
           :data="this.tableData.data"
           tooltip-effect="dark"
@@ -134,20 +145,21 @@
             <el-table-column prop="unDeleteTime" label="恢复删除时间"></el-table-column>
             <el-table-column prop="unDeleteUserName" label="恢复删除人员"></el-table-column>
             <el-table-column prop="unDeleteDes" label="恢复删除描述"></el-table-column>
-          </el-table>
-          <el-pagination class="mtb20"
+          </dsn-table>
+          <dsn-pagination class="mtb20"
             background
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page="this.tableData.page.currentPage"
             :page-sizes="[1, 10, 15, 20, 30, 50]"
             :page-size="this.tableData.page.pageSize"
-            layout="->, total, prev, pager, next, sizes, jumper"
+            layout="->, total, prev, pager, next, sizes"
             :total="this.tableData.page.total">
-          </el-pagination>
+          </dsn-pagination>
         </div>
       </el-tab-pane>
     </el-tabs>
+    </DsnPanel>
   </div>
 </template>
 
