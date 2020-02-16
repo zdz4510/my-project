@@ -68,11 +68,11 @@
             </el-form-item>
             <el-form-item label="计划物料:" prop="material">
               <el-col :span="9" style="margin-right:7px;">
-                <el-input placeholder="请输入计划物料" v-model="ruleForm.plannedMaterial"><el-button slot="append" icon="el-icon-document-copy" @click="materialHandler"></el-button></el-input>
+                <el-input size="small" placeholder="请输入计划物料" v-model="ruleForm.plannedMaterial"><el-button size="small" slot="append" icon="el-icon-document-copy" @click="materialHandler"></el-button></el-input>
               </el-col>
-              <div class="choiceBox">
+              <!-- <div class="choiceBox">
                 <i class="el-icon-document-copy"></i>
-              </div>
+              </div> -->
               <!--物料版本-->
               <div class="version">
                 <el-form>
@@ -86,11 +86,11 @@
             </el-form-item>
             <el-form-item label="计划工艺路线:" label-width="150">
               <el-col :span="9" style="margin-right:7px;">
-                <dsn-input placeholder="计划工艺路线" v-model="ruleForm.plannedRouter"></dsn-input>
+                <el-input size="small" placeholder="计划工艺路线" v-model="ruleForm.plannedRouter"><el-button slot="append"  size="small" icon="el-icon-document-copy" @click.native="routerHandler"></el-button></el-input>
               </el-col>
-              <div class="choiceBox">
+              <!-- <div class="choiceBox">
                 <i class="el-icon-document-copy"></i>
-              </div>
+              </div> -->
               <!--计划工艺路线版本-->
               <div class="version">
                 <el-form>
@@ -185,13 +185,13 @@
           tooltip-effect="dark"
           style="width: 100%"
           height="350px"
-          @selection-change="handleSelectionMaterial"
+          @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column type="index" label="序号" width="50"></el-table-column>
           <el-table-column prop="shopOrder" label="工单" width="120"></el-table-column>
           <el-table-column label="状态" prop="status" width="120"></el-table-column>
-          <el-table-column prop="shopOrderType" label="类型" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="shopOrderType" label="类型"></el-table-column>
         </dsn-table>
       <span slot="footer" class="dialog-footer">
         <dsn-button @click="orderDialog = false">取 消</dsn-button>
@@ -202,25 +202,51 @@
     <el-dialog
       title="物料选择"
       :visible.sync="materialDialog"
-      width="500px">
+      width="800px">
       <dsn-table
           ref="multipleTable"
           :data="materialTable"
           tooltip-effect="dark"
           style="width: 100%"
           height="350px"
-          @selection-change="handleSelectionChange"
+          @selection-change="handleSelectionMaterial"
         >
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column type="index" label="序号" width="50"></el-table-column>
-          <el-table-column prop="materialDes" label="物料" width="120"></el-table-column>
-          <el-table-column label="版本" prop="aterialRev" width="120"></el-table-column>
-          <el-table-column prop="currentRev" label="当前版本" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="material" label="物料" width="120"></el-table-column>
+          <el-table-column label="版本" prop="materialRev" width="120"></el-table-column>
+          <el-table-column prop="currentRev" label="当前版本"></el-table-column>
           <el-table-column label="描述" prop="materialDes" width="120"></el-table-column>
         </dsn-table>
       <span slot="footer" class="dialog-footer">
         <dsn-button @click="materialDialog = false">取 消</dsn-button>
         <dsn-button type="primary" @click="sureMaterial">确 定</dsn-button>
+      </span>
+    </el-dialog>
+    <!--工艺路线选择-->
+    <el-dialog
+      title="工艺路线选择"
+      :visible.sync="routerDialog"
+      width="800px">
+      <dsn-table
+          ref="multipleTable"
+          :data="routerTable"
+          tooltip-effect="dark"
+          style="width: 100%"
+          height="350px"
+          @selection-change="handlerSelectionRouter"
+        >
+          <el-table-column type="selection" width="55"></el-table-column>
+          <el-table-column type="index" label="序号" width="50"></el-table-column>
+          <el-table-column prop="router" label="工艺路线" width="120"></el-table-column>
+          <el-table-column label="版本" prop="revision" width="120"></el-table-column>
+          <el-table-column prop="currentRevision" label="当前版本"></el-table-column>
+          <el-table-column label="类型" prop="routerType" width="120"></el-table-column>
+          <el-table-column label="描述" prop="description" width="180"></el-table-column>
+        </dsn-table>
+      <span slot="footer" class="dialog-footer">
+        <dsn-button @click="routerDialog = false">取 消</dsn-button>
+        <dsn-button type="primary" @click="sureRouter">确 定</dsn-button>
       </span>
     </el-dialog>
   </div>
@@ -234,7 +260,8 @@ import{
     // findFieldRequest,
     deleteRequest,
     findShopOrderListHttp,
-    listAllRequest
+    listAllRequest,
+    listRouterPageHttp
 } from '@/api/work-order/work-order.api.js' 
 export default {
   inject:['defaltDialogWidth'],
@@ -282,15 +309,50 @@ export default {
         materialTable:[],
         materialDialog:false,
         materialChoice:[],
+        routerDialog:false,
+        routerTable:[],
+        routerChoice:[]
     };
   },
   methods:{
+    routerHandler(){
+      listRouterPageHttp().then(data =>{
+          const res = data.data
+          if(res.code == 200){
+            this.routerTable=res.data.data
+          }else{
+            this.$message({
+              message:res.message,
+              type:'warning'
+            })
+          }
+        })
+      this.routerDialog=true;
+    },
+    sureRouter(){
+      if(this.routerChoice.length>1){
+        this.$message({
+            message:"只能选择一行数据",
+            type:'warning'
+          })
+          return ;
+      }if(this.routerChoice.length===0){
+        this.$message({
+          message:"还没选择一行数据",
+          type:'warning'
+        })
+        return ;
+      }
+      else{
+        this.ruleForm.plannedRouter=this.routerChoice[0].router;
+        this.routerDialog=false;
+      }
+    },
     materialHandler(){
       // alert("111")
       listAllRequest().then(data =>{
           const res = data.data
           if(res.code == 200){
-            console.log(res,"shuju ")
             this.materialTable=res.data
           }else{
             this.$message({
@@ -326,7 +388,15 @@ export default {
             message:"只能选择一行数据",
             type:'warning'
           })
-      }else{
+          return ;
+      }if(this.orderChoice.length===0){
+        this.$message({
+          message:"还没选择一行数据",
+          type:'warning'
+        })
+        return ;
+      }
+      else{
         this.shopOrder=this.orderChoice[0].shopOrder;
         this.orderDialog=false;
       }
@@ -337,7 +407,15 @@ export default {
             message:"只能选择一行数据",
             type:'warning'
           })
-      }else{
+          return ;
+      }if(this.materialChoice.length===0){
+        this.$message({
+          message:"还没选择一行数据",
+          type:'warning'
+        })
+        return ;
+      }
+      else{
         this.ruleForm.plannedMaterial=this.materialChoice[0].material;
         this.materialDialog=false;
       }
@@ -346,8 +424,10 @@ export default {
       this.materialChoice=row;
     },
     handleSelectionChange(row){
-      // console.log(row,"hahah")
       this.orderChoice=row
+    },
+    handlerSelectionRouter(row){
+      this.routerChoice=row;
     },
     //初始化获取自定义字段
     // getCustom(){

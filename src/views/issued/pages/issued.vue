@@ -17,7 +17,7 @@
                             ]"
                         >
                             <el-col :span="9">
-                                <el-input  autocomplete="off" v-model='workOrderIssued.shopOrder'><el-button slot="append" icon="el-icon-document-copy" @click="orderHandler"></el-button></el-input>
+                                <el-input size="small" autocomplete="off" v-model='workOrderIssued.shopOrder'><el-button size="small" slot="append" icon="el-icon-document-copy" @click="orderHandler"></el-button></el-input>
                             </el-col>
                             
                             <div class="choiceBox">                       

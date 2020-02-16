@@ -26,11 +26,16 @@
         </el-form-item>
       </el-form>
     </DsnPanel>
-    <div class="operation">
+    
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索结果</span>
+      </div>
+      <div class="operation">
       <dsn-button 
         size="small" 
         type="success" 
-        icon="el-icon-add"
+        icon="el-icon-folder-add"
         :disabled="false"
         @click.native="handleAdd">新增</dsn-button>
       <dsn-button
@@ -48,13 +53,9 @@
         icon="el-icon-delete"
         :disabled="selectionList.length <= 0"
         @click="deleteDialog = true"
-      >
-        删除
-      </dsn-button>
-    </div>
-    <DsnPanel>
-      <div slot="header" class="title clearfix">
-        <span>搜索结果</span>
+        >
+          删除
+        </dsn-button>
       </div>
       <dsn-table
         ref="multipleTable"

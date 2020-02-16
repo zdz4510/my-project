@@ -1,6 +1,9 @@
 <template>
   <div class="topic">
-    <div class="query">
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索信息</span>
+      </div>
       <el-form
         :model="themeForm"
         ref="themeForm"
@@ -9,32 +12,38 @@
         :inline="true"
       >
         <el-form-item label="主题" prop="topic">
-          <el-input v-model.trim="themeForm.topic" placeholder="请输入主题"></el-input>
+          <dsn-input v-model.trim="themeForm.topic" placeholder="请输入主题"></dsn-input>
         </el-form-item>
         <el-form-item>
-          <el-button size="small" type="primary" @click="handleQuery">查询</el-button>
-          <el-button size="small" type="primary" @click="handleReset">重置</el-button>
+          <dsn-button size="small" type="primary" icon="el-icon-search" @click="handleQuery">查询</dsn-button>
+          <dsn-button size="small" type="primary" icon="el-icon-refresh" @click="handleReset">重置</dsn-button>
         </el-form-item>
       </el-form>
-    </div>
-    <div class="operate">
-      <el-button size="small" type="primary" @click="handleAdd">新增</el-button>
-      <el-button
+    </DsnPanel>
+    
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索结果</span>
+      </div>
+      <div class="operate">
+      <dsn-button size="small" type="success" icon="el-icon-folder-add" @click="handleAdd">新增</dsn-button>
+      <dsn-button
         size="small"
         type="primary"
+        icon="el-icon-edit"
         :disabled="selectionList.length <= 0"
         @click="handleEdit"
-      >编辑</el-button>
-      <el-button size="small" type="primary" :disabled="true">保存</el-button>
-      <el-button
+      >编辑</dsn-button>
+      <dsn-button size="small" type="primary" :disabled="true">保存</dsn-button>
+      <dsn-button
         size="small"
         type="danger"
+        icon="el-icon-delete"
         :disabled="selectionList.length <= 0"
         @click="handleDelete"
-      >删除</el-button>
-    </div>
-    <div class="showInfo">
-      <el-table
+        >删除</dsn-button>
+      </div>
+      <dsn-table
         ref="multipleTable"
         :data="tableData"
         tooltip-effect="dark"
@@ -45,10 +54,10 @@
         <el-table-column prop="topic" label="主题"></el-table-column>
         <el-table-column prop="topicDes" label="主题描述"></el-table-column>
         <el-table-column prop="catenation" label="地址连接"></el-table-column>
-      </el-table>
-    </div>
+      </dsn-table>
+    </DsnPanel>
     <div class="pagination">
-      <el-pagination
+      <dsn-pagination
         background
         layout="->,total,prev,pager,next,sizes"
         :total="total"
@@ -57,8 +66,15 @@
         :current-page="currentPage"
         @size-change="handlePagesize"
         @current-change="handleCurrentChange"
-      ></el-pagination>
+      ></dsn-pagination>
     </div>
+    <el-dialog title="删除" :visible.sync="deleteDialog" :width="defaltDialogWidth">
+      <span>是否确认删除{{ selectionList.length }}条数据？</span>
+      <span slot="footer" class="dialog-footer">
+        <dsn-button @click.native="deleteDialog = false">取 消</dsn-button>
+        <dsn-button type="primary" @click.native="sureDelete">确 定</dsn-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -82,6 +98,7 @@ const filterVal = [
 ];
 const fileName = "主题维护表";
 export default {
+  inject: ["defaltDialogWidth"],
   data() {
     return {
       tHeader,
@@ -95,7 +112,8 @@ export default {
       //分页
       currentPage: 1,
       pagesize: 10,
-      total: 0
+      total: 0,
+      deleteDialog:false
     };
   },
   created() {
@@ -212,6 +230,10 @@ export default {
         });
       }
       if (this.selectionList.length > 0) {
+        this.deleteDialog=true;
+      }
+    },
+    sureDelete(){
         const data = this.selectionList;
         deleteTopicBatchHttp(data).then(data => {
           const res = data.data;
@@ -227,8 +249,8 @@ export default {
               type: "warning"
             });
           }
+          this.deleteDialog=false;
         });
-      }
     }
     //返回结果，提示信息
     // exportResult(data) {
@@ -253,23 +275,23 @@ export default {
 
 <style lang="scss">
 .topic {
-  padding: 0 30px;
-  .query {
-    padding: 10px;
-    .el-form {
-      .el-form-item {
-        margin-bottom: 0px;
-      }
-    }
-  }
-  .operate {
-    padding: 10px 5px;
-  }
-  .showInfo {
-    width: 100%;
-    // .el-table__header{
-    //   width: 1000px !important;
-    // }
-  }
+  // padding: 0 30px;
+  // .query {
+  //   padding: 10px;
+  //   .el-form {
+  //     .el-form-item {
+  //       margin-bottom: 0px;
+  //     }
+  //   }
+  // }
+  // .operate {
+  //   padding: 10px 5px;
+  // }
+  // .showInfo {
+  //   width: 100%;
+  //   // .el-table__header{
+  //   //   width: 1000px !important;
+  //   // }
+  // }
 }
 </style>
