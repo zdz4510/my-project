@@ -60,8 +60,9 @@
                 @input='changeScale'
                 vertical
                 :step='0.05'
+                size="small"
                 :min="0.1"
-                :max="2"
+                :max="1"
                 height="200px">
               </el-slider>
               <el-button @click="hanldscale('minus')" circle>-</el-button>
@@ -793,11 +794,11 @@ export default {
   z-index: 2;
   display: flex;
   flex-direction: column;
-  padding: 15px;
-  padding: 5px;
+  // padding: 15px;
+  // padding: 5px;
   background: rgba(158, 158, 158, 0.44);
   border-radius: 40px;
-  margin: 10px
+  // margin: 10px
 }
 #flowContainer {
   // background-image: linear-gradient(

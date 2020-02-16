@@ -1,46 +1,38 @@
 <template>
   <div class="route-maintenance">
-    <DsnPanel >
-      <el-form :inline="true" class="typeForm"  :model="form"  :rules="searchrules" ref="form">
+    <DsnPanel>
+      <el-form :inline="true" class="typeForm" :model="form" :rules="searchrules" ref="form">
         <el-form-item label="工艺路线:" prop="router">
           <dsn-input placeholder="请输入工艺路线" v-model="form.router">
-             <i slot="append" class="el-icon-document-copy"></i>
+            <i slot="append" class="el-icon-document-copy"></i>
           </dsn-input>
         </el-form-item>
         <el-form-item label="版本:" prop="revision">
-          <dsn-input
-            placeholder="请输入版本"
-            v-model="form.revision"
-          >
-         
-          </dsn-input>
+          <dsn-input placeholder="请输入版本" v-model="form.revision"></dsn-input>
         </el-form-item>
-        <el-form-item >
-        <dsn-button size="small" type="primary" icon='el-icon-search' @click="handleQuery">查询</dsn-button>
-        <dsn-button size="small" type="primary" icon='el-icon-refresh' @click.native="reset">重置</dsn-button>
-        <dsn-button size="small" type="danger" icon='el-icon-delete'>清除</dsn-button>
-        <dsn-button size="small" type="success" icon='el-icon-check' @click="handleSave">保存</dsn-button>
+        <el-form-item>
+          <dsn-button size="small" type="primary" icon="el-icon-search" @click="handleQuery">查询</dsn-button>
+          <dsn-button size="small" type="primary" icon="el-icon-refresh" @click.native="reset">重置</dsn-button>
+          <dsn-button size="small" type="danger" icon="el-icon-delete">清除</dsn-button>
+          <dsn-button size="small" type="success" icon="el-icon-check" @click="handleSave">保存</dsn-button>
         </el-form-item>
       </el-form>
     </DsnPanel>
     <div class="showInfo">
       <el-tabs type="border-card">
         <el-tab-pane>
-          <span slot="label"> <i class="el-icon-date"></i> 一般 </span>
+          <span slot="label">
+            <i class="el-icon-date"></i> 一般
+          </span>
           <el-form
             :model="form"
             :rules="rules"
-            ref="form"
+            ref="form2"
             label-width="100px"
             class="demo-ruleForm"
           >
             <el-form-item label="描述：" prop="description">
-              <dsn-input
-                style="width:194px"
-                v-model="form.description"
-                placeholder="描述"
-              >
-              </dsn-input>
+              <dsn-input style="width:194px" v-model="form.description" placeholder="描述"></dsn-input>
             </el-form-item>
             <el-form-item label="当前版本：" prop="currentRevision">
               <el-checkbox v-model="form.currentRevision"></el-checkbox>
@@ -52,8 +44,7 @@
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"
-                >
-                </el-option>
+                ></el-option>
               </dsn-select>
             </el-form-item>
             <el-form-item label="状态" prop="status">
@@ -63,8 +54,7 @@
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"
-                >
-                </el-option>
+                ></el-option>
               </dsn-select>
             </el-form-item>
           </el-form>
@@ -72,9 +62,7 @@
         <el-tab-pane label="附加工序">
           <pannel ref="panel" :search="searchValue" />
         </el-tab-pane>
-        <el-tab-pane label="自定义字段">
-          自定义字段
-        </el-tab-pane>
+        <el-tab-pane label="自定义字段">自定义字段</el-tab-pane>
       </el-tabs>
     </div>
   </div>
@@ -139,14 +127,21 @@ export default {
       value: "",
       //工单表信息
       searchrules: {
-        router: [{ required: true, message: "工艺路线不能为空", trigger: "blur" }],
-        revision: [{ required: true, message: "版本不能为空", trigger: "blur" }],
-       
+        router: [
+          { required: true, message: "工艺路线不能为空", trigger: "blur" }
+        ],
+        revision: [{ required: true, message: "版本不能为空", trigger: "blur" }]
       },
-       rules: {
-        description: [{ required: false, message: "请选择类型", trigger: "blur" }],
-        currentRevision: [{ required: false, message: "请选择状态", trigger: "change" }],
-         routerType: [{ required: true, message: "类型不能为空", trigger: "blur" }],
+      rules: {
+        description: [
+          { required: false, message: "请选择类型", trigger: "blur" }
+        ],
+        currentRevision: [
+          { required: false, message: "请选择状态", trigger: "change" }
+        ],
+        routerType: [
+          { required: true, message: "类型不能为空", trigger: "blur" }
+        ],
         status: [{ required: true, message: "状态不能为空", trigger: "blur" }]
       },
       shopOrder: "", //最新工单
@@ -169,16 +164,16 @@ export default {
     },
     //重置
     reset() {
-      console.log('reset')
-      this.$refs['form'].resetFields();
+      console.log("reset");
+      this.$refs["form"].resetFields();
     },
 
     //保存
     handleSave() {
-      if(this.form.modifyTime && this.form.reference){
-         console.log('save')
-         this.handleUpdateRoute();
-         return ;
+      if (this.form.modifyTime && this.form.reference) {
+        console.log("save");
+        this.handleUpdateRoute();
+        return;
       }
       this.handleCreateRouter();
     },
@@ -247,6 +242,13 @@ export default {
       });
     },
     handleQuery() {
+      this.$refs["form"].validate(valid => {
+        if (valid) {
+          this.getRouteInfo();
+        }
+      });
+    },
+    getRouteInfo() {
       getRouter({
         revision: this.form.revision,
         router: this.form.router
@@ -311,10 +313,10 @@ export default {
       box-sizing: border-box;
       .el-tabs__content {
         height: 100%;
-            box-sizing: border-box;
+        box-sizing: border-box;
         .el-tab-pane {
           height: 100%;
-              box-sizing: border-box;
+          box-sizing: border-box;
         }
       }
     }
