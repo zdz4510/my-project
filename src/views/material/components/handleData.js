@@ -89,6 +89,9 @@
  */
 const handleData =(data)=>{
   let node = data.nodeList;  // 获取node
+  if(node.length==0){
+    return ;
+  }
   //const line = data.lineList;  // 获取line
   const line = data.lineList;
   const fromAtoB = A => {
@@ -96,11 +99,13 @@ const handleData =(data)=>{
     return item.from == A;
   });
 };
+
   const findNodseByArr=(arr)=>{
     return  node.filter(item=>{
           return arr.indexOf(item.id)!=-1;
     })
   }
+  // 开始节点
   const root = fromAtoB(-1);  //  获取
   
   const arr = node.filter(item=>{

@@ -8,9 +8,9 @@
       <el-tab-pane>
         <span slot="label"><i class="el-icon-date"></i> 一般</span>
         <el-form :model="node" ref="dataForm" label-width="80px">
-          <el-form-item label="名称">
+          <!-- <el-form-item label="名称">
             <el-input v-model="node.name"></el-input>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="left坐标" v-if="false">
             <el-input v-model="node.left"></el-input>
           </el-form-item>

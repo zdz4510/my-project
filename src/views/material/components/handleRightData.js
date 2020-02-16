@@ -2,24 +2,18 @@
  *  data,
  * entry 入口的值
  */
-
 const findNodeBystepId = (stepId, routerSteps) => {
   const arr = routerSteps.filter(item => {
     return (item.stepId == stepId);
   });
-
   return arr[0];
 };
 export default ({ entryRouterStep, routerSteps }) => {
   console.log(entryRouterStep);
   console.log(routerSteps);
-
   let lines = [];
   let nodes = [];
-  
   let rootId ;
-  
-  
   routerSteps.forEach(item => {
     const isO = item.routerComponent.routerComponentType == "O";
     // const stepId = item.stepId;
@@ -48,7 +42,7 @@ export default ({ entryRouterStep, routerSteps }) => {
         } else {
           to = node.routerComponent.routerReturnComponent.retrunType;
         }
-        lines.push({ form: from, to: to });
+        lines.push({ from: from, to: to });
       });
     }
 
@@ -119,5 +113,7 @@ export default ({ entryRouterStep, routerSteps }) => {
     from: "-1",
     to: rootId
   });
+  console.log(lines)
+  console.log(nodes)
   return { lines, nodes };
 };

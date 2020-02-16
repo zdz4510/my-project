@@ -55,24 +55,24 @@
           <el-col :span="24" style="height:100%" class="pannerBox">
             <div class="scale-wrap">
               <el-button @click="hanldscale('plus')" circle>+</el-button>
-               <el-slider
+              <el-slider
                 v-model="scale"
-                @input='changeScale'
+                @input="changeScale"
                 vertical
-                :step='0.05'
+                :step="0.05"
                 size="small"
                 :min="0.1"
                 :max="1"
-                height="200px">
+                height="200px"
+              >
               </el-slider>
               <el-button @click="hanldscale('minus')" circle>-</el-button>
             </div>
-            <div id="flowContainer"  ref="flowContainer" class="container">
-              <template v-for="(node,index) in rightData.nodeList">
+            <div id="flowContainer" ref="flowContainer" class="container">
+              <template v-for="(node, index) in rightData.nodeList">
                 <flow-node
-                  
                   :id="node.id"
-                  :key="node.id+index"
+                  :key="node.id + index"
                   :node="node"
                   @deleteNode="deleteNode"
                   @changeNodeSite="changeNodeSite"
@@ -109,7 +109,7 @@ import { getDataB } from "./data_B";
 import { getDataC } from "./data_C";
 import { getAllOperation } from "@/api/material/route.maintenance.api";
 import { getCraftProcess } from "@/api/process-flow/process.flow.api/";
-import  "./handleData.js";
+import "./handleData.js";
 export default {
   name: "pannel",
   props: {
@@ -120,7 +120,7 @@ export default {
   },
   data() {
     return {
-      scale:1, // 画布比例
+      scale: 1, // 画布比例
       menuList: [],
       // jsPlumb 实例
       jsPlumb: null,
@@ -191,7 +191,7 @@ export default {
       // 数据
       //  data: {}
       rightData: {
-        description:'',
+        description: "",
         nodeList: [],
         lineList: []
       }
@@ -213,18 +213,24 @@ export default {
   methods: {
     // 进度缩放
     changeScale(val) {
-      this.$refs.flowContainer.setAttribute('style', `transform:scale(${val})`);
-      console.log(val)
+      this.$refs.flowContainer.setAttribute("style", `transform:scale(${val})`);
+      console.log(val);
     },
     // 按钮缩放
-    hanldscale(attr){
-      if(attr == 'plus') {
-        this.scale = this.scale + 0.05
-        this.$refs.flowContainer.setAttribute('style', `transform:scale(${this.scale})`);
+    hanldscale(attr) {
+      if (attr == "plus") {
+        this.scale = this.scale + 0.05;
+        this.$refs.flowContainer.setAttribute(
+          "style",
+          `transform:scale(${this.scale})`
+        );
       }
-      if(attr == 'minus') {
-        this.scale = this.scale - 0.05
-        this.$refs.flowContainer.setAttribute('style', `transform:scale(${this.scale})`);
+      if (attr == "minus") {
+        this.scale = this.scale - 0.05;
+        this.$refs.flowContainer.setAttribute(
+          "style",
+          `transform:scale(${this.scale})`
+        );
       }
     },
     init() {
@@ -239,21 +245,21 @@ export default {
     handleLeftData(isEndDrag, isStartDrag) {
       this.menuList = this.menuList.map(item => {
         let newitem = {
-          id: item.operation,  // id
+          id: item.operation, // id
           name: item.operation, //  名字
           type: item.operation, // 类型
           operationDes: item.operationDes,
-          reportingStep:'', // 报工步骤
+          reportingStep: "", // 报工步骤
           resourceGroup: item.resourceGroup,
-          routerComponentType:'O',  // 工艺路线类型
+          routerComponentType: "O", // 工艺路线类型
           ico: "el-icon-user-solid",
-          customizedData:[],
-          operation:item.operation, // 工序id
-          isLastReportingStep:false, //最后包工步骤checkbox
-          description:'', //  描述
-          stepId:'', //
+          customizedData: [],
+          operation: item.operation, // 工序id
+          isLastReportingStep: false, //最后包工步骤checkbox
+          description: "", //  描述
+          stepId: "", //
           returnOperation: "", // 返回工序
-          returnStepId: "",  // 返回步骤   
+          returnStepId: "" // 返回步骤
         };
         return {
           ...newitem
@@ -298,40 +304,39 @@ export default {
         type: "handle",
         name: "处置",
         ico: "el-icon-user-solid",
-        
+
         children: [
-        
           {
             id: "A",
             type: "A",
             name: "返回置任一步骤",
             ico: "el-icon-odometer",
-            routerComponentType:'R',
-            retrunType:'A'
+            routerComponentType: "R",
+            retrunType: "A"
           },
           {
             id: "N",
             type: "N",
             name: "返回置上一步骤",
             ico: "el-icon-odometer",
-            routerComponentType:'R',
-            retrunType:'N'
+            routerComponentType: "R",
+            retrunType: "N"
           },
           {
             id: "O",
             type: "O",
             name: "返回置原始步骤",
-            routerComponentType:'R',
+            routerComponentType: "R",
             ico: "el-icon-odometer",
-            retrunType:'O'
+            retrunType: "O"
           },
           {
             id: "P",
             type: "P",
             name: "返回置下一步骤",
             ico: "el-icon-odometer",
-            routerComponentType:'R',
-             retrunType:'P'
+            routerComponentType: "R",
+            retrunType: "P"
           }
         ]
       };
@@ -529,20 +534,19 @@ export default {
      */
     addNode(evt, nodeMenu, mousePosition) {
       let nodeId = nodeMenu.id;
-       const item =  this.rightData.nodeList.filter(item=>{
-         return item.id==nodeMenu.id
-       });
-       if(item.length>0){
-         this.$message({
-           type:'warning',
-           message:"工序在右边画板已经存在,不可添加"
-         });
-         return ;
-       }
+      const item = this.rightData.nodeList.filter(item => {
+        return item.id == nodeMenu.id;
+      });
+      if (item.length > 0) {
+        this.$message({
+          type: "warning",
+          message: "工序在右边画板已经存在,不可添加"
+        });
+        return;
+      }
 
       let width = this.$refs.nodeMenu.$el.clientWidth;
 
-      
       let left = mousePosition.left;
       let top = mousePosition.top;
       if (left < 0) {
@@ -559,7 +563,7 @@ export default {
         ico: nodeMenu.ico,
         show: true,
         id: nodeId,
-        type:nodeId
+        type: nodeId
       };
       /**
        * 这里可以进行业务判断、是否能够添加该节点
@@ -744,6 +748,8 @@ export default {
     },
     // 加载流程图
     dataReload(data) {
+     
+      console.log(data);
       this.easyFlowVisible = false;
       this.rightData.nodeList = [];
       this.rightData.lineList = [];
@@ -811,7 +817,7 @@ export default {
   // // background-color: rgb(251, 251, 251);
   // min-height: 500%;
   /*background-color: #42b983;*/
-  overflow: hidden;;
+  overflow: hidden;
   position: relative;
   transform-origin: 0 0; // transform 基点为左上角
   min-height: 100%;
