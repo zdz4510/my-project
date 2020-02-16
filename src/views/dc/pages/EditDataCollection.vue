@@ -103,7 +103,7 @@
           >
             <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
             <el-table-column type="index" label="序号"></el-table-column>
-            <el-table-column prop="parameter" label="参数名称"></el-table-column>
+            <el-table-column prop="parameter" label="参数名称" sortable></el-table-column>
             <el-table-column label="软检查">
               <template slot-scope="scope">{{ scope.row.softCheck ? '启用' : '不启用' }}</template>
             </el-table-column>
@@ -111,13 +111,13 @@
             <el-table-column prop="targetValue" label="标准值"></el-table-column>
             <el-table-column prop="upperSpecLimit" label="标准值上限"></el-table-column>
             <el-table-column prop="lowerSpecLimit" label="标准值下限"></el-table-column>
-            <el-table-column prop="upperWarnLimit" label="警告发生上限"></el-table-column>
-            <el-table-column prop="lowerWarnLimit" label="警告发生下限"></el-table-column>
+            <el-table-column prop="upperWarnLimit" label="警告发生上限" width="100"></el-table-column>
+            <el-table-column prop="lowerWarnLimit" label="警告发生下限" width="100"></el-table-column>
             <el-table-column label="参数状态">
               <template slot-scope="scope">{{ scope.row.parameterStatus ? '启用' : '不启用' }}</template>
             </el-table-column>
             <el-table-column prop="alarm" label="预警事件"></el-table-column>
-            <el-table-column prop="createTime" label="创建时间"></el-table-column>
+            <el-table-column prop="createTime" label="创建时间" width="120"></el-table-column>
             <el-table-column prop="createUserId" label="创建人"></el-table-column>
           </dsn-table>
         </el-tab-pane>
@@ -212,7 +212,7 @@
             <el-form-item label="标准值上限:" prop="upperSpecLimit">
               <dsn-input
                 v-model="addParamForm.upperSpecLimit"
-                :disabled="addParamForm.valueType != '数值'"
+                :disabled="addParamForm.valueType !== 10 || !addParamForm.targetValue"
               ></dsn-input>
             </el-form-item>
           </el-col>
@@ -234,7 +234,7 @@
             <el-form-item label="标准值下限:" prop="lowerSpecLimit">
               <dsn-input
                 v-model="addParamForm.lowerSpecLimit"
-                :disabled="addParamForm.valueType != '数值'"
+                :disabled="addParamForm.valueType !== 10 || !addParamForm.targetValue"
               ></dsn-input>
             </el-form-item>
           </el-col>
@@ -256,7 +256,7 @@
             <el-form-item label="预警发生上限值:" prop="upperWarnLimit">
               <dsn-input
                 v-model="addParamForm.upperWarnLimit"
-                :disabled="addParamForm.valueType != '数值'"
+                :disabled="addParamForm.valueType !== 10 || !addParamForm.targetValue"
               ></dsn-input>
             </el-form-item>
           </el-col>
@@ -278,7 +278,7 @@
             <el-form-item label="预警发生下限值:" prop="lowerWarnLimit">
               <dsn-input
                 v-model="addParamForm.lowerWarnLimit"
-                :disabled="addParamForm.valueType != '数值'"
+                :disabled="addParamForm.valueType !== 10 || !addParamForm.targetValue"
               ></dsn-input>
             </el-form-item>
           </el-col>
@@ -385,7 +385,7 @@ export default {
   },
   data() {
     var targetValueRequired = (rule, value, callback) => {
-      if (this.addParamForm.valueType == "数值") {
+      if (this.addParamForm.valueType == 10) {
         var reg = /^[0-9]*$/;
         if (!reg.test(value)) {
           return callback(new Error("只能输入数字"));
@@ -405,6 +405,8 @@ export default {
       callback();
     };
     return {
+      //克隆一份初始数据
+      cloneDataCollectionEditList: [],
       formLabelWidth: "130px",
       activeName: "first",
       paramsDialogVisible: false,
@@ -507,13 +509,16 @@ export default {
       ],
       valueType: [
         {
-          value: "数值"
+          label: "数值",
+          value: 10
         },
         {
-          value: "文本"
+          label: "文本",
+          value: 20
         },
         {
-          value: "布尔"
+          label: "布尔",
+          value: 30
         }
       ],
       alarmList: [],
@@ -695,14 +700,15 @@ export default {
                   this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
                 }
               }
-            } else {
-              this.$message({
-                message: res.message,
-                type: "error"
-              });
-              this.saveDialog = false;
-              // this.setCurrent(this.oldRow);
+              this.goBack();
+              return;
             }
+            this.$message({
+              message: res.message,
+              type: "error"
+            });
+            this.saveDialog = false;
+            // this.setCurrent(this.oldRow);
           });
         }
       });
@@ -884,12 +890,19 @@ export default {
         this.SetupInfoList = data.data.data;
       });
     },
-    resetForm() {}
+    resetForm() {
+      this.editForm = JSON.parse(
+        JSON.stringify(this.cloneDataCollectionEditList[0])
+      );
+    }
   },
   created() {
     this.$nextTick(() => {
       this.init();
     });
+    this.cloneDataCollectionEditList = JSON.parse(
+      JSON.stringify(this.dataCollectionEditList)
+    );
     let params = {
       alarm: ""
     };

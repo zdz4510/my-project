@@ -75,11 +75,13 @@
           >
             <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
             <el-table-column type="index" label="序号"></el-table-column>
-            <el-table-column prop="parameter" label="参数名称"></el-table-column>
+            <el-table-column prop="parameter" label="参数名称" sortable></el-table-column>
             <el-table-column label="软检查">
               <template slot-scope="scope">{{ scope.row.softCheck ? '启用' : '不启用' }}</template>
             </el-table-column>
-            <el-table-column prop="valueType" label="值类型"></el-table-column>
+            <el-table-column prop="valueType" label="值类型">
+              <template slot-scope="scope">{{ scope.row.valueType | filterValueType}}</template>
+            </el-table-column>
             <el-table-column prop="targetValue" label="标准值"></el-table-column>
             <el-table-column prop="upperSpecLimit" label="标准值上限"></el-table-column>
             <el-table-column prop="lowerSpecLimit" label="标准值下限"></el-table-column>
@@ -149,21 +151,29 @@
               ></dsn-input>
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-if="addParamForm.valueType != '布尔'">
+          <el-col :span="12" v-if="addParamForm.valueType != 30">
             <el-form-item label="标准值:" prop="targetValue" required>
               <dsn-input v-model="addParamForm.targetValue"></dsn-input>
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-if="addParamForm.valueType == '布尔'">
+          <el-col :span="12" v-if="addParamForm.valueType == 30">
             <el-form-item label="标准值:" prop="targetValue" required>
-              <dsn-select v-model="addParamForm.targetValue">
+              <!-- <dsn-select v-model="addParamForm.targetValue">
                 <el-option
                   v-for="item in status"
                   :key="item.value"
                   :label="item.valueType"
                   :value="item.value"
                 ></el-option>
-              </dsn-select>
+              </dsn-select>-->
+              <el-row :gutter="20">
+                <el-col :span="12">
+                  <div class="grid-content bg-purple"></div>
+                </el-col>
+                <el-col :span="12">
+                  <div class="grid-content bg-purple"></div>
+                </el-col>
+              </el-row>
             </el-form-item>
           </el-col>
         </el-row>
@@ -177,7 +187,7 @@
             <el-form-item label="标准值上限:" prop="upperSpecLimit">
               <dsn-input
                 v-model="addParamForm.upperSpecLimit"
-                :disabled="addParamForm.valueType != '数值'"
+               :disabled="addParamForm.valueType !== 10 || !addParamForm.targetValue"
               ></dsn-input>
             </el-form-item>
           </el-col>
@@ -199,7 +209,7 @@
             <el-form-item label="标准值下限:" prop="lowerSpecLimit">
               <dsn-input
                 v-model="addParamForm.lowerSpecLimit"
-                :disabled="addParamForm.valueType != '数值'"
+                :disabled="addParamForm.valueType !== 10 || !addParamForm.targetValue"
               ></dsn-input>
             </el-form-item>
           </el-col>
@@ -211,7 +221,7 @@
                 <el-option
                   v-for="item in valueType"
                   :key="item.value"
-                  :label="item.value"
+                  :label="item.label"
                   :value="item.value"
                 ></el-option>
               </dsn-select>
@@ -221,7 +231,7 @@
             <el-form-item label="预警发生上限值:" prop="upperWarnLimit">
               <dsn-input
                 v-model="addParamForm.upperWarnLimit"
-                :disabled="addParamForm.valueType != '数值'"
+                :disabled="addParamForm.valueType !== 10 || !addParamForm.targetValue"
               ></dsn-input>
             </el-form-item>
           </el-col>
@@ -243,7 +253,7 @@
             <el-form-item label="预警发生下限值:" prop="lowerWarnLimit">
               <dsn-input
                 v-model="addParamForm.lowerWarnLimit"
-                :disabled="addParamForm.valueType != '数值'"
+                :disabled="addParamForm.valueType !== 10 || !addParamForm.targetValue"
               ></dsn-input>
             </el-form-item>
           </el-col>
@@ -344,7 +354,7 @@ export default {
   name: "add-data-collection",
   data() {
     var targetValueRequired = (rule, value, callback) => {
-      if (this.addParamForm.valueType == "数值") {
+      if (this.addParamForm.valueType == 10) {
         var reg = /^[0-9]*$/;
         if (!reg.test(value)) {
           return callback(new Error("只能输入数字"));
@@ -357,9 +367,9 @@ export default {
       callback();
     };
     var numberRequired = (rule, value, callback) => {
-      var reg = /^[0-9]*$/;
+      var reg = /^((\d{1,5}\.\d{0,3})||(\d{1,5}))$/g;
       if (!reg.test(value) && !!value) {
-        return callback(new Error("只能输入数字"));
+        return callback(new Error("只能输入整数5位以内，小数3位以内"));
       }
       callback();
     };
@@ -474,13 +484,16 @@ export default {
       ],
       valueType: [
         {
-          value: "数值"
+          label: "数值",
+          value: 10
         },
         {
-          value: "文本"
+          label: "文本",
+          value: 20
         },
         {
-          value: "布尔"
+          label: "布尔",
+          value: 30
         }
       ],
       alarmList: [],
@@ -488,6 +501,20 @@ export default {
       sCheckedList: [],
       currentOperation: ""
     };
+  },
+  filters: {
+    filterValueType(value) {
+      if (value === 10) {
+        return "数值";
+      }
+      if (value === 20) {
+        return "文本";
+      }
+      if (value === 30) {
+        return "布尔";
+      }
+      return value;
+    }
   },
   created() {
     let params = {

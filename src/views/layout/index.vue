@@ -32,7 +32,7 @@ import DsnFooter from "./dsn-footer";
 import DsnHeader from "./dsn-header";
 import DsnLeftMenu from "./dsn-left-menu";
 import { mapGetters, mapMutations,mapActions } from "vuex";
-import { getResourceList } from "@/api/login.api.js";
+import { getSystemList } from "@/api/login.api.js";
 export default {
   name: "Layout",
   components: {
@@ -72,13 +72,11 @@ export default {
       this.$router.push({name:item.name})
     },
      getSystwmId(type){
-      getResourceList({
-        type:"SYSTEM"
-      }).then(
+      getSystemList().then(
         data=>{
           const res = data.data;
           if(res.code==200){
-                const arr = res.data.data;
+                const arr = res.data;
                const item = arr.find(item=>{
                     return item.key==type
                 })

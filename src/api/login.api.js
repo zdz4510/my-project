@@ -6,8 +6,8 @@ export const login = data => {
 };
 
 // type SYSTEM 可以查询
-export const getResourceList  = data => {
-    return request.post(`${window.VUE_APP_URL}/mcs/resource/list?pageSize=0&currentPage=1`,data);
+export const getSystemList  = data => {
+    return request.get(`${window.VUE_APP_URL}/mcs/open/resource/getSystemList`,data);
   };
 
 
