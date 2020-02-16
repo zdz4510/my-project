@@ -187,7 +187,7 @@
             <el-form-item label="标准值上限:" prop="upperSpecLimit">
               <dsn-input
                 v-model="addParamForm.upperSpecLimit"
-                :disabled="parseInt(addParamForm.valueType) !== 10 && addParamForm.targetValue"
+               :disabled="addParamForm.valueType !== 10 || !addParamForm.targetValue"
               ></dsn-input>
             </el-form-item>
           </el-col>
@@ -209,7 +209,7 @@
             <el-form-item label="标准值下限:" prop="lowerSpecLimit">
               <dsn-input
                 v-model="addParamForm.lowerSpecLimit"
-                :disabled="parseInt(addParamForm.valueType) !== 10 && addParamForm.targetValue"
+                :disabled="addParamForm.valueType !== 10 || !addParamForm.targetValue"
               ></dsn-input>
             </el-form-item>
           </el-col>
@@ -231,7 +231,7 @@
             <el-form-item label="预警发生上限值:" prop="upperWarnLimit">
               <dsn-input
                 v-model="addParamForm.upperWarnLimit"
-                :disabled="addParamForm.valueType !== 10 && addParamForm.targetValue"
+                :disabled="addParamForm.valueType !== 10 || !addParamForm.targetValue"
               ></dsn-input>
             </el-form-item>
           </el-col>
@@ -253,7 +253,7 @@
             <el-form-item label="预警发生下限值:" prop="lowerWarnLimit">
               <dsn-input
                 v-model="addParamForm.lowerWarnLimit"
-                :disabled="addParamForm.valueType !== 10 && addParamForm.targetValue"
+                :disabled="addParamForm.valueType !== 10 || !addParamForm.targetValue"
               ></dsn-input>
             </el-form-item>
           </el-col>

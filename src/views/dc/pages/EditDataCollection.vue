@@ -212,7 +212,7 @@
             <el-form-item label="标准值上限:" prop="upperSpecLimit">
               <dsn-input
                 v-model="addParamForm.upperSpecLimit"
-                :disabled="addParamForm.valueType != '数值'"
+                :disabled="addParamForm.valueType !== 10 || !addParamForm.targetValue"
               ></dsn-input>
             </el-form-item>
           </el-col>
@@ -234,7 +234,7 @@
             <el-form-item label="标准值下限:" prop="lowerSpecLimit">
               <dsn-input
                 v-model="addParamForm.lowerSpecLimit"
-                :disabled="addParamForm.valueType != '数值'"
+                :disabled="addParamForm.valueType !== 10 || !addParamForm.targetValue"
               ></dsn-input>
             </el-form-item>
           </el-col>
@@ -256,7 +256,7 @@
             <el-form-item label="预警发生上限值:" prop="upperWarnLimit">
               <dsn-input
                 v-model="addParamForm.upperWarnLimit"
-                :disabled="addParamForm.valueType != '数值'"
+                :disabled="addParamForm.valueType !== 10 || !addParamForm.targetValue"
               ></dsn-input>
             </el-form-item>
           </el-col>
@@ -278,7 +278,7 @@
             <el-form-item label="预警发生下限值:" prop="lowerWarnLimit">
               <dsn-input
                 v-model="addParamForm.lowerWarnLimit"
-                :disabled="addParamForm.valueType != '数值'"
+                :disabled="addParamForm.valueType !== 10 || !addParamForm.targetValue"
               ></dsn-input>
             </el-form-item>
           </el-col>
@@ -385,7 +385,7 @@ export default {
   },
   data() {
     var targetValueRequired = (rule, value, callback) => {
-      if (this.addParamForm.valueType == "数值") {
+      if (this.addParamForm.valueType == 10) {
         var reg = /^[0-9]*$/;
         if (!reg.test(value)) {
           return callback(new Error("只能输入数字"));
@@ -509,13 +509,16 @@ export default {
       ],
       valueType: [
         {
-          value: "数值"
+          label: "数值",
+          value: 10
         },
         {
-          value: "文本"
+          label: "文本",
+          value: 20
         },
         {
-          value: "布尔"
+          label: "布尔",
+          value: 30
         }
       ],
       alarmList: [],
