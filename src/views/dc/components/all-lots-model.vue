@@ -1,6 +1,6 @@
 <template>
   <div class="allLotModel">
-    <el-table
+    <dsn-table
       ref="singleTable"
       :data="lot"
       highlight-current-row
@@ -8,10 +8,9 @@
       height="200px"
       @current-change="handleCurrentLotChange"
     >
-      <el-table-column type="index" label="序号" width="80"> </el-table-column>
-      <el-table-column prop="lot" label="LOT" show-overflow-tooltip>
-      </el-table-column>
-    </el-table>
+      <el-table-column type="index" label="序号" width="80"></el-table-column>
+      <el-table-column prop="lot" label="LOT" show-overflow-tooltip></el-table-column>
+    </dsn-table>
   </div>
 </template>
 
