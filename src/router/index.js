@@ -348,6 +348,9 @@ const routes = [
   {
     path: "/alarm",
     name: "alarm",
+    meta: {
+      title: "预警管理"
+    },
     component: () =>
       import(/* webpackChunkName: "layout" */ "../views/layout/"),
     children: [
