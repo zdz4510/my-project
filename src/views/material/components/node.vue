@@ -1,6 +1,6 @@
 <template>
-  <el-tooltip content="Left center" placement="top" >
-    <div slot="content">多行信息<br />第二行信息</div>
+  <!-- <el-tooltip content="Left center" placement="top" > -->
+    <!-- <div slot="content">多行信息<br />第二行信息</div> -->
     <div
       ref="node"
       :style="nodeContainerStyle"
@@ -24,7 +24,7 @@
         {{ node.name}}
       </div>
     </div>
-  </el-tooltip>
+  <!-- </el-tooltip> -->
 </template>
 
 <script>

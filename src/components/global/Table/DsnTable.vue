@@ -2,7 +2,7 @@
   <el-table
     :height="height"
     :data="data"
-    stripe
+    :stripe="stripe"
     :border="border"
     :emptyText="emptyText"
     :row-key="rowKey"
@@ -15,7 +15,7 @@
     @selection-change="tableSelectionChange"
     @current-change="currentChange"
     :highlight-current-row="highlightCurrentRow"
-    
+    :row-class-name="rowClassName"
     ref="table"
    
   >
@@ -66,7 +66,7 @@ export default {
     //是否是斑马纹
     stripe: {
       type: Boolean,
-      required: false
+      default: true
     },
     //medium  small mini
     size: {
@@ -84,7 +84,12 @@ export default {
     emptyText: {
       type: String,
       default: "没有数据啊"
-    }
+    },
+    'rowClassName':{
+      type:Function,
+        required:false
+    },
+   
   },
   methods: {
   

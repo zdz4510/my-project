@@ -6,12 +6,17 @@
     :icon="icon"
     :size="size"
     :disabled="disabled"
+    :loading="loading"
+    :plain="plain"
+    :round="round"
+    :circle="circle"
+    :autofocus="autofocus"
+    :nativeType="nativeType"
   >
     <slot></slot>
   </el-button>
 </template>
 <script>
-
 export default {
   name: "dsnButton",
   props: {
@@ -35,6 +40,31 @@ export default {
     icon: {
       type: String,
       required: false
+    },
+    plain: {
+      type: Boolean,
+      default: false
+    },
+    round: {
+      type: Boolean,
+      default: false
+    },
+    circle: {
+      type: Boolean,
+      default: false
+    },
+    loading: {
+      type: Boolean,
+      default: false
+    },
+
+    autofocus: {
+      type: Boolean,
+      default: false
+    },
+    nativeType: {
+      type: String,
+      default: "button"
     }
   },
   components: {},

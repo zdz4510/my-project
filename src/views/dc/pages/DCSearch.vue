@@ -1,6 +1,11 @@
 <template>
   <div class="dc-search">
-    <div class="search-bar">
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索条件</span>
+      </div>
+      <!-- 查询条件start -->
+
       <el-form
         :inline="true"
         :model="searchForm"
@@ -9,98 +14,131 @@
         class="form-style"
         :label-width="formLabelWidth"
       >
-        <el-form-item label="物料号/工单号/工序设备ID:" prop="resource">
-          <el-input v-model="searchForm.resource"></el-input>
-        </el-form-item>
-        <el-form-item label="收集类型:" prop="collectionType" required>
-          <el-select v-model="searchForm.collectionType" filterable placeholder="请选择">
-            <el-option
-              v-for="item in collectionType"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="数据收集组名称:" prop="dcGroup">
-          <el-input v-model="searchForm.dcGroup"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button size="small" type="primary" @click="search">查询</el-button>
-          <el-button size="small" type="primary" @click="resetForm('searchForm')">重置</el-button>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="物料号/工单号/工序设备ID:" prop="resource">
+              <dsn-input v-model="searchForm.resource" placeholder="请输入物料号/工单号/工序设备ID"></dsn-input>
+            </el-form-item>
+            <el-form-item label="数据收集组名称:" prop="dcGroup">
+              <dsn-input v-model="searchForm.dcGroup" placeholder="请输入数据收集组名称"></dsn-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="收集类型:" prop="collectionType" required label-width="150px">
+              <dsn-select v-model="searchForm.collectionType" filterable placeholder="请选择收集类型">
+                <el-option
+                  v-for="item in collectionType"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </dsn-select>
+            </el-form-item>
+            <el-form-item>
+              <dsn-button size="small" type="primary" icon="el-icon-search" @click="search">查询</dsn-button>
+              <dsn-button
+                size="small"
+                type="primary"
+                icon="el-icon-refresh"
+                @click="resetForm('searchForm')"
+              >重置</dsn-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
-    </div>
-    <div class="operate">
-      <el-button
-        size="small"
-        type="primary"
-        @click="del"
-        :disabled="this.checkedList.length === 0"
-      >删除</el-button>
-      <el-button size="small" type="primary" @click="handleExport" :disabled="!this.show">导出</el-button>
-    </div>
+      <!-- 查询条件end -->
+    </DsnPanel>
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索结果</span>
+      </div>
+      <!-- 表格操作start -->
+      <div class="operate">
+        <dsn-button
+          size="small"
+          type="danger"
+          icon="el-icon-delete"
+          @click="del"
+          :disabled="this.checkedList.length === 0"
+        >删除</dsn-button>
+        <dsn-button
+          size="small"
+          type="primary"
+          icon="el-icon-upload2"
+          @click="handleExport"
+          :disabled="!this.show"
+        >导出</dsn-button>
+      </div>
+      <!-- 表格操作end -->
+      <!-- 表格数据start -->
+      <div class v-if="!this.show">
+        <dsn-table
+          ref="multipleTable"
+          :data="this.tableData.data"
+          tooltip-effect="dark"
+          row-key="mat"
+          @selection-change="handleSelectionChange"
+        >
+          <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
+          <el-table-column type="index" label="序号"></el-table-column>
+          <el-table-column prop="dcGroup" label="数据收集组"></el-table-column>
+          <el-table-column prop="collectionType" label="收集类型">
+            <template slot-scope="scope">{{ parseInt(scope.row.collectionType)===10?"LOT":"资源"}}</template>
+          </el-table-column>
+          <el-table-column prop="resourceGroup" label="设备组"></el-table-column>
+          <el-table-column prop="resource" label="设备编号"></el-table-column>
+          <el-table-column prop="material" label="物料号"></el-table-column>
+          <el-table-column prop="materialGroup" label="物料组"></el-table-column>
+          <el-table-column prop="shopOrder" label="工单号"></el-table-column>
+          <el-table-column prop="workCenter" label="工作中心"></el-table-column>
+          <el-table-column prop="operation" label="工序"></el-table-column>
+          <el-table-column prop="testPass" label="校验结果"></el-table-column>
+          <el-table-column prop="createUserName" label="创建人"></el-table-column>
+          <el-table-column prop="createTime" label="创建时间" width="140"></el-table-column>
+        </dsn-table>
+        <dsn-pagination
+          background
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="this.page.currentPage"
+          :page-sizes="[1, 10, 15, 20, 30, 50]"
+          :page-size="this.page.pageSize"
+          layout="->, total, prev, pager, next, sizes"
+          :total="this.page.total"
+        ></dsn-pagination>
+      </div>
+      <!-- 表格数据end -->
 
-    <div class v-if="!this.show">
-      <el-table
-        ref="multipleTable"
-        :data="this.tableData.data"
-        tooltip-effect="dark"
-        row-key="mat"
-        @selection-change="handleSelectionChange"
-      >
-        <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
-        <el-table-column type="index" label="序号"></el-table-column>
-        <el-table-column prop="dcGroup" label="数据收集组"></el-table-column>
-        <el-table-column prop="collectionType" label="收集类型"></el-table-column>
-        <el-table-column prop="resourceGroup" label="设备组"></el-table-column>
-        <el-table-column prop="resource" label="设备编号"></el-table-column>
-        <el-table-column prop="material" label="物料号"></el-table-column>
-        <el-table-column prop="materialGroup" label="物料组"></el-table-column>
-        <el-table-column prop="shopOrder" label="工单号"></el-table-column>
-        <el-table-column prop="workCenter" label="工作中心"></el-table-column>
-        <el-table-column prop="operation" label="工序"></el-table-column>
-        <el-table-column prop="testPass" label="校验结果"></el-table-column>
-        <el-table-column prop="createUserName" label="创建人"></el-table-column>
-        <el-table-column prop="createTime" label="创建时间"></el-table-column>
-      </el-table>
-      <el-pagination
-        class="mtb20"
-        background
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="this.page.currentPage"
-        :page-sizes="[1, 10, 15, 20, 30, 50]"
-        :page-size="this.page.pageSize"
-        layout="->, total, prev, pager, next, sizes, jumper"
-        :total="this.page.total"
-      ></el-pagination>
-    </div>
-    <div v-if="this.show">
-      <el-table
-        border
-        :data="tableParamsData.data"
-        @selection-change="handleSelectionChange2"
-        row-key="mat"
-      >
-        <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
-        <el-table-column type="index" label="序号"></el-table-column>
-        <template v-for="(item,index) in tableParamsData.tableHead">
-          <el-table-column :prop="item.column_name" :label="item.column_comment" :key="index"></el-table-column>
-        </template>
-      </el-table>
-      <el-pagination
-        class="mtb20"
-        background
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="this.page.currentPage"
-        :page-sizes="[1, 10, 15, 20, 30, 50]"
-        :page-size="this.page.pageSize"
-        layout="->, total, prev, pager, next, sizes, jumper"
-        :total="this.page.total"
-      ></el-pagination>
-    </div>
+      <div v-if="this.show">
+        <!-- 表格数据start -->
+        <dsn-table
+          border
+          :data="tableParamsData.data"
+          @selection-change="handleSelectionChange2"
+          row-key="mat"
+        >
+          <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
+          <el-table-column type="index" label="序号"></el-table-column>
+          <template v-for="(item,index) in tableParamsData.tableHead">
+            <el-table-column :prop="item.column_name" :label="item.column_comment" :key="index"></el-table-column>
+          </template>
+        </dsn-table>
+        <!-- 表格数据end -->
+        <!-- 分页start -->
+        <dsn-pagination
+          class="mtb20"
+          background
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="this.page.currentPage"
+          :page-sizes="[1, 10, 15, 20, 30, 50]"
+          :page-size="this.page.pageSize"
+          layout="->, total, prev, pager, next, sizes"
+          :total="this.page.total"
+        ></dsn-pagination>
+        <!-- 分页end -->
+      </div>
+    </DsnPanel>
   </div>
 </template>
 
@@ -157,19 +195,11 @@ export default {
       collectionType: [
         {
           value: "10",
-          label: "工单"
+          label: "LOT"
         },
         {
           value: "20",
-          label: "物料"
-        },
-        {
-          value: "30",
           label: "资源"
-        },
-        {
-          value: "40",
-          label: "工序"
         }
       ],
       tableData: {
@@ -393,13 +423,5 @@ export default {
 
 <style lang="scss">
 .dc-search {
-  padding: 0 30px;
-  .search-bar {
-    background: #ffffff;
-    padding-top: 10px;
-  }
-  .operate {
-    padding: 10px;
-  }
 }
 </style>

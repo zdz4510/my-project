@@ -1,9 +1,9 @@
 <template>
   <div class="DsnPanel">
     <el-card class="box-card" shadow="never">
-      <div slot="header">
+      <template slot="header">
         <slot name="header"></slot>
-      </div>
+      </template>
       <slot> </slot>
     </el-card>
   </div>

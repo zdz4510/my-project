@@ -425,8 +425,8 @@ export default {
     queryCite(fieldName, limitGeneralCode, limitGeneralField) {
       console.log(fieldName, limitGeneralCode, limitGeneralField);
       const data = {
-        limitGeneralCode: limitGeneralCode,
-        limitGeneralField: limitGeneralField
+        limitGeneralCode,
+        limitGeneralField
       };
       findReferenceHttp(data).then(data => {
         const res = data.data;
@@ -443,7 +443,7 @@ export default {
           if (fieldName === "FIELD_01") {
             //文本型
             if (field.fieldType === "A") {
-              this.addFormRules[`${field.fieldName}`].push({
+              this.addFormRules[`${fieldName}`].push({
                 max: field.fieldSize,
                 message: `长度在${field.fieldSize}以内`,
                 trigger: "blur"
@@ -452,7 +452,7 @@ export default {
             //数字型
             if (field.fieldType === "N") {
               this.tempField = field;
-              this.addFormRules[`${field.fieldName}`].push({
+              this.addFormRules[`${fieldName}`].push({
                 validator: this.valiNumber.bind(field),
                 trigger: "blur"
               });
@@ -461,7 +461,7 @@ export default {
             console.log(field.fieldType);
             //文本型
             if (field.fieldType === "A") {
-              this.$set(this.addFormRules, field.fieldName, [
+              this.$set(this.addFormRules, fieldName, [
                 {
                   max: field.fieldSize,
                   message: `长度在${field.fieldSize}以内`,
@@ -472,7 +472,7 @@ export default {
             //数字型
             if (field.fieldType === "N") {
               this.tempField = field;
-              this.$set(this.addFormRules, field.fieldName, [
+              this.$set(this.addFormRules, fieldName, [
                 { validator: this.valiNumber.bind(field), trigger: "blur" }
               ]);
             }

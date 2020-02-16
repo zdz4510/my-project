@@ -1,60 +1,63 @@
 <template>
   <div class="tagPrint">
     <div class="top">
-      <div class="topLeft">
-        <el-form ref="form" :model="form" label-width="100px">
+      <dsnPanel class="topLeft">
+        <div slot="header" class="title clearfix">
+          <span>搜索信息</span>
+        </div>
+        <el-form ref="form" :model="form" label-width="100px" :inline="true">
           <el-form-item label="标签应用类型">
-            <el-col :span="16">
               <el-select
+                size="small"
                 v-model="form.labelUseType"
                 placeholder="请选择标签应用类型"
               >
                 <el-option label="LOT" value="10"></el-option>
                 <el-option label="容器" value="20"></el-option>
               </el-select>
-            </el-col>
           </el-form-item>
           <el-form-item label="输入栏">
-            <el-col :span="16">
-              <el-input v-model="form.name"></el-input>
-            </el-col>
+              <dsn-input size='small' v-model="form.name"></dsn-input>
           </el-form-item>
           <el-form-item>
-            <el-col :span="16">
-              <el-button
+              <dsn-button
+                icon="el-icon-search"
                 size="small"
                 type="primary"
                 @click="handleSearchByLotNo"
-                >检索</el-button
+                >检索</dsn-button
               >
-              <el-button size="small" type="primary">打印</el-button>
+              <el-button icon="el-icon-printer" size="small" type="primary" class="mr-10">打印</el-button>
               <el-checkbox v-model="autoPrint">自动打印</el-checkbox>
-            </el-col>
           </el-form-item>
         </el-form>
-      </div>
+      </dsnPanel>
       <div class="topRight">
         <el-tabs v-model="activeName" type="card">
           <el-tab-pane label="基础信息" name="baseInfo">
             <div class="showData">
-              <div>
-                <span class="name">物料号：</span><span>{{ info.mat }}</span>
+              <div class="item">
+                <span class="name">物料号：</span>
+                <span class="val">{{ info.mat }}</span>
               </div>
-              <div>
-                <span class="name">物料组:</span
-                ><span>{{ info.matGroup }}</span>
+              <div class="item">
+                <span class="name">物料组:</span>
+                <span class="val">{{ info.matGroup }}</span>
               </div>
-              <div>
-                <span class="name">容器层级:</span
-                ><span>{{ info.packingClass }}</span>
+              <div class="item">
+                <span class="name">容器层级:</span>
+                <span class="val">{{ info.packingClass }}</span>
               </div>
             </div>
           </el-tab-pane>
         </el-tabs>
       </div>
     </div>
-    <div class="showInfo">
-      <el-table
+    <dsnPanel class="showInfo">
+      <div slot="header" class="title clearfix">
+        <span>搜索结果</span>
+      </div>
+      <dsn-table
         ref="multipleTable"
         :data="tableData"
         tooltip-effect="dark"
@@ -91,10 +94,10 @@
           show-overflow-tooltip
         >
         </el-table-column>
-      </el-table>
-    </div>
+      </dsn-table>
+    </dsnPanel>
    
-    <el-dialog title="删除" :visible.sync="showConfig" width="30%">
+    <el-dialog title="删除" :visible.sync="showConfig" width="400">
       <tag-print-config />
       <span slot="footer" class="dialog-footer">
         <el-button @click="showConfig = false">取 消</el-button>
@@ -127,7 +130,7 @@ export default {
       total: 0,
       pageSize: 10,
       currentPage: 1,
-      showConfig: true,
+      showConfig: false,
       selectionList: [],
       info: {
         matGroup: "",
@@ -148,10 +151,15 @@ export default {
         inputValue: this.form.name
       }).then(data => {
         const res = data.data;
+        console.log('res')
+        console.log(res)
         if (res.code == 200) {
-          this.info = res.data;
-          this.handleSearchLabelIdListByMat();
-          this.handleGetPrintDevicesAvailable()
+          if(res.data) {
+            this.info = res.data;
+            this.handleSearchLabelIdListByMat();
+            this.handleGetPrintDevicesAvailable()
+          }
+          
         } else {
           this.$message({
             type: "error",
@@ -196,43 +204,65 @@ export default {
 
 <style lang="scss">
 .tagPrint {
-  padding: 0 30px;
+  .mr-10 {
+    margin-right: 10px;
+  }
   .top {
     width: 100%;
-    height: 150px;
     display: flex;
+    .el-card {
+      min-height: 300px;
+      .el-form {
+        max-width: 400px;;
+      }
+    }
     .topLeft {
       flex: 1;
       height: 100%;
-      padding: 10px 30px;
+      margin-right: 15px;
       .el-form {
         .el-form-item {
           margin-bottom: 5px;
+          .el-select {
+            width: 100%;
+          }
         }
-      }
+       }
     }
     .topRight {
       flex: 1;
       height: 100%;
-      padding: 10px 30px;
+      .el-tabs {
+        min-height: 300px;
+        background: #fff;
+        border-radius: 4px;
+        border: 1px solid #EBEEF5;
+        .el-tabs__nav-wrap {
+          margin-bottom: 0;
+        }
+        .el-tabs__nav {
+          border:none;
+        }
+        .el-tabs__header .el-tabs__item {
+          padding: 15px;
+          height: auto;
+          line-height: 20px;
+          font-size: 15px;
+        }
+      }
       .showData {
         padding: 0 10px;
-        div {
-          height: 25px;
-          line-height: 25px;
-          span {
-            font-size: 14px;
-            .name {
-              display: inline-block;
-              width: 80px;
-            }
+        .item {
+          margin-bottom: 15px;
+          .name {
+            font-size: 13px;
+            color: #666;
           }
         }
       }
     }
   }
   .showInfo {
-    margin-top: 10px;
   }
 }
 </style>

@@ -1,81 +1,103 @@
 <template>
   <div class="data-collection">
-    <div class="search-bar">
-      <el-form
-        :inline="true"
-        :model="searchForm"
-        ref="searchForm"
-        :rules="rules"
-        class="form-style"
-      >
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索条件</span>
+      </div>
+      <!-- 查询条件start -->
+      <el-form :inline="true" :model="searchForm" ref="searchForm" :rules="rules">
         <el-form-item label="数据收集组:" prop="dcGroup">
-          <el-input v-model="searchForm.dcGroup"></el-input>
+          <dsn-input v-model="searchForm.dcGroup"></dsn-input>
         </el-form-item>
         <el-form-item label="数据收集组类型:" prop="collectionType">
-          <el-select v-model="searchForm.collectionType">
-            <el-option
+          <dsn-select v-model="searchForm.collectionType">
+            <!-- <el-option
               v-for="item in collectionType"
               :key="item.value"
               :label="item.label"
               :value="item.value"
-            ></el-option>
-          </el-select>
+            ></el-option>-->
+            <el-option label="LOT" :value="10"></el-option>
+            <el-option label="资源" :value="20"></el-option>
+          </dsn-select>
         </el-form-item>
-        <el-form-item label prop>
-          <el-button size="small" type="primary" @click="search">查询</el-button>
-          <el-button size="small" type="primary" @click="resetForm('searchForm')">重置</el-button>
+        <el-form-item>
+          <dsn-button size="small" type="primary" icon="el-icon-search" @click="search">查询</dsn-button>
+          <dsn-button
+            size="small"
+            type="primary"
+            icon="el-icon-refresh"
+            @click="resetForm('searchForm')"
+          >重置</dsn-button>
         </el-form-item>
       </el-form>
-    </div>
-    <div class="operate">
-      <el-button size="small" type="primary" @click="add" :disabled="this.checkedList.length>0">新增</el-button>
-      <el-button
-        size="small"
-        type="primary"
-        @click="edit"
-        :disabled="this.checkedList.length === 0"
-      >编辑</el-button>
-      <el-button
-        size="small"
-        type="primary"
-        @click="del"
-        :disabled="this.checkedList.length === 0"
-      >删除</el-button>
-      <el-button size="small" type="primary" @click="handleExport">导出</el-button>
-    </div>
-
-    <div class>
-      <el-table
+      <!-- 查询条件end -->
+    </DsnPanel>
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索结果</span>
+      </div>
+      <!-- 表格操作start -->
+      <div class="operate">
+        <dsn-button
+          size="small"
+          type="success"
+          icon="el-icon-folder-add"
+          @click="add"
+          :disabled="this.checkedList.length>0"
+        >新增</dsn-button>
+        <dsn-button
+          size="small"
+          type="primary"
+          icon="el-icon-edit"
+          @click="edit"
+          :disabled="this.checkedList.length === 0"
+        >编辑</dsn-button>
+        <dsn-button
+          size="small"
+          type="danger"
+          icon="el-icon-delete"
+          @click="del"
+          :disabled="this.checkedList.length === 0"
+        >删除</dsn-button>
+        <dsn-button size="small" type="primary" icon="el-icon-upload2" @click="handleExport">导出</dsn-button>
+      </div>
+      <!-- 表格操作end -->
+      <!-- 表格数据start -->
+      <dsn-table
         ref="multipleTable"
         :data="this.tableData.data"
-        tooltip-effect="dark"
         row-key="dcGroup"
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
         <el-table-column type="index" label="序号"></el-table-column>
         <el-table-column prop="dcGroup" label="数据收集组"></el-table-column>
-        <el-table-column label="数据收集组类型">
+        <el-table-column label="数据收集组类型" width="110">
           <template slot-scope="scope">{{ getFormat(scope.row.collectionType) }}</template>
         </el-table-column>
-        <el-table-column prop="dcGroupDes" label="数据收集描述"></el-table-column>
+        <el-table-column prop="dcGroupDes" label="数据收集描述" width="100"></el-table-column>
+        <el-table-column prop="paramNum" label="参数数量"></el-table-column>
+        <el-table-column prop="conditionNum" label="条件数量"></el-table-column>
         <el-table-column prop="createUserName" label="创建人"></el-table-column>
-        <el-table-column prop="createTime" label="创建时间"></el-table-column>
+        <el-table-column prop="createTime" label="创建时间" width="135"></el-table-column>
         <el-table-column prop="modifyUserName" label="修改人"></el-table-column>
-        <el-table-column prop="modifyTime" label="修改时间"></el-table-column>
-      </el-table>
-      <el-pagination
-        class="mtb20"
+        <el-table-column prop="modifyTime" label="修改时间" width="135"></el-table-column>
+      </dsn-table>
+      <!-- 表格数据end -->
+      <!-- 分页start -->
+      <dsn-pagination
         background
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="this.tableData.page.currentPage"
         :page-sizes="[1, 10, 15, 20, 30, 50]"
         :page-size="this.tableData.page.pageSize"
-        layout="->, total, prev, pager, next, sizes, jumper"
+        layout="->, total, prev, pager, next, sizes"
         :total="this.tableData.page.total"
-      ></el-pagination>
-    </div>
+      ></dsn-pagination>
+      <!-- 分页end -->
+    </DsnPanel>
   </div>
 </template>
 
@@ -219,7 +241,7 @@ export default {
     },
     getFormat(collectionType) {
       if (collectionType == "10") {
-        return "物料";
+        return "LOT";
       } else if (collectionType == "20") {
         return "资源";
       } else if (collectionType == "30") {
@@ -241,7 +263,7 @@ export default {
         this.checkedList.map(item => {
           item.collectionType =
             item.collectionType == 10
-              ? "物料"
+              ? "LOT"
               : item.collectionType == 20
               ? "资源"
               : item.collectionType == 30
@@ -264,7 +286,7 @@ export default {
           res.map(item => {
             item.collectionType =
               item.collectionType == 10
-                ? "物料"
+                ? "LOT"
                 : item.collectionType == 20
                 ? "资源"
                 : item.collectionType == 30
@@ -301,17 +323,5 @@ export default {
 
 <style lang="scss">
 .data-collection {
-  padding: 0 30px;
-  .search-bar {
-    padding: 10px 0;
-    .el-form {
-      .el-form-item {
-        margin-bottom: 0px;
-      }
-    }
-  }
-  .operate {
-    padding: 10px 0;
-  }
 }
 </style>

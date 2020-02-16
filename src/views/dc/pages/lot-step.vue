@@ -1,93 +1,79 @@
 <template>
   <div class="lotStep">
-    <div class="query">
-      <div class="left">
-        <el-form
-          :model="lotStepForm"
-          :inline="true"
-          ref="lotStepForm"
-          :rules="lotStepFormRules"
-          label-width="100px"
-          class="lotStepForm"
-        >
-          <el-form-item label="LOT" prop="lot">
-            <el-input
-              class="lot"
-              v-model.trim="lotStepForm.lot"
-              placeholder="请输入LOT"
-            ></el-input>
-            <i class="el-icon-document" @click="goQuery"></i>
-          </el-form-item>
-          <el-form-item label="备注" prop="comment ">
-            <el-input
-              v-model.trim="lotStepForm.comment"
-              placeholder="请输入备注"
-            ></el-input>
-          </el-form-item>
-        </el-form>
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索条件</span>
       </div>
-      <div class="right">
-        <el-button size="small" type="primary" @click="handleQuery">
-          查询
-        </el-button>
-        <el-button size="small" type="primary" @click="handleReset">
-          重置
-        </el-button>
-      </div>
-    </div>
-    <div class="operate">
-      <el-button size="small" type="primary" @click="handleSetFinish">
-        LOT状态置为完成
-      </el-button>
-      <el-dropdown @command="handleCommand">
-        <el-button type="primary" size="small">
-          步骤操作<i class="el-icon-arrow-down el-icon--right"></i>
-        </el-button>
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item command="clear">清除步骤</el-dropdown-item>
-          <el-dropdown-item command="byPass">绕过步骤</el-dropdown-item>
-          <el-dropdown-item command="inQueue">
-            将整个数量置于队列中
-          </el-dropdown-item>
-          <el-dropdown-item command="stepDone">
-            将步骤标记为已完成
-          </el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
-      <el-button size="small" type="primary" @click="handleSave">
-        保存
-      </el-button>
-    </div>
-    <div class="showInfo">
-      <el-table
-        ref="multipleTable"
-        :data="tableData"
-        tooltip-effect="dark"
-        style="width: 100%"
-        height="350px"
-        @selection-change="handleSelectionChange"
-        @cell-dblclick="cellDblClick"
+      <!-- 查询条件start -->
+      <el-form
+        :model="lotStepForm"
+        :inline="true"
+        ref="lotStepForm"
+        :rules="lotStepFormRules"
+        class="lotStepForm"
       >
-        <el-table-column type="selection" width="55"> </el-table-column>
-        <el-table-column prop="stepId" label="步骤" width="120">
-        </el-table-column>
-        <el-table-column prop="operation" label="工序" width="120">
-        </el-table-column>
-        <el-table-column prop="operationDes" label="描述" width="170">
-        </el-table-column>
-
-        <el-table-column prop="stepStatus" label="步骤状态" width="120">
-        </el-table-column>
-        <el-table-column prop="qtyInQueue" label="排队中数量" width="170">
-        </el-table-column>
-        <el-table-column
-          prop="qtyInWork"
-          label="在制数量"
-          show-overflow-tooltip
+        <el-form-item label="LOT" prop="lot">
+          <el-row>
+            <el-col :span="22">
+              <dsn-input class="lot" v-model.trim="lotStepForm.lot" placeholder="请输入LOT"></dsn-input>
+            </el-col>
+            <el-col :span="2">
+              <i class="el-icon-document" @click="goQuery"></i>
+            </el-col>
+          </el-row>
+        </el-form-item>
+        <el-form-item label="备注" prop="comment ">
+          <dsn-input v-model.trim="lotStepForm.comment" placeholder="请输入备注"></dsn-input>
+        </el-form-item>
+        <el-form-item>
+          <dsn-button size="small" type="primary" icon="el-icon-search" @click="handleQuery">查询</dsn-button>
+          <dsn-button size="small" type="primary" icon="el-icon-refresh" @click="handleReset">重置</dsn-button>
+        </el-form-item>
+      </el-form>
+      <!-- 查询条件end -->
+    </DsnPanel>
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索结果</span>
+      </div>
+      <!-- 查询结果start -->
+      <div class="operate">
+        <dsn-button size="small" type="primary" @click="handleSetFinish">LOT状态置为完成</dsn-button>
+        <el-dropdown @command="handleCommand">
+          <dsn-button type="primary" size="small">
+            步骤操作
+            <i class="el-icon-arrow-down el-icon--right"></i>
+          </dsn-button>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item command="clear">清除步骤</el-dropdown-item>
+            <el-dropdown-item command="byPass">绕过步骤</el-dropdown-item>
+            <el-dropdown-item command="inQueue">将整个数量置于队列中</el-dropdown-item>
+            <el-dropdown-item command="stepDone">将步骤标记为已完成</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+        <dsn-button size="small" type="primary" @click="handleSave">保存</dsn-button>
+      </div>
+      <div class="showInfo">
+        <el-table
+          ref="multipleTable"
+          :data="tableData"
+          tooltip-effect="dark"
+          style="width: 100%"
+          height="350px"
+          @selection-change="handleSelectionChange"
+          @cell-dblclick="cellDblClick"
         >
-        </el-table-column>
-      </el-table>
-    </div>
+          <el-table-column type="selection" width="55"></el-table-column>
+          <el-table-column prop="stepId" label="步骤" width="120"></el-table-column>
+          <el-table-column prop="operation" label="工序" width="120"></el-table-column>
+          <el-table-column prop="operationDes" label="描述" width="170"></el-table-column>
+
+          <el-table-column prop="stepStatus" label="步骤状态" width="120"></el-table-column>
+          <el-table-column prop="qtyInQueue" label="排队中数量" width="170"></el-table-column>
+          <el-table-column prop="qtyInWork" label="在制数量" show-overflow-tooltip></el-table-column>
+        </el-table>
+      </div>
+    </DsnPanel>
     <!-- <div class="pagination">
       <el-pagination
         background
@@ -100,14 +86,12 @@
         @current-change="handleCurrentChange"
       >
       </el-pagination>
-    </div> -->
+    </div>-->
     <el-dialog title="删除" :visible.sync="deleteDialog" width="30%">
       <span>是否确认删除{{ selectionList.length }}条数据？</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="deleteDialog = false">取 消</el-button>
-        <el-button type="primary" @click="handleDelete">
-          确 定
-        </el-button>
+        <dsn-button @click="deleteDialog = false">取 消</dsn-button>
+        <dsn-button type="primary" @click="handleDelete">确 定</dsn-button>
       </span>
     </el-dialog>
   </div>
@@ -223,7 +207,10 @@ export default {
     inQueue() {},
     //跳转到查询LOT界面
     goQuery() {
-      this.$router.push({ name: "lotQuery" });
+      this.$router.push({
+        name: "lotQuery",
+        query: { lot: this.lotStepForm.lot }
+      });
     },
     handleDelete() {},
     handleQuery() {
@@ -333,7 +320,6 @@ export default {
 
 <style lang="scss">
 .lotStep {
-  padding: 0 30px;
   .operate {
     padding: 10px 5px;
     .el-dropdown {
