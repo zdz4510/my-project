@@ -26,8 +26,8 @@ export const getAllDistinctHttp = () => {
  * 不分页查询所有信息
  *  url /mes/matGroup/listALL
  */
-export const listALLHttp = data => {
-  return request.post(`${window.VUE_APP_URL}/mes/matGroup/listALL`, data);
+export const listALLMaterialGroupHttp = () => {
+  return request.post(`${window.VUE_APP_URL}/mes/matGroup/listALL`);
 };
 
 /**

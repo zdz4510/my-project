@@ -150,7 +150,7 @@
               :header-cell-style="{ 'background-color': '#F5F7FA' }"
               @selection-change="handleSelectionChange"
             >
-              <el-table-column type="selection" width="55"></el-table-column>
+              <el-table-column :selectable="selectable" type="selection" width="55"></el-table-column>
               <el-table-column prop="conditionName" label="保养条件名称" width="120"></el-table-column>
               <el-table-column prop="maintenancePeriod" label="保养周期" width="120"></el-table-column>
               <el-table-column prop="periodUnit" label="保养周期单位" width="120">
@@ -400,18 +400,23 @@ export default {
       this.isWorkCenter = val === 20 ? true : false;
     },
     handleSelectionChange(val) {
-      console.log(val);
-      console.log(111);
       this.selectionList = val;
       if (this.selectionList.length > 0) {
-        this.upkeepConfigForm = this.selectionList[0];
+        this.upkeepConfigForm = _.cloneDeep(this.selectionList[0]);
       } else {
-        this.upkeepConfigForm = this.tableData[0];
+        const { upkeepConfigForm } = this;
+        Object.keys(upkeepConfigForm).map(item => (upkeepConfigForm[item] = ''))
       }
+    },
+    selectable(row) {
+      const { selectionList } = this;
+      if (!selectionList.length) return true;
+      const { conditionName } = selectionList[0];
+      const { conditionName: rowConditionName } = row;
+      return conditionName === rowConditionName
     },
     handleChangeRadio(val) {
       this.maintenanceForm.resourceStatus = val;
-      console.log(val);
     },
     handleTabClick() {
       if (this.saveType === "baseInfo") {
@@ -460,7 +465,6 @@ export default {
         const copyObj = JSON.parse(JSON.stringify(this.upkeepConfigForm));
         copyObj.resource = this.maintenanceForm.resource;
         this.tableData.push(copyObj);
-        console.log(this.tableData);
         return;
       }
     },
@@ -541,7 +545,6 @@ export default {
       }
     },
     handleBack() {
-      console.log(11);
       this.selectionList = [];
       this.MAINTENANCEPELIST(this.selectionList);
       this.$router.push({
@@ -567,24 +570,10 @@ export default {
         return;
       }
 
-      // this.tableData = [];
+      
       this.tableData = this.tableData.filter(item => {
         return this.selectionList.includes(item) == false;
       });
-      // this.upkeepConfigForm = this.tableData[0];
-      console.log(this.upkeepConfigForm);
-      console.log(this.tableData[0]);
-      // console.log(this.tableData);
-      // this.upkeepConfigForm.conditionName = "";
-      // this.upkeepConfigForm.startTime = "";
-      // this.upkeepConfigForm.conditionDes = "";
-      // this.upkeepConfigForm.maintenanceUserId = "";
-      // this.upkeepConfigForm.alarm = "";
-      // this.upkeepConfigForm.warningFunction = "";
-      // this.upkeepConfigForm.maintenancePeriod = "";
-      // this.upkeepConfigForm.periodUnit = "";
-      // this.upkeepConfigForm.maintenanceLocation = "";
-      // this.$refs["upkeepConfigForm"].resetFields();
       console.log(this.upkeepConfigForm);
     },
     handleSaveUpkeepConfig() {

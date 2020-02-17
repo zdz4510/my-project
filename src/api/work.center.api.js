@@ -1,5 +1,5 @@
 import request from "@/service/";
-// import qs from "qs";
+import qs from "qs";
 
 /* 工作中心*/
 /**
@@ -37,9 +37,11 @@ export const deleteWorkCenter = data => {
  * 查询所有
  * url /mes/workCenter/listAll
  */
- export const getAllList = data => {
-   return request.post(`${window.VUE_APP_URL}/mes/workCenter/listAll?workCenter=${data.workCenter}`);
- };
+export const getAllList = data => {
+  return request.post(
+    `${window.VUE_APP_URL}/mes/workCenter/listAll?workCenter=${data.workCenter}`
+  );
+};
 // export const listAllHttp = data => {
 //   const params = qs.stringify(data);
 //   return request.post(
@@ -53,7 +55,9 @@ export const deleteWorkCenter = data => {
  * url /mes/workCenter/getRelation
  */
 export const getRelationData = data => {
-  return request.post(`${window.VUE_APP_URL}/mes/workCenter/getRelation?workCenter=${data.workCenter}`);
+  return request.post(
+    `${window.VUE_APP_URL}/mes/workCenter/getRelation?workCenter=${data.workCenter}`
+  );
 };
 /**
  * 获取所有用户
@@ -63,6 +67,30 @@ export const getUserList = () => {
   return request.post(`${window.VUE_APP_URL}/mes/workCenter/findAllUser`);
 };
 
+/**
+ * 模糊搜索
+ * url /workCenter/findPage
+ */
+export const findPageHttp = data => {
+  const params = qs.stringify(data);
+  return request.post(
+    `${window.VUE_APP_URL}/mes/workCenter/findPage?${params}`,
+    data
+  );
+};
 
+/**
+ * 获取所有车间
+ * url /workCenter/getAllLevel1
+ */
+export const getAllLevel1Http = () => {
+  return request.post(`${window.VUE_APP_URL}/mes/workCenter/getAllLevel1`);
+};
 
-
+/**
+ * 获取所有产线
+ * url /workCenter/getAllLevel2
+ */
+export const getAllLevel2Http = () => {
+  return request.post(`${window.VUE_APP_URL}/mes/workCenter/getAllLevel2`);
+};

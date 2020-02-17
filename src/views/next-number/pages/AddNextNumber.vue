@@ -1,10 +1,6 @@
 <template>
   <div class="add-next-number">
-    <div class="operate">
-      <el-button size="small" type="primary" @click="goBack">返回</el-button>
-      <el-button size="small" type="primary" @click="save('addForm')">保存</el-button>
-      <el-button size="small" type="primary" @click="resetForm('addForm')">重置</el-button>
-    </div>
+    
     <div class="addForm">
       <el-form
         :model="addForm"
@@ -14,33 +10,33 @@
         :rules="rules"
       >
         <el-form-item label="规则类型:" prop="sequenceType" required>
-          <el-select v-model="addForm.sequenceType" placeholder="请选择" @change="onChange">
+          <dsn-select v-model="addForm.sequenceType" placeholder="请选择" @change="onChange">
             <el-option
               v-for="item in ruleTypes"
               :key="item.value"
               :label="item.label"
               :value="item.value"
             ></el-option>
-          </el-select>
+          </dsn-select>
         </el-form-item>
         <el-row v-if="addForm.sequenceType == 'F'">
           <el-col :span="24">
             <el-form-item label="固定字符串:" prop="fixedString" required>
-              <el-input v-model="addForm.fixedString"></el-input>
+              <dsn-input v-model="addForm.fixedString"></dsn-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row v-if="addForm.sequenceType == 'V'">
           <el-col :span="24">
             <el-form-item label="可替换参数:" prop="varType" required>
-              <el-select v-model="addForm.varType" placeholder="请选择">
+              <dsn-select v-model="addForm.varType" placeholder="请选择">
                 <el-option
                   v-for="item in replaceable"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"
                 ></el-option>
-              </el-select>
+              </dsn-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -64,43 +60,43 @@
         <el-row v-if="addForm.sequenceType == 'S'">
           <el-col :span="12">
             <el-form-item label="长度:" prop="length" required>
-              <el-input v-model="addForm.length"></el-input>
+              <dsn-input v-model="addForm.length"></dsn-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="进制:" prop="numBase" required>
-              <el-input-number v-model="addForm.numBase" :min="2" :max="36" label></el-input-number>
+              <dsn-input-number v-model="addForm.numBase" :min="2" :max="36" label></dsn-input-number>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row v-if="addForm.sequenceType == 'S'">
           <el-col :span="12">
             <el-form-item label="增量:" prop="numIncr" required>
-              <el-input v-model="addForm.numIncr"></el-input>
+              <dsn-input v-model="addForm.numIncr"></dsn-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="初始值:" prop="initValue" required>
-              <el-input v-model="addForm.initValue"></el-input>
+              <dsn-input v-model="addForm.initValue"></dsn-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row v-if="addForm.sequenceType == 'S'">
           <el-col :span="12">
             <el-form-item label="终值:" prop="finalValue" required>
-              <el-input v-model="addForm.finalValue"></el-input>
+              <dsn-input v-model="addForm.finalValue"></dsn-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="循环:" prop="reset" required>
-              <el-select v-model="addForm.reset" placeholder="请选择">
+              <dsn-select v-model="addForm.reset" placeholder="请选择">
                 <el-option
                   v-for="item in circle"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"
                 ></el-option>
-              </el-select>
+              </dsn-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -116,11 +112,15 @@
         </el-row>
       </el-form>
     </div>
+    <div class="operate">
+      <dsn-button size="small" type="primary" @click.native="close">取消</dsn-button>
+      <dsn-button size="small" type="primary" @click.native="save('addForm')">保存</dsn-button>
+      <dsn-button size="small" type="primary" @click.native="resetForm('addForm')">重置</dsn-button>
+    </div>
   </div>
 </template>
 
 <script>
-import { saveNextNumber } from "../../../api/next.number.api";
 export default {
   name: "add-next-number",
   data() {
@@ -241,8 +241,8 @@ export default {
   },
   created() {},
   methods: {
-    goBack() {
-      this.$router.push({ path: "/nextNumber/nextNumber" });
+    close() {
+      this.$emit('handleClose');
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
@@ -250,26 +250,9 @@ export default {
     save(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          let searchForm = JSON.parse(sessionStorage.getItem("searchForm"));
-          let obj = { ...this.addForm, ...searchForm };
-          let params = {
-            createList: [obj],
-            updateList: [],
-            deleteList: []
-          };
-          saveNextNumber(params).then(data => {
-            if (data.data.code == 200) {
-              this.$message({
-                type: "success",
-                message: "保存成功!"
-              });
-              setTimeout(() => {
-                this.$router.push({ path: "/nextNumber/nextNumber" });
-              }, 1000);
-            } else {
-              this.$message.error(data.data.message);
-            }
-          });
+          const searchForm = JSON.parse(sessionStorage.getItem("searchForm"));
+          const obj = { ...this.addForm, ...searchForm };
+          this.$emit('handleSave', 'add', obj);
         } else {
           console.log("error submit!!");
           return false;

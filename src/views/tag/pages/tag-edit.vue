@@ -316,6 +316,10 @@ export default {
 <style lang="scss">
 .box {
   height: 100%;
+  position: absolute;
+  width: 100%;
+  left: 0;
+  top: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;

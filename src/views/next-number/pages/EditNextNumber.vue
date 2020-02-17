@@ -1,9 +1,5 @@
 <template>
   <div class="edit-next-number">
-		<div class="operate">
-			<dsn-button size="small" type="primary" @click.native="goBack">返回</dsn-button>
-			<dsn-button size="small" type="primary" @click.native="handleSave('editForm')">保存</dsn-button>
-		</div>
 		<el-row :gutter="20">
 			<el-col :span="6">
 				<div class="editList">
@@ -25,7 +21,7 @@
 				<div class="workList" style="height: 602px">
 					<el-form :model="editForm" :inline="true" ref="editForm" :label-width="formLabelWidth">
 						<el-form-item label="规则类型:" prop="sequenceType" required>
-							<dsn-select v-model="editForm.sequenceType" placeholder="请选择" @change=onChange>
+							<dsn-select v-model="editForm.sequenceType" placeholder="请选择" @change="onChange">
 								<el-option
 									v-for="item in ruleTypes"
 									:key="item.value"
@@ -121,25 +117,19 @@
 							</el-col>
 						</el-row>
 					</el-form>
-					<!-- 确认模态框 -->
-					<el-dialog title="保存" :visible.sync="saveDialog" width="30%">
-						<span>是否保存数据？</span>
-						<span slot="footer" class="dialog-footer">
-							<dsn-button @click.native="handleCancle">取 消</dsn-button>
-							<dsn-button type="primary" @click.native="handleSave('editForm')">
-								确 定
-							</dsn-button>
-						</span>
-					</el-dialog>
 				</div>
 			</el-col>
 		</el-row>
+		<div class="operate">
+      <dsn-button size="small" type="primary" @click.native="close">取消</dsn-button>
+      <dsn-button size="small" type="primary" @click.native="save('editForm')">保存</dsn-button>
+      <dsn-button size="small" type="primary" @click.native="resetForm('editForm')">重置</dsn-button>
+    </div>
 	</div>
 </template>
 
 <script>
 import { mapGetters, mapMutations } from "vuex";
-import {saveNextNumber} from '../../../api/next.number.api.js'
 export default {
   name:'edit-next-number',
   computed: {
@@ -231,6 +221,9 @@ export default {
         this.setCurrent(this.editForm); // 设置选中第一行
         this.currentRow = this.editForm; // 设置初始currentRow 为第一行
       }
+		},
+		close() {
+      this.$emit('handleClose');
     },
     //清除下拉列表时触发
     handleClearSelect() {
@@ -321,64 +314,13 @@ export default {
       }
     },
     //保存操作
-    handleSave(formName) {
+    save(formName) {
 			this.$refs[formName].validate((valid) => {
 				if (valid) {
-					let params = {}
-					params.createList = []
-					params.deleteList = []
-					params.updateList = [{
-						nextNumberType:this.editForm.nextNumberType,
-						definedBy:this.editForm.definedBy,
-						material:this.editForm.material,
-						materialRev:this.editForm.materialRev,
-						commitType:this.editForm.commitType,
-						sequences:[this.editForm]
-					}]
-
-					saveNextNumber(params).then(data => {
-						const res = data.data;
-						this.saveDialog = false; // 保存的提示框消失
-						this.selectIsDisabled = false;
-
-						// 直接成功
-						if (res.code === 200) {
-							this.saveDialog = false;
-							this.selectIsDisabled = false;
-							this.$message({
-								message: "修改成功",
-								type: "success"
-							});
-							// 直接覆盖
-							if (this.cloneList.length == this.nextNumberEditList.length) {
-								//直接覆盖
-								//重新更改初始的副本
-								//设置左边的选中状态
-								this.SETNEXTNUMBEREDITLIST(JSON.parse(JSON.stringify(this.cloneList)));
-								this.editForm = this.currentRow;
-								this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
-							}
-
-							if (this.cloneList.length == 1) {
-								let index = this.findIndexByItem(
-									this.nextNumberEditList,
-									this.editForm.sequence
-								);
-								if (index > -1) {
-									this.nextNumberEditList.splice(index, 1, this.editForm); // 替换
-									this.SETNEXTNUMBEREDITLIST(JSON.parse(JSON.stringify(this.nextNumberEditList)));
-									this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
-								}
-							}
-						} else {
-							this.$message({
-								message: res.message,
-								type: "error"
-							});
-							this.saveDialog = false;
-							this.setCurrent(this.oldRow);
-						}
-					});
+					console.log(this.cloneList)
+					const searchForm = JSON.parse(sessionStorage.getItem("searchForm"));
+          const obj = { ...this.editForm, ...searchForm };
+          this.$emit('handleSave', 'edit', obj);
 				}
 			});
     },

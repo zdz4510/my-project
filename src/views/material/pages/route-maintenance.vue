@@ -13,7 +13,7 @@
         <el-form-item>
           <dsn-button size="small" type="primary" icon="el-icon-search" @click="handleQuery">查询</dsn-button>
           <dsn-button size="small" type="primary" icon="el-icon-refresh" @click.native="reset">重置</dsn-button>
-          <dsn-button size="small" type="danger" icon="el-icon-delete">清除</dsn-button>
+          <dsn-button size="small" type="danger" icon="el-icon-delete" @click="clearCanvas">清除</dsn-button>
           <dsn-button size="small" type="success" icon="el-icon-check" @click="handleSave">保存</dsn-button>
         </el-form-item>
       </el-form>
@@ -86,7 +86,7 @@ export default {
       searchValue: "",
       form: {
         description: "", // 描述
-        currentRevision: false, // 当前版本
+        currentRevision: true, // 当前版本
         routerType: "",
         status: "Releasable",
         router: "AAAAAA",
@@ -162,10 +162,20 @@ export default {
         this.$refs["panel"].init();
       });
     },
+    clearCanvas(){
+        this.$refs["panel"].clearCanvas()
+    },
     //重置
     reset() {
-      console.log("reset");
-      this.$refs["form"].resetFields();
+      this.form={
+        description: "", // 描述
+        currentRevision: true, // 当前版本
+        routerType: "",
+        status: "Releasable",
+        router: "",
+        revision: ""
+      }
+      //  this.$refs["form"].resetFields();
     },
 
     //保存
@@ -213,7 +223,28 @@ export default {
     handleCreateRouter() {
       //  获取 附加工序的数据
       const data = this.$refs["panel"].getDataInfo();
-      const { entryRouterStep, routerSteps } = handleData(data);
+      const {nodeList} =data;
+      if(nodeList.length==0 || nodeList.length==1){
+        this.$message({
+          type:'warning',
+          message:'请先补充附加工序'
+        })
+        return ;
+      }
+     let  entryRouterStep ,routerSteps;
+     try {
+       const  { entryRouterStep:a, routerSteps:b } = handleData(data);
+       entryRouterStep= a;
+       routerSteps =b;
+     } catch (error) {
+        console.log(error)
+         this.$message({
+          type:'warning',
+          message:'附加工序数据不合法'
+        })
+        return ;
+      }
+       
 
       const params = {
         currentRevision: this.form.currentRevision, // 当前版本

@@ -79,6 +79,7 @@
                     placeholder="选择日期"
                     size="small"
                     value-format="yyyy-MM-dd HH:mm:ss"
+                    :picker-options="pickerOptions"
                     style="width:100%"
                   ></el-date-picker>
                 </el-form-item>
@@ -114,7 +115,13 @@ export default {
       },
       workCertFormRules: this.rules,
       workCenters: [],
-      workCenterRelations: []
+      workCenterRelations: [],
+      pickerOptions: {
+        // 限制收货时间不让选择今天以前的
+        disabledDate(time) {
+          return time.getTime() < Date.now() - 24 * 60 * 60 * 1000;
+        }
+      }
     };
   },
   computed: {

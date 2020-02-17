@@ -214,7 +214,6 @@ export default {
     // 进度缩放
     changeScale(val) {
       this.$refs.flowContainer.setAttribute("style", `transform:scale(${val})`);
-      console.log(val);
     },
     // 按钮缩放
     hanldscale(attr) {
@@ -232,6 +231,13 @@ export default {
           `transform:scale(${this.scale})`
         );
       }
+    },
+    clearCanvas(){
+      const data={
+        nodeList:[],
+        lineList:[]
+      }
+      this.dataReload(data)
     },
     init() {
       if (!this.jsPlumb) {
@@ -549,11 +555,12 @@ export default {
 
       let left = mousePosition.left;
       let top = mousePosition.top;
+      console.log(evt.originalEvent.clientY)
       if (left < 0) {
         left = evt.originalEvent.layerX - width;
       }
       if (top < 0) {
-        top = evt.originalEvent.clientY - 50;
+        top = evt.originalEvent.clientY - 270;
       }
 
       let node = {
@@ -794,6 +801,7 @@ export default {
 <style lang="scss" scoped>
 .pannel {
   height: 100%;
+  position: relative;
 }
 .scale-wrap {
   position: fixed;
