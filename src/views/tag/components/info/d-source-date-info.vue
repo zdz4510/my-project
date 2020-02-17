@@ -58,7 +58,7 @@
   export default {
     data() {
       return {
-        key: 'value'
+        value: '1'
       }
     },
   }
