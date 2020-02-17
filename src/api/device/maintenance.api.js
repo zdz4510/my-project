@@ -62,10 +62,8 @@ export const findResourceMaintenanceListHttp = data => {
  * 获取所有待使用的设备
  *  url /mes/resource/getInactiveResource
  */
-export const getInactiveResourceHttp = data => {
-  return request.get(`${window.VUE_APP_URL}/mes/resource/getInactiveResource`, {
-    params: data
-  });
+export const getInactiveResourceHttp = () => {
+  return request.get(`${window.VUE_APP_URL}/mes/resource/getInactiveResource`);
 };
 
 /**

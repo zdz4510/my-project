@@ -83,7 +83,7 @@
             ref="pTable"
             :data="this.MeasureInfoList"
             tooltip-effect="dark"
-            row-key="dcGroup"
+            row-key="parameter"
             :row-class-name="tableRowClassName"
             @selection-change="handleSelectionChange"
           >
@@ -135,7 +135,7 @@
           >
             <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
             <el-table-column type="index" label="序号" width="100"></el-table-column>
-            <el-table-column label="条件明细" width="200">
+            <el-table-column label="条件明细" width="300">
               <template
                 slot-scope="scope"
               >{{ scope.row.material+','+scope.row.materialGroup+','+scope.row.shopOrder+','+scope.row.workCenter+','+scope.row.resourceGroup+','+scope.row.shopOrder }}</template>
@@ -156,7 +156,7 @@
       >
         <el-row>
           <el-col :span="12">
-            <el-form-item label="参数名称:" prop="parameter" required>
+            <el-form-item label="参数名称:" prop="parameter">
               <dsn-input
                 v-model="addParamForm.parameter"
                 :disabled="this.currentOperation == 'edit'"
@@ -164,14 +164,14 @@
             </el-form-item>
           </el-col>
           <el-col :span="12" v-if="addParamForm.valueType != 30">
-            <el-form-item label="标准值:" prop="targetValue" required>
+            <el-form-item label="标准值:" prop="targetValue">
               <dsn-input v-model="addParamForm.targetValue"></dsn-input>
             </el-form-item>
           </el-col>
           <el-col :span="12" v-if="addParamForm.valueType == 30">
             <el-row>
               <el-col>
-                <el-form-item label="标准值:" prop="trueValue" required>
+                <el-form-item label="标准值:" prop="trueValue">
                   <dsn-input
                     placeholder="true的命名"
                     v-model="addParamForm.trueValue"
@@ -179,7 +179,7 @@
                     style="width:100px"
                   ></dsn-input>
                 </el-form-item>
-                <el-form-item prop="falseValue" required>
+                <el-form-item prop="falseValue">
                   <dsn-input
                     placeholder="false的命名"
                     v-model="addParamForm.falseValue"
@@ -208,7 +208,7 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="参数状态:" prop="parameterStatus" required>
+            <el-form-item label="参数状态:" prop="parameterStatus">
               <dsn-select v-model="addParamForm.parameterStatus">
                 <el-option
                   v-for="(item,index) in status"
@@ -230,7 +230,7 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="值类型:" prop="valueType" required>
+            <el-form-item label="值类型:" prop="valueType">
               <dsn-select v-model="addParamForm.valueType" @change="onChange">
                 <el-option
                   v-for="(item,index) in valueType"
@@ -252,7 +252,7 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="必须值:" prop="required" required>
+            <el-form-item label="必须值:" prop="required">
               <dsn-select v-model="addParamForm.required">
                 <el-option
                   v-for="(item,index) in status"
@@ -274,7 +274,7 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="软检查:" prop="softCheck" required>
+            <el-form-item label="软检查:" prop="softCheck">
               <dsn-select v-model="addParamForm.softCheck">
                 <el-option
                   v-for="(item,index) in status"
@@ -729,12 +729,14 @@ export default {
     goBack() {
       this.$router.push({ path: "/dc/dataCollection" });
     },
+    rowKeyFn(row) {
+      return row.parameter;
+    },
     saveParams(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.addParamForm.dcGroup = this.addForm.dcGroup;
           let form = JSON.parse(JSON.stringify(this.addParamForm));
-          console.log(form);
           if (this.currentOperation == "add") {
             if (
               this.MeasureInfoList.findIndex(
@@ -769,6 +771,9 @@ export default {
         if (valid) {
           let count = 0;
           let tempObj = JSON.parse(JSON.stringify(this.addSetUpForm));
+          let dcGroup = tempObj.dcGroup;
+          tempObj.dcGroup = "";
+          console.log(tempObj);
           for (const key in tempObj) {
             if (tempObj.hasOwnProperty(key)) {
               if (tempObj[key] === "") {
@@ -776,13 +781,15 @@ export default {
               }
             }
           }
-          if (count >= 6) {
+          console.log(count);
+          if (count > 6) {
             this.$message({
               message: "请至少输入一个信息",
               type: "warning"
             });
             return;
           }
+          tempObj.dcGroup = dcGroup;
           this.handleSaveSetUp(formName);
         } else {
           return false;

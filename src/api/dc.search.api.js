@@ -1,12 +1,21 @@
 import request from  "@/service/"
 
 /**
- * 查询列表
+ * 分页查询数据收集结果数据报表
  *  url /mes/dcDataReport/findDcDataPage
  */
-export const getDataReportList = data => {
+export const findDcDataPageHttp = data => {
 	return request.post(`${window.VUE_APP_URL}/mes/dcDataReport/findDcDataPage?currentPage=${data.currentPage}&pageSize=${data.pageSize}`,data);
 };
+
+/**
+ * 分页查询数据收集结果参数数据报表
+ *  url /dcDataReport/findDcParamPage
+ */
+export const findDcParamPageHttp = data => {
+	return request.post(`${window.VUE_APP_URL}/mes/dcDataReport/findDcParamPage?currentPage=${data.currentPage}&pageSize=${data.pageSize}`,data);
+};
+
 /**
  * 导出
  *  url /mes/dcDataReport/exportExcel

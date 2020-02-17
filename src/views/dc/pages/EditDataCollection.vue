@@ -177,22 +177,22 @@
       >
         <el-row>
           <el-col :span="12">
-            <el-form-item label="参数名称:" prop="parameter" required>
+            <el-form-item label="参数名称:" prop="parameter">
               <dsn-input
                 v-model="addParamForm.parameter"
                 :disabled="this.currentOperation == 'edit'"
               ></dsn-input>
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-if="addParamForm.valueType != '布尔'">
-            <el-form-item label="标准值:" prop="targetValue" required>
+          <el-col :span="12" v-if="addParamForm.valueType !==30">
+            <el-form-item label="标准值:" prop="targetValue">
               <dsn-input v-model="addParamForm.targetValue"></dsn-input>
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-if="addParamForm.valueType == '布尔'">
+          <el-col :span="12" v-if="addParamForm.valueType == 30">
             <el-row>
               <el-col>
-                <el-form-item label="标准值:" prop="trueValue" required>
+                <el-form-item label="标准值:" prop="trueValue">
                   <dsn-input
                     placeholder="true的命名"
                     v-model="addParamForm.trueValue"
@@ -200,7 +200,7 @@
                     style="width:100px"
                   ></dsn-input>
                 </el-form-item>
-                <el-form-item prop="falseValue" required>
+                <el-form-item prop="falseValue">
                   <dsn-input
                     placeholder="false的命名"
                     v-model="addParamForm.falseValue"
@@ -230,7 +230,7 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="参数状态:" prop="parameterStatus" required>
+            <el-form-item label="参数状态:" prop="parameterStatus">
               <dsn-select v-model="addParamForm.parameterStatus">
                 <el-option
                   v-for="item in status"
@@ -252,12 +252,12 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="值类型:" prop="valueType" required>
+            <el-form-item label="值类型:" prop="valueType">
               <dsn-select v-model="addParamForm.valueType" @change="onChange">
                 <el-option
                   v-for="item in valueType"
                   :key="item.value"
-                  :label="item.value"
+                  :label="item.label"
                   :value="item.value"
                 ></el-option>
               </dsn-select>
@@ -275,7 +275,7 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="必须值:" prop="required" required>
+            <el-form-item label="必须值:" prop="required">
               <dsn-select v-model="addParamForm.required">
                 <el-option
                   v-for="item in status"
@@ -297,7 +297,7 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="软检查:" prop="softCheck" required>
+            <el-form-item label="软检查:" prop="softCheck">
               <dsn-select v-model="addParamForm.softCheck">
                 <el-option
                   v-for="item in status"
@@ -544,35 +544,41 @@ export default {
       callback();
     };
     let validatorUpper = (rule, value, callback) => {
-      let reg = /^((\d{1,5}\.\d{0,3})||(\d{1,5}))$/g;
-      if (!reg.test(value)) {
-        return callback(new Error("只能输入整数5位以内，小数3位以内"));
+      if (this.addParamForm.valueType == 10) {
+        let reg = /^((\d{1,5}\.\d{0,3})||(\d{1,5}))$/g;
+        if (!reg.test(value)) {
+          return callback(new Error("只能输入整数5位以内，小数3位以内"));
+        }
+        if (value <= this.addParamForm.targetValue) {
+          return callback(new Error("只能输入比标准值大的数字"));
+        }
+        this.addParamForm.upperSpecLimit = Number(
+          this.addParamForm.upperSpecLimit
+        ).toFixed(3);
+        this.addParamForm.upperWarnLimit = Number(
+          this.addParamForm.upperWarnLimit
+        ).toFixed(3);
+        callback();
       }
-      if (value < this.addParamForm.targetValue) {
-        return callback(new Error("只能输入比标准值大的数字"));
-      }
-      this.addParamForm.upperSpecLimit = Number(
-        this.addParamForm.upperSpecLimit
-      ).toFixed(3);
-      this.addParamForm.upperWarnLimit = Number(
-        this.addParamForm.upperWarnLimit
-      ).toFixed(3);
       callback();
     };
     let validatorLower = (rule, value, callback) => {
-      let reg = /^((\d{1,5}\.\d{0,3})||(\d{1,5}))$/g;
-      if (!reg.test(value)) {
-        return callback(new Error("只能输入整数5位以内，小数3位以内"));
+      if (this.addParamForm.valueType == 10) {
+        let reg = /^((\d{1,5}\.\d{0,3})||(\d{1,5}))$/g;
+        if (!reg.test(value)) {
+          return callback(new Error("只能输入整数5位以内，小数3位以内"));
+        }
+        if (value >= this.addParamForm.targetValue) {
+          return callback(new Error("只能输入比标准值小的数字"));
+        }
+        this.addParamForm.lowerSpecLimit = Number(
+          this.addParamForm.lowerSpecLimit
+        ).toFixed(3);
+        this.addParamForm.lowerWarnLimit = Number(
+          this.addParamForm.lowerWarnLimit
+        ).toFixed(3);
+        callback();
       }
-      if (value > this.addParamForm.targetValue) {
-        return callback(new Error("只能输入比标准值小的数字"));
-      }
-      this.addParamForm.lowerSpecLimit = Number(
-        this.addParamForm.lowerSpecLimit
-      ).toFixed(3);
-      this.addParamForm.lowerWarnLimit = Number(
-        this.addParamForm.lowerWarnLimit
-      ).toFixed(3);
       callback();
     };
     return {
@@ -609,6 +615,8 @@ export default {
         parameterStatus: "",
         lowerSpecLimit: "",
         valueType: "",
+        falseValue: "",
+        trueValue: "",
         upperWarnLimit: "",
         required: "",
         lowerWarnLimit: "",
