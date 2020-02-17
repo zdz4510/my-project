@@ -174,6 +174,14 @@ export default {
         } = res;
         if (code === 200) {
           this.total = total;
+          data.forEach(item=>{
+            if(item.bomType==="ORDER"){
+              item.bomType="订单"
+            }else if(item.bomType==="MATERIAL"){
+              item.bomType="主数据"
+            }
+            
+          })
           this.tableData = data;
           return;
         }

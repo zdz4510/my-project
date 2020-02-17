@@ -16,15 +16,15 @@
       >
         <el-row>
           <el-col :span="12">
-            <el-form-item label="物料号/工单号/工序设备ID:" prop="resource">
-              <dsn-input v-model="searchForm.resource" placeholder="请输入物料号/工单号/工序设备ID"></dsn-input>
+            <el-form-item label="接收值:" prop="resource">
+              <dsn-input v-model="searchForm.resource" placeholder="请输入接收值"></dsn-input>
             </el-form-item>
             <el-form-item label="数据收集组名称:" prop="dcGroup">
               <dsn-input v-model="searchForm.dcGroup" placeholder="请输入数据收集组名称"></dsn-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="收集类型:" prop="collectionType" required label-width="150px">
+            <el-form-item label="收集类型:" prop="collectionType" required label-width="90px">
               <dsn-select v-model="searchForm.collectionType" filterable placeholder="请选择收集类型">
                 <el-option
                   v-for="item in collectionType"
@@ -35,7 +35,20 @@
               </dsn-select>
             </el-form-item>
             <el-form-item>
-              <dsn-button size="small" type="primary" icon="el-icon-search" @click="search">查询</dsn-button>
+              <dsn-button
+                v-show="searchForm.dcGroup===''"
+                size="small"
+                type="primary"
+                icon="el-icon-search"
+                @click="search"
+              >查询</dsn-button>
+              <dsn-button
+                v-show="searchForm.dcGroup!==''"
+                size="small"
+                type="primary"
+                icon="el-icon-search"
+                @click="searchRight"
+              >查询</dsn-button>
               <dsn-button
                 size="small"
                 type="primary"
@@ -54,97 +67,102 @@
       </div>
       <!-- 表格操作start -->
       <div class="operate">
-        <dsn-button
-          size="small"
-          type="danger"
-          icon="el-icon-delete"
-          @click="del"
-          :disabled="this.checkedList.length === 0"
-        >删除</dsn-button>
-        <dsn-button
-          size="small"
-          type="primary"
-          icon="el-icon-upload2"
-          @click="handleExport"
-          :disabled="!this.show"
-        >导出</dsn-button>
+        <dsn-button size="small" type="primary" icon="el-icon-upload2" @click="handleExport">导出</dsn-button>
       </div>
       <!-- 表格操作end -->
-      <!-- 表格数据start -->
-      <div class v-if="!this.show">
-        <dsn-table
-          ref="multipleTable"
-          :data="this.tableData.data"
-          tooltip-effect="dark"
-          row-key="mat"
-          @selection-change="handleSelectionChange"
-        >
-          <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
-          <el-table-column type="index" label="序号"></el-table-column>
-          <el-table-column prop="dcGroup" label="数据收集组"></el-table-column>
-          <el-table-column prop="collectionType" label="收集类型">
-            <template slot-scope="scope">{{ parseInt(scope.row.collectionType)===10?"LOT":"资源"}}</template>
-          </el-table-column>
-          <el-table-column prop="resourceGroup" label="设备组"></el-table-column>
-          <el-table-column prop="resource" label="设备编号"></el-table-column>
-          <el-table-column prop="material" label="物料号"></el-table-column>
-          <el-table-column prop="materialGroup" label="物料组"></el-table-column>
-          <el-table-column prop="shopOrder" label="工单号"></el-table-column>
-          <el-table-column prop="workCenter" label="工作中心"></el-table-column>
-          <el-table-column prop="operation" label="工序"></el-table-column>
-          <el-table-column prop="testPass" label="校验结果"></el-table-column>
-          <el-table-column prop="createUserName" label="创建人"></el-table-column>
-          <el-table-column prop="createTime" label="创建时间" width="140"></el-table-column>
-        </dsn-table>
-        <dsn-pagination
-          background
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="this.page.currentPage"
-          :page-sizes="[1, 10, 15, 20, 30, 50]"
-          :page-size="this.page.pageSize"
-          layout="->, total, prev, pager, next, sizes"
-          :total="this.page.total"
-        ></dsn-pagination>
-      </div>
-      <!-- 表格数据end -->
-
-      <div v-if="this.show">
-        <!-- 表格数据start -->
-        <dsn-table
-          border
-          :data="tableParamsData.data"
-          @selection-change="handleSelectionChange2"
-          row-key="mat"
-        >
-          <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
-          <el-table-column type="index" label="序号"></el-table-column>
-          <template v-for="(item,index) in tableParamsData.tableHead">
-            <el-table-column :prop="item.column_name" :label="item.column_comment" :key="index"></el-table-column>
-          </template>
-        </dsn-table>
-        <!-- 表格数据end -->
-        <!-- 分页start -->
-        <dsn-pagination
-          class="mtb20"
-          background
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="this.page.currentPage"
-          :page-sizes="[1, 10, 15, 20, 30, 50]"
-          :page-size="this.page.pageSize"
-          layout="->, total, prev, pager, next, sizes"
-          :total="this.page.total"
-        ></dsn-pagination>
-        <!-- 分页end -->
-      </div>
+      <el-tabs type="border-card" @tab-click="handleClick">
+        <el-tab-pane label="已收集数据收集组清单" name="清单">
+          <!-- 已收集数据收集组清单表格数据start -->
+          <dsn-table
+            ref="multipleTable"
+            :data="this.tableData.data"
+            tooltip-effect="dark"
+            row-key="mat"
+            @selection-change="handleSelectionChange"
+          >
+            <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
+            <el-table-column type="index" label="序号"></el-table-column>
+            <el-table-column prop="dcGroup" label="数据收集组"></el-table-column>
+            <el-table-column prop="collectionType" label="收集类型">
+              <template slot-scope="scope">{{ parseInt(scope.row.collectionType)===10?"LOT":"资源"}}</template>
+            </el-table-column>
+            <el-table-column prop="resourceGroup" label="设备组"></el-table-column>
+            <el-table-column prop="resource" label="设备编号"></el-table-column>
+            <el-table-column prop="material" label="物料号"></el-table-column>
+            <el-table-column prop="materialGroup" label="物料组"></el-table-column>
+            <el-table-column prop="shopOrder" label="工单号"></el-table-column>
+            <el-table-column prop="workCenter" label="工作中心"></el-table-column>
+            <el-table-column prop="operation" label="工序"></el-table-column>
+            <el-table-column prop="testPass" label="校验结果"></el-table-column>
+            <el-table-column prop="createUserName" label="创建人"></el-table-column>
+            <el-table-column prop="createTime" label="创建时间" width="140"></el-table-column>
+          </dsn-table>
+          <dsn-pagination
+            background
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="this.page.currentPage"
+            :page-sizes="[1, 10, 15, 20, 30, 50]"
+            :page-size="this.page.pageSize"
+            layout="->, total, prev, pager, next, sizes"
+            :total="this.page.total"
+          ></dsn-pagination>
+          <!-- 已收集数据收集组清单表格数据end -->
+        </el-tab-pane>
+        <el-tab-pane label="已收集数据收集组参数清单" :disabled="searchForm.dcGroup===''" name="参数清单">
+          <!-- 已收集数据收集组参数清单表格数据start -->
+          <dsn-table
+            border
+            :data="tableParamsData.data"
+            @selection-change="handleSelectionChange2"
+            row-key="mat"
+          >
+            <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
+            <el-table-column type="index" label="序号"></el-table-column>
+            <template v-for="(item,index) in tableParamsData.tableHead">
+              <el-table-column :prop="item.column_name" :label="item.column_comment" :key="index"></el-table-column>
+            </template>
+          </dsn-table>
+          <!-- 已收集数据收集组参数清单表格数据end -->
+          <!-- 分页start -->
+          <dsn-pagination
+            class="mtb20"
+            background
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="this.page.currentPage"
+            :page-sizes="[1, 10, 15, 20, 30, 50]"
+            :page-size="this.page.pageSize"
+            layout="->, total, prev, pager, next, sizes"
+            :total="this.page.total"
+          ></dsn-pagination>
+          <!-- 分页end -->
+        </el-tab-pane>
+      </el-tabs>
     </DsnPanel>
   </div>
 </template>
 
 <script>
-import { getDataReportList, deleteDcSearch } from "../../../api/dc.search.api";
+import {
+  findDcDataPageHttp,
+  findDcParamPageHttp
+} from "../../../api/dc.search.api";
 import { exportExcel } from "@/until/excel.js";
+let tableHead = [
+  {
+    column_name: "resource",
+    column_comment: "接收值"
+  },
+  {
+    column_name: "collectionType",
+    column_comment: "收集类型"
+  },
+  {
+    column_name: "dcGroup",
+    column_comment: "数据收集组"
+  }
+];
 export default {
   name: "dc-search",
   data() {
@@ -188,9 +206,9 @@ export default {
         tenantSiteCode: "test"
       },
       rules: {
-        // process: [
-        // 	{ required: true, message: '请输入工序名称', trigger: 'blur' },
-        // ],
+        collectionType: [
+          { required: true, message: "请选择收集类型", trigger: "blur" }
+        ]
       },
       collectionType: [
         {
@@ -207,7 +225,7 @@ export default {
       },
       tableParamsData: {
         data: [],
-        tableHead: []
+        tableHead
       },
       page: {
         currentPage: 1,
@@ -221,7 +239,7 @@ export default {
   },
   methods: {
     search() {
-      let params = {
+      const params = {
         tenantSiteCode: this.searchForm.tenantSiteCode,
         resource: this.searchForm.resource,
         dcGroup: this.searchForm.dcGroup,
@@ -229,39 +247,38 @@ export default {
         pageSize: this.page.pageSize,
         currentPage: this.page.currentPage
       };
-      getDataReportList(params).then(data => {
-        if (data.data.code == 200) {
-          this.show = data.data.data.isShowParamPage;
-          if (this.show) {
-            let tableHead = [
-              {
-                column_name: "collectionType",
-                column_comment: "收集类型"
-              },
-              {
-                column_name: "dcGroup",
-                column_comment: "数据收集名称"
-              }
-            ];
-
-            data.data.data.dcParamColumnHead.forEach(function(val) {
-              let obj = {};
-              obj.column_name = val;
-              obj.column_comment = val;
-              tableHead.push(obj);
-            });
-            console.log(tableHead, "tableHead");
-            this.tableParamsData.data = data.data.data.dcParamPage.data;
-            this.tableParamsData.tableHead = tableHead;
-            this.page.total = data.data.data.dcParamPage.total;
-          } else {
-            this.tableData.data = data.data.data.dcDataPage.data;
-            this.page.total = data.data.data.dcDataPage.total;
-          }
-        } else {
-          this.$message.error(data.data.message);
+      this.searchLeft(params);
+      this.searchRight(params);
+    },
+    searchLeft(params) {
+      findDcDataPageHttp(params).then(data => {
+        const res = data.data;
+        if (res.code == 200) {
+          this.tableData.data = res.data.dcDataPage.data;
+          this.page.total = res.data.dcParamPage.total;
+          return;
         }
+        this.$message({ message: res.message, type: "error" });
       });
+    },
+    searchRight(params) {
+      findDcParamPageHttp(params).then(data => {
+        const res = data.data;
+        if (res.code == 200) {
+          res.data.dcParamColumnHead.forEach(element => {
+            this.tableParamsData.tableHead.push({
+              column_name: element,
+              column_comment: element
+            });
+          });
+          this.page.total = res.data.dcParamPage.total;
+          return;
+        }
+        this.$message({ message: res.message, type: "error" });
+      });
+    },
+    handleClick(tab, event) {
+      console.log(tab, event);
     },
     handleSizeChange(pageSize) {
       console.log(pageSize);
@@ -279,30 +296,6 @@ export default {
     handleSelectionChange2(val) {
       this.checkedList = val;
       console.log(val);
-    },
-    del() {
-      this.$confirm("是否删除所选数据?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
-          deleteDcSearch(this.checkedList).then(data => {
-            if (data.data.code == 200) {
-              this.$message.success("删除成功");
-              this.search();
-              this.$refs.multipleTable.clearSelection();
-            } else {
-              this.$message.error(data.data.message);
-            }
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除"
-          });
-        });
     },
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
@@ -347,18 +340,22 @@ export default {
         pageSize: 0,
         currentPage: this.page.currentPage
       };
-      getDataReportList(params).then(data => {
+      findDcDataPageHttp(params).then(data => {
         if (data.data.code == 200) {
-          this.show = data.data.data.isShowParamPage;
+          // this.show = data.data.data.isShowParamPage;
           if (this.show) {
             let tableHead = [
+              {
+                column_name: "resource",
+                column_comment: "接收值"
+              },
               {
                 column_name: "collectionType",
                 column_comment: "收集类型"
               },
               {
                 column_name: "dcGroup",
-                column_comment: "数据收集名称"
+                column_comment: "数据收集组"
               }
             ];
 

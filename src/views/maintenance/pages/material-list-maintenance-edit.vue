@@ -52,13 +52,13 @@
               label-width="150px"
               :rules="rules"
             >
+              <el-form-item label="版本号" prop="currentRev">
+                <el-checkbox v-model="baseInfo.currentRev">当前版本:</el-checkbox>
+              </el-form-item>
               <el-form-item label="当前版本" prop="bomRev">
                 <dsn-input 
                   v-model="baseInfo.bomRev"
                 />
-              </el-form-item>
-              <el-form-item label="版本号" prop="currentRev">
-                <el-checkbox v-model="baseInfo.currentRev">当前版本:</el-checkbox>
               </el-form-item>
               <el-form-item label="状态:" prop="status">
                 <dsn-select
@@ -216,6 +216,25 @@ export default {
     //   immediate: true,
     //   deep: true
     // }
+    // bomMaterialList(){
+    //     this.bomMaterialList.forEach(item=>{
+    //       if(item.sequence===""){
+    //         alert("顺序不能为空");
+    //       }
+    //       if(item.materialRev===""){
+    //         alert("版本不能为空")
+    //       }
+    //       if(item.material===""){
+    //         alert("组件不能为空")
+    //       }
+    //       if(item.material===""){
+    //         alert("版本不能为空")
+    //       }
+    //       if(item.assemQty===""){
+    //         alert("装配数量不能为空")
+    //       }
+    //     })
+    //   },
   },
   created() {
     this.getMaterialAll();

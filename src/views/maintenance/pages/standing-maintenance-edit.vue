@@ -55,43 +55,57 @@
                   <dsn-input v-model.trim="standingForm.padIp" placeholder="请输入IP地址"></dsn-input>
                 </el-form-item>
                 <el-form-item label="工作中心:" prop="workCenter">
-                  <el-autocomplete
-                    size="small"
+                  <el-select
                     v-model="standingForm.workCenter"
-                    :fetch-suggestions="querySearch"
-                    placeholder="请输入工作中心"
-                    @select="handleSelectWorkCenter"
-                    style="width:100%"
-                  ></el-autocomplete>
-                </el-form-item>
-                <el-form-item label="产线:" prop="workCenterRelation">
-                  <dsn-select
-                    v-model="standingForm.workCenterRelation"
-                    style="width:100%"
                     filterable
-                    placeholder="请选择产线"
+                    placeholder="请选择工作中心"
+                    size="small"
+                    style="width:100%"
                   >
                     <el-option
-                      v-for="(item, index) in workCenterRelations"
-                      :key="index"
-                      :label="item"
-                      :value="item"
+                      v-for="item in workCenterList"
+                      :key="item.workCenter"
+                      :label="item.workCenterDes"
+                      :value="item.workCenter"
                     ></el-option>
-                  </dsn-select>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="产线:" prop="workCenterRelation">
+                  <el-select
+                    v-model="standingForm.workCenterRelation"
+                    filterable
+                    placeholder="请选择产线"
+                    size="small"
+                    style="width:100%"
+                  >
+                    <el-option
+                      v-for="(item,index) in workCenterRelationList"
+                      :key="index"
+                      :label="item.workCenterDes"
+                      :value="item.workCenter"
+                    ></el-option>
+                  </el-select>
                 </el-form-item>
                 <el-form-item label="设备:" prop="resource">
-                  <el-row>
-                    <el-col :span="22">
-                      <dsn-input
-                        v-model.trim="standingForm.resource"
-                        placeholder="请输入设备"
-                        class="resource"
-                      ></dsn-input>
-                    </el-col>
-                    <el-col :span="2">
-                      <i class="el-icon-document" @click="handleSeleteResource"></i>
-                    </el-col>
-                  </el-row>
+                  <!-- <dsn-input
+                    v-model.trim="standingForm.resource"
+                    placeholder="请输入设备"
+                    class="resource"
+                  ></dsn-input>-->
+                  <el-select
+                    v-model="standingForm.resource"
+                    filterable
+                    placeholder="请选择设备"
+                    size="small"
+                    style="width:100%"
+                  >
+                    <el-option
+                      v-for="(item,index) in deviceList"
+                      :key="index"
+                      :label="item.resourceDes"
+                      :value="item.resource"
+                    ></el-option>
+                  </el-select>
                 </el-form-item>
                 <el-form-item label="状态:" prop="status">
                   <el-radio-group v-model="standingForm.status">
@@ -147,11 +161,10 @@
 </template>
 
 <script>
-import { getAllList } from "@/api/work.center.api.js";
-import { getInactiveResourceHttp } from "@/api/device/maintenance.api.js";
+import { getAllLevel1Http, getAllLevel2Http } from "@/api/work.center.api.js";
 import { saveHttp } from "@/api/maintenance/standing.api.js";
+import { getInactiveResourceHttp } from "@/api/device/maintenance.api.js";
 import { mapGetters, mapMutations } from "vuex";
-import _ from "lodash";
 export default {
   data() {
     const valiIP = (rule, value, callback) => {
@@ -205,69 +218,34 @@ export default {
       workCenterRelations: [],
       resourceDialog: false,
       currentRow: {},
-      saveDialog: false
+      saveDialog: false,
+      workCenterRelationList: [],
+      workCenterList: [],
+      deviceList: []
     };
   },
   computed: {
     ...mapGetters(["standingList"])
   },
   created() {
-    this.deBounceSearch();
     this.operateType = this.$route.query.operateType;
     this.cloneList = JSON.parse(JSON.stringify(this.standingList));
-    console.log(this.cloneList[0]);
     if (this.operateType === "edit") {
       this.standingForm = this.cloneList[0];
       this.isEditStation = true;
     }
+    this.getAllWorkCenterRelation();
+    this.getAllWorkCenter();
+    this.getAllDevice();
   },
   methods: {
     ...mapMutations(["STANDINGLIST"]),
-    deBounceSearch() {
-      this.fn = _.debounce(cb => {
-        const data = { workCenter: this.standingForm.workCenter };
-        //查询所有工作中心
-        getAllList(data).then(data => {
-          const res = data.data;
-          if (res.code === 200) {
-            this.workCenters = res.data;
-            this.workCenters.forEach(element => {
-              element.value = element.workCenter;
-            });
-            cb(this.workCenters);
-            return;
-          }
-          this.$message({
-            message: res.message,
-            type: "warning"
-          });
-        });
-      }, 150);
-    },
-    //搜索
-    querySearch(queryString, cb) {
-      this.fn(cb);
-    },
-    // 点击某一行选中后操作的状态你
-    handleStationCurrentChange(currentRow) {
-      this.standingForm = JSON.parse(JSON.stringify(currentRow));
-    },
-    //工作中心选择
-    handleSelectWorkCenter(item) {
-      this.standingForm.workCenter = item.value;
-      this.workCenterRelations = item.workCenterRelation;
-    },
-    //产线选择
-    handleSelectWorkCenterRelation(item) {
-      this.standingForm.workCenterRelation = item.value;
-    },
-    //查询所有待使用设备
-    handleSeleteResource() {
-      getInactiveResourceHttp().then(data => {
+    //获取所有产线
+    getAllWorkCenterRelation() {
+      getAllLevel2Http().then(data => {
         const res = data.data;
         if (res.code === 200) {
-          this.resourceData = res.data;
-          this.resourceDialog = true;
+          this.workCenterRelationList = res.data;
           return;
         }
         this.$message({
@@ -276,6 +254,54 @@ export default {
         });
       });
     },
+    //获取所有工作中心
+    getAllWorkCenter() {
+      getAllLevel1Http().then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.workCenterList = res.data;
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
+    },
+    //获取所有设备
+    getAllDevice() {
+      getInactiveResourceHttp().then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.deviceList = res.data;
+          console.log(this.deviceList);
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
+    },
+    //产线选择
+    handleSelectWorkCenterRelation(item) {
+      this.standingForm.workCenterRelation = item.value;
+    },
+    // //查询所有待使用设备
+    // handleSeleteResource() {
+    //   getInactiveResourceHttp().then(data => {
+    //     const res = data.data;
+    //     if (res.code === 200) {
+    //       this.resourceData = res.data;
+    //       this.resourceDialog = true;
+    //       return;
+    //     }
+    //     this.$message({
+    //       message: res.message,
+    //       type: "warning"
+    //     });
+    //   });
+    // },
     //返回
     handleBack() {
       this.$router.push({ name: "standingMaintenance" });

@@ -78,3 +78,19 @@ export const findPageHttp = data => {
     data
   );
 };
+
+/**
+ * 获取所有车间
+ * url /workCenter/getAllLevel1
+ */
+export const getAllLevel1Http = () => {
+  return request.post(`${window.VUE_APP_URL}/mes/workCenter/getAllLevel1`);
+};
+
+/**
+ * 获取所有产线
+ * url /workCenter/getAllLevel2
+ */
+export const getAllLevel2Http = () => {
+  return request.post(`${window.VUE_APP_URL}/mes/workCenter/getAllLevel2`);
+};
