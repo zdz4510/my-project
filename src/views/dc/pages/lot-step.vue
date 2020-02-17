@@ -239,19 +239,19 @@ export default {
         });
         return;
       }
+      if (this.lotStepForm.comment === "") {
+        this.$message({
+          type: "warning",
+          message: "请填写备注！"
+        });
+        return;
+      }
       this.$confirm("是否确认将LOT的状态置为完成？", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
       })
         .then(() => {
-          if (this.lotStepForm.comment === "") {
-            this.$message({
-              type: "warning",
-              message: "请填写备注！"
-            });
-            return;
-          }
           this.setFinishHttp();
         })
         .catch(() => {
@@ -263,14 +263,13 @@ export default {
     },
     //请求
     setFinishHttp() {
-      // const tempArr = [];
-      // this.tableData.forEach(element => {
-      //   tempArr.push(element.lot);
-      // });
-      console.log(this.selectionList[0].lots);
+      const lots = [];
+      this.selectionList.forEach(element => {
+        lots.push(element.lot);
+      });
       const data = {
         comment: this.lotStepForm.comment,
-        lots: this.selectionList.lots
+        lots
       };
       setLotsStatusDoneHttp(data).then(data => {
         const res = data.data;
