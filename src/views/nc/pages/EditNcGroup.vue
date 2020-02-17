@@ -54,7 +54,7 @@
 							<el-tab-pane label="工序" name="second">
 								<el-row>
 									<el-col :span="24">
-										<el-row>
+										<el-row style="left:90px">
 											<el-col :span="8">
 												<dsn-table :data="allocated.filter(data => !operation1 || data.operation.toLowerCase().includes(operation1.toLowerCase()))" @select="check1" @select-all="check1">
 													<el-table-column label="已分配工序">
@@ -62,9 +62,9 @@
 															<template slot="header">
 																<dsn-input v-model="operation1" placeholder="输入工序搜索"/>
 															</template>
-															<el-table-column type="selection" width="100"></el-table-column>
+															<el-table-column type="selection" width="50"></el-table-column>
 															<el-table-column prop="operation" label="工序"></el-table-column>
-															<el-table-column prop="operationDes" label="工序描述"></el-table-column>
+															<el-table-column prop="operationDes" label="工序描述" width="300"></el-table-column>
 															</el-table-column>
 													</el-table-column>
 												</dsn-table>
@@ -80,9 +80,9 @@
 															<template slot="header">
 																<dsn-input v-model="operation2" placeholder="输入工序搜索"/>
 															</template>
-															<el-table-column type="selection" width="100"></el-table-column>
+															<el-table-column type="selection" width="50"></el-table-column>
 															<el-table-column prop="operation" label="工序"></el-table-column>
-															<el-table-column prop="operationDes" label="工序描述"></el-table-column>
+															<el-table-column prop="operationDes" label="工序描述" width="300"></el-table-column>
 															</el-table-column>
 													</el-table-column>
 												</dsn-table>
@@ -91,6 +91,7 @@
 									</el-col>
 								</el-row>
 							</el-tab-pane>
+								<el-tab-pane label="自定义数据" name="custom">数据字段，数据属性</el-tab-pane>
 						</el-tabs>
 						<div slot="footer" class="dialog-footer">
 							<!-- <dsn-button @click="handleReset(workCenterForm)">重 置</dsn-button> -->
