@@ -30,7 +30,7 @@
           size="small"
           type="primary"
           icon="el-icon-edit"
-          :disabled="selectionList.length < 1"
+          :disabled="selectionList.length !== 1"
           @click="handleEdit"
         >修改</dsn-button>
         <dsn-button
