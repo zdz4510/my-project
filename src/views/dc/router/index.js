@@ -154,6 +154,18 @@ export default {
           /* webpackChunkName: "lotMerge" */ "@/views/dc/pages/lot-merge.vue"
         )
     },
+    {
+      path: "lotNum",
+      name: "lotNum",
+      meta: {
+        title: "Lot 数量调整",
+        requiresAuth:true
+      },
+      component: () =>
+        import(
+          /* webpackChunkName: "lotMerge" */ "@/views/dc/pages/lot-num.vue"
+        )
+    },
     //生产操作
     {
       path: "productionOperate",

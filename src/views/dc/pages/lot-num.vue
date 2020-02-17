@@ -1,5 +1,5 @@
 <template>
-    <div class="issued">
+    <div class="num">
         <!--顶部-->
         <div class="issudTop">
             <!--顶部左边-->
@@ -8,138 +8,67 @@
                     <div slot="header" class="title clearfix">
                         <span>搜索信息</span>
                     </div>
-                    <el-form
-                        :inline="true"
-                        :model="workOrderIssued"
-                        ref="workOrderIssued"
-                        :rules="rules"
-                        class="form-style"
-                        label-width="100px"
-                    >
-                        <el-form-item 
-                            label="工单:"
-                            prop="shopOrder">
-                            <el-input size="small" autocomplete="off" v-model='workOrderIssued.shopOrder'><el-button size="small" slot="append" icon="el-icon-document-copy" @click="orderHandler"></el-button></el-input>
-                        </el-form-item> 
-                        <el-form-item>
-                       <dsn-button size="small" type="primary" @click.native="handleGet">获取</dsn-button>
-                        <dsn-button size="small" type="primary" @click.native="reset">清除</dsn-button>
-                        </el-form-item>
-                    </el-form>
-                    <!-- <el-form :inline="true" ref="workOrderIssued" label-width="100px" class="demo-ruleForm" :model="workOrderIssued">
+                    <el-form  ref="workOrderIssued" label-width="100px" class="demo-ruleForm" :model="workOrderIssued">
                         <el-form-item
-                            label="工单:"
+                            label="Lot:"
                             prop="shopOrder"
                             :rules="[
                             { required: true, message: '工单不能为空'}
                             ]"
                         >
-                            <el-input size="small" autocomplete="off" v-model='workOrderIssued.shopOrder'><el-button size="small" slot="append" icon="el-icon-document-copy" @click="orderHandler"></el-button></el-input>
-                        </el-form-item>
+                            <el-input size="small" autocomplete="off" v-model='workOrderIssued.lot'><el-button size="small" slot="append" icon="el-icon-document-copy" @click="numHandler"></el-button></el-input>
+                            <div class="choiceBox">                       
+                                <dsn-button size="small" type="primary" @click.native="handleGet">获取</dsn-button>
+                                <dsn-button size="small" type="primary" @click.native="reset">清除</dsn-button>
+                            </div>
 
-                        <el-form-item
-                            label="下达数量:"
-                            prop="numIssued"
-                            :rules="[
-                            { required: true, message: '下达数量不能为空'}
-                            ]"
-                        >
-                            <dsn-input  autocomplete="off" v-model='workOrderIssued.numIssued'></dsn-input>
-                            <dsn-button size="small" type="primary" style="margin-left:26px;" @click.native="handleIssued">下达</dsn-button>
-                        </el-form-item> -->
-                    <!-- </el-form> -->
-                    <!-- <div class="operate">                       
-                        <dsn-button size="small" type="primary" @click.native="handleGet">获取</dsn-button>
-                        <dsn-button size="small" type="primary" @click.native="reset">清除</dsn-button>
-                    </div> -->
+                        </el-form-item>
+                    </el-form>
                 </DsnPanel>
             </div>
             <div class="topRigt">
                 <div class="showData">
                     <div><i>*</i><span>状态：{{shopOrderInfo.status}}</span></div>
-                    <div><i>*</i><span>生产数量:{{shopOrderInfo.productQty}}</span></div>
+                    <div><i>*</i><span>工单:{{shopOrderInfo.productQty}}</span></div>
                 </div>
                 <div class="showData">
                     <div><i>*</i><span>物料(版本):{{shopOrderInfo.plannedMaterialRev}}</span></div>
                     <div><i>*</i><span>已下达数量:{{shopOrderInfo.releasedQuantity}}</span></div>
                 </div>
                 <div class="showData">
+                    <div><i>*</i><span>操作:{{shopOrderInfo.availableQuantity}}</span></div>
                     <div><i>*</i><span>工艺路线(版本)：{{shopOrderInfo.plannedRouterRev}}</span></div>
-                    <div><i>*</i><span>可下达数量:{{shopOrderInfo.availableQuantity}}</span></div>
+                </div>
+                <div class="showData">
+                    <div><i>*</i><span>排队数量:{{shopOrderInfo.availableQuantity}}</span></div>
+                    <div><i>*</i><span>可拆分数量：{{shopOrderInfo.plannedRouterRev}}</span></div>
                 </div>
             </div>
         </div>
         <DsnPanel>
             <div slot="header" class="title clearfix">
-                <span>下达数据</span>
+                <span>lot 调整</span>
             </div>
-            <el-form :inline="true" ref="workOrderIssued" label-width="100px" class="demo-ruleForm" :model="workOrderIssued">
-                <el-form-item
-                    label="下达数量:"
-                    prop="numIssued"
-                    :rules="[
-                    { required: true, message: '下达数量不能为空'}
-                    ]"
-                >
-                    <dsn-input  autocomplete="off" v-model='workOrderIssued.numIssued'></dsn-input>
-                    <dsn-button size="small" type="primary" style="margin-left:26px;" @click.native="handleIssued">下达</dsn-button>
-                </el-form-item>
-            </el-form>
-        </DsnPanel>
         <!--下达列表-->
-        <div class="height48">
-            <div>工单下达</div>
-            <dsn-button type="primary" size="small" icon="el-icon-upload2" @click.native="exportExcelUndeal" >导出</dsn-button>
-        </div>
-        <div class="issuedTable">
-            <dsn-table
-                ref="multipleTable"
-                :data="tableData"
-                tooltip-effect="dark"
-                style="width: 100%"
-                height="514px"
-                @selection-change="handleTableChange">
-                <el-table-column
-                type="selection"
-                width="55">
-                </el-table-column>
-                <el-table-column
-                label="工单"
-                width="120"
-                prop='shopOrder'>
-                </el-table-column>
-                <el-table-column
-                prop="lot"
-                label="LOT"
-                width="120">
-                </el-table-column>
-                <el-table-column
+        <el-form  ref="workOrderIssued" label-width="100px" class="demo-ruleForm" :model="workOrderIssued">
+            <el-form-item
+                label="新排队数量:"
                 prop="quantity"
-                label="数量"
-                show-overflow-tooltip>
-                </el-table-column>
-                <el-table-column
-                prop="material"
-                label="物料"
-                show-overflow-tooltip>
-                </el-table-column>
-                <el-table-column
-                prop="materialRev"
-                label="物料版本"
-                show-overflow-tooltip>
-                </el-table-column>
-                <el-table-column
-                prop="router"
-                label="工艺路线"
-                show-overflow-tooltip>
-                </el-table-column>
-                <el-table-column
-                prop="routerRev"
-                label="工艺路线版本"
-                show-overflow-tooltip>
-                </el-table-column>
-            </dsn-table>
-        </div>
+                :rules="[
+                { required: true, message: '新排队数量不能为空'}
+                ]"
+            >
+                <el-col :span="9">
+                    <el-input size="small" autocomplete="off" v-model='quantity'></el-input>
+                </el-col>
+                
+                <div class="choiceBox">                       
+                    <dsn-button size="small" type="primary" @click.native="handleChange">调整</dsn-button>
+                </div>
+
+            </el-form-item>
+        </el-form>
+        </DsnPanel>
         <!--工单选择-->
         <el-dialog
         title="工单"
@@ -174,32 +103,30 @@ import {
 import{
     findShopOrderListHttp
 } from '@/api/work-order/work-order.api.js'
-import { exportExcel } from "@/until/excel.js";
-const tHeader = [
-  "工单",
-  "Lot",
-  "数量",
-  "物料",
-  "物料版本",
-  "工艺路线",
-  "工艺路线版本"
-];
-const filterVal = [
-  "shopOrder",
-  "lot",
-  "quantity",
-  "material",
-  "materialRev",
-  "router",
-  "routerRev"
-];
-const fileName="工单下达表"
+// import { exportExcel } from "@/until/excel.js";
+// const tHeader = [
+//   "工单",
+//   "Lot",
+//   "数量",
+//   "物料",
+//   "物料版本",
+//   "工艺路线",
+//   "工艺路线版本"
+// ];
+// const filterVal = [
+//   "shopOrder",
+//   "lot",
+//   "quantity",
+//   "material",
+//   "materialRev",
+//   "router",
+//   "routerRev"
+// ];
+// const fileName="工单下达表"
 export default {
     data(){
         return{
-            tHeader,
-            filterVal,
-            fileName,
+            quantity:"", //新调整数量
             tenantSiteCode:'',
             shopOrderInfo:'',//工单信息
             workOrderIssued: {
@@ -211,62 +138,65 @@ export default {
             orderTable:[],
             orderDialog:false,
             orderChoice:[],
-            handleTableChangeList:[],
+            // handleTableChangeList:[],
             currentPage: 1,
             pageSize: 10,
             total: 0,
         }
     },
     methods:{
+        handleChange(){
+            console.log("handleChange")
+        },
         // 工单表格
-        handleTableChange(row){
-            this.handleTableChangeList=row;
-        },
-        // 导出操作
-        exportExcelUndeal(){
-            if (this.handleTableChangeList.length === 0) {
-                this.exportHttpUndeal();
-            }
-            if (this.handleTableChangeList.length > 0) {
-                this.exportResult(this.handleTableChangeList);
-            }
-        },
-        exportHttpUndeal(){
-            findShopOrderListHttp().then(data => {
-            const res = data.data;
-            if (res.code === 200) {
-            data = res.data.data;
-            data.forEach(element => {
-                element.shopOrderTotal = element.shopOrderList.length;
-            });
-            this.exportResult(data);
-            return;
-            }
-            this.$message({
-                message: res.message,
-                type: "warning"
-                });
-            });
-        },
-        //返回结果，提示信息
-        exportResult(data) {
-        const tipString = exportExcel(tHeader, filterVal, data, this.fileName);
-        if (tipString === undefined) {
-            this.$message({
-            message: "导出成功",
-            type: "success"
-            });
-            return;
-        } else {
-            this.$message({
-            message: tipString,
-            type: "warning"
-            });
-            return;
-        }
-        },
+        // handleTableChange(row){
+        //     this.handleTableChangeList=row;
+        // },
+        // // 导出操作
+        // exportExcelUndeal(){
+        //     if (this.handleTableChangeList.length === 0) {
+        //         this.exportHttpUndeal();
+        //     }
+        //     if (this.handleTableChangeList.length > 0) {
+        //         this.exportResult(this.handleTableChangeList);
+        //     }
+        // },
+        // exportHttpUndeal(){
+        //     findShopOrderListHttp().then(data => {
+        //     const res = data.data;
+        //     if (res.code === 200) {
+        //     data = res.data.data;
+        //     data.forEach(element => {
+        //         element.shopOrderTotal = element.shopOrderList.length;
+        //     });
+        //     this.exportResult(data);
+        //     return;
+        //     }
+        //     this.$message({
+        //         message: res.message,
+        //         type: "warning"
+        //         });
+        //     });
+        // },
+        // //返回结果，提示信息
+        // exportResult(data) {
+        // const tipString = exportExcel(tHeader, filterVal, data, this.fileName);
+        // if (tipString === undefined) {
+        //     this.$message({
+        //     message: "导出成功",
+        //     type: "success"
+        //     });
+        //     return;
+        // } else {
+        //     this.$message({
+        //     message: tipString,
+        //     type: "warning"
+        //     });
+        //     return;
+        // }
+        // },
         
-        orderHandler(){
+        numHandler(){
             // alert("1111");
             findShopOrderListHttp().then(data =>{
             const res = data.data
@@ -305,14 +235,13 @@ export default {
         //清除按钮
         reset(){
             this.workOrderIssued ={
-                shopOrder: '',
-                numIssued:'',
+                lot: '',
             };
         },
         //获取工单信息
         handleGet(){
             const params = {
-                shopOrder:this.workOrderIssued.shopOrder,
+                lot:this.workOrderIssued.lot,
                 tenantSiteCode:this.tenantSiteCode
             }
             if(this.workOrderIssued.shopOrder !== ""){
@@ -363,7 +292,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.issued{
+.num{
     padding: 0 30px;
     .issudTop{
         width:100%;
@@ -400,7 +329,7 @@ export default {
     }
     
 }
-.issued .height48{
+.num .height48{
     height:48px;
     width:100%;
     background:#fff;
@@ -420,7 +349,7 @@ export default {
     }
 }
 //选择弹框
-.issued .choiceBox{
+.num .choiceBox{
     width:150px;
     height:41px;
     display: flex;
@@ -431,7 +360,7 @@ export default {
         margin-right:7px;
     }
 }
-// .issued .el-form-item__content{
+// .num .el-form-item__content{
 //     display: flex;
 // }
 </style>

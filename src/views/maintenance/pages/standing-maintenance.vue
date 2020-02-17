@@ -401,8 +401,8 @@ export default {
 .standingMaintenance {
   .el-dialog {
     text-align: center;
-    .import {
-    }
+    // .import {
+    // }
   }
 }
 </style>
