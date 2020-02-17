@@ -264,8 +264,8 @@ const routes = [
       import(/* webpackChunkName: "layout" */ "../views/layout/"),
     children: [
       {
-        path: "dcSearch",
-        name: "dcSearch",
+        path: "dcSearchFrom",
+        name: "dcSearchFrom",
         meta: {
           title: "独立数据报表查询"
         },
