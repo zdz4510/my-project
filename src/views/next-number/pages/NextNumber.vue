@@ -80,6 +80,8 @@
           <el-form-item>
             <dsn-button size="small" type="primary" @click.native="search('searchForm')">查询</dsn-button>
             <dsn-button size="small" type="primary" @click.native="resetForm('searchForm')">重置</dsn-button>
+            <dsn-button size="small" type="success" icon="el-icon-folder-add" @click.native="handleSaveData">保存</dsn-button>
+            <dsn-button icon="el-icon-delete" size="small" type="danger" @click.native="del">删除</dsn-button>
           </el-form-item>
         </el-form>
       </div>
@@ -100,10 +102,10 @@
           size="small"
           type="primary"
           icon="el-icon-edit"
-          @click.native="save('searchForm')"
+          @click.native="edit('searchForm')"
           :disabled="this.checkedList.length===0"
         >编辑</dsn-button>
-        <dsn-button icon="el-icon-delete" size="small" type="danger" :disabled="this.checkedList.length===0" @click.native="del">删除</dsn-button>
+        
       </div>
       <div>
         <dsn-table
@@ -137,6 +139,19 @@
         </dsn-table>
       </div>
     </DsnPanel>
+    <el-dialog title="保存" :visible.sync="dialogFlag">
+      <add-next-number
+       @handleClose="handleClose"
+       @handleSave="handleSave"
+       v-if="dialogType === 'add'"
+      ></add-next-number>
+      <edit-next-number
+       @handleClose="handleClose"
+       @handleSave="handleSave"
+       v-if="dialogType === 'edit'"
+      ></edit-next-number>
+    </el-dialog>
+    
   </div>
 </template>
 
@@ -149,8 +164,11 @@ import {
   saveNextNumber
 } from "../../../api/next.number.api.js";
 import { mapMutations } from "vuex";
+import addNextNumber from './AddNextNumber.vue';
+import editNextNumber from './EditNextNumber.vue';
 export default {
   name: "next-number",
+  inject: ['defaltDialogWidth'],
   data() {
     return {
       formLabelWidth: "120px",
@@ -161,7 +179,8 @@ export default {
         materialRev: "",
         commitType: ""
       },
-      addDialog: false,
+      dialogFlag: false,
+      dialogType: '',
       addForm: {
         type: "",
         str: ""
@@ -281,7 +300,7 @@ export default {
         params.materialGroup = "";
         params.material = this.searchForm.value.split("&")[0];
       }
-
+      if (params.sequences) delete params.sequences;
       getNextNumberList(params).then(data => {
         if (data.data.code == 200) {
           if (!data.data.data) {
@@ -334,14 +353,15 @@ export default {
             this.searchForm.value = this.searchForm.materialGroup;
           }
           sessionStorage.setItem("searchForm", JSON.stringify(this.searchForm));
-          this.$router.push({ path: "/nextNumber/addNextNumber" });
+          this.dialogFlag = true;
+          this.dialogType = 'add';
         } else {
           console.log("error submit!!");
           return false;
         }
       });
     },
-    save(formName) {
+    edit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
           if (this.searchForm.definedBy == "MATERIAL") {
@@ -351,7 +371,8 @@ export default {
           }
           sessionStorage.setItem("searchForm", JSON.stringify(this.searchForm));
           this.SETNEXTNUMBEREDITLIST(this.checkedList);
-          this.$router.push({ path: "/nextNumber/editNextNumber" });
+         this.dialogFlag = true;
+          this.dialogType = 'edit';
         } else {
           console.log("error submit!!");
           return false;
@@ -359,29 +380,34 @@ export default {
       });
     },
     del() {
-      this.$confirm("是否删除所选数据?", "提示", {
+      this.$confirm("是否删除数据?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
       })
         .then(() => {
-          let params = {};
-          params.nextNumberType = this.searchForm.nextNumberType;
-          params.definedBy = this.searchForm.definedBy;
-          params.material = this.searchForm.value.split("&")[0];
-          params.materialRev = this.searchForm.materialRev;
-          params.commitType = this.searchForm.commitType;
-          params.sequences = [];
-          deleteNextNumber(params).then(data => {
-            if (data.data.code == 200) {
-              this.$message.success("删除成功");
-              // this.search('searchForm')
-              this.$refs.multipleTable.clearSelection();
-              this.tableData.data = [];
-            } else {
-              this.$message.error(data.data.message);
+          this.$refs['searchForm'].validate(valid => {
+            if (valid) {
+              let params = {};
+              params.nextNumberType = this.searchForm.nextNumberType;
+              params.definedBy = this.searchForm.definedBy;
+              params.material = this.searchForm.value.split("&")[0];
+              params.materialRev = this.searchForm.materialRev;
+              params.commitType = this.searchForm.commitType;
+              params.sequences = [];
+              deleteNextNumber(params).then(data => {
+                if (data.data.code == 200) {
+                  this.$message.success("删除成功");
+                  // this.search('searchForm')
+                  this.$refs.multipleTable.clearSelection();
+                  this.tableData.data = [];
+                } else {
+                  this.$message.error(data.data.message);
+                }
+              });
             }
           });
+          
         })
         .catch(() => {
           this.$message({
@@ -433,7 +459,6 @@ export default {
       }
     },
     handleClickDown(row) {
-      console.log(row, "r");
       let length = this.tableData.data.length;
       if (row.sequence == length) {
         return;
@@ -477,11 +502,14 @@ export default {
         type: "warning"
       })
         .then(() => {
-          let arr = this.tableData.data.splice(row.sequence, 1);
-          console.log(arr, "ar");
+          /* let arr = this.tableData.data.splice(row.sequence, 1);
           arr.map((item, index) => {
             item.sequence = index + 1;
-          });
+          }); */
+          const { data } = this.tableData;
+          const arr = data.filter(item => item.sequence !== row.sequence)
+                          .map((item,index) => Object.assign(item, { sequence:index + 1 }))
+          this.tableData.data = arr;
           //调用保存方法
           let params = {};
           params.createList = [];
@@ -511,10 +539,46 @@ export default {
             message: "已取消删除"
           });
         });
+    },
+    handleClose() {
+      this.dialogFlag = false;
+    },
+    handleSave(type, item) {
+      this.dialogFlag = false;
+      if (type === 'add') {
+        const { data } = this.tableData;
+        item.sequence = data.length + 1;
+        data.push(item);
+      }
+      if (type === 'edit') {
+        console.log('editdata', item)
+      }
+    },
+    handleSaveData() {
+      this.$refs['searchForm'].validate(valid => {
+        if (valid) {
+          console.log(this.searchForm, this.tableData.data);
+          const { searchForm, tableData: { data } } = this;
+          const params = Object.assign(searchForm, { sequences: data } );
+          console.log(params)
+          saveNextNumber({updateList: [{...params}]}).then(data => {
+            if (data.data.code == 200) {
+              this.$message.success("操作成功");
+              this.search("searchForm");
+            } else {
+              this.$message.error(data.data.message);
+            }
+          })
+        }
+      });
     }
   },
   beforeDestroy() {
     // sessionStorage.removeItem('searchForm')
+  },
+  components: {
+    addNextNumber,
+    editNextNumber
   }
 };
 </script>
