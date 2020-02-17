@@ -65,12 +65,26 @@
               @click="del"
               :disabled="this.pCheckedList.length === 0"
             >删除</dsn-button>
+            <dsn-button @click.native="handleCopy">粘贴行</dsn-button>
+            <dsn-button
+              size="40"
+              type="text"
+              icon="el-icon-caret-top"
+              @click.native="handleUpCraft"
+            >上移</dsn-button>
+            <dsn-button
+              size="20"
+              type="text"
+              icon="el-icon-caret-bottom"
+              @click.native="handleDownCraft"
+            >下移</dsn-button>
           </div>
           <dsn-table
             ref="pTable"
             :data="this.MeasureInfoList"
             tooltip-effect="dark"
             row-key="dcGroup"
+            :row-class-name="tableRowClassName"
             @selection-change="handleSelectionChange"
           >
             <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
@@ -433,6 +447,7 @@ import { findShopOrderListRequest } from "@/api/work-order/work-order.api.js";
 import { getOperationList } from "@/api/operation.maintain.api.js";
 import { findPageHttp } from "@/api/work.center.api.js";
 import { listAllResourceGroupHttp } from "@/api/device/type.api.js";
+import _ from "lodash";
 export default {
   name: "add-data-collection",
   data() {
@@ -719,6 +734,7 @@ export default {
         if (valid) {
           this.addParamForm.dcGroup = this.addForm.dcGroup;
           let form = JSON.parse(JSON.stringify(this.addParamForm));
+          console.log(form);
           if (this.currentOperation == "add") {
             if (
               this.MeasureInfoList.findIndex(
@@ -808,6 +824,9 @@ export default {
     },
     handleSelectionChange(val) {
       this.pCheckedList = val;
+      this.pCheckedList.forEach(element => {
+        console.log(element.index);
+      });
     },
     handleSelectionChange2(val) {
       this.sCheckedList = val;
@@ -895,6 +914,72 @@ export default {
     sortChange(column, prop, order) {
       console.log(column, prop, order);
     },
+    tableRowClassName(row, rowIndex) {
+      console.log(row, rowIndex);
+    },
+    // 复制动作的操作
+    handleCopy() {
+      if (this.pCheckedList.length != 1) {
+        this.$message({
+          type: "warning",
+          message: "请先选中一行，然后粘贴"
+        });
+        return;
+      }
+      const selectItem = this.pCheckedList[0];
+      //  复制取当前后面的序号
+      const index = this.MeasureInfoList.findIndex(item => {
+        return item === selectItem;
+      });
+
+      // const len = this.MeasureInfoList.length;
+      const copyItem = _.cloneDeep({
+        ...selectItem
+      });
+      this.MeasureInfoList.splice(index + 1, 0, copyItem);
+      // this.lockOpeAction = true; //  锁定操作
+    },
+    // 上排序
+    handleUpCraft() {
+      if (this.pCheckedList.length != 1) {
+        this.$message({
+          type: "warning",
+          message: "请先选择需要移动的一行"
+        });
+        return;
+      }
+      const selectOne = this.pCheckedList[0];
+      const index = this.MeasureInfoList.findIndex(item => item === selectOne);
+      console.log(index);
+      // 无法上移动
+      if (index <= 0) {
+        return;
+      }
+      const topOne = this.MeasureInfoList[index - 1];
+      this.MeasureInfoList.splice(index, 1, topOne);
+      this.MeasureInfoList.splice(index - 1, 1, selectOne);
+    },
+    //下移
+    handleDownCraft() {
+      if (this.pCheckedList.length != 1) {
+        this.$message({
+          type: "warning",
+          message: "请先选择需要移动的一行"
+        });
+        return;
+      }
+      const selectOne = this.pCheckedList[0];
+      const index = this.MeasureInfoList.findIndex(item => item === selectOne);
+      console.log(index);
+      // 无法下移动
+      if (index == this.MeasureInfoList.length - 1) {
+        return;
+      }
+      const bottomOne = this.MeasureInfoList[index + 1];
+      this.MeasureInfoList.splice(index, 1, bottomOne);
+      this.MeasureInfoList.splice(index + 1, 1, selectOne);
+    },
+
     //搜索建议调用方法
     createFilter(queryString) {
       return item => {
