@@ -1,10 +1,10 @@
 <template>
   <div class="box">
-    <div class="top">
+    <div class="top"  v-if="false">
       <top @save="save" />
     </div>
     <div class="bottom">
-      <div class="left"></div>
+      <!-- <div class="left"></div> -->
       <div class="content" id="content">
         <span class="x" :style="`top:${h}px;`"></span>
         <span class="y" :style="`left:${w}px`"></span>
@@ -338,7 +338,7 @@ export default {
       overflow: hidden;
     }
     .right {
-      width: 270px;
+      width: 350px;
       height: 100%;
       overflow: hidden;
       background: #eee;
