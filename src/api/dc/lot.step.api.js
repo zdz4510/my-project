@@ -40,7 +40,7 @@ export const searchLotDetailHttp = data => {
  */
 export const setLotsStatusDoneHttp = data => {
   return request.post(
-    `${window.VUE_APP_URL}/LotStepStatusService/setLotsStatusDone?comment=${data.comment}`,
+    `${window.VUE_APP_URL}/mes/LotStepStatusService/setLotsStatusDone?comment=${data.comment}`,
     data.lots
   );
 };
