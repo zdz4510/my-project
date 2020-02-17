@@ -86,7 +86,7 @@ export default {
     },
     filterable: {
       type: Boolean,
-      default: false
+      default: true
     },
     "allowCreate": {
       type: Boolean,
