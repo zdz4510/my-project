@@ -59,7 +59,7 @@ export default {
     },
     clearable: {
       type: Boolean,
-      default: false
+      default: true
     },
     size: {
       type: String,
@@ -86,7 +86,7 @@ export default {
     },
     filterable: {
       type: Boolean,
-      default: false
+      default: true
     },
     "allowCreate": {
       type: Boolean,

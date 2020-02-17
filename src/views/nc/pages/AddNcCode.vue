@@ -41,8 +41,9 @@
 							</el-col>
 						</el-row>
 					</el-tab-pane>
+					
 					<el-tab-pane label="不合格组" name="second">
-						<el-row>
+						<el-row style="left:140px">
 							<el-col :span="24">
 								<el-row>
 									<el-col :span="8">
@@ -52,9 +53,9 @@
 													<template slot="header">
 														<dsn-input v-model="ncGroup1" placeholder="输入不合格组搜索"/>
 													</template>
-													<el-table-column type="selection" width="100"></el-table-column>
+													<el-table-column type="selection" width="50"></el-table-column>
 													<el-table-column prop="ncGroup" label="不合格组"></el-table-column>
-													<el-table-column prop="ncGroupDes" label="不合格组描述"></el-table-column>
+													<el-table-column prop="ncGroupDes" label="不合格组描述" width="300"></el-table-column>
 													</el-table-column>
 											</el-table-column>
 										</dsn-table>
@@ -63,16 +64,16 @@
 										<div class="direction mt70"><i class="el-icon-caret-right" @click="right"></i></div>
 										<div class="direction"><i class="el-icon-caret-left" @click="left"></i></div>
 									</el-col>
-									<el-col :span="8">
+									<el-col :span="8" class="Unallocated">
 										<dsn-table :data="undistributed.filter(data => !ncGroup2 || data.ncGroup.toLowerCase().includes(ncGroup2.toLowerCase()))" @select="check2" @select-all="check2">
 											<el-table-column label="未分配不合格组">
 												<el-table-column label="">
 													<template slot="header">
 														<dsn-input v-model="ncGroup2" placeholder="输入不合格组搜索"/>
 													</template>
-													<el-table-column type="selection" width="100"></el-table-column>
+													<el-table-column type="selection" width="50"></el-table-column>
 													<el-table-column prop="ncGroup" label="不合格组"></el-table-column>
-													<el-table-column prop="ncGroupDes" label="不合格组描述"></el-table-column>
+													<el-table-column prop="ncGroupDes" label="不合格组描述" width="300"></el-table-column>
 													</el-table-column>
 											</el-table-column>
 										</dsn-table>
@@ -81,7 +82,9 @@
 							</el-col>
 						</el-row>
 					</el-tab-pane>
+<el-tab-pane label="自定义数据" name="custom">数据字段，数据属性</el-tab-pane>
 				</el-tabs>
+				
 				<div slot="footer" class="dialog-footer">
 					<!-- <dsn-button @click.native="handleReset(workCenterForm)">重 置</dsn-button> -->
 					<dsn-button >重 置</dsn-button>
@@ -203,6 +206,7 @@
 </script>
 
 <style scoped lang="scss">
+  
 	.operate {
 		background: #FFFFFF;
 		padding: 10px;

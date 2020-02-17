@@ -29,6 +29,7 @@
             type="primary"
             icon="el-icon-scissors"
             :disabled="lotForm.lot === ''"
+            @click="handleDivestiture"
           >拆分</dsn-button>
         </el-form-item>
       </el-form>
@@ -85,7 +86,7 @@
               <el-form-item label="新LOT数量" prop="quantity">
                 <dsn-input
                   class="lot"
-                  v-model.trim="lotDivestitureForm.quantity"
+                  v-model.number="lotDivestitureForm.quantity"
                   placeholder="请输入新LOT数量"
                 ></dsn-input>
               </el-form-item>
@@ -113,7 +114,8 @@
 <script>
 import {
   findLotAtOperationHttp,
-  listLotHttp
+  listLotHttp,
+  splitLotHttp
 } from "@/api/dc/lot.divestiture.api.js";
 import allLotModel from "../components/all-lots-model.vue";
 
@@ -124,12 +126,34 @@ export default {
     allLotModel
   },
   data() {
+    const validatorLot = (rule, value, callback) => {
+      // debugger;
+      if (value === "") {
+        callback("lot不能为空");
+      }
+      let reg = /^([A-Z]|[0-9]|_|-|\/)+$/;
+      if (!reg.test(value)) {
+        callback("lot格式应只包含（[A-Z,0-9,_,-,/]）");
+      }
+      callback();
+    };
+    const validatorNewLot = (rule, value, callback) => {
+      // debugger;
+      if (value === "") {
+        callback("lot不能为空");
+      }
+      let reg = /^([A-Z]|[0-9]|_|-|\/)+$/;
+      if (!reg.test(value)) {
+        callback("lot格式应只包含（[A-Z,0-9,_,-,/]）");
+      }
+      callback();
+    };
     return {
       lotForm: {
         lot: ""
       },
       lotFormRules: {
-        lot: [{ required: true, message: "请输入lot", trigger: "change" }]
+        lot: [{ required: true, validator: validatorLot, trigger: "blur" }]
       },
       showInfo: {
         status: "",
@@ -146,9 +170,10 @@ export default {
         quantity: 0
       },
       lotDivestitureFormRules: {
-        lot: [{ required: true, message: "请输入lot", trigger: "change" }],
+        lot: [{ required: true, validator: validatorNewLot, trigger: "blur" }],
         quantity: [
-          { required: true, message: "请输入lot数量", trigger: "change" }
+          { required: true, message: "请输入lot数量", trigger: "blur" },
+          { type: "number", message: "lot必须为数字值", trigger: "blur" }
         ]
       },
       tableData: [],
@@ -205,12 +230,40 @@ export default {
     //获取弹出框选择的数据
     selectLot(val) {
       this.currentLot = val;
-      console.log(this.currentLot);
     },
     //弹出框确认选择lot
     handleSelectLot() {
+      if (this.currentLot.lot === "") {
+        this.$message({
+          message: "请选择一个lot",
+          type: "warning"
+        });
+        return;
+      }
       this.lotForm.lot = this.currentLot.lot;
       this.lotDialog = false;
+    },
+    //拆分
+    handleDivestiture() {
+      const data = {
+        lot: this.lotForm.lot,
+        splitList: [this.lotDivestitureForm]
+      };
+      splitLotHttp(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.$refs["lotDivestitureForm"].resetFields();
+          this.$message({
+            message: res.message,
+            type: "success"
+          });
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
     }
   }
 };
@@ -231,48 +284,5 @@ export default {
       }
     }
   }
-  // padding: 10px 30px;
-  // .query {
-  //   display: flex;
-  //   .left {
-  //     .lot {
-  //       width: 90%;
-  //     }
-  //   }
-  // }
-  // .showInfo {
-  //   display: flex;
-  //   width: 100%;
-  //   height: 85%;
-  //   padding: 10px 10px;
-  //   background: white;
-  //   .left {
-  //     flex: 1;
-  //     .el-form {
-  //       width: 350px;
-  //       .el-form-item {
-  //         margin-bottom: 0px;
-  //         .el-input__inner {
-  //           border: 0px;
-  //         }
-  //       }
-  //     }
-  //   }
-  //   .right {
-  //     flex: 1;
-  //     .el-form {
-  //       width: 350px;
-  //       .el-form-item {
-  //         margin-bottom: 0px;
-  //         .el-input__inner {
-  //           border: 0px;
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
-  // .newLot {
-  //   width: 30%;
-  // }
 }
 </style>

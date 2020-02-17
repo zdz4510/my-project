@@ -5,59 +5,45 @@
         <span>搜索条件</span>
       </div>
       <!-- 查询条件start -->
-
-      <el-form
-        :inline="true"
-        :model="searchForm"
-        ref="searchForm"
-        :rules="rules"
-        class="form-style"
-        :label-width="formLabelWidth"
-      >
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="接收值:" prop="resource">
-              <dsn-input v-model="searchForm.resource" placeholder="请输入接收值"></dsn-input>
-            </el-form-item>
-            <el-form-item label="数据收集组名称:" prop="dcGroup">
-              <dsn-input v-model="searchForm.dcGroup" placeholder="请输入数据收集组名称"></dsn-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="收集类型:" prop="collectionType" required label-width="90px">
-              <dsn-select v-model="searchForm.collectionType" filterable placeholder="请选择收集类型">
-                <el-option
-                  v-for="item in collectionType"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
-              </dsn-select>
-            </el-form-item>
-            <el-form-item>
-              <dsn-button
-                v-show="searchForm.dcGroup===''"
-                size="small"
-                type="primary"
-                icon="el-icon-search"
-                @click="search"
-              >查询</dsn-button>
-              <dsn-button
-                v-show="searchForm.dcGroup!==''"
-                size="small"
-                type="primary"
-                icon="el-icon-search"
-                @click="searchRight"
-              >查询</dsn-button>
-              <dsn-button
-                size="small"
-                type="primary"
-                icon="el-icon-refresh"
-                @click="resetForm('searchForm')"
-              >重置</dsn-button>
-            </el-form-item>
-          </el-col>
-        </el-row>
+      <el-form :inline="true" :model="searchForm" ref="searchForm" :rules="rules">
+        <el-form-item label="接收值:" prop="resource">
+          <dsn-input v-model="searchForm.resource" placeholder="请输入接收值"></dsn-input>
+        </el-form-item>
+        <el-form-item label="数据收集组名称:" prop="dcGroup">
+          <dsn-input v-model="searchForm.dcGroup" placeholder="请输入数据收集组名称"></dsn-input>
+        </el-form-item>
+        <el-form-item label="收集类型:" prop="collectionType" required label-width="90px">
+          <dsn-select v-model="searchForm.collectionType" filterable placeholder="请选择收集类型">
+            <el-option
+              v-for="item in collectionType"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </dsn-select>
+        </el-form-item>
+        <el-form-item>
+          <dsn-button
+            v-show="searchForm.dcGroup===''"
+            size="small"
+            type="primary"
+            icon="el-icon-search"
+            @click="searchLeft"
+          >查询</dsn-button>
+          <dsn-button
+            v-show="searchForm.dcGroup!==''"
+            size="small"
+            type="primary"
+            icon="el-icon-search"
+            @click="searchRight"
+          >查询</dsn-button>
+          <dsn-button
+            size="small"
+            type="primary"
+            icon="el-icon-refresh"
+            @click="resetForm('searchForm')"
+          >重置</dsn-button>
+        </el-form-item>
       </el-form>
       <!-- 查询条件end -->
     </DsnPanel>
@@ -67,10 +53,23 @@
       </div>
       <!-- 表格操作start -->
       <div class="operate">
-        <dsn-button size="small" type="primary" icon="el-icon-upload2" @click="handleExport">导出</dsn-button>
+        <dsn-button
+          size="small"
+          type="primary"
+          icon="el-icon-upload2"
+          v-show="activeName === '清单'"
+          @click="handleExportLeft"
+        >导出</dsn-button>
+        <dsn-button
+          size="small"
+          type="primary"
+          icon="el-icon-upload2"
+          v-show="activeName === '参数清单'"
+          @click="handleExportRight"
+        >导出</dsn-button>
       </div>
       <!-- 表格操作end -->
-      <el-tabs type="border-card" @tab-click="handleClick">
+      <el-tabs type="border-card" @tab-click="handleClick" v-model="activeName">
         <el-tab-pane label="已收集数据收集组清单" name="清单">
           <!-- 已收集数据收集组清单表格数据start -->
           <dsn-table
@@ -78,7 +77,7 @@
             :data="this.tableData.data"
             tooltip-effect="dark"
             row-key="mat"
-            @selection-change="handleSelectionChange"
+            @selection-change="handleSelectionChangeLeft"
           >
             <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
             <el-table-column type="index" label="序号"></el-table-column>
@@ -99,13 +98,13 @@
           </dsn-table>
           <dsn-pagination
             background
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="this.page.currentPage"
+            @size-change="handleSizeChangeLeft"
+            @current-change="handleCurrentChangeLeft"
+            :current-page="this.leftPage.currentPage"
             :page-sizes="[1, 10, 15, 20, 30, 50]"
-            :page-size="this.page.pageSize"
+            :page-size="this.leftPage.pageSize"
             layout="->, total, prev, pager, next, sizes"
-            :total="this.page.total"
+            :total="this.leftPage.total"
           ></dsn-pagination>
           <!-- 已收集数据收集组清单表格数据end -->
         </el-tab-pane>
@@ -113,8 +112,8 @@
           <!-- 已收集数据收集组参数清单表格数据start -->
           <dsn-table
             border
-            :data="tableParamsData.data"
-            @selection-change="handleSelectionChange2"
+            :data="tableParamsData.tableData"
+            @selection-change="handleSelectionChangeRight"
             row-key="mat"
           >
             <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
@@ -126,15 +125,14 @@
           <!-- 已收集数据收集组参数清单表格数据end -->
           <!-- 分页start -->
           <dsn-pagination
-            class="mtb20"
             background
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="this.page.currentPage"
+            @size-change="handleSizeChangeRight"
+            @current-change="handleCurrentChangeRight"
+            :current-page="this.rightPage.currentPage"
             :page-sizes="[1, 10, 15, 20, 30, 50]"
-            :page-size="this.page.pageSize"
+            :page-size="this.rightPage.pageSize"
             layout="->, total, prev, pager, next, sizes"
-            :total="this.page.total"
+            :total="this.rightPage.total"
           ></dsn-pagination>
           <!-- 分页end -->
         </el-tab-pane>
@@ -163,41 +161,51 @@ let tableHead = [
     column_comment: "数据收集组"
   }
 ];
+const tHeaderLeft = [
+  "数据收集组",
+  "收集类型",
+  "设备组",
+  "设备编号",
+  "物料号",
+  "物料组",
+  "工单号",
+  "工作中心",
+  "工序",
+  "校验结果",
+  "创建人",
+  "创建时间"
+];
+const filterValLeft = [
+  "dcGroup",
+  "collectionType",
+  "resourceGroup",
+  "resource",
+  "material",
+  "materialGroup",
+  "shopOrder",
+  "workCenter",
+  "operation",
+  "testPass",
+  "createUserName",
+  "createTime"
+];
+const fileNameLeft = "已收集数据收集组清单";
+const tHeaderRight = ["数据收集组", "收集类型"];
+const filterValRight = ["dcGroup", "collectionType"];
+const fileNameRight = "已收集数据收集组参数清单表格数据";
 export default {
   name: "dc-search",
   data() {
     return {
-      tHeader: [
-        "数据收集组",
-        "收集类型",
-        "设备组",
-        "设备编号",
-        "物料号",
-        "物料组",
-        "工单号",
-        "工作中心",
-        "工序",
-        "校验结果",
-        "创建人",
-        "创建时间"
-      ],
-      filterVal: [
-        "dcGroup",
-        "collectionType",
-        "resourceGroup",
-        "resource",
-        "material",
-        "materialGroup",
-        "shopOrder",
-        "workCenter",
-        "operation",
-        "testPass",
-        "createUserName",
-        "createTime"
-      ],
-      fileName: "独立数据查询报表维护表",
-      show: true,
-      checkedList: [],
+      tHeaderLeft,
+      filterValLeft,
+      fileNameLeft,
+      tHeaderRight,
+      filterValRight,
+      fileNameRight,
+      tableHead,
+      checkedListLeft: [],
+      checkedListRight: [],
       formLabelWidth: "200px",
       searchForm: {
         resource: "",
@@ -225,53 +233,80 @@ export default {
       },
       tableParamsData: {
         data: [],
-        tableHead
+        tableHead: []
       },
-      page: {
+      leftPage: {
         currentPage: 1,
         pageSize: 10,
         total: 0
-      }
+      },
+      rightPage: {
+        currentPage: 1,
+        pageSize: 10,
+        total: 0
+      },
+      activeName: "清单"
     };
   },
   created() {
-    this.search();
+    this.searchLeft();
   },
   methods: {
-    search() {
+    searchLeft() {
       const params = {
         tenantSiteCode: this.searchForm.tenantSiteCode,
         resource: this.searchForm.resource,
         dcGroup: this.searchForm.dcGroup,
         collectionType: this.searchForm.collectionType,
-        pageSize: this.page.pageSize,
-        currentPage: this.page.currentPage
+        pageSize: this.leftPage.pageSize,
+        currentPage: this.leftPage.currentPage
       };
-      this.searchLeft(params);
-      this.searchRight(params);
+      this.search(params);
     },
-    searchLeft(params) {
+    searchRight() {
+      const params = {
+        tenantSiteCode: this.searchForm.tenantSiteCode,
+        resource: this.searchForm.resource,
+        dcGroup: this.searchForm.dcGroup,
+        collectionType: this.searchForm.collectionType
+      };
+      this.search({
+        ...params,
+        pageSize: this.leftPage.pageSize,
+        currentPage: this.leftPage.currentPage
+      });
+      this.searchParams({
+        ...params,
+        pageSize: this.rightPage.pageSize,
+        currentPage: this.rightPage.currentPage
+      });
+    },
+    search(params) {
       findDcDataPageHttp(params).then(data => {
         const res = data.data;
         if (res.code == 200) {
           this.tableData.data = res.data.dcDataPage.data;
-          this.page.total = res.data.dcParamPage.total;
+          this.leftPage.total = res.data.dcDataPage.total;
           return;
         }
         this.$message({ message: res.message, type: "error" });
       });
     },
-    searchRight(params) {
+    searchParams(params) {
       findDcParamPageHttp(params).then(data => {
         const res = data.data;
         if (res.code == 200) {
+          this.tableParamsData.tableHead = JSON.parse(
+            JSON.stringify(this.tableHead)
+          );
           res.data.dcParamColumnHead.forEach(element => {
             this.tableParamsData.tableHead.push({
               column_name: element,
               column_comment: element
             });
           });
-          this.page.total = res.data.dcParamPage.total;
+          this.tableParamsData.tableData = res.data.dcParamPage.data;
+          this.rightPage.total = res.data.dcParamPage.total;
           return;
         }
         this.$message({ message: res.message, type: "error" });
@@ -280,128 +315,122 @@ export default {
     handleClick(tab, event) {
       console.log(tab, event);
     },
-    handleSizeChange(pageSize) {
-      console.log(pageSize);
-      this.page.pageSize = pageSize;
-      this.search();
+    handleSizeChangeLeft(pageSize) {
+      this.leftPage.pageSize = pageSize;
+      this.leftPage.currentPage = 1;
+      this.searchLeft();
     },
-    handleCurrentChange(currentPage) {
-      this.page.currentPage = currentPage;
-      this.search();
+    handleCurrentChangeLeft(currentPage) {
+      this.leftPage.currentPage = currentPage;
+      this.searchLeft();
     },
-    handleSelectionChange(val) {
-      this.checkedList = val;
+    handleSizeChangeRight(pageSize) {
+      this.rightPage.pageSize = pageSize;
+      this.rightPage.currentPage = 1;
+      this.searchRight();
+    },
+    handleCurrentChangeRight(currentPage) {
+      this.rightPage.currentPage = currentPage;
+      this.searchRight();
+    },
+    handleSelectionChangeLeft(val) {
+      this.checkedListLeft = val;
       console.log(val);
     },
-    handleSelectionChange2(val) {
-      this.checkedList = val;
-      console.log(val);
-    },
-    submitForm(formName) {
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          console.log("submit!");
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
-      });
+    handleSelectionChangeRight(val) {
+      this.checkedListRight = val;
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
-      this.search();
+      this.searchLeft();
     },
-    // exportExcel(){
-    // 	let data = this.searchForm
-    // 	// exportExcelData(params).then(data => {
-    // 	// 	console.log(data)
-    // 	// })
-    // 	// console.log(`${window.VUE_APP_URL}/mes/dcDataReport/exportExcel?collectionType=${data.collectionType}&dcGroup=${data.dcGroup}&resource=${data.resource}&tenantSiteCode=${data.tenantSiteCode}`)
-    // 	window.location.href=`${window.VUE_APP_URL}/mes/dcDataReport/exportExcel?collectionType=${data.collectionType}&dcGroup=${data.dcGroup}&resource=${data.resource}&tenantSiteCode=${data.tenantSiteCode}`
-    // }
-    //导出开始
-    handleExport() {
-      if (this.checkedList.length === 0) {
-        this.exportHttp();
+    //左边导出开始
+    handleExportLeft() {
+      if (this.checkedListLeft.length === 0) {
+        this.exportHttpLeft();
       }
-      if (this.checkedList.length > 0) {
-        this.checkedList.map(item => {
-          item.status = item.status ? "已启用" : "未启用";
+      if (this.checkedListLeft.length > 0) {
+        this.checkedListLeft.map(item => {
+          item.collectionType = item.collectionType === 10 ? "LOT" : "资源";
         });
-        this.exportResult(this.checkedList);
+
+        this.exportResultLeft(this.checkedListLeft);
       }
     },
-    exportHttp() {
+    exportHttpLeft() {
       let params = {
         tenantSiteCode: this.searchForm.tenantSiteCode,
         resource: this.searchForm.resource,
         dcGroup: this.searchForm.dcGroup,
         collectionType: this.searchForm.collectionType,
         pageSize: 0,
-        currentPage: this.page.currentPage
+        currentPage: this.leftPage.currentPage
       };
       findDcDataPageHttp(params).then(data => {
-        if (data.data.code == 200) {
-          // this.show = data.data.data.isShowParamPage;
-          if (this.show) {
-            let tableHead = [
-              {
-                column_name: "resource",
-                column_comment: "接收值"
-              },
-              {
-                column_name: "collectionType",
-                column_comment: "收集类型"
-              },
-              {
-                column_name: "dcGroup",
-                column_comment: "数据收集组"
-              }
-            ];
-
-            data.data.data.dcParamColumnHead.forEach(function(val) {
-              let obj = {};
-              obj.column_name = val;
-              obj.column_comment = val;
-              tableHead.push(obj);
-            });
-            // this.tableParamsData.data = data.data.data.dcParamPage.data
-            // this.tableParamsData.tableHead = tableHead
-            // this.page.total = data.data.data.dcParamPage.total
-            this.exportResult(data.data.data.dcParamPage.data);
-          } else {
-            // this.tableData.data = data.data.data.dcDataPage.data
-            // this.page.total = data.data.data.dcDataPage.total
-            this.exportResult(data.data.data.dcDataPage.data);
-          }
-        } else {
-          this.$message.error(data.data.message);
+        const res = data.data;
+        if (res.code == 200) {
+          this.exportResultLeft(res.data.dcDataPage.data);
+          return;
         }
+        this.$message({ message: res.message, type: "error" });
       });
-
-      // let params= {
-      // 	pageSize: 0,
-      // 	currentPage: this.tableData.page.currentPage,
-      // 	operation:this.searchForm.operation,
-      // }
-      // getOperationList(params).then(data => {
-      // 	if(data.data.code == 200){
-      // 		let res = data.data.data.data
-      // 		res.map(item=>{
-      // 			item.status = item.status ? '已启用' : '未启用'
-      // 		})
-      // 		this.exportResult(res);
-      // 	}else{
-      // 		this.$message.error(data.data.message)
-      // 	}
-      // })
     },
-    exportResult(data) {
+    exportResultLeft(data) {
       const tipString = exportExcel(
-        this.tHeader,
-        this.filterVal,
+        this.tHeaderLeft,
+        this.filterValLeft,
         data,
-        this.fileName
+        this.fileNameLeft
+      );
+      if (tipString === undefined) {
+        return;
+      } else {
+        this.$message({
+          message: tipString,
+          type: "warning"
+        });
+        return;
+      }
+    },
+    //左边导出结束
+    // 右边导出开始
+    handleExportRight() {
+      if (this.checkedListRight.length === 0) {
+        this.exportHttpRight();
+      }
+      if (this.checkedListRight.length > 0) {
+        this.tHeaderRight = this.tableParamsData.tableHead;
+        this.exportResultRight(this.checkedListRight);
+      }
+    },
+    exportHttpRight() {
+      let params = {
+        tenantSiteCode: this.searchForm.tenantSiteCode,
+        resource: this.searchForm.resource,
+        dcGroup: this.searchForm.dcGroup,
+        collectionType: this.searchForm.collectionType,
+        pageSize: 0,
+        currentPage: this.rightPage.currentPage
+      };
+      findDcParamPageHttp(params).then(data => {
+        const res = data.data;
+        if (res.code == 200) {
+          res.data.dcParamColumnHead.forEach(element => {
+            this.tHeaderRight.push(element);
+          });
+          console.log(res.data.dcParamPage.data);
+          this.exportResultRight(res.data.dcParamPage.data);
+          return;
+        }
+        this.$message({ message: res.message, type: "error" });
+      });
+    },
+    exportResultRight(data) {
+      const tipString = exportExcel(
+        this.tHeaderRight,
+        this.filterValRight,
+        data,
+        this.fileNameRight
       );
       if (tipString === undefined) {
         return;
@@ -413,7 +442,7 @@ export default {
         return;
       }
     }
-    //导出结束
+    // 右边导出结束
   }
 };
 </script>

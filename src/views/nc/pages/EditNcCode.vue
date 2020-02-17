@@ -59,7 +59,7 @@
 								</el-row>
 							</el-tab-pane>
 							<el-tab-pane label="不合格组" name="second">
-								<el-row>
+								<el-row style="left:90px">
 									<el-col :span="24">
 										<el-row>
 											<el-col :span="8">
@@ -69,9 +69,9 @@
 															<template slot="header">
 																<dsn-input v-model="ncGroup1" placeholder="输入不合格组搜索"/>
 															</template>
-															<el-table-column type="selection" width="100"></el-table-column>
+															<el-table-column type="selection" width="50"></el-table-column>
 															<el-table-column prop="ncGroup" label="不合格组"></el-table-column>
-															<el-table-column prop="ncGroupDes" label="不合格组描述"></el-table-column>
+															<el-table-column prop="ncGroupDes" label="不合格组描述" width="300"></el-table-column>
 															</el-table-column>
 													</el-table-column>
 												</dsn-table>
@@ -87,9 +87,9 @@
 															<template slot="header">
 																<dsn-input v-model="ncGroup2" placeholder="输入不合格组搜索"/>
 															</template>
-															<el-table-column type="selection" width="100"></el-table-column>
+															<el-table-column type="selection" width="50"></el-table-column>
 															<el-table-column prop="ncGroup" label="不合格组"></el-table-column>
-															<el-table-column prop="ncGroupDes" label="不合格组描述"></el-table-column>
+															<el-table-column prop="ncGroupDes" label="不合格组描述" width="300"></el-table-column>
 															</el-table-column>
 													</el-table-column>
 												</dsn-table>
@@ -98,6 +98,7 @@
 									</el-col>
 								</el-row>
 							</el-tab-pane>
+							<el-tab-pane label="自定义数据" name="custom">数据字段，数据属性</el-tab-pane>
 						</el-tabs>
 						<div slot="footer" class="dialog-footer">
 							<!-- <dsn-button @click.native="handleReset(workCenterForm)">重 置</dsn-button> -->
@@ -189,10 +190,11 @@ export default {
 		this.setCurrent(this.editForm); // 设置选中第一行
 		
 				this.currentRow = this.editForm; // 设置初始currentRow 为第一行
-				console.log("2222",this.editForm)
+				
 				this.allocated = this.editForm.ncCodeGroupList.allocated;
 				
 				this.undistributed = this.editForm.ncCodeGroupList.undistributed;
+				
       }
     },
     //清除下拉列表时触发
@@ -298,6 +300,7 @@ export default {
 					this.allocated.map(item=>{
 						arr.push(item.ncGroup)
 					})
+					console.log("88888888",arr)
 					this.editForm.ncCodeGroupList = arr
 					params.updateList = [this.editForm]
 					saveNcCode(params).then(data => {
