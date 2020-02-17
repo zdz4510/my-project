@@ -1,129 +1,152 @@
 <template>
-  <!-- 线条 -->
-  <div class="line-info">
-    <table class="info-table gridtable" border="1">
-      <tr>
-        <td>定位</td>
-        <td>输出</td>
-      </tr>
-      <tr>
-        <td>文本值:</td>
-        <td>
-          <input />
-        </td>
-      </tr>
-      <tr>
-        <td>变量名称:</td>
-        <td>
-          <input />
-        </td>
-      </tr>
-      <tr>
-        <td>Y轴:</td>
-        <td>
-          <input />
-        </td>
-      </tr>
-      <tr>
-        <td>长度:</td>
-        <td>
-          <input />
-        </td>
-      </tr>
-      <tr>
-        <td>宽度::</td>
-        <td>
-          <input />
-        </td>
-      </tr>
-      <tr>
-        <td>字体大小:</td>
-        <td>
-          <input />
-        </td>
-      </tr>
-      <tr>
-        <td>颜色:</td>
-        <td>
-          <input />
-        </td>
-      </tr>
-      <tr>
-        <td>颜色:</td>
-        <td>
-         <el-color-picker  size="mini" v-model="value"></el-color-picker>
-        </td>
-      </tr>
-      <tr>
-        <td>文本输出前缀:</td>
-        <td>
-          <input />
-        </td>
-      </tr>
-      <tr>
-        <td>文本输出后缀:</td>
-        <td>
-          <input />
-        </td>
-      </tr>
-      <tr>
-        <td>文本填充位数:</td>
-        <td>
-          <input />
-        </td>
-      </tr>
-      <tr>
-        <td>文本填充值:</td>
-        <td>
-          <input />
-        </td>
-      </tr>
-      <tr>
-        <td>横向对齐方式:</td>
-        <td>
-          <el-select size="mini" v-model="value" placeholder="请选择">
-            <el-option label="居上" value="1"></el-option>
-            <el-option label="居中" value="2"></el-option>
-            <el-option label="居下" value="3"></el-option>
-          </el-select>
-        </td>
-      </tr>
-      <tr>
-        <td>纵向对齐方式:</td>
-        <td>
-          <el-select size="mini" v-model="value" placeholder="请选择">
-            <el-option label="居左" value="1"></el-option>
-            <el-option label="居中" value="2"></el-option>
-            <el-option label="居右" value="3"></el-option>
-          </el-select>
-        </td>
-      </tr>
-      <tr>
-        <td>粗体:</td>
-        <td>
-          <el-switch size="mini" v-model="value1"></el-switch>
-        </td>
-      </tr>
-      <tr>
-        <td>斜体:</td>
-        <td>
-          <el-switch size="mini" v-model="value1"></el-switch>
-        </td>
-      </tr>
-      <tr>
-        <td>自动换行:</td>
-        <td>
-          <el-switch size="mini" v-model="value1"></el-switch>
-        </td>
-      </tr>
-      <tr>
-        <td>斜体:</td>
-        <td>
-          <input />
-        </td>
-      </tr>
-    </table>
-
+  <!-- 文本 -->
+  <el-tabs
+        class="tabs-wrap"
+        v-model="currentTabs"
+        type="card"
+      >
+      <el-tab-pane label="定位" name="location">
+        <table>
+          <tr>
+            <td>X轴:</td>
+            <td><input type="text"></td>
+          </tr>
+          <tr>
+            <td>Y轴:</td>
+            <td><input type="text"></td>
+          </tr>
+          <tr>
+            <td>长度:</td>
+            <td><input type="text"></td>
+          </tr>
+          <tr>
+            <td>宽度:</td>
+            <td><input type="text"></td>
+          </tr>
+          <tr>
+            <td>旋转:</td>
+            <td><input type="text"></td>
+          </tr>
+        </table>
+      </el-tab-pane>
+      <el-tab-pane label="输出" name="export">
+        <table class="info-table gridtable" border="1">
+            <tr>
+              <td>定位</td>
+              <td>输出</td>
+            </tr>
+            <tr>
+              <td>文本值:</td>
+              <td>
+                <input />
+              </td>
+            </tr>
+            <tr>
+              <td>变量名称:</td>
+              <td>
+                <input />
+              </td>
+            </tr>
+            <tr>
+              <td>Y轴:</td>
+              <td>
+                <input />
+              </td>
+            </tr>
+            <tr>
+              <td>长度:</td>
+              <td>
+                <input />
+              </td>
+            </tr>
+            <tr>
+              <td>宽度::</td>
+              <td>
+                <input />
+              </td>
+            </tr>
+            <tr>
+              <td>字体大小:</td>
+              <td>
+                <input />
+              </td>
+            </tr>
+            <tr>
+              <td>颜色:</td>
+              <td>
+                <input />
+              </td>
+            </tr>
+            <tr>
+              <td>颜色:</td>
+              <td>
+              <el-color-picker  size="mini" v-model="value"></el-color-picker>
+              </td>
+            </tr>
+            <tr>
+              <td>文本输出前缀:</td>
+              <td>
+                <input />
+              </td>
+            </tr>
+            <tr>
+              <td>文本输出后缀:</td>
+              <td>
+                <input />
+              </td>
+            </tr>
+            <tr>
+              <td>文本填充位数:</td>
+              <td>
+                <input />
+              </td>
+            </tr>
+            <tr>
+              <td>文本填充值:</td>
+              <td>
+                <input />
+              </td>
+            </tr>
+            <tr>
+              <td>横向对齐方式:</td>
+              <td>
+                <el-select size="mini" v-model="value" placeholder="请选择">
+                  <el-option label="居上" value="1"></el-option>
+                  <el-option label="居中" value="2"></el-option>
+                  <el-option label="居下" value="3"></el-option>
+                </el-select>
+              </td>
+            </tr>
+            <tr>
+              <td>纵向对齐方式:</td>
+              <td>
+                <el-select size="mini" v-model="value" placeholder="请选择">
+                  <el-option label="居左" value="1"></el-option>
+                  <el-option label="居中" value="2"></el-option>
+                  <el-option label="居右" value="3"></el-option>
+                </el-select>
+              </td>
+            </tr>
+            <tr>
+              <td>粗体:</td>
+              <td>
+                <el-switch size="mini" v-model="value1"></el-switch>
+              </td>
+            </tr>
+            <tr>
+              <td>斜体:</td>
+              <td>
+                <el-switch size="mini" v-model="value1"></el-switch>
+              </td>
+            </tr>
+            <tr>
+              <td>自动换行:</td>
+              <td>
+                <el-switch size="mini" v-model="value1"></el-switch>
+              </td>
+            </tr>
+          </table>
+      </el-tab-pane>
     <!-- <el-form
               ref="locationForm"
               :model="locationForm"
@@ -309,7 +332,7 @@
                 </el-image>
               </el-form-item>
     </el-form>-->
-  </div>
+  </el-tabs>
 </template>
 
 <script>
@@ -323,6 +346,7 @@ export default {
   },
   data() {
     return {
+      currentTabs: 'location',
       radio1: "",
       value1: true,
       value: ""
@@ -352,7 +376,4 @@ export default {
   }
 }
 
-.info-table {
-  border: 1px solid #eee;
-}
 </style>

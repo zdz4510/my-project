@@ -1,4 +1,5 @@
 <template>
+<!-- 形状 -->
   <el-tabs
       class="tabs-wrap"
       v-model="currentTabs"
@@ -6,10 +7,6 @@
     >
     <el-tab-pane label="定位" name="location">
       <table>
-        <!-- <tr>
-          <td>定位</td>
-          <td>输出</td>
-        </tr> -->
         <tr>
           <td>X轴:</td>
           <td><input type="text"></td>
@@ -35,35 +32,44 @@
     <el-tab-pane label="输出" name="export">
       <table>
         <tr>
-          <td>来源路径:</td>
-          <td> <input type="text"> </td>
+          <td>形状:</td>
+          <td>
+            <dsn-select size="mini" v-model="value" placeholder="请选择">
+              <el-option label="线条" value="1"></el-option>
+              <el-option label="圆形" value="2"></el-option>
+              <el-option label="矩形" value="3"></el-option>
+            </dsn-select>
+          </td>
         </tr>
         <tr>
-          <td>垂直镜像:</td>
-          <td> <input type="text"> </td>
+          <td>线条厚度:</td>
+          <td><input type="text"></td>
         </tr>
         <tr>
-          <td>水平镜像:</td>
-          <td> <input type="text"> </td>
-        </tr>
-        <tr>
-          <td>亮度:</td>
-          <td> <input type="text"> </td>
-        </tr>
-        <tr>
-          <td>对比:</td>
-          <td> <input type="text"> </td>
+          <td>填充色:</td>
+          <td>
+            <dsn-select size="mini" v-model="value" placeholder="请选择">
+              <el-option label="透明" value="1"></el-option>
+              <el-option label="黑色" value="2"></el-option>
+            </dsn-select>
+          </td>
         </tr>
       </table>
     </el-tab-pane>
   </el-tabs>
 </template>
+
 <script>
-  export default{
+  export default {
     data() {
       return {
-        currentTabs: 'location'
+        currentTabs: 'location',
+        value: '1'
       }
     },
   }
 </script>
+
+<style lang="scss" scoped>
+
+</style>

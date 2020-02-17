@@ -14,28 +14,40 @@
 
   <div class="right-top-box">
     <div class="objAttr">
-      <el-tabs
-        v-model="objAttr"
-        type="card"
-        @tab-click="handleObjAttributeClick"
-      >
-        <el-tab-pane label="定位" name="location">
-          <div class="location-box">
-    
-            <DTextInfo  :locationForm="locationForm"></DTextInfo>
-           
-          </div>
-        </el-tab-pane>
-        <el-tab-pane label="输出" name="export">输出</el-tab-pane>
-      </el-tabs>
+      <DTextInfo  :locationForm="locationForm"></DTextInfo>
+      <!-- <DImageInfo></DImageInfo> -->
+      <!-- <DQrCodeInfo></DQrCodeInfo> -->
+      <!-- <DBarcodeInfo></DBarcodeInfo> -->
+      <!-- <DGeometricalInfo></DGeometricalInfo> -->
+      <!-- <DPDF417Info></DPDF417Info> -->
+      <!-- <DSourceDateInfo></DSourceDateInfo> -->
+      <!-- <DSourceFreeInfo></DSourceFreeInfo> -->
+      <!-- <DTagSetInfo></DTagSetInfo> -->
     </div>
   </div>
 </template>
 <script>
-import DTextInfo from "@/views/tag/components/info/d-text-info.vue"
+import DTextInfo from "@/views/tag/components/info/d-text-info.vue" // 文本
+// import DImageInfo from "@/views/tag/components/info/d-image-info.vue" // 图片
+// import DQrCodeInfo from "@/views/tag/components/info/d-qr-code-info.vue" // 二维码
+// import DBarcodeInfo from "@/views/tag/components/info/d-barcode-info.vue" // 一维码
+// import DGeometricalInfo from "@/views/tag/components/info/d-geometrical-info.vue" // 形状（线条/圆形/矩形）
+// import DPDF417Info from "@/views/tag/components/info/d-pdf417-info.vue" // pdf417
+// import DSourceDateInfo from "@/views/tag/components/info/d-source-date-info.vue" // 资料源属性(日期)	
+// import DSourceFreeInfo from "@/views/tag/components/info/d-source-free-info.vue" // 资料源属性(任意/公式)	
+// import DTagSetInfo from "@/views/tag/components/info/d-tag-set-info.vue" // 标签设置	
+
 export default {
   components:{
-    DTextInfo
+    DTextInfo,
+    // DImageInfo,
+    // DQrCodeInfo,
+    // DBarcodeInfo,
+    // DGeometricalInfo,
+    // DPDF417Info,
+    // DSourceDateInfo,
+    // DSourceFreeInfo,
+    // DTagSetInfo
   },
   props: {
     locationForm: {
@@ -147,5 +159,38 @@ background-color: #ffffff;
      outline: none;
     
    }
+}
+.tabs-wrap {
+  height: 100%;
+  overflow-y: scroll;
+
+  .header {
+    font-size: 14px;
+    padding: 15px 0;
+  }
+  table{
+    border-collapse: collapse;
+    width: 100%;
+    tr {
+      // border-bottom: 1px solid #eee;
+      // &:first-child {
+      //   td {
+      //     color: #333;
+      //     font-weight: bold;
+      //   }
+      // }
+      td{
+        border: 1px solid #eee;
+        padding: 5px;
+        color: #666;
+        height: 20px;
+        input{
+          &:active,&:focus {
+            outline: none
+          }
+        }
+      }
+    }
+  }
 }
 </style>

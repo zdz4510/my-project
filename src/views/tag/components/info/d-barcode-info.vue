@@ -1,5 +1,5 @@
 <template>
-<!-- 二维码 -->
+<!-- 一维码 -->
   <el-tabs
       class="tabs-wrap"
       v-model="currentTabs"
@@ -40,44 +40,67 @@
     <el-tab-pane label="输出" name="export">
       <table>
         <tr>
-            <td>条码种类:</td>
-            <td><input type="text"></td>
+          <td>条码种类:</td>
+          <td><input type="text"></td>
         </tr>
         <tr>
-            <td>固定值:</td>
-            <td><input type="text"></td>
+          <td>输出类型:</td>
+          <td>
+            <el-select size="mini" v-model="value" placeholder="请选择">
+              <el-option label="AUTO/CODE" value="1"></el-option>
+              <el-option label="A/CODE" value="2"></el-option>
+              <el-option label="B/CODE" value="3"></el-option>
+              <el-option label="C" value="3"></el-option>
+            </el-select>
+          </td>
         </tr>
         <tr>
-            <td>变量名称:</td>
-            <td><input type="text"></td>
+          <td>狭窄条宽:</td>
+          <td><input type="text"></td>
         </tr>
         <tr>
-            <td>元件宽度:</td>
-            <td><input type="text"></td>
+          <td>条宽间隔:</td>
+          <td><input type="text"></td>
         </tr>
         <tr>
-            <td>ECC:</td>
-            <td><input type="text"></td>
+          <td>高度:</td>
+          <td><input type="text"></td>
         </tr>
         <tr>
-            <td>型号:</td>
-            <td><input type="text"></td>
+          <td>固定值:</td>
+          <td><input type="text"></td>
         </tr>
         <tr>
-            <td>起始状态:</td>
-            <td><input type="text"></td>
+          <td>变量名称:</td>
+          <td><input type="text"></td>
         </tr>
         <tr>
-            <td>字体:</td>
-            <td><input type="text"></td>
+          <td>变量输出前缀:</td>
+          <td><input type="text"></td>
         </tr>
         <tr>
-            <td>字体大小:</td>
-            <td><input type="text"></td>
+          <td>变量输出后缀:</td>
+          <td><input type="text"></td>
         </tr>
         <tr>
-            <td>字体宽度:</td>
-            <td><input type="text"></td>
+          <td>变量填充位数:</td>
+          <td><input type="text"></td>
+        </tr>
+        <tr>
+          <td>变量填充值:</td>
+          <td><input type="text"></td>
+        </tr>
+        <tr>
+          <td>字体:</td>
+          <td><input type="text"></td>
+        </tr>
+        <tr>
+          <td>字体大小:</td>
+          <td><input type="text"></td>
+        </tr>
+        <tr>
+          <td>字体宽度:</td>
+          <td><input type="text"></td>
         </tr>
         <tr>
             <td>粗体:</td>
@@ -108,45 +131,72 @@
             </td>
         </tr>
         <tr>
-            <td>文本条码间隔:</td>
-            <td><input type="text"></td>
+          <td>文本条码间隔:</td>
+          <td><input type="text"></td>
         </tr>
         <tr>
-            <td>文本输出前缀:</td>
-            <td><input type="text"></td>
+          <td>文本输出前缀:</td>
+          <td><input type="text"></td>
         </tr>
         <tr>
-            <td>文本输出后缀:</td>
-            <td><input type="text"></td>
+          <td>文本输出后缀:</td>
+          <td><input type="text"></td>
         </tr>
         <tr>
-            <td>文本填充位数:</td>
-            <td><input type="text"></td>
+          <td>文本填充位数:</td>
+          <td><input type="text"></td>
         </tr>
         <tr>
-            <td>文本填充值:</td>
-            <td><input type="text"></td>
+          <td>文本填充值:</td>
+          <td><input type="text"></td>
         </tr>
         <tr>
-            <td>自动换行:</td>
-            <td><input type="text"></td>
+          <td>自动换行:</td>
+          <td><input type="text"></td>
         </tr>
       </table>
     </el-tab-pane>
   </el-tabs>
 </template>
-<script>
-  export default{
-    data() {
-      return {
-        currentTabs: 'location',
-        value: '1',
-        value1: false,
-        value2: false
-      }
-    },
-  }
-</script>
-<style lang="scss">
 
+<script>
+    export default {
+        data() {
+            return {
+                currentTabs: 'location',
+                value: '1',
+                value1: false,
+                value2: false
+            }
+        },
+    }
+</script>
+
+<style lang="scss">
+.tabs-wrap {
+  table{
+    border-collapse: collapse;
+    width: 100%;
+    tr {
+      // border-bottom: 1px solid #eee;
+      // &:first-child {
+      //   td {
+      //     color: #333;
+      //     font-weight: bold;
+      //   }
+      // }
+      td{
+        border: 1px solid #eee;
+        padding: 5px;
+        color: #666;
+        height: 20px;
+        input{
+          &:active,&:focus {
+            outline: none
+          }
+        }
+      }
+    }
+  }
+}
 </style>
