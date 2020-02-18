@@ -63,7 +63,7 @@
           <pannel ref="panel" :search="searchValue" />
         </el-tab-pane>
         <el-tab-pane label="自定义字段">
-          <DsnData></DsnData>
+          <DsnData  :data="form.customizedFieldDefInfoList"></DsnData>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -87,6 +87,7 @@ export default {
     return {
       searchValue: "",
       form: {
+        customizedFieldDefInfoList:[],
         description: "", // 描述
         currentRevision: true, // 当前版本
         routerType: "",
@@ -298,7 +299,9 @@ export default {
             entryRouterStep,
             routerSteps,
             reference,
-            modifyTime
+            modifyTime,
+            customizedFieldDefInfoList
+            
           } = res.data;
           this.form = {
             description: description, // 描述
@@ -308,11 +311,12 @@ export default {
             router: router,
             revision: revision,
             reference,
-            modifyTime
+            modifyTime,
+             customizedFieldDefInfoList:customizedFieldDefInfoList||[]
           };
           const data = handleRightData({
             entryRouterStep,
-            routerSteps
+            routerSteps,
           });
           // 重新渲染 附加工序的图
           this.$refs["panel"].dataReload({
