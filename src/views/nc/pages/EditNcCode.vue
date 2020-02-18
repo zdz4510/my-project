@@ -141,7 +141,7 @@ export default {
 				ncCode:'',
 				ncCodeDes:'',
 				status:'',
-				ncCodeGroupList:[],
+				ncGroupList:[],
 			},
 			rules: {
 				
@@ -301,7 +301,7 @@ export default {
 						arr.push(item.ncGroup)
 					})
 					console.log("88888888",arr)
-					this.editForm.ncCodeGroupList = arr
+					this.editForm.ncGroupList = arr
 					params.updateList = [this.editForm]
 					saveNcCode(params).then(data => {
 						const res = data.data;
