@@ -1,366 +1,328 @@
 <template>
-    <div class="num">
-        <!--顶部-->
-        <div class="issudTop">
-            <!--顶部左边-->
-            <div class="topLeft">
-                <DsnPanel>
-                    <div slot="header" class="title clearfix">
-                        <span>搜索信息</span>
-                    </div>
-                    <el-form  ref="workOrderIssued" label-width="100px" class="demo-ruleForm" :model="workOrderIssued">
-                        <el-form-item
-                            label="Lot:"
-                            prop="shopOrder"
-                            :rules="[
-                            { required: true, message: '工单不能为空'}
-                            ]"
-                        >
-                            <el-input size="small" autocomplete="off" v-model='workOrderIssued.lot'><el-button size="small" slot="append" icon="el-icon-document-copy" @click="numHandler"></el-button></el-input>
-                            <div class="choiceBox">                       
-                                <dsn-button size="small" type="primary" @click.native="handleGet">获取</dsn-button>
-                                <dsn-button size="small" type="primary" @click.native="reset">清除</dsn-button>
-                            </div>
-
-                        </el-form-item>
-                    </el-form>
-                </DsnPanel>
-            </div>
-            <div class="topRigt">
-                <div class="showData">
-                    <div><i>*</i><span>状态：{{shopOrderInfo.status}}</span></div>
-                    <div><i>*</i><span>工单:{{shopOrderInfo.productQty}}</span></div>
-                </div>
-                <div class="showData">
-                    <div><i>*</i><span>物料(版本):{{shopOrderInfo.plannedMaterialRev}}</span></div>
-                    <div><i>*</i><span>已下达数量:{{shopOrderInfo.releasedQuantity}}</span></div>
-                </div>
-                <div class="showData">
-                    <div><i>*</i><span>操作:{{shopOrderInfo.availableQuantity}}</span></div>
-                    <div><i>*</i><span>工艺路线(版本)：{{shopOrderInfo.plannedRouterRev}}</span></div>
-                </div>
-                <div class="showData">
-                    <div><i>*</i><span>排队数量:{{shopOrderInfo.availableQuantity}}</span></div>
-                    <div><i>*</i><span>可拆分数量：{{shopOrderInfo.plannedRouterRev}}</span></div>
-                </div>
-            </div>
-        </div>
-        <DsnPanel>
-            <div slot="header" class="title clearfix">
-                <span>lot 调整</span>
-            </div>
-        <!--下达列表-->
-        <el-form  ref="workOrderIssued" label-width="100px" class="demo-ruleForm" :model="workOrderIssued">
-            <el-form-item
-                label="新排队数量:"
-                prop="quantity"
-                :rules="[
-                { required: true, message: '新排队数量不能为空'}
-                ]"
-            >
-                <el-col :span="9">
-                    <el-input size="small" autocomplete="off" v-model='quantity'></el-input>
-                </el-col>
-                
-                <div class="choiceBox">                       
-                    <dsn-button size="small" type="primary" @click.native="handleChange">调整</dsn-button>
-                </div>
-
-            </el-form-item>
+  <div class="lotDivestiture">
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索条件</span>
+      </div>
+      <!-- 查询条件start -->
+      <el-form :model="lotForm" :inline="true" ref="lotForm" class="lotForm" :rules="lotFormRules">
+        <el-form-item label="LOT" prop="lot">
+          <el-row>
+            <el-col :span="22">
+              <dsn-input class="lot" v-model.trim="lotForm.lot" :disabled="unShowInput" placeholder="请输入LOT"></dsn-input>
+            </el-col>
+            <el-col :span="2">
+              <i class="el-icon-document" @click="goQuery"></i>
+            </el-col>
+          </el-row>
+        </el-form-item>
+        <el-form-item>
+          <dsn-button
+            size="small"
+            type="primary"
+            icon="el-icon-search"
+            @click="checkForm('lotForm')"
+          >查询</dsn-button>
+          <dsn-button size="small" type="primary" icon="el-icon-refresh" @click="handleReset">重置</dsn-button>
+        </el-form-item>
+      </el-form>
+      <!-- 查询条件end -->
+    </DsnPanel>
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索结果</span>
+      </div>
+      <!-- 查询结果start -->
+      <div>
+        <el-form :model="showInfo" label-width="140px" class="showInfo">
+          <el-row :gutter="20">
+            <el-col :span="10">
+              <el-form-item label="状态：">
+                <el-input v-model.trim="showInfo.status" size="small" :disabled="true"></el-input>
+              </el-form-item>
+              <el-form-item label="操作：">
+                <el-input v-model.trim="showInfo.operationList" size="small" :disabled="true"></el-input>
+              </el-form-item>
+              <el-form-item label="资源：">
+                <el-input v-model.trim="showInfo.resourceList" size="small" :disabled="true"></el-input>
+              </el-form-item>
+              <el-form-item label="可拆分数量：">
+                <el-input v-model.trim="showInfo.quantity" size="small" :disabled="true"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="10">
+              <el-form-item label="工单：">
+                <el-input v-model.trim="showInfo.shopOrder" size="small" :disabled="true"></el-input>
+              </el-form-item>
+              <el-form-item label="物料（版本）：">
+                <el-input v-model.trim="showInfo.materialRev" size="small" :disabled="true"></el-input>
+              </el-form-item>
+              <el-form-item label="工艺路线（版本）：">
+                <el-input v-model.trim="showInfo.routerRev" size="small" :disabled="true"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
         </el-form>
-        </DsnPanel>
-        <!--工单选择-->
-        <el-dialog
-        title="工单"
-        :visible.sync="orderDialog"
-        width="500px">
-        <dsn-table
-            ref="multipleTable"
-            :data="orderTable"
-            tooltip-effect="dark"
-            style="width: 100%"
-            height="350px"
-            @selection-change="handleSelectionChange"
+      </div>
+
+      <!-- 查询结果end -->
+      <div style="margin-top:50px">
+        <el-row :gutter="20">
+          <el-col :span="10">
+            <el-form
+              :model="lotDivestitureForm"
+              ref="lotDivestitureForm"
+              label-width="140px"
+              class="newLot"
+              :rules="lotDivestitureFormRules"
             >
-            <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column type="index" label="序号" width="50"></el-table-column>
-            <el-table-column prop="shopOrder" label="工单" width="120"></el-table-column>
-            <el-table-column label="状态" prop="status" width="120"></el-table-column>
-            <el-table-column prop="shopOrderType" label="类型" show-overflow-tooltip></el-table-column>
-            </dsn-table>
-        <span slot="footer" class="dialog-footer">
-            <dsn-button @click="orderDialog = false">取 消</dsn-button>
-            <dsn-button type="primary" @click="sureOrder">确 定</dsn-button>
-        </span>
-        </el-dialog>
-    </div>
+              <el-form-item label="排队数量" prop="quantity">
+                <el-input
+                  class="lot"
+                  v-model.trim="lotDivestitureForm.quantity"
+                  :disabled="showInput"
+                  placeholder="排队数量"
+                ></el-input>
+              </el-form-item>
+              <el-form-item label="新排队数量" prop="num">
+                <dsn-input class="quantity" v-model.trim="lotDivestitureForm.num" placeholder="请输入新排队数量"></dsn-input>
+              </el-form-item>
+              <el-form-item>
+                <dsn-button size="small" @click.native="changeNum">调整</dsn-button>
+              </el-form-item>
+            </el-form>
+          </el-col>
+        </el-row>
+      </div>
+    </DsnPanel>
+
+    <el-dialog title="lot" :visible.sync="lotDialog" :width="defaltDialogWidth">
+      <span>
+        <allLotModel :lot="tableData" @selectLot="selectLot"></allLotModel>
+      </span>
+      <span slot="footer" class="dialog-footer">
+        <dsn-button @click="lotDialog = false">取 消</dsn-button>
+        <dsn-button type="primary" @click="handleSelectLot">确 定</dsn-button>
+      </span>
+    </el-dialog>
+  </div>
 </template>
+
 <script>
 import {
-    findShopOrderListRequest,
-    releaseRequest
-} from '@/api/issued/issued.api.js' 
-import{
-    findShopOrderListHttp
-} from '@/api/work-order/work-order.api.js'
-// import { exportExcel } from "@/until/excel.js";
-// const tHeader = [
-//   "工单",
-//   "Lot",
-//   "数量",
-//   "物料",
-//   "物料版本",
-//   "工艺路线",
-//   "工艺路线版本"
-// ];
-// const filterVal = [
-//   "shopOrder",
-//   "lot",
-//   "quantity",
-//   "material",
-//   "materialRev",
-//   "router",
-//   "routerRev"
-// ];
-// const fileName="工单下达表"
+  findLotAtOperationHttp,
+  listLotHttp
+} from "@/api/dc/lot.divestiture.api.js";
+import {
+  adjustLotQuantityHttp
+} from "@/api/dc/lot.num.api.js";
+import allLotModel from "../components/all-lots-model.vue";
+
 export default {
-    data(){
-        return{
-            quantity:"", //新调整数量
-            tenantSiteCode:'',
-            shopOrderInfo:'',//工单信息
-            workOrderIssued: {
-                shopOrder: '',
-                numIssued:'',
-            },
-            tableData:[],//工单下达列表
-            multipleSelection: [],
-            orderTable:[],
-            orderDialog:false,
-            orderChoice:[],
-            // handleTableChangeList:[],
-            currentPage: 1,
-            pageSize: 10,
-            total: 0,
-        }
+  name: "lotDivestiture",
+  inject: ["defaltDialogWidth"],
+  components: {
+    allLotModel
+  },
+  data() {
+    return {
+        lotForm: {
+            lot: ""
+        },
+        lotFormRules: {
+            lot: [{ required: true, message: "请输入lot", trigger: "blur" }]
+        },
+        showInfo: {
+            status: "",
+            operationList: "",
+            resourceList: "",
+            quantity: "",
+            shopOrder: "",
+            materialRev: "",
+            routerRev: ""
+        },
+        lotDialog: false,
+        lotDivestitureForm: {
+            quantity: "",
+            num:"",// 新排队数量
+        },
+        lotDivestitureFormRules: {
+            // lot: [{ required: true, message: "请输入lot", trigger: "change" }],
+            quantity: [
+            { required: true, message: "请输入排队数量", trigger: "blur" }
+            ],
+            num:[
+            { required: true, message: "请输入新排队数量", trigger: "blur" }
+            ],
+        },
+        tableData: [],
+        currentLot: {},
+        showInput:true,
+        unShowInput:false
+        };
     },
-    methods:{
-        handleChange(){
-            console.log("handleChange")
-        },
-        // 工单表格
-        // handleTableChange(row){
-        //     this.handleTableChangeList=row;
-        // },
-        // // 导出操作
-        // exportExcelUndeal(){
-        //     if (this.handleTableChangeList.length === 0) {
-        //         this.exportHttpUndeal();
-        //     }
-        //     if (this.handleTableChangeList.length > 0) {
-        //         this.exportResult(this.handleTableChangeList);
-        //     }
-        // },
-        // exportHttpUndeal(){
-        //     findShopOrderListHttp().then(data => {
-        //     const res = data.data;
-        //     if (res.code === 200) {
-        //     data = res.data.data;
-        //     data.forEach(element => {
-        //         element.shopOrderTotal = element.shopOrderList.length;
-        //     });
-        //     this.exportResult(data);
-        //     return;
-        //     }
-        //     this.$message({
-        //         message: res.message,
-        //         type: "warning"
-        //         });
-        //     });
-        // },
-        // //返回结果，提示信息
-        // exportResult(data) {
-        // const tipString = exportExcel(tHeader, filterVal, data, this.fileName);
-        // if (tipString === undefined) {
-        //     this.$message({
-        //     message: "导出成功",
-        //     type: "success"
-        //     });
-        //     return;
-        // } else {
-        //     this.$message({
-        //     message: tipString,
-        //     type: "warning"
-        //     });
-        //     return;
-        // }
-        // },
-        
-        numHandler(){
-            // alert("1111");
-            findShopOrderListHttp().then(data =>{
-            const res = data.data
-            if(res.code == 200){
-              // console.log(res,"shuju ")
-              this.orderTable=res.data
-              // this.$message({
-              //   message:'更新成功',
-              //   type:'success'
-              // })
-            }else{
+    // watch: {
+    //     quantity: {
+    //     handler() {
+    //         console.log("watch");
+    //     },
+    //     immediate: true,
+    //     deep: true
+    //     }
+    // },  
+  methods: {
+      changeNum(){
+          if(this.lotForm.lot===""){
               this.$message({
-                message:res.message,
-                type:'warning'
-              })
+                message: "请先执行查询操作",
+                type: "warning"
+                });
+          }else{
+            const data={
+                lot:this.lotForm.lot,
+                newQuantity:this.lotDivestitureForm.num
             }
-          })
-            this.orderDialog=true;
-        },
-        sureOrder(){
-            if(this.orderChoice.length>1){
-                this.$message({
-                    message:"只能选择一行数据",
-                    type:'warning'
-                })
-            }else{
-                this.workOrderIssued.shopOrder=this.orderChoice[0].shopOrder;
-                this.workOrderIssued.numIssued="";
-                this.orderDialog=false;
-            }
-        },
-        handleSelectionChange(row){
-            // console.log(row,"hahah")
-            this.orderChoice=row
-        },
-        //清除按钮
-        reset(){
-            this.workOrderIssued ={
-                lot: '',
-            };
-        },
-        //获取工单信息
-        handleGet(){
-            const params = {
-                lot:this.workOrderIssued.lot,
-                tenantSiteCode:this.tenantSiteCode
-            }
-            if(this.workOrderIssued.shopOrder !== ""){
-                findShopOrderListRequest(params).then(data =>{
-                    // console.log('获取工单信息'+JSON.stringify(data))
-                    const res = data.data
-                    if(res.code == 200){
-                        this.shopOrderInfo = res.data
-                        // console.log('获取工单信息'+JSON.stringify(this.shopOrderInfo))
-                    }else{
-                        this.$message({
-                            message:`${res.message}`,
-                            type:'warning'
-                        })
-                    }  
-                })
-            }else{
-                this.$message({
-                    message: "请输入工单",
-                    type:'warning'
-                })
-            }
-            
-        },
-        //点击下达按钮
-        handleIssued(){
-            const params = {
-                quantity: this.workOrderIssued.numIssued,
-                shopOrder: this.workOrderIssued.shopOrder
-            }
-            releaseRequest(params).then(data=>{
-                const res = data.data
-                if(res.code == 200){
-                    this.tableData = res.data.releasedLotList
-                    for(let i = 0;i<this.tableData.length;i++){
-                        this.tableData[i].shopOrder = this.workOrderIssued.shopOrder
-                    }
+            adjustLotQuantityHttp(data).then(data => {
+                const res = data.data;
+                if (res.code === 200) {
+                    console.log(res,"数据");
                 }else{
                     this.$message({
-                        message:`${res.message}`,
-                        type:'warning'
-                    })
+                    message: res.message,
+                    type: "warning"
+                    });
                 }
-            })
+            });
+          }
+      },
+    //验证表单信息
+    checkForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.handleQuery();
+        } else {
+          return false;
         }
+      });
+    },
+    //查询LOT状态信息
+    handleQuery() {
+      const data = { lot: this.lotForm.lot };
+      findLotAtOperationHttp(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.showInfo = res.data;
+          const operations = res.data.operationList.join(",");
+          this.showInfo.operationList = operations;
+          const resources = res.data.resourceList.join(",");
+          this.showInfo.resourceList = resources;
+          this.unShowInput=true;
+        }
+      });
+    },
+    //重置
+    handleReset() {
+      this.$refs["lotForm"].resetFields();
+      this.$refs["lotDivestitureForm"].resetFields();
+      this.unShowInput=false;
+      this.showInfo = {
+        status: "",
+        operationList: "",
+        resourceList: "",
+        quantity: "",
+        shopOrder: "",
+        materialRev: "",
+        routerRev: ""
+      };
+    },
+    //查询LOT
+    goQuery() {
+      const data = { lot: this.lotForm.lot };
+      console.log(data,"数据集")
+      listLotHttp(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.tableData = res.data;
+          this.lotDialog = true;
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
+    },
+    //获取弹出框选择的数据
+    selectLot(val) {
+      this.currentLot = val;
+      console.log(this.currentLot);
+    },
+    //弹出框确认选择lot
+    handleSelectLot() {
+      this.lotForm.lot = this.currentLot.lot;
+      this.lotDialog = false;
     }
-
-}
+  }
+};
 </script>
-<style lang="scss" scoped>
-.num{
-    padding: 0 30px;
-    .issudTop{
-        width:100%;
-        margin-top:30px;
-        display: flex;
-        margin-bottom:30px;
-        .topLeft{
-            width:50%;
-        }
-        .topRigt{
-            height:200px;
-            width:40%;
-            background:#fff;
-            box-sizing: border-box;
-            margin:0 10px;
-            .showData{
-                display: flex;
-                justify-content:space-between;
-                margin:10px;
-                >div{
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    font-size:14px;
-                    i{
-                        display: inline-block;
-                        color:red;
-                        margin-right:7px;
-                    }
-                    
-                }
-            }
-        }
+
+<style lang="scss">
+.lotDivestiture {
+  .showInfo {
+    background: #eee9e9;
+    padding: 10px;
+    background-color: rgba(245, 244, 244, 0.5);
+    .el-form-item {
+      margin-bottom: 0px;
+      .el-input__inner {
+        border: 0px;
+        opacity: 1;
+        background-color: #fff;
+      }
     }
-    
+  }
+  // padding: 10px 30px;
+  // .query {
+  //   display: flex;
+  //   .left {
+  //     .lot {
+  //       width: 90%;
+  //     }
+  //   }
+  // }
+  // .showInfo {
+  //   display: flex;
+  //   width: 100%;
+  //   height: 85%;
+  //   padding: 10px 10px;
+  //   background: white;
+  //   .left {
+  //     flex: 1;
+  //     .el-form {
+  //       width: 350px;
+  //       .el-form-item {
+  //         margin-bottom: 0px;
+  //         .el-input__inner {
+  //           border: 0px;
+  //         }
+  //       }
+  //     }
+  //   }
+  //   .right {
+  //     flex: 1;
+  //     .el-form {
+  //       width: 350px;
+  //       .el-form-item {
+  //         margin-bottom: 0px;
+  //         .el-input__inner {
+  //           border: 0px;
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
+  // .newLot {
+  //   width: 30%;
+  // }
 }
-.num .height48{
-    height:48px;
-    width:100%;
-    background:#fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size:14px;
-    border:1px solid #fff;
-    border-bottom-color:rgb(235, 238, 245);
-    padding:0 10px;
-    box-sizing: border-box;
-    div{
-        flex:1;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-}
-//选择弹框
-.num .choiceBox{
-    width:150px;
-    height:41px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-right:50px;
-    .choice{
-        margin-right:7px;
-    }
-}
-// .num .el-form-item__content{
-//     display: flex;
-// }
 </style>

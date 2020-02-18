@@ -1,60 +1,68 @@
 <template>
   <div class="jieBao">
-    <el-form
-      :inline="true"
-      :model="searchForm"
-      ref="searchForm"
-      class="form-style"
-      :label-width="formLabelWidth"
-      :rules="searchFormRules"
-      style="display:flex;align-items:center"
-    >
-      <el-form-item label="工序:" prop="operation">
-        <!-- <el-input v-model="searchForm.operation"></el-input> -->
-        <el-autocomplete
-          v-model.trim="searchForm.operation"
-          :fetch-suggestions="querySearchOperation"
-          placeholder="请输入工序"
-          @select="handleSelectOperation"
-        ></el-autocomplete>
-      </el-form-item>
-      <el-form-item label="设备:" prop="resource">
-        <el-autocomplete
-          v-model.trim="searchForm.resource"
-          :fetch-suggestions="querySearchResource"
-          placeholder="请输入设备"
-          @select="handleSelectResource"
-        ></el-autocomplete>
-      </el-form-item>
-      <el-form-item
-        label="LOT:"
-        prop="lot"
-        style="display:flex;align-items:center;width:300px"
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索信息</span>
+      </div>
+      <el-form
+        :inline="true"
+        :model="searchForm"
+        ref="searchForm"
+        class="form-style"
+        :label-width="formLabelWidth"
+        :rules="searchFormRules"
+        style="display:flex;align-items:center"
       >
-        <div style="display:flex;align-item:center">
-          <el-input v-model="searchForm.lot" placeholder="请输入LOT"></el-input>
-          <i class="el-icon-document-copy" @click="goQuery"></i>
-        </div>
-      </el-form-item>
-      <el-form-item>
-        <el-button size="small" type="primary" @click="checkForm('searchForm')"
-          >查询</el-button
+        <el-form-item label="工序:" prop="operation">
+          <!-- <dsn-input v-model="searchForm.operation"></dsn-input> -->
+          <el-autocomplete
+            v-model.trim="searchForm.operation"
+            :fetch-suggestions="querySearchOperation"
+            placeholder="请输入工序"
+            @select="handleSelectOperation"
+          ></el-autocomplete>
+        </el-form-item>
+        <el-form-item label="设备:" prop="resource">
+          <el-autocomplete
+            v-model.trim="searchForm.resource"
+            :fetch-suggestions="querySearchResource"
+            placeholder="请输入设备"
+            @select="handleSelectResource"
+          ></el-autocomplete>
+        </el-form-item>
+        <el-form-item
+          label="LOT:"
+          prop="lot"
+          style="display:flex;align-items:center;width:300px"
         >
-        <el-button size="small" type="primary" @click="resetForm"
-          >重置</el-button
-        >
-      </el-form-item>
-    </el-form>
+          <div style="display:flex;align-item:center">
+            <dsn-input v-model="searchForm.lot" placeholder="请输入LOT"></dsn-input>
+            <i class="el-icon-document-copy" @click="goQuery"></i>
+          </div>
+        </el-form-item>
+        <el-form-item>
+          <dsn-button size="small" type="primary" icon="el-icon-search" @click="checkForm('searchForm')"
+            >查询</dsn-button
+          >
+          <dsn-button size="small" type="primary" icon="el-icon-refresh" @click="resetForm"
+            >重置</dsn-button
+          >
+        </el-form-item>
+      </el-form>
+      </DsnPanel>
     <div class="operation">
-      <el-button type="primary" size="small" @click="goEdit">开始</el-button>
-      <el-button type="primary" size="small" @click="reset">注销</el-button>
-      <el-button type="primary" size="small">结束</el-button>
-      <el-button type="primary" size="small">1号组</el-button>
-      <el-button type="primary" size="small">2号组</el-button>
+      <dsn-button type="primary" size="small" @click="goEdit">开始</dsn-button>
+      <dsn-button type="primary" size="small" @click="reset">注销</dsn-button>
+      <dsn-button type="primary" size="small">结束</dsn-button>
+      <dsn-button type="primary" size="small">1号组</dsn-button>
+      <dsn-button type="primary" size="small">2号组</dsn-button>
     </div>
     <!--表单-->
-    <div class="tableBox">
-      <el-table
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索结果</span>
+      </div>
+      <dsn-table
         ref="multipleTable"
         :data="row"
         tooltip-effect="dark"
@@ -90,8 +98,8 @@
           label="工艺路线"
           show-overflow-tooltip
         ></el-table-column>
-      </el-table>
-    </div>
+      </dsn-table>
+    </DsnPanel>
 
     <!-- LOT模态框 -->
     <el-dialog title="lot" :visible.sync="lotDialog" width="50%">
@@ -102,10 +110,10 @@
         ></dimQueryLotModel>
       </span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="lotDialog = false">取 消</el-button>
-        <el-button type="primary" @click="handleSelectLot">
+        <dsn-button @click="lotDialog = false">取 消</dsn-button>
+        <dsn-button type="primary" @click="handleSelectLot">
           确 定
-        </el-button>
+        </dsn-button>
       </span>
     </el-dialog>
   </div>
