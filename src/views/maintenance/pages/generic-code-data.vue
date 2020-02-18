@@ -413,7 +413,8 @@ export default {
     setNumberRules() {},
     //数字型的验证规则
     valiNumber(rule, value, callback) {
-      let reg = new RegExp("^\\d{1," + this.tempField.fieldSize + "}$", "gim"); // re为/^\d+bl$/gim
+      // let reg = new RegExp("^\\d{1," + this.tempField.fieldSize + "}$", "gim"); // re为/^\d+bl$/gim
+      let reg = /^([0-9]+)||([0-9]+\.[0-9]+)$/;
       if (!reg.test(value)) {
         callback(
           new Error(`该字段是数字型且最长为${this.tempField.fieldSize}`)
