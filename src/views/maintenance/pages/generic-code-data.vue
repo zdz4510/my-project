@@ -604,7 +604,7 @@ export default {
           return JSON.stringify(item) !== JSON.stringify(this.cloneEditForm);
         });
       }
-      this.tableData.push(this.addForm);
+      this.tableData.push(JSON.parse(JSON.stringify(this.addForm)));
     },
     //编辑
     handleEdit() {

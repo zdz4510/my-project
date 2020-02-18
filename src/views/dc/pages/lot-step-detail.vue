@@ -111,7 +111,7 @@ export default {
       findLotStepDetailHttp(this.lotStepDetailList).then(data => {
         const res = data.data;
         if (res.code === 200) {
-          this.lotStepDetailForm.routerRev = res.data.routerRev;
+          this.lotStepDetailForm.routerRev = `${res.data.router}(${res.data.routerRev})`;
           this.lotStepDetailForm.routerDes = res.data.routerDes;
           this.lotStepDetailForm.stepId = res.data.stepId;
           this.lotStepDetailForm.operation = this.lotStepDetailList.operation;
@@ -127,7 +127,7 @@ export default {
     },
     //返回
     goBack() {
-      this.$router.push({ name: "lotStep" });
+      this.$router.back({ name: "lotStep" });
     }
   }
 };
