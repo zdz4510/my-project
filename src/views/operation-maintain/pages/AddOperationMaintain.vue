@@ -98,12 +98,23 @@ import {
 export default {
   name: "add-operation-maintain",
   data() {
+    const operationRequired = (rule, value, callback) => {
+      const reg = /^[0-9A-Z_/-]{1,}$/;
+      if (value.length > 30) {
+        return callback(new Error("只能填写数字，大写字母，-，_,/;30个字符以内"));
+      }
+      if (!reg.test(value)) {
+        return callback(new Error("只能填写数字，大写字母，-，_,/;30个字符以内"));
+      }
+      callback();
+    };
     return {
       activeName: "first",
       formLabelWidth: "80px",
       rules: {
         operation: [
-          { required: true, message: "请填写工序名称", trigger: "blur" }
+          { required: true, message: "请填写工序名称", trigger: "blur" },
+          { validator: operationRequired, trigger: "change" }
         ],
         status: [{ required: true, message: "请选择状态", trigger: "change" }],
         resourceGroup: [
@@ -113,7 +124,7 @@ export default {
       addForm: {
         operation: "",
         operationDes: "",
-        status: "",
+        status: true,
         certOperation: "",
         reportingStep: "",
         resourceGroup: ""
