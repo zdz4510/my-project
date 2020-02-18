@@ -3,7 +3,16 @@
 		<el-row :gutter="20">
 			<el-col :span="6">
 				<div class="editList">
-					<dsn-select style="margin-bottom: 30px" v-model="value" clearable placeholder="请选择" :disabled="selectIsDisabled" @clear="handleClearSelect" @change="handleChangeOption" @focus="handleSelectFocus" ref="select" >
+					<dsn-select
+						style="margin-bottom: 30px"
+						v-model="value"
+						clearable
+						placeholder="请选择"
+						:disabled="selectIsDisabled"
+						@clear="handleClearSelect"
+						@change="handleChangeOption"
+						ref="select"
+					>
 						<el-option
 							v-for="item in cloneList"
 							:key="item.sequence"
@@ -129,6 +138,7 @@
 </template>
 
 <script>
+import _ from 'lodash';
 import { mapGetters, mapMutations } from "vuex";
 export default {
   name:'edit-next-number',
@@ -194,8 +204,6 @@ export default {
 					value: 'OP_USER',
 					label: '操作执行人员ID'
 				}],
-			
-      saveDialog: false, //保存弹框的显示和隐藏
       currentRow: {},
       oldRow: {}, // 当前选中的行
       cloneList: [], // 复制所以可以编辑的数据副本
@@ -208,16 +216,21 @@ export default {
     this.$nextTick(() => {
       this.init();
 		});
-		console.log(this.nextNumberEditList,'store')
-  },
+	},
+	watch: {
+		'$store.state.nextNumberEdit.nextNumberEditList'() {
+			this.init()
+		}
+	},
   methods: {
     ...mapMutations(["SETNEXTNUMBEREDITLIST"]),
     //初始化的操作
     init() {
+			console.log('init')
       if (this.nextNumberEditList.length > 0) {
-        this.cloneList = JSON.parse(JSON.stringify(this.nextNumberEditList)); //复制一份副本,保证副本和初始列表数据一致性
+        this.cloneList = _.cloneDeep(this.nextNumberEditList); //复制一份副本,保证副本和初始列表数据一致性
         this.editForm = this.cloneList[0]; // 默认选中第一行
-        this.cloneModify = JSON.parse(JSON.stringify(this.editForm)); // modify 的副本
+        this.cloneModify = _.cloneDeep(this.editForm); // modify 的副本
         this.setCurrent(this.editForm); // 设置选中第一行
         this.currentRow = this.editForm; // 设置初始currentRow 为第一行
       }
@@ -236,26 +249,10 @@ export default {
       }
       //过滤数组
       const tempList = this.cloneList.filter(item => item["sequence"] == row);
-      console.log(tempList);
       // this.cloneList = tempList;
       this.editForm = tempList[0];
       this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
       this.setCurrent(tempList[0]);
-    },
-    //下拉列表获取到焦点时触发
-    handleSelectFocus() {
-      // this.oldRow = oldRow;
-      //  当前编辑的和之前的数据不一样就显示弹窗
-      if (JSON.stringify(this.editForm) !== JSON.stringify(this.cloneModify)) {
-        // console.log('数据不一样禁用下拉框还有弹出保存')
-        this.saveDialog = true; // 保存弹出框出现
-        this.selectIsDisabled = true; // 禁用下拉框
-        this.$refs['select'].blur();
-      } else {
-        //  console.log('数据一样不禁用下拉框还有不弹出保存')
-        this.saveDialog = false;
-        this.selectIsDisabled = false;
-      }
     },
     //设置某一行被选中
     setCurrent(row) {
@@ -273,12 +270,6 @@ export default {
     handleCurrentChange(currentRow) {
       this.oldRow = this.currentRow;
       this.currentRow = currentRow;
-      if (
-        JSON.stringify(this.editForm) !== JSON.stringify(this.cloneModify)
-      ) {
-        this.saveDialog = true; // 弹出保存的提示框
-        return;
-      }
       this.editForm = currentRow;
       this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
     },
@@ -295,7 +286,6 @@ export default {
     },
     // 取消操作  一般是在弹框出现的时候才有取消操作
     handleCancle() {
-      this.saveDialog = false;
       this.selectIsDisabled = false;
       //数据还原
       if(this.cloneList.length<this.nextNumberEditList.length && this.value!=''){
@@ -317,10 +307,7 @@ export default {
     save(formName) {
 			this.$refs[formName].validate((valid) => {
 				if (valid) {
-					console.log(this.cloneList)
-					const searchForm = JSON.parse(sessionStorage.getItem("searchForm"));
-          const obj = { ...this.editForm, ...searchForm };
-          this.$emit('handleSave', 'edit', obj);
+          this.$emit('handleSave', 'edit', this.cloneList);
 				}
 			});
     },
@@ -328,7 +315,7 @@ export default {
 			this.editForm = {}
 			this.editForm.sequenceType = val
 		}
-  }
+	},
 };
 </script>
 
