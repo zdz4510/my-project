@@ -96,8 +96,8 @@ const routerHistory = {
       });
     },
     /**
-     * 
-     * @param {*} state 
+     *
+     * @param {*} state
      * @param {*} currentName 当前路由的名称
      */
     POPROUTER(state, currentName) {
