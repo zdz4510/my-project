@@ -206,7 +206,7 @@
 
 <script>
 import { searchLotDetailHttp } from "@/api/dc/lot.step.api.js";
-import { mapMutations } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 
 export default {
   data() {
@@ -231,6 +231,10 @@ export default {
   },
   created() {
     this.lotConditionForm.lot = this.$route.query.lot;
+    this.tableData = JSON.parse(JSON.stringify(this.lotQueryList));
+  },
+  computed: {
+    ...mapGetters(["lotQueryList"])
   },
   methods: {
     ...mapMutations(["LOTQUERYLIST"]),
@@ -314,10 +318,10 @@ export default {
         });
         return;
       }
-      const tempArr = [];
-      this.selectionList.forEach(element => {
-        tempArr.push(element.lot);
-      });
+      const tempArr = JSON.parse(JSON.stringify(this.selectionList));
+      // this.selectionList.forEach(element => {
+      //   tempArr.push(element.lot);
+      // });
       this.LOTQUERYLIST(tempArr);
       this.goBack();
     }
