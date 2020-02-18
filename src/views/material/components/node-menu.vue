@@ -29,7 +29,7 @@
               :type="son.id"
               v-show="!son.hide"
             >
-              <i :class="son.ico"></i>{{ son.name }}
+              <i :class="son.ico"></i>{{ son.operationDes }}
             </el-menu-item>
           </draggable>
         </el-menu-item-group>

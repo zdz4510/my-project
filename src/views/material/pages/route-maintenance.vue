@@ -62,7 +62,9 @@
         <el-tab-pane label="附加工序">
           <pannel ref="panel" :search="searchValue" />
         </el-tab-pane>
-        <el-tab-pane label="自定义字段">自定义字段</el-tab-pane>
+        <el-tab-pane label="自定义字段">
+          <DsnData></DsnData>
+        </el-tab-pane>
       </el-tabs>
     </div>
   </div>
