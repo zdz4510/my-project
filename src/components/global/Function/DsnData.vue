@@ -23,7 +23,7 @@
           v-if="item.fieldType == 'N'"
           v-model="form[`${item.fieldName}`]"
         ></dsn-input>
-        <dsn-select
+        <!-- <dsn-select
           style="width:100%"
           @focus="selectFocus(item)"
           v-if="item.fieldType == 'C'"
@@ -35,7 +35,7 @@
             :value="item"
             v-for="item in list"
           ></el-option>
-        </dsn-select>
+        </dsn-select> -->
       </el-form-item>
     </el-form>
   </div>
@@ -60,20 +60,26 @@ export default {
   watch: {
     data() {
       this.data.forEach(item => {
-        this.$set(this.form, item.fieldName, item.fieldValue);
+        this.$set(this.form, item.fieldName, item.fieldValue||'');
         //   this.form[`${item.fieldName}`] =item['fieldValue']
       });
     },
     form: {
       handler: function() {
         this.data.forEach(item => {
-          item.fieldValue = this.form[`${item.fieldName}`];
+          item.fieldValue = this.form[`${item.fieldName}`]||'';
         });
         console.log("aaaaa");
         this.$emit("input", this.data);
       },
       deep: true
     }
+  },
+  created(){
+       this.data.forEach(item => {
+        this.$set(this.form, item.fieldName, item.fieldValue||'');
+        //   this.form[`${item.fieldName}`] =item['fieldValue']
+      });
   },
   data() {
     return {
@@ -87,7 +93,7 @@ export default {
       list: []
     };
   },
-  created() {},
+
   methods: {
     getData() {},
     computedRules(item) {
