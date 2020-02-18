@@ -20,27 +20,28 @@
         </el-form-item>
       </el-form>
     </DsnPanel>
-    <div class="operation">
-      <dsn-button size="small" type="success" icon="el-icon-add" @click.native="handleAdd">新增</dsn-button>
-      <dsn-button
-        size="small"
-        type="primary"
-        icon="el-icon-edit"
-        :disabled="selectionList.length <= 0"
-        @click.native="handleEdit"
-      >修改</dsn-button>
-      <dsn-button
-        size="small"
-        type="danger"
-        icon="el-icon-delete"
-        :disabled="selectionList.length <= 0"
-        @click.native="deleteDialog = true"
-      >删除</dsn-button>
-      <dsn-button size="small" type="primary" icon="el-icon-upload2" @click.native="handleExport">导出</dsn-button>
-    </div>
+    
     <DsnPanel>
       <div slot="header" class="title clearfix">
         <span>搜索结果</span>
+      </div>
+      <div class="operation">
+        <dsn-button size="small" type="success" icon="el-icon-add" @click.native="handleAdd">新增</dsn-button>
+        <dsn-button
+          size="small"
+          type="primary"
+          icon="el-icon-edit"
+          :disabled="selectionList.length <= 0"
+          @click.native="handleEdit"
+        >修改</dsn-button>
+        <dsn-button
+          size="small"
+          type="danger"
+          icon="el-icon-delete"
+          :disabled="selectionList.length <= 0"
+          @click.native="deleteDialog = true"
+        >删除</dsn-button>
+        <dsn-button size="small" type="primary" icon="el-icon-upload2" @click.native="handleExport">导出</dsn-button>
       </div>
       <div class="showInfo">
         <dsn-table
@@ -210,14 +211,14 @@ export default {
             type: "success"
           });
           this.deleteDialog = false;
-          this.init();
-          return;
+        }else{
+          this.deleteDialog = false;
+          this.$message({
+            message: res.message,
+            type: "warning"
+          });
         }
-        this.deleteDialog = false;
-        this.$message({
-          message: res.message,
-          type: "warning"
-        });
+        this.handleReset();
       });
     },
     handleQuery() {

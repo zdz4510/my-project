@@ -3,6 +3,7 @@
     <div class="operate">
       <dsn-button size="small" type="primary" @click.native="goBack">返回</dsn-button>
       <dsn-button size="small" type="primary" @click.native="handleSave('editForm')">保存</dsn-button>
+      <dsn-button size="small" type="primary" icon="el-icon-refresh" @click.native="resetForm">重置</dsn-button>
     </div>
     <el-row :gutter="20" class="bgw">
       <el-col :span="6">
@@ -184,10 +185,10 @@
                       <el-col :span="8">
                         <el-form-item
                           label="供应商物料号:"
-                          prop="vebdorMaterial"
+                          prop="vendorMaterial"
                           v-if="editForm.materialType=='辅料' || editForm.materialType=='原材料'"
                         >
-                          <dsn-input v-model="editForm.vebdorMaterial"></dsn-input>
+                          <dsn-input v-model="editForm.vendorMaterial"></dsn-input>
                         </el-form-item>
                       </el-col>
                     </el-row>
@@ -379,7 +380,7 @@ export default {
         client: "",
         clientMaterial: "",
         vebdor: "",
-        vebdorMaterial: "",
+        vendorMaterial: "",
         materialStatus: "",
         modifyUserId:"",
         length: "",
@@ -498,6 +499,10 @@ export default {
         this.setCurrent(this.editForm); // 设置选中第一行
         this.currentRow = this.editForm; // 设置初始currentRow 为第一行
       }
+    },
+    resetForm(){
+      this.init();
+      this.value= ""
     },
     //清除下拉列表时触发
     handleClearSelect() {

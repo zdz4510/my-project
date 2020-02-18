@@ -19,11 +19,19 @@
                         <el-form-item 
                             label="工单:"
                             prop="shopOrder">
-                            <el-input size="small" autocomplete="off" v-model='workOrderIssued.shopOrder'><el-button size="small" slot="append" icon="el-icon-document-copy" @click="orderHandler"></el-button></el-input>
+                            <el-row>
+                                <el-col :span="22">
+                                <dsn-input size="small" placeholder="请输入工单" v-model="workOrderIssued.shopOrder"></dsn-input>
+                                </el-col>
+                                <el-col :span="2">
+                                <i class="el-icon-document" @click="orderHandler"></i>
+                                </el-col>
+                            </el-row>
+                            <!-- <el-input size="small" autocomplete="off" v-model='workOrderIssued.shopOrder'><el-button size="small" slot="append" icon="el-icon-document-copy" @click="orderHandler"></el-button></el-input> -->
                         </el-form-item> 
                         <el-form-item>
-                       <dsn-button size="small" type="primary" @click.native="handleGet">获取</dsn-button>
-                        <dsn-button size="small" type="primary" @click.native="reset">清除</dsn-button>
+                            <dsn-button size="small" type="primary" @click.native="handleGet">获取</dsn-button>
+                            <dsn-button size="small" type="primary" @click.native="reset">清除</dsn-button>
                         </el-form-item>
                     </el-form>
                     <!-- <el-form :inline="true" ref="workOrderIssued" label-width="100px" class="demo-ruleForm" :model="workOrderIssued">
@@ -69,23 +77,7 @@
                 </div>
             </div>
         </div>
-        <DsnPanel>
-            <div slot="header" class="title clearfix">
-                <span>下达数据</span>
-            </div>
-            <el-form :inline="true" ref="workOrderIssued" label-width="100px" class="demo-ruleForm" :model="workOrderIssued">
-                <el-form-item
-                    label="下达数量:"
-                    prop="numIssued"
-                    :rules="[
-                    { required: true, message: '下达数量不能为空'}
-                    ]"
-                >
-                    <dsn-input  autocomplete="off" v-model='workOrderIssued.numIssued'></dsn-input>
-                    <dsn-button size="small" type="primary" style="margin-left:26px;" @click.native="handleIssued">下达</dsn-button>
-                </el-form-item>
-            </el-form>
-        </DsnPanel>
+        
         <!--下达列表-->
         <div class="height48">
             <div>工单下达</div>
@@ -140,6 +132,22 @@
                 </el-table-column>
             </dsn-table>
         </div>
+        <DsnPanel>
+            <div slot="header" class="title clearfix">
+                <span>下达数据</span>
+            </div>
+            <el-form :inline="true" :rules="rules" ref="workOrderIssued" label-width="100px" class="demo-ruleForm" :model="workOrderIssued">
+                <el-form-item
+                    label="下达数量:"
+                    prop="numIssued"
+                >
+                    <dsn-input  autocomplete="off" v-model='workOrderIssued.numIssued'></dsn-input>
+                </el-form-item>
+                <el-form-item>
+                    <dsn-button size="small" type="primary" style="margin-left:26px;" @click.native="handleIssued">下达</dsn-button>
+                </el-form-item>
+            </el-form>
+        </DsnPanel>
         <!--工单选择-->
         <el-dialog
         title="工单"
@@ -215,6 +223,10 @@ export default {
             currentPage: 1,
             pageSize: 10,
             total: 0,
+            rules:{
+                shopOrder: [{ required: true, message: "请输入工单", trigger: "blur" }],
+                numIssued: [{ required: true, message: "请输入下达数量", trigger: "blur" }],
+            }
         }
     },
     methods:{
@@ -339,6 +351,12 @@ export default {
         },
         //点击下达按钮
         handleIssued(){
+            if(this.workOrderIssued.numIssued===""){
+                this.$message({
+                    message:"请先输入下达数量",
+                    type:'warning'
+                })
+            }else{
             const params = {
                 quantity: this.workOrderIssued.numIssued,
                 shopOrder: this.workOrderIssued.shopOrder
@@ -357,6 +375,7 @@ export default {
                     })
                 }
             })
+            }
         }
     }
 
@@ -374,8 +393,8 @@ export default {
             width:50%;
         }
         .topRigt{
-            height:200px;
-            width:40%;
+            height:135px;
+            width:50%;
             background:#fff;
             box-sizing: border-box;
             margin:0 10px;
