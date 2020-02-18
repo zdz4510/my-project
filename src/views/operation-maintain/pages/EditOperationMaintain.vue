@@ -28,7 +28,7 @@
               :value="item.operation"
             ></el-option>
           </dsn-select>
-          <el-table
+          <dsn-table
             ref="editTable"
             :data="cloneList"
             border
@@ -38,7 +38,7 @@
           >
             <el-table-column label="工序" prop="operation"></el-table-column>
             <el-table-column label="描述" prop="operationDes"></el-table-column>
-          </el-table>
+          </dsn-table>
         </DsnPanel>
       </el-col>
       <el-col :span="18">
@@ -77,7 +77,7 @@
             </el-row>
             <el-row>
               <el-col :span="24">
-                <el-tabs v-model="activeName" type="border-card">
+                <dsn-tabs v-model="activeName" type="border-card" style="margin-bottom: 125px">
                   <el-tab-pane label="基础信息" name="first">
                     <el-row>
                       <el-col :span="24">
@@ -116,7 +116,7 @@
                     </el-row>
                     <el-row>
                       <el-col :span="24">
-                        <el-form-item label="上岗证:" prop="certOperation" required>
+                        <el-form-item label="上岗证:" prop="certOperation">
                           <dsn-select v-model="editForm.certOperation">
                             <el-option
                               v-for="item in certOperation"
@@ -130,7 +130,7 @@
                     </el-row>
                   </el-tab-pane>
                   <el-tab-pane label="自定义数据" name="second">数据字段，数据属性</el-tab-pane>
-                </el-tabs>
+                </dsn-tabs>
               </el-col>
             </el-row>
           </el-form>
@@ -153,7 +153,7 @@ import { mapGetters, mapMutations } from "vuex";
 import {
   saveOperation,
   getAllResourceGroup,
-  getAllCert
+  getUnassignedCert
 } from "../../../api/operation.maintain.api.js";
 export default {
   name: "edit-operation-maintain",
@@ -182,9 +182,6 @@ export default {
         resourceGroup: [
           { required: true, message: "请选择设备组", trigger: "change" }
         ],
-        certOperation: [
-          { required: true, message: "请选择上岗证", trigger: "change" }
-        ]
       },
       status: [
         {
@@ -214,13 +211,6 @@ export default {
         this.$message.error(data.data.message);
       }
     });
-    getAllCert().then(data => {
-      if (data.data.code == 200) {
-        this.certOperation = data.data.data;
-      } else {
-        this.$message.error(data.data.message);
-      }
-    });
     this.$nextTick(() => {
       this.init();
     });
@@ -235,8 +225,21 @@ export default {
         this.cloneModify = JSON.parse(JSON.stringify(this.editForm)); // modify 的副本
         this.setCurrent(this.editForm); // 设置选中第一行
         this.currentRow = this.editForm; // 设置初始currentRow 为第一行
+        this.getUnassignedCertList();
       }
     },
+
+    getUnassignedCertList() {
+      const params = { cert: this.editForm.certOperation };
+      getUnassignedCert(params).then(data => {
+        if (data.data.code == 200) {
+          this.certOperation = data.data.data;
+        } else {
+          this.$message.error(data.data.message);
+        }
+      })
+    },
+
     //清除下拉列表时触发
     handleClearSelect() {
       this.init();
@@ -253,18 +256,17 @@ export default {
       this.editForm = tempList[0];
       this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
       this.setCurrent(tempList[0]);
+      this.getUnassignedCertList()
     },
     //下拉列表获取到焦点时触发
     handleSelectFocus() {
       // this.oldRow = oldRow;
       //  当前编辑的和之前的数据不一样就显示弹窗
       if (JSON.stringify(this.editForm) !== JSON.stringify(this.cloneModify)) {
-        // console.log('数据不一样禁用下拉框还有弹出保存')
         this.saveDialog = true; // 保存弹出框出现
         this.selectIsDisabled = true; // 禁用下拉框
         this.$refs["select"].blur();
       } else {
-        //  console.log('数据一样不禁用下拉框还有不弹出保存')
         this.saveDialog = false;
 
         this.selectIsDisabled = false;
@@ -292,6 +294,7 @@ export default {
       }
       this.editForm = currentRow;
       this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
+      this.getUnassignedCertList();
     },
     //选中某一行
     //返回操作

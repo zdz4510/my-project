@@ -69,7 +69,7 @@
             </el-row>
             <el-row>
               <el-col :span="24">
-                <el-form-item label="上岗证:" prop="certOperation" required>
+                <el-form-item label="上岗证:" prop="certOperation">
                   <dsn-select v-model="addForm.certOperation">
                     <el-option
                       v-for="item in certList"
@@ -93,7 +93,7 @@
 import {
   saveOperation,
   getAllResourceGroup,
-  getAllCert
+  getUnassignedCert
 } from "../../../api/operation.maintain.api.js";
 export default {
   name: "add-operation-maintain",
@@ -109,9 +109,6 @@ export default {
         resourceGroup: [
           { required: true, message: "请选择设备组", trigger: "change" }
         ],
-        certOperation: [
-          { required: true, message: "请选择上岗证", trigger: "change" }
-        ]
       },
       addForm: {
         operation: "",
@@ -144,7 +141,7 @@ export default {
         this.$message.error(data.data.message);
       }
     });
-    getAllCert().then(data => {
+    getUnassignedCert({cert: ''}).then(data => {
       if (data.data.code == 200) {
         this.certList = data.data.data;
       } else {
