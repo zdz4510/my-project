@@ -2,9 +2,15 @@
   <div class="route-maintenance">
     <DsnPanel>
       <el-form :inline="true" class="typeForm" :model="form" :rules="searchrules" ref="form">
-        <el-form-item label="工艺路线:" prop="router">
-          <dsn-input placeholder="请输入工艺路线" v-model="form.router">
-            <i slot="append" class="el-icon-document-copy"></i>
+        <el-form-item label="工艺路线:"  prop="router">
+          <dsn-input   v-model="form.router" placeholder="">
+            <template slot="append">
+              <dsn-select  @change="handleSelectChange"  style="width:150px" placeholder="请输入工艺路线" v-model="form.router">
+           <el-option :label="item.router" :value="item" v-for="(item) in selectList" :key="item.router+item.revision">
+             {{item.router}} - {{item.revision}}
+           </el-option>
+          </dsn-select>
+            </template>
           </dsn-input>
         </el-form-item>
         <el-form-item label="版本:" prop="revision">
@@ -75,7 +81,8 @@ import {
   createRouter,
   getRouter,
   updateRouter,
-  findCustomizedFieldDefList
+  findCustomizedFieldDefList,
+  listRouterPage
 } from "@/api/material/route.maintenance.api";
 import Pannel from "../components/pannel";
 import handleData from "../components/handleData.js";
@@ -89,6 +96,7 @@ export default {
     return {
       list:[],
       list2:[],
+      selectList:[],
       searchValue: "",
       form: {
         customizedFieldDefInfoList:[],
@@ -135,7 +143,7 @@ export default {
       //工单表信息
       searchrules: {
         router: [
-          { required: true, message: "工艺路线不能为空", trigger: "blur" }
+          { required: true, message: "工艺路线不能为空", trigger: "change" }
         ],
         revision: [{ required: true, message: "版本不能为空", trigger: "blur" }]
       },
@@ -164,12 +172,28 @@ export default {
     this.init();
     this.hanldeFindCustomizedFieldDefList(1);
     this.hanldeFindCustomizedFieldDefList(2);
+    this.handleListRouterPage()
   },
   methods: {
     init() {
       this.$nextTick(() => {
         this.$refs["panel"].init();
       });
+    },
+    handleSelectChange(v){
+      console.log(v)
+       let item= this.selectList.find(item=>item==v);
+       console.log(item)
+       this.form.revision = item.revision;
+       this.form.router = item.router;
+    },
+    handleListRouterPage(){
+      listRouterPage().then(data=>{
+        const res = data.data;
+        if(res.code==200){
+          this.selectList = res.data.data;
+        }
+      })
     },
     clearCanvas(){
         this.$refs["panel"].clearCanvas()
@@ -190,7 +214,6 @@ export default {
     //保存
     handleSave() {
       if (this.form.modifyTime && this.form.reference) {
-        console.log("save");
         this.handleUpdateRoute();
         return;
       }
