@@ -15,7 +15,12 @@
         <el-form-item label="LOT" prop="lot">
           <el-row>
             <el-col :span="22">
-              <dsn-input class="lot" v-model.trim="lotStepForm.lot" placeholder="请输入LOT"></dsn-input>
+              <dsn-input
+                class="lot"
+                v-model.trim="lotStepForm.lot"
+                placeholder="请输入LOT"
+                @clear="clearLot"
+              ></dsn-input>
             </el-col>
             <el-col :span="2">
               <i class="el-icon-document" @click="goQuery"></i>
@@ -100,7 +105,8 @@
 <script>
 import {
   findLotStepStatusHttp,
-  setLotsStatusDoneHttp
+  setLotsStatusDoneHttp,
+  saveLotStepStatusHttp
 } from "@/api/dc/lot.step.api.js";
 import { mapMutations, mapGetters } from "vuex";
 
@@ -139,9 +145,6 @@ export default {
       this.lotStepForm.lot = "已选择" + this.lotQueryList.length + "个";
     }
     this.cloneLotQueryList = JSON.parse(JSON.stringify(this.lotQueryList));
-    this.cloneLotQueryList.forEach(element => {
-      this.queryLots.push(element.lot);
-    });
   },
   computed: {
     ...mapGetters(["lotQueryList"])
@@ -200,10 +203,14 @@ export default {
     },
     //步骤操作
     stepOperate(stepStatus, changeType) {
-      this.stepIdList.forEach(element => {
-        this.tableData[element].stepStatus = stepStatus;
-        this.tableData[element].qtyInQueue = 0;
-        this.tableData[element].qtyInWork = 0;
+      this.stepIdList.forEach(stepId => {
+        this.tableData.find(item => {
+          if (item.stepId === stepId) {
+            item.stepStatus = stepStatus;
+            item.qtyInQueue = 0;
+            item.qtyInWork = 0;
+          }
+        });
       });
       this.selectionList.forEach(element => {
         this.stepStatusList.push({
@@ -231,6 +238,14 @@ export default {
     },
     handleDelete() {},
     handleQuery() {
+      this.queryLots = [];
+      if (this.cloneLotQueryList.length > 0) {
+        this.cloneLotQueryList.forEach(element => {
+          this.queryLots.push(element.lot);
+        });
+      } else {
+        this.queryLots.push(this.lotStepForm.lot);
+      }
       const data = this.queryLots;
       findLotStepStatusHttp(data).then(data => {
         const res = data.data;
@@ -245,8 +260,13 @@ export default {
       });
     },
     handleReset() {
+      this.lotStepForm.comment = "";
       this.lotStepForm.lot = "";
       this.tableData = [];
+      this.queryLots = [];
+      this.stepStatusList = [];
+      this.cloneLotQueryList = [];
+      this.stepIdList = [];
     },
     handleSetFinish() {
       if (this.tableData.length === 0) {
@@ -337,9 +357,33 @@ export default {
         });
         return;
       }
-
-      //保存成功清空步骤记录数组
-      // this.stepStatusList = [];
+      const data = {
+        comment: this.lotStepForm.comment,
+        lots: ["string"],
+        stepStatus: this.stepStatusList
+      };
+      saveLotStepStatusHttp(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.$message({
+            type: "success",
+            message: res.message
+          });
+          //保存成功清空步骤记录数组
+          this.stepStatusList = [];
+          return;
+        }
+        this.$message({
+          type: "error",
+          message: res.message
+        });
+      });
+    },
+    //lot输入框清空
+    clearLot() {
+      this.queryLots = [];
+      this.stepStatusList = [];
+      this.cloneLotQueryList = [];
     }
   }
 };
