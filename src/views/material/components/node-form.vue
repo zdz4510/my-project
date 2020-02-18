@@ -40,7 +40,7 @@
         </el-form>
       </el-tab-pane>
       <el-tab-pane label="自定义字段">
-        <DsnData v-model="node.customizedFieldDefInfoList"></DsnData>
+        <DsnData   v-model="node.customizedFieldDefInfoList"></DsnData>
       </el-tab-pane>
     </el-tabs>
     <span slot="footer" class="dialog-footer">

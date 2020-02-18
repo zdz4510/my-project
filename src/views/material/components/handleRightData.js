@@ -82,6 +82,7 @@ export default ({ entryRouterStep, routerSteps }) => {
       newItem = {
         id: key,
         name: name,
+        operationDes:name,
         type: key,
         ico: item.ico,
         routerComponentType: "R",

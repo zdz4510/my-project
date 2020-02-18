@@ -338,6 +338,7 @@ export default {
             id: "A",
             type: "A",
             name: "返回置任一步骤",
+            operationDes:'返回置任一步骤',
             ico: "el-icon-odometer",
             routerComponentType: "R",
             retrunType: "A"
@@ -346,6 +347,7 @@ export default {
             id: "N",
             type: "N",
             name: "返回置上一步骤",
+            operationDes:'返回置上一步骤',
             ico: "el-icon-odometer",
             routerComponentType: "R",
             retrunType: "N"
@@ -354,6 +356,7 @@ export default {
             id: "O",
             type: "O",
             name: "返回置原始步骤",
+            operationDes:'返回置原始步骤',
             routerComponentType: "R",
             ico: "el-icon-odometer",
             retrunType: "O"
@@ -362,6 +365,7 @@ export default {
             id: "P",
             type: "P",
             name: "返回置下一步骤",
+            operationDes:'返回置下一步骤',
             ico: "el-icon-odometer",
             routerComponentType: "R",
             retrunType: "P"
@@ -587,7 +591,7 @@ export default {
         
       }
       
-      const len = this.rightData.nodeList.filter(item=>item.routerComponentType=='O').length;
+      const len = this.rightData.nodeList.filter(item=>item.id!='-1').length;
       const v =  ((len+1)*10).toString().padStart(4, '0');
       console.log(top,this.offsetY)
       let node = {
