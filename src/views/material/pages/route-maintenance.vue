@@ -60,10 +60,10 @@
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="附加工序">
-          <pannel ref="panel" :search="searchValue" />
+          <pannel ref="panel" :search="searchValue"  :modelCustomizedFieldDefInfoList="list2" />
         </el-tab-pane>
         <el-tab-pane label="自定义字段">
-          <DsnData  :data="form.customizedFieldDefInfoList"></DsnData>
+          <DsnData  v-model="form.customizedFieldDefInfoList"></DsnData>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -74,17 +74,21 @@
 import {
   createRouter,
   getRouter,
-  updateRouter
+  updateRouter,
+  findCustomizedFieldDefList
 } from "@/api/material/route.maintenance.api";
 import Pannel from "../components/pannel";
 import handleData from "../components/handleData.js";
 import handleRightData from "../components/handleRightData";
+
 export default {
   components: {
     Pannel
   },
   data() {
     return {
+      list:[],
+      list2:[],
       searchValue: "",
       form: {
         customizedFieldDefInfoList:[],
@@ -158,6 +162,8 @@ export default {
   },
   created() {
     this.init();
+    this.hanldeFindCustomizedFieldDefList(1);
+    this.hanldeFindCustomizedFieldDefList(2);
   },
   methods: {
     init() {
@@ -274,6 +280,19 @@ export default {
           });
         }
       });
+    },
+    hanldeFindCustomizedFieldDefList(type){
+        findCustomizedFieldDefList(type).then(data=>{
+          const res= data.data;
+          if(res.code==200){
+              if(type==1){
+                this.list = res.data.customizedFieldDefInfoList;
+                this.form.customizedFieldDefInfoList = this.list
+              }else{
+                 this.list2 = res.data.customizedFieldDefInfoList;
+              }
+          }
+        })
     },
     handleQuery() {
       this.$refs["form"].validate(valid => {

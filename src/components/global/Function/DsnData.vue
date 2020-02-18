@@ -3,47 +3,46 @@
     <el-form :model="form" class="demo-ruleForm">
       <el-form-item
         :label="item.fieldLabel + ':'"
-        :prop="item.fieldLabel"
+        :prop="item.fieldName"
         label-width="100px"
-        :required="item.required"
-        :rules="[
-          {
-            required: item.required,
-            message: `请输入${item.fieldLabel}`,
-            trigger: 'change'
-          },
-          {
-            min: 1,
-            max: 200,
-            message: '长度在 3 到 200 个字符',
-            trigger: 'blur'
-          },
-          { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
-        ]"
+        :rules="computedRules(item)"
         v-for="item in data"
         :key="item.lable"
       >
         <dsn-input
+          :maxlength="item.fieldSize"
+          show-word-limit
           type="textarea"
           v-if="item.fieldType == 'S'"
-          v-model="item.fieldValue"
+          v-model="form[`${item.fieldName}`]"
         ></dsn-input>
         <dsn-input
           type="number"
+          :maxlength="item.fieldSize"
+          show-word-limit
           v-if="item.fieldType == 'N'"
-          v-model="item.fieldValue"
+          v-model="form[`${item.fieldName}`]"
         ></dsn-input>
-        <dsn-input
-          type="text"
+        <dsn-select
+          style="width:100%"
+          @focus="selectFocus(item)"
           v-if="item.fieldType == 'C'"
-          v-model="item.fieldValue"
-        ></dsn-input>
+          v-model="form[`${item.fieldName}`]"
+        >
+          <el-option
+            :label="item"
+            :key="item"
+            :value="item"
+            v-for="item in list"
+          ></el-option>
+        </dsn-select>
       </el-form-item>
     </el-form>
   </div>
 </template>
 
 <script>
+import { findDataByLimitGeneralCode } from "@/api/material/route.maintenance.api.js";
 export default {
   name: "DsnData",
   props: {
@@ -54,7 +53,28 @@ export default {
       }
     }
   },
-
+  model: {
+    prop: "data",
+    event: "input"
+  },
+  watch: {
+    data() {
+      this.data.forEach(item => {
+        this.$set(this.form, item.fieldName, item.fieldValue);
+        //   this.form[`${item.fieldName}`] =item['fieldValue']
+      });
+    },
+    form: {
+      handler: function() {
+        this.data.forEach(item => {
+          item.fieldValue = this.form[`${item.fieldName}`];
+        });
+        console.log("aaaaa");
+        this.$emit("input", this.data);
+      },
+      deep: true
+    }
+  },
   data() {
     return {
       //   form: [
@@ -63,16 +83,18 @@ export default {
       //       value: 1
       //     }
       //   ],
-      form: {}
+      form: {},
+      list: []
     };
   },
+  created() {},
   methods: {
     getData() {},
     computedRules(item) {
       const rule1 = {
         required: item.required,
-        message: `请输入${item.fieldLabel}`,
-        trigger: "change"
+        message: `${item.fieldLabel} 不能为空`,
+        trigger: ["change", "blur"]
       };
       //   ,
 
@@ -80,9 +102,9 @@ export default {
         return [
           rule1,
           {
-            min: 1,
-            max: 200,
-            message: "长度在 1 到 200 个字符",
+            min: 0,
+            max: parseInt(item.fieldSize),
+            message: "长度在 0 到 200 个字符",
             trigger: "blur"
           }
         ];
@@ -90,10 +112,27 @@ export default {
       if (item.fieldType == "N") {
         return [
           rule1,
-          { min: 1, max: 30, message: "长度在 1 到 30 个字符", trigger: "blur" }
+          { min: 0, max: parseInt(item.fieldSize), message: "长度在 0 到 30 个字符", trigger: "blur" }
         ];
       }
-      return [];
+      return rule1;
+    },
+    //下拉框fouces 触发的事件
+    selectFocus(item) {
+      const { limitGeneralField, limitGeneralCode } = item;
+      this.getList({
+        limitGeneralCode,
+        limitGeneralField
+      });
+    },
+    getList(data) {
+      findDataByLimitGeneralCode(data).then(data => {
+        console.log(data);
+        const res = data.data;
+        if (res.code == 200) {
+          this.list = res.data;
+        }
+      });
     }
   }
 };

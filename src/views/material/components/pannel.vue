@@ -110,12 +110,19 @@ import { getDataC } from "./data_C";
 import { getAllOperation } from "@/api/material/route.maintenance.api";
 import { getCraftProcess } from "@/api/process-flow/process.flow.api/";
 import "./handleData.js";
+
 export default {
   name: "pannel",
   props: {
     search: {
       type: String,
       required: true
+    },
+    modelCustomizedFieldDefInfoList:{
+      type:Array,
+      default:()=>{
+        return []
+      }
     }
   },
   data() {
@@ -591,7 +598,8 @@ export default {
         show: true,
         id: nodeId,
         type: nodeId,
-        stepId:v
+        stepId:v,
+        customizedFieldDefInfoList:lodash.cloneDeep(this.modelCustomizedFieldDefInfoList)
       };
       /**
        * 这里可以进行业务判断、是否能够添加该节点

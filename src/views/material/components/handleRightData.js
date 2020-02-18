@@ -53,8 +53,8 @@ export default ({ entryRouterStep, routerSteps }) => {
         name: key,
         type: key,
         description: item.description, // 描述
-        customizedData:
-          item.routerComponent.routerOperationComponent.customizedData || [],
+        customizedFieldDefInfoList:
+          item.routerComponent.routerOperationComponent.customizedFieldDefInfoList || [],
         isLastReportingStep:
           item.routerComponent.routerOperationComponent.isLastReportingStep,
         routerComponentType: item.routerComponent.routerComponentType, // 组件类型  O / R
@@ -93,7 +93,8 @@ export default ({ entryRouterStep, routerSteps }) => {
         returnStepId: item.routerComponent.routerReturnComponent.returnStepId,
         description: item.description, // 描述
         stepId: item.stepId,
-        sequence: item.sequence
+        sequence: item.sequence,
+       
       };
     }
     nodes.push(newItem);
