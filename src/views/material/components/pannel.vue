@@ -300,7 +300,7 @@ export default {
           resourceGroup: item.resourceGroup,
           routerComponentType: "O", // 工艺路线类型
           ico: "el-icon-user-solid",
-          customizedData: [],
+          customizedFieldDefInfoList: [],
           operation: item.operation, // 工序id
           isLastReportingStep: false, //最后包工步骤checkbox
           description: "", //  描述
