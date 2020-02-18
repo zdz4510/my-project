@@ -40,7 +40,29 @@ export const searchLotDetailHttp = data => {
  */
 export const setLotsStatusDoneHttp = data => {
   return request.post(
-    `${window.VUE_APP_URL}/LotStepStatusService/setLotsStatusDone?comment=${data.comment}`,
+    `${window.VUE_APP_URL}/mes/LotStepStatusService/setLotsStatusDone?comment=${data.comment}`,
     data.lots
+  );
+};
+
+/**
+ * 步骤操作接口
+ *  url /LotStepStatusService/saveLotStepStatus
+ */
+export const saveLotStepStatusHttp = data => {
+  return request.post(
+    `${window.VUE_APP_URL}/mes/LotStepStatusService/saveLotStepStatus`,
+    data
+  );
+};
+
+/**
+ * Lot步骤更改规则获取
+ *  url /LotStepStatusService/getLotStepChangRule
+ */
+export const getLotStepChangRuleHttp = data => {
+  return request.get(
+    `${window.VUE_APP_URL}/mes/LotStepStatusService/getLotStepChangRule`,
+    { params: data }
   );
 };

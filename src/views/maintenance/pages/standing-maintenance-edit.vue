@@ -65,7 +65,7 @@
                     <el-option
                       v-for="item in workCenterList"
                       :key="item.workCenter"
-                      :label="item.workCenterDes"
+                      :label="item.workCenter"
                       :value="item.workCenter"
                     ></el-option>
                   </el-select>
@@ -81,7 +81,7 @@
                     <el-option
                       v-for="(item,index) in workCenterRelationList"
                       :key="index"
-                      :label="item.workCenterDes"
+                      :label="item.workCenter"
                       :value="item.workCenter"
                     ></el-option>
                   </el-select>
@@ -102,7 +102,7 @@
                     <el-option
                       v-for="(item,index) in deviceList"
                       :key="index"
-                      :label="item.resourceDes"
+                      :label="item.resource"
                       :value="item.resource"
                     ></el-option>
                   </el-select>

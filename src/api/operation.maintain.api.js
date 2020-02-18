@@ -1,4 +1,5 @@
-import request from  "@/service/"
+import request from "@/service/";
+import qs from "qs";
 /**
  * 获取所有工序
  * url /mes/operation/getAllOperation
@@ -15,9 +16,12 @@ export const getAllOperation = data => {
  * url /mes/resource_group/listAllResourceGroup
  */
 export const getAllResourceGroup = data => {
-  return request.get(`${window.VUE_APP_URL}/mes/resource_group/listAllResourceGroup`, {
-    params: data
-  });
+  return request.get(
+    `${window.VUE_APP_URL}/mes/resource_group/listAllResourceGroup`,
+    {
+      params: data
+    }
+  );
 };
 
 /**
@@ -40,13 +44,15 @@ export const getOperationByName = data => {
   });
 };
 
-
 /**
  * 对工序进行添加或者更新，存在tenantSiteCode，operation对应的记录则为更新记录否则为添加新记录
  * url /mes/operation/saveOperation
  */
 export const saveOperation = data => {
-	return request.post(`${window.VUE_APP_URL}/mes/operation/saveOperation`, data);
+  return request.post(
+    `${window.VUE_APP_URL}/mes/operation/saveOperation`,
+    data
+  );
 };
 
 /**
@@ -54,7 +60,19 @@ export const saveOperation = data => {
  *  url /mes/operation/deleteOperation
  */
 export const deleteOperation = data => {
-  return request.delete(`${window.VUE_APP_URL}/mes/operation/deleteOperation?${data}`,);
+  return request.delete(
+    `${window.VUE_APP_URL}/mes/operation/deleteOperation?${data}`
+  );
+};
+
+/**
+ * 获取所有上岗证
+ * url /mes/cert/listAllCert
+ */
+export const getUnassignedCert = params => {
+  return request.get(
+    `${window.VUE_APP_URL}/mes/cert/listUnassignedCert?${qs.stringify(params)}`
+  );
 };
 
 /**
@@ -63,6 +81,15 @@ export const deleteOperation = data => {
  */
 export const getAllCert = data => {
   return request.get(`${window.VUE_APP_URL}/mes/cert/listAllCert`, {
+    params: data
+  });
+};
+/**
+ * 分页查询所有工序
+ * url /operation/findPage
+ */
+export const findPageHttp = data => {
+  return request.get(`${window.VUE_APP_URL}/mes/operation/findPage`, {
     params: data
   });
 };

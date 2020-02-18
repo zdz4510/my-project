@@ -21,3 +21,15 @@ export const listLotHttp = data => {
     params: data
   });
 };
+
+/**
+ * 拆分Lot接口
+ *  url /splitLot/splitLot
+ */
+export const splitLotHttp = data => {
+  // const params = qs.stringify(data);
+  return request.post(
+    `${window.VUE_APP_URL}/mes/splitLot/splitLot?lot=${data.lot}`,
+    data.splitList
+  );
+};

@@ -194,7 +194,8 @@ export default {
         description: "",
         nodeList: [],
         lineList: []
-      }
+      },
+      offsetY:0,
     };
   },
   components: {
@@ -209,8 +210,21 @@ export default {
       this.jsPlumbInit();
     });
   },
-  mounted() {},
+  mounted() {
+    let dom = document.getElementsByClassName('pannerBox')[0];
+    dom.addEventListener('scroll',this.hadleScroll);
+  },
+  beforeDestroy(){
+     let dom = document.getElementsByClassName('pannerBox')[0];
+    dom.removeEventListener('scroll',this.hadleScroll);
+  },
   methods: {
+    hadleScroll(){
+    
+     this.offsetY =   document.getElementsByClassName('pannerBox')[0].scrollTop;
+  
+
+    },
     // 进度缩放
     changeScale(val) {
       this.$refs.flowContainer.setAttribute("style", `transform:scale(${val})`);
@@ -298,6 +312,7 @@ export default {
             id: "-1",
             type: "-1",
             name: "开始",
+            operationDes:'开始',
             componentCode: "-1",
             craftNum: "-1",
             ico: "el-icon-odometer",
@@ -555,14 +570,19 @@ export default {
 
       let left = mousePosition.left;
       let top = mousePosition.top;
-      console.log(evt.originalEvent.clientY)
+     // console.log(evt.originalEvent.clientY)
       if (left < 0) {
         left = evt.originalEvent.layerX - width;
       }
       if (top < 0) {
-        top = evt.originalEvent.clientY - 270;
+        let offsetY= document.getElementsByClassName('showInfo')[0].offsetTop-98;
+        top = evt.originalEvent.clientY - 270+this.offsetY-offsetY;
+        
       }
-
+      
+      const len = this.rightData.nodeList.filter(item=>item.routerComponentType=='O').length;
+      const v =  ((len+1)*10).toString().padStart(4, '0');
+      console.log(top,this.offsetY)
       let node = {
         ...nodeMenu,
         left: left + "px",
@@ -570,7 +590,8 @@ export default {
         ico: nodeMenu.ico,
         show: true,
         id: nodeId,
-        type: nodeId
+        type: nodeId,
+        stepId:v
       };
       /**
        * 这里可以进行业务判断、是否能够添加该节点
@@ -825,10 +846,10 @@ export default {
   // // background-color: rgb(251, 251, 251);
   // min-height: 500%;
   /*background-color: #42b983;*/
-  overflow: hidden;
+  // overflow: hidden;
   position: relative;
   transform-origin: 0 0; // transform 基点为左上角
-  min-height: 100%;
+  min-height: 400%;
 }
 
 .labelClass {
@@ -844,7 +865,7 @@ export default {
   user-select: none;
 }
 .pannerBox {
-  overflow: scroll;
+  overflow-y: scroll;
   background-image: linear-gradient(
       90deg,
       rgba(0, 0, 0, 0.15) 10%,
