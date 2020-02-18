@@ -121,7 +121,7 @@
             :label="field"
             :prop="field"
           >
-            <dsn-input v-model.number="addForm[`${field}`]" placeholder="请输入字段数据"></dsn-input>
+            <dsn-input v-model.trim="addForm[`${field}`]" placeholder="请输入字段数据"></dsn-input>
           </el-form-item>
         </el-form>
       </span>
@@ -352,7 +352,6 @@ export default {
               trigger: "blur"
             }
           ]);
-          console.log(element.fieldType);
           //引用型
           if (element.fieldType === "C") {
             this.queryCite(
@@ -361,17 +360,16 @@ export default {
               element.limitGeneralField
             );
           }
+          this.tempField = element;
           //文本型
           if (element.fieldType === "A") {
             this.addFormRules[`${element.fieldName}`].push({
-              max: element.fieldSize,
-              message: `长度在${element.fieldSize}以内`,
+              validator: this.valiText.bind(element),
               trigger: "blur"
             });
           }
           //数字型
           if (element.fieldType === "N") {
-            this.tempField = element;
             this.addFormRules[`${element.fieldName}`].push({
               validator: this.valiNumber.bind(element),
               trigger: "blur"
@@ -381,46 +379,48 @@ export default {
         }
         //引用型
         if (element.fieldType === "C") {
-          console.log(111);
           this.queryCite(
             element.fieldName,
             element.limitGeneralCode,
             element.limitGeneralField
           );
         }
+        this.tempField = element;
         //文本型
         if (element.fieldType === "A") {
           this.$set(this.addFormRules, element.fieldName, [
             {
-              max: element.fieldSize,
-              message: `长度在${element.fieldSize}以内`,
+              validator: this.valiText.bind(element),
               trigger: "blur"
             }
           ]);
         }
         //数字型
         if (element.fieldType === "N") {
-          this.tempField = element;
           this.$set(this.addFormRules, element.fieldName, [
             { validator: this.valiNumber.bind(element), trigger: "blur" }
           ]);
         }
       });
     },
-    //设置文本型得规则
-    setTextRules() {},
-    //设置数字型得规则
-    setNumberRules() {},
+    //设置文本型的验证规则
+    valiText(rule, value, callback) {
+      if ((value + "").length > this.tempField.fieldSize) {
+        callback(new Error(`该字段总长最多为${this.tempField.fieldSize}`));
+      }
+      callback();
+    },
     //数字型的验证规则
     valiNumber(rule, value, callback) {
-      let reg = new RegExp("^\\d{1," + this.tempField.fieldSize + "}$", "gim"); // re为/^\d+bl$/gim
+      // let reg = new RegExp("^\\d{1," + this.tempField.fieldSize + "}$", "gim"); // re为/^\d+bl$/gim
+      let reg = /^(([0-9]+)||([0-9]+\.[0-9]{1,3}))$/g;
       if (!reg.test(value)) {
-        callback(
-          new Error(`该字段是数字型且最长为${this.tempField.fieldSize}`)
-        );
-      } else {
-        callback();
+        callback(new Error(`该字段是数字型且最多三位小数`));
       }
+      if ((value + "").length > this.tempField.fieldSize) {
+        callback(new Error(`该字段总长最多为${this.tempField.fieldSize}`));
+      }
+      callback();
     },
     queryCite(fieldName, limitGeneralCode, limitGeneralField) {
       console.log(fieldName, limitGeneralCode, limitGeneralField);
@@ -439,45 +439,39 @@ export default {
               field.limitGeneralField
             );
           }
-          console.log(fieldName);
+          this.tempField = field;
           if (fieldName === "FIELD_01") {
             //文本型
             if (field.fieldType === "A") {
               this.addFormRules[`${fieldName}`].push({
-                max: field.fieldSize,
-                message: `长度在${field.fieldSize}以内`,
+                validator: this.valiText.bind(field),
                 trigger: "blur"
               });
             }
             //数字型
             if (field.fieldType === "N") {
-              this.tempField = field;
               this.addFormRules[`${fieldName}`].push({
                 validator: this.valiNumber.bind(field),
                 trigger: "blur"
               });
             }
           } else {
-            console.log(field.fieldType);
             //文本型
             if (field.fieldType === "A") {
               this.$set(this.addFormRules, fieldName, [
                 {
-                  max: field.fieldSize,
-                  message: `长度在${field.fieldSize}以内`,
+                  validator: this.valiText.bind(field),
                   trigger: "blur"
                 }
               ]);
             }
             //数字型
             if (field.fieldType === "N") {
-              this.tempField = field;
               this.$set(this.addFormRules, fieldName, [
                 { validator: this.valiNumber.bind(field), trigger: "blur" }
               ]);
             }
           }
-
           return;
         }
         this.$message({
@@ -541,6 +535,8 @@ export default {
     handleQuery(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
+          this.usedFieldNames = [];
+          this.tableData = [];
           this.init();
         } else {
           return false;

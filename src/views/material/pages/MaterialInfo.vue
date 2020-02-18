@@ -18,7 +18,7 @@
         <el-form-item label="版本号:" :label-width="formLabelWidth" prop="materialRev">
           <dsn-input v-model="searchForm.materialRev"></dsn-input>
         </el-form-item>
-        <el-form-item label prop>
+        <el-form-item>
           <dsn-button size="small" type="primary" icon="el-icon-search" @click.native="search">查询</dsn-button>
           <dsn-button size="small" type="primary" icon="el-icon-refresh" @click.native="resetForm('searchForm')">重置</dsn-button>
         </el-form-item>

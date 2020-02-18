@@ -126,7 +126,8 @@ export default {
         "FIXED2020/01/1300000118MAT1",
         "FIXED2020/01/1300000120MAT1"
       ],
-      stepStatusList: []
+      stepStatusList: [],
+      stepIdList: []
     };
   },
   created() {
@@ -154,7 +155,10 @@ export default {
     //当前选中行
     handleSelectionChange(val) {
       this.selectionList = val;
-      console.log(this.selectionList);
+      this.stepIdList = [];
+      this.selectionList.forEach(element => {
+        this.stepIdList.push(element.stepId);
+      });
     },
     //双击单元格
     cellDblClick(row) {
@@ -163,28 +167,25 @@ export default {
     },
     //点击步骤操作菜单栏
     handleCommand(command) {
-      // if (this.selectionList.length === 0) {
-      //   this.$message({
-      //     message: "请至少选择一行数据进行操作！",
-      //     type: "warning"
-      //   });
-      //   return;
-      // }
+      if (this.selectionList.length === 0) {
+        this.$message({
+          message: "请至少选择一行数据进行操作！",
+          type: "warning"
+        });
+        return;
+      }
+
       //清除步骤
       if (command === "clear") {
-        this.stepStatusList.push({
-          changeType: "CLEAR",
-          stepId: this.selectionList[0].stepId
-        });
-        this.stepOperate("");
+        this.stepOperate("", "CLEAR");
       }
       //步骤绕过
       if (command === "byPass") {
-        this.stepOperate("已绕过");
+        this.stepOperate("已绕过", "BYPASS");
       }
       //步骤已完成
       if (command === "stepDone") {
-        this.stepOperate("已完成");
+        this.stepOperate("已完成", "STEPDONE");
       }
       //整个数量置于队列中
       if (command === "inQueue") {
@@ -192,14 +193,16 @@ export default {
       }
     },
     //步骤操作
-    stepOperate(stepStatus) {
-      this.tableData.forEach(element1 => {
-        this.selectionList.forEach(element2 => {
-          if (JSON.stringify(element1) === JSON.stringify(element2)) {
-            element1.stepStatus = stepStatus;
-            element1.qtyInQueue = 0;
-            element1.qtyInQueue = 0;
-          }
+    stepOperate(stepStatus, changeType) {
+      this.stepIdList.forEach(element => {
+        this.tableData[element].stepStatus = stepStatus;
+        this.tableData[element].qtyInQueue = 0;
+        this.tableData[element].qtyInWork = 0;
+      });
+      this.selectionList.forEach(element => {
+        this.stepStatusList.push({
+          changeType,
+          stepId: element.stepId
         });
       });
     },
@@ -239,19 +242,19 @@ export default {
         });
         return;
       }
+      if (this.lotStepForm.comment === "") {
+        this.$message({
+          type: "warning",
+          message: "请填写备注！"
+        });
+        return;
+      }
       this.$confirm("是否确认将LOT的状态置为完成？", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
       })
         .then(() => {
-          if (this.lotStepForm.comment === "") {
-            this.$message({
-              type: "warning",
-              message: "请填写备注！"
-            });
-            return;
-          }
           this.setFinishHttp();
         })
         .catch(() => {
@@ -263,14 +266,13 @@ export default {
     },
     //请求
     setFinishHttp() {
-      // const tempArr = [];
-      // this.tableData.forEach(element => {
-      //   tempArr.push(element.lot);
-      // });
-      console.log(this.selectionList[0].lots);
+      const lots = [];
+      this.selectionList.forEach(element => {
+        lots.push(element.lot);
+      });
       const data = {
         comment: this.lotStepForm.comment,
-        lots: this.selectionList.lots
+        lots
       };
       setLotsStatusDoneHttp(data).then(data => {
         const res = data.data;
@@ -313,6 +315,9 @@ export default {
           return;
         }
       });
+
+      //保存成功清空步骤记录数组
+      // this.stepStatusList = [];
     }
   }
 };

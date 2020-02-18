@@ -825,10 +825,10 @@ export default {
   // // background-color: rgb(251, 251, 251);
   // min-height: 500%;
   /*background-color: #42b983;*/
-  overflow: hidden;
+  // overflow: hidden;
   position: relative;
   transform-origin: 0 0; // transform 基点为左上角
-  min-height: 100%;
+  min-height: 400%;
 }
 
 .labelClass {
@@ -844,7 +844,7 @@ export default {
   user-select: none;
 }
 .pannerBox {
-  overflow: scroll;
+  overflow-y: scroll;
   background-image: linear-gradient(
       90deg,
       rgba(0, 0, 0, 0.15) 10%,
