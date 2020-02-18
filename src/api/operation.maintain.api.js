@@ -1,4 +1,5 @@
-import request from  "@/service/"
+import request from  "@/service/";
+import qs from 'qs';
 /**
  * 获取所有工序
  * url /mes/operation/getAllOperation
@@ -61,8 +62,7 @@ export const deleteOperation = data => {
  * 获取所有上岗证
  * url /mes/cert/listAllCert
  */
-export const getAllCert = data => {
-  return request.get(`${window.VUE_APP_URL}/mes/cert/listAllCert`, {
-    params: data
-  });
+export const getUnassignedCert = params => {
+
+  return request.get(`${window.VUE_APP_URL}/mes/cert/listUnassignedCert?${qs.stringify(params)}`);
 };
