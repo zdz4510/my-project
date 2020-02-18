@@ -65,7 +65,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="进制:" prop="numBase" required>
-              <dsn-input-number v-model="addForm.numBase" :min="2" :max="36" label></dsn-input-number>
+              <el-input-number v-model="addForm.numBase" :min="2" :max="36" label></el-input-number>
             </el-form-item>
           </el-col>
         </el-row>
