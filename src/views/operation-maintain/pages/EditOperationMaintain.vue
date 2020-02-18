@@ -56,14 +56,12 @@
             :label-width="formLabelWidth"
           >
             <el-row>
-              <el-col :span="10">
+              <el-col :span="12">
                 <el-form-item label="工序:" prop="operation">
                   <dsn-input v-model="editForm.operation" disabled></dsn-input>
                 </el-form-item>
               </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="24">
+              <el-col :span="12">
                 <el-form-item label="描述:" prop="operationDes">
                   <dsn-input
                     maxlength="80"

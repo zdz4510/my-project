@@ -55,3 +55,14 @@ export const saveLotStepStatusHttp = data => {
     data
   );
 };
+
+/**
+ * Lot步骤更改规则获取
+ *  url /LotStepStatusService/getLotStepChangRule
+ */
+export const getLotStepChangRuleHttp = data => {
+  return request.get(
+    `${window.VUE_APP_URL}/mes/LotStepStatusService/getLotStepChangRule`,
+    { params: data }
+  );
+};

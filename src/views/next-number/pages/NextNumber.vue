@@ -173,8 +173,8 @@ export default {
     return {
       formLabelWidth: "120px",
       searchForm: {
-        definedBy: "",
-        nextNumberType: "",
+        definedBy: "MATERIAL",
+        nextNumberType: "S",
         value: "",
         materialRev: "",
         commitType: ""
@@ -374,7 +374,7 @@ export default {
           }
           sessionStorage.setItem("searchForm", JSON.stringify(this.searchForm));
           this.SETNEXTNUMBEREDITLIST(this.checkedList);
-         this.dialogFlag = true;
+          this.dialogFlag = true;
           this.dialogType = 'edit';
         } else {
           console.log("error submit!!");
@@ -543,13 +543,18 @@ export default {
     },
     handleSave(type, item) {
       this.dialogFlag = false;
-      if (type === 'add') {
-        const { data } = this.tableData;
+      const { data } = this.tableData;
+      if (type === 'add') {  
         item.sequence = data.length + 1;
         data.push(item);
       }
       if (type === 'edit') {
-        console.log('editdata', item)
+        const newData = data.map(obj => {
+          const modifyData = item.find(child => child.sequence === obj.sequence);
+          return modifyData || obj;
+        })
+        console.log(newData)
+        this.tableData.data = newData;
       }
     },
     handleSaveData() {

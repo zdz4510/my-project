@@ -56,7 +56,7 @@
             <el-dropdown-item command="stepDone">将步骤标记为已完成</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <dsn-button size="small" type="primary" @click="handleSave">保存</dsn-button>
+        <dsn-button size="small" type="primary" @click="checkSaveRule">保存</dsn-button>
       </div>
       <div class="showInfo">
         <el-table
@@ -106,7 +106,8 @@
 import {
   findLotStepStatusHttp,
   setLotsStatusDoneHttp,
-  saveLotStepStatusHttp
+  saveLotStepStatusHttp,
+  getLotStepChangRuleHttp
 } from "@/api/dc/lot.step.api.js";
 import { mapMutations, mapGetters } from "vuex";
 
@@ -138,7 +139,16 @@ export default {
     };
   },
   created() {
+    if (this.lotStepAllInfo.length > 0) {
+      this.lotStepForm = this.lotStepAllInfo[0].lotStepForm;
+      this.queryLots = this.lotStepAllInfo[0].queryLots;
+      this.stepStatusList = this.lotStepAllInfo[0].stepStatusList;
+      this.stepIdList = this.lotStepAllInfo[0].stepIdList;
+      this.tableData = this.lotStepAllInfo[0].tableData;
+    }
+    console.log(this.lotStepAllInfo);
     if (this.lotQueryList.length === 1) {
+      console.log(this.lotQueryList.length);
       this.lotStepForm.lot = this.lotQueryList[0].lot;
     }
     if (this.lotQueryList.length > 1) {
@@ -147,11 +157,10 @@ export default {
     this.cloneLotQueryList = JSON.parse(JSON.stringify(this.lotQueryList));
   },
   computed: {
-    ...mapGetters(["lotQueryList"])
+    ...mapGetters(["lotQueryList", "lotStepDetailList", "lotStepAllInfo"])
   },
   methods: {
-    ...mapMutations(["LOTSTEPDETAILLIST"]),
-    ...mapMutations(["LOTQUERYLIST"]),
+    ...mapMutations(["LOTSTEPDETAILLIST", "LOTQUERYLIST", "LOTSTEPALLINFO"]),
     toggleSelection(rows) {
       if (rows) {
         rows.forEach(row => {
@@ -172,6 +181,17 @@ export default {
     //双击单元格
     cellDblClick(row) {
       this.LOTSTEPDETAILLIST(row);
+      const tempData = [
+        {
+          lotStepForm: this.lotStepForm,
+          tableData: this.tableData,
+          queryLots: this.queryLots,
+          stepStatusList: this.stepStatusList,
+          stepIdList: this.stepIdList
+        }
+      ];
+      console.log(tempData);
+      this.LOTSTEPALLINFO(tempData);
       this.$router.push({ name: "lotStepDetail" });
     },
     //点击步骤操作菜单栏
@@ -220,7 +240,42 @@ export default {
       });
     },
     //整个数量置于队列中
-    inQueue() {},
+    inQueue() {
+      let stepSequence = 0;
+      this.selectionList.forEach(element => {
+        if (element.stepSequence > stepSequence) {
+          stepSequence = element.stepSequence;
+        }
+      });
+      console.log(stepSequence);
+      let count = 1;
+      this.tableData.forEach(element => {
+        if (element.stepSequence === stepSequence) {
+          element.stepStatus = "排队中";
+          element.qtyInQueue = count++; //待修改
+          element.qtyInWork = 0;
+        }
+        if (element.stepSequence > stepSequence) {
+          element.stepStatus = "";
+          element.qtyInQueue = 0;
+          element.qtyInWork = 0;
+        }
+        if (
+          element.stepSequence < stepSequence &&
+          element.stepStatus !== "已完成"
+        ) {
+          element.stepStatus = "已绕过";
+          element.qtyInQueue = 0;
+          element.qtyInWork = 0;
+        }
+      });
+      this.selectionList.forEach(element => {
+        this.stepStatusList.push({
+          changeType: "INQUEUE",
+          stepId: element.stepId
+        });
+      });
+    },
     //跳转到查询LOT界面
     goQuery() {
       if (this.queryLots.length > 1) {
@@ -276,13 +331,31 @@ export default {
         });
         return;
       }
-      if (this.lotStepForm.comment === "") {
+      getLotStepChangRuleHttp({ ruler: "COMMENT_REQUIRED" }).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          if (res.data === "yes") {
+            if (this.lotStepForm.comment === "") {
+              this.$message({
+                type: "warning",
+                message: "请填写备注！"
+              });
+              return;
+            }
+            this.confirmStatusIdFinish();
+          } else {
+            this.confirmStatusIdFinish();
+          }
+          return;
+        }
         this.$message({
-          type: "warning",
-          message: "请填写备注！"
+          message: res.message,
+          type: "warning"
         });
-        return;
-      }
+      });
+    },
+    //是否确认将LOT的状态置为完成弹框
+    confirmStatusIdFinish() {
       this.$confirm("是否确认将LOT的状态置为完成？", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -298,7 +371,7 @@ export default {
           });
         });
     },
-    //请求
+    //请求LOT的状态置为完成
     setFinishHttp() {
       const lots = [];
       this.selectionList.forEach(element => {
@@ -311,10 +384,10 @@ export default {
       setLotsStatusDoneHttp(data).then(data => {
         const res = data.data;
         if (res.code === 200) {
-          console.log(res.data);
+          this.handleQuery();
           this.$message({
             type: "success",
-            message: "操作成功!"
+            message: res.message
           });
           return;
         }
@@ -324,14 +397,31 @@ export default {
         });
       });
     },
-    handleSave() {
-      if (this.lotStepForm.comment === "") {
+    checkSaveRule() {
+      getLotStepChangRuleHttp({ ruler: "COMMENT_REQUIRED" }).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          if (res.data === "yes") {
+            if (this.lotStepForm.comment === "") {
+              this.$message({
+                type: "warning",
+                message: "请填写备注！"
+              });
+              return;
+            }
+            this.handleSave();
+          } else {
+            this.handleSave();
+          }
+          return;
+        }
         this.$message({
-          type: "warning",
-          message: "请填写备注！"
+          message: res.message,
+          type: "warning"
         });
-        return;
-      }
+      });
+    },
+    handleSave() {
       if (this.tableData.length === 0) {
         this.$message({
           type: "warning",
@@ -359,7 +449,7 @@ export default {
       }
       const data = {
         comment: this.lotStepForm.comment,
-        lots: ["string"],
+        lots: this.queryLots,
         stepStatus: this.stepStatusList
       };
       saveLotStepStatusHttp(data).then(data => {

@@ -28,14 +28,18 @@ export const getRouter = data => {
   });
 };
 
-/**
- * /mes/router/listRouterPage  查询工艺路线列表: 分页和不分页
- */
-export const listRouterPage = data => {
-  return request.get(`${window.VUE_APP_URL}/mes/router/listRouterPage`, {
-    params: data
-  });
-};
+
+  
+  /**
+   * /mes/router/listRouterPage  查询工艺路线列表: 分页和不分页
+   */
+  export const listRouterPage = data => {
+    return request.get(
+      `${window.VUE_APP_URL}/mes/router/listRouterPage`,{
+        params:data
+      },
+    );
+  };
 
 /**
  *  /mes/router/updateRouter 更新工艺路线
