@@ -103,7 +103,7 @@
             :current-page="this.leftPage.currentPage"
             :page-sizes="[1, 10, 15, 20, 30, 50]"
             :page-size="this.leftPage.pageSize"
-            layout="->, total, prev, pager, next, sizes"
+            layout="->, total, prev, pager, next, sizes, jumper"
             :total="this.leftPage.total"
           ></dsn-pagination>
           <!-- 已收集数据收集组清单表格数据end -->
@@ -111,7 +111,6 @@
         <el-tab-pane label="已收集数据收集组参数清单" :disabled="searchForm.dcGroup===''" name="参数清单">
           <!-- 已收集数据收集组参数清单表格数据start -->
           <dsn-table
-            border
             :data="tableParamsData.tableData"
             @selection-change="handleSelectionChangeRight"
             row-key="mat"
@@ -119,7 +118,20 @@
             <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
             <el-table-column type="index" label="序号"></el-table-column>
             <template v-for="(item,index) in tableParamsData.tableHead">
-              <el-table-column :prop="item.column_name" :label="item.column_comment" :key="index"></el-table-column>
+              <el-table-column
+                :prop="item.column_name"
+                :label="item.column_comment"
+                :key="index"
+                v-if=" item.column_name==='collectionType'"
+              >
+                <template slot-scope="scope">{{ parseInt(scope.row.collectionType)===10?"LOT":"资源"}}</template>
+              </el-table-column>
+              <el-table-column
+                :prop="item.column_name"
+                :label="item.column_comment"
+                :key="index"
+                v-if=" item.column_name!=='collectionType'"
+              ></el-table-column>
             </template>
           </dsn-table>
           <!-- 已收集数据收集组参数清单表格数据end -->
@@ -131,7 +143,7 @@
             :current-page="this.rightPage.currentPage"
             :page-sizes="[1, 10, 15, 20, 30, 50]"
             :page-size="this.rightPage.pageSize"
-            layout="->, total, prev, pager, next, sizes"
+            layout="->, total, prev, pager, next, sizes, jumper"
             :total="this.rightPage.total"
           ></dsn-pagination>
           <!-- 分页end -->

@@ -74,7 +74,6 @@ const routerHistory = {
      *  关闭右边
      */
     closeRight(state, currentName) {
-     
       if (state.historyList.length <= 1) {
         return;
       }
@@ -82,7 +81,7 @@ const routerHistory = {
         return item.name == currentName;
       });
       if (state.historyList.length >= index + 2) {
-         state.historyList.splice(index+1, 1);
+        state.historyList.splice(index + 1, 1);
       }
     },
     /**
@@ -94,6 +93,16 @@ const routerHistory = {
       }
       state.historyList = state.historyList.filter(item => {
         return item.name == currentName;
+      });
+    },
+    /**
+     *
+     * @param {*} state
+     * @param {*} currentName 当前路由的名称
+     */
+    POPROUTER(state, currentName) {
+      state.historyList = state.historyList.filter(item => {
+        return item.name != currentName;
       });
     }
   },
