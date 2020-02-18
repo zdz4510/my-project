@@ -93,17 +93,29 @@
               @click="del"
               :disabled="this.pCheckedList.length === 0"
             >删除</dsn-button>
+            <dsn-button
+              size="40"
+              type="text"
+              icon="el-icon-caret-top"
+              @click.native="handleUpCraft"
+            >上移</dsn-button>
+            <dsn-button
+              size="20"
+              type="text"
+              icon="el-icon-caret-bottom"
+              @click.native="handleDownCraft"
+            >下移</dsn-button>
           </div>
           <dsn-table
             ref="pTable"
             :data="this.MeasureInfoList"
             tooltip-effect="dark"
-            row-key="dcGroup"
+            row-key="parameter"
             @selection-change="handleSelectionChange"
           >
             <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
             <el-table-column type="index" label="序号"></el-table-column>
-            <el-table-column prop="parameter" label="参数名称" sortable></el-table-column>
+            <el-table-column prop="parameter" label="参数名称"></el-table-column>
             <el-table-column label="软检查">
               <template slot-scope="scope">{{ scope.row.softCheck ? '启用' : '不启用' }}</template>
             </el-table-column>
@@ -117,7 +129,7 @@
               <template slot-scope="scope">{{ scope.row.parameterStatus ? '启用' : '不启用' }}</template>
             </el-table-column>
             <el-table-column prop="alarm" label="预警事件"></el-table-column>
-            <el-table-column prop="createTime" label="创建时间" width="120"></el-table-column>
+            <el-table-column prop="createTime" label="创建时间" width="140"></el-table-column>
             <el-table-column prop="createUserId" label="创建人"></el-table-column>
           </dsn-table>
         </el-tab-pane>
@@ -143,7 +155,7 @@
             ref="sTable"
             :data="this.SetupInfoList"
             tooltip-effect="dark"
-            row-key="dcGroup"
+            row-key="index"
             @selection-change="handleSelectionChange2"
           >
             <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
@@ -151,7 +163,7 @@
             <el-table-column label="条件明细">
               <template
                 slot-scope="scope"
-              >{{ scope.row.mat+','+scope.row.matGroup+','+scope.row.shopOrder+','+scope.row.workCenter+','+scope.row.resourceGroup+','+scope.row.shopOrder }}</template>
+              >{{ scope.row.material+','+scope.row.materialGroup+','+scope.row.shopOrder+','+scope.row.workCenter+','+scope.row.resourceGroup+','+scope.row.shopOrder }}</template>
             </el-table-column>
           </el-table>
         </el-tab-pane>
@@ -602,6 +614,8 @@ export default {
       srules: {},
       MeasureInfoList: [],
       SetupInfoList: [],
+      cloneMeasureInfoList: [],
+      cloneSetupInfoList: [],
       editForm: {
         dcGroup: "",
         collectionType: "",
@@ -626,9 +640,9 @@ export default {
         tenantSiteCode: "test"
       },
       addSetUpForm: {
-        matGroup: "",
+        materialGroup: "",
         operation: "",
-        mat: "",
+        material: "",
         workCenter: "",
         shopOrder: "",
         resourceGroup: "",
@@ -699,7 +713,27 @@ export default {
       resourceGroupList: []
     };
   },
+  created() {
+    this.$nextTick(() => {
+      this.init();
+    });
+    this.cloneDataCollectionEditList = JSON.parse(
+      JSON.stringify(this.dataCollectionEditList)
+    );
+    let params = {
+      alarm: ""
+    };
+    getAlarmList(params).then(data => {
+      this.alarmList = data.data.data;
+    });
 
+    console.log(this.currentRow, "dataCollectionEditList");
+    let p = {
+      dcGroup: this.dataCollectionEditList[0].dcGroup,
+      tenantSiteCode: "test"
+    };
+    this.getListData(p);
+  },
   methods: {
     ...mapMutations(["SETDATACOLLECTIONEDITLIST"]),
     //初始化的操作
@@ -814,6 +848,47 @@ export default {
         this.editForm = item;
       }
     },
+    // 上排序
+    handleUpCraft() {
+      if (this.pCheckedList.length != 1) {
+        this.$message({
+          type: "warning",
+          message: "请先选择需要移动的一行"
+        });
+        return;
+      }
+      const selectOne = this.pCheckedList[0];
+      const index = this.MeasureInfoList.findIndex(item => item === selectOne);
+      // 无法上移动
+      if (index <= 0) {
+        return;
+      }
+      const topOne = this.MeasureInfoList[index - 1];
+      this.MeasureInfoList.splice(index, 1, topOne);
+      this.MeasureInfoList.splice(index - 1, 1, selectOne);
+      console.log(this.MeasureInfoList);
+    },
+    //下移
+    handleDownCraft() {
+      if (this.pCheckedList.length != 1) {
+        this.$message({
+          type: "warning",
+          message: "请先选择需要移动的一行"
+        });
+        return;
+      }
+      const selectOne = this.pCheckedList[0];
+      const index = this.MeasureInfoList.findIndex(item => item === selectOne);
+      console.log(index);
+      // 无法下移动
+      if (index == this.MeasureInfoList.length - 1) {
+        return;
+      }
+      const bottomOne = this.MeasureInfoList[index + 1];
+      this.MeasureInfoList.splice(index, 1, bottomOne);
+      this.MeasureInfoList.splice(index + 1, 1, selectOne);
+    },
+
     //保存操作
     handleSave(formName) {
       this.$refs[formName].validate(valid => {
@@ -835,11 +910,12 @@ export default {
             element.materialGroup = element.matGroup;
           });
           const tempMeasureInfoList = this.MeasureInfoList;
-          tempMeasureInfoList.forEach(element => {
+          tempMeasureInfoList.forEach((element, index) => {
             element.lowerSpecLimit = parseFloat(element.lowerSpecLimit);
             element.lowerWarnLimit = parseFloat(element.lowerWarnLimit);
             element.upperSpecLimit = parseFloat(element.upperSpecLimit);
             element.upperWarnLimit = parseFloat(element.upperWarnLimit);
+            element.parameterOrder = index + 1;
           });
           const params = {
             collectionType: this.editForm.collectionType,
@@ -1008,6 +1084,7 @@ export default {
     addSet() {
       this.setUpDialogVisible = true;
       this.currentOperation = "add";
+      this.queryData();
     },
     edit() {
       this.paramsDialogVisible = true;
@@ -1015,11 +1092,20 @@ export default {
       console.log(this.pCheckedList, "pc");
       this.addParamForm = JSON.parse(JSON.stringify(this.pCheckedList[0]));
     },
+    queryData() {
+      this.queryMaterialGroup();
+      this.queryMaterial();
+      this.queryShopOrder();
+      this.queryOperation();
+      this.queryWorkCenter();
+      this.queryResourceGroup();
+    },
     editSet() {
       this.setUpDialogVisible = true;
       this.currentOperation = "edit";
       console.log(this.sCheckedList, "pc");
       this.addSetUpForm = JSON.parse(JSON.stringify(this.sCheckedList[0]));
+      this.queryData();
     },
     del() {
       this.$confirm("是否删除所选数据?", "提示", {
@@ -1073,15 +1159,37 @@ export default {
     },
     getListData(params) {
       getMeasureList(params).then(data => {
-        this.MeasureInfoList = data.data.data;
+        if (data.data.code === 200) {
+          this.cloneMeasureInfoList = JSON.parse(
+            JSON.stringify(data.data.data)
+          );
+          this.MeasureInfoList = data.data.data;
+          return;
+        }
+        this.$message({
+          type: "error",
+          message: data.data.message
+        });
       });
       getSetupList(params).then(data => {
-        this.SetupInfoList = data.data.data;
+        if (data.data.code === 200) {
+          this.cloneSetupInfoList = JSON.parse(JSON.stringify(data.data.data));
+          this.SetupInfoList = data.data.data;
+          return;
+        }
+        this.$message({
+          type: "error",
+          message: data.data.message
+        });
       });
     },
     resetForm() {
       this.editForm = JSON.parse(
         JSON.stringify(this.cloneDataCollectionEditList[0])
+      );
+      this.SetupInfoList = JSON.parse(JSON.stringify(this.cloneSetupInfoList));
+      this.MeasureInfoList = JSON.parse(
+        JSON.stringify(this.cloneMeasureInfoList)
       );
     },
     //搜索建议调用方法
@@ -1259,27 +1367,6 @@ export default {
       this.addSetUpForm.resourceGroup = item.resourceGroup;
     }
     // 查询设备类型信息end
-  },
-  created() {
-    this.$nextTick(() => {
-      this.init();
-    });
-    this.cloneDataCollectionEditList = JSON.parse(
-      JSON.stringify(this.dataCollectionEditList)
-    );
-    let params = {
-      alarm: ""
-    };
-    getAlarmList(params).then(data => {
-      this.alarmList = data.data.data;
-    });
-
-    console.log(this.currentRow, "dataCollectionEditList");
-    let p = {
-      dcGroup: this.dataCollectionEditList[0].dcGroup,
-      tenantSiteCode: "test"
-    };
-    this.getListData(p);
   }
 };
 </script>
