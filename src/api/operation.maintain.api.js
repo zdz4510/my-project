@@ -66,3 +66,12 @@ export const getAllCert = data => {
     params: data
   });
 };
+/**
+ * 分页查询所有工序
+ * url /operation/findPage
+ */
+export const findPageHttp = data => {
+  return request.get(`${window.VUE_APP_URL}/mes/operation/findPage`, {
+    params: data
+  });
+};
