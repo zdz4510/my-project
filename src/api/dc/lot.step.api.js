@@ -44,3 +44,14 @@ export const setLotsStatusDoneHttp = data => {
     data.lots
   );
 };
+
+/**
+ * 步骤操作接口
+ *  url /LotStepStatusService/saveLotStepStatus
+ */
+export const saveLotStepStatusHttp = data => {
+  return request.post(
+    `${window.VUE_APP_URL}/mes/LotStepStatusService/saveLotStepStatus`,
+    data
+  );
+};
