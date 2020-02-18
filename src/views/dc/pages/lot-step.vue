@@ -122,27 +122,33 @@ export default {
       // total: 0,
       deleteDialog: false,
       queryLots: [
-        "FIXED2020/01/1300000116MAT1",
-        "FIXED2020/01/1300000118MAT1",
-        "FIXED2020/01/1300000120MAT1"
+        // "FIXED2020/01/1300000116MAT1",
+        // "FIXED2020/01/1300000118MAT1",
+        // "FIXED2020/01/1300000120MAT1"
       ],
       stepStatusList: [],
-      stepIdList: []
+      stepIdList: [],
+      cloneLotQueryList: []
     };
   },
   created() {
     if (this.lotQueryList.length === 1) {
-      this.lotStepForm.lot = this.lotQueryList[0];
+      this.lotStepForm.lot = this.lotQueryList[0].lot;
     }
     if (this.lotQueryList.length > 1) {
       this.lotStepForm.lot = "已选择" + this.lotQueryList.length + "个";
     }
+    this.cloneLotQueryList = JSON.parse(JSON.stringify(this.lotQueryList));
+    this.cloneLotQueryList.forEach(element => {
+      this.queryLots.push(element.lot);
+    });
   },
   computed: {
     ...mapGetters(["lotQueryList"])
   },
   methods: {
     ...mapMutations(["LOTSTEPDETAILLIST"]),
+    ...mapMutations(["LOTQUERYLIST"]),
     toggleSelection(rows) {
       if (rows) {
         rows.forEach(row => {
@@ -210,10 +216,18 @@ export default {
     inQueue() {},
     //跳转到查询LOT界面
     goQuery() {
-      this.$router.push({
-        name: "lotQuery",
-        query: { lot: this.lotStepForm.lot }
-      });
+      if (this.queryLots.length > 1) {
+        this.LOTQUERYLIST(this.cloneLotQueryList);
+        this.$router.push({
+          name: "lotQuery",
+          query: { lot: "" }
+        });
+      } else {
+        this.$router.push({
+          name: "lotQuery",
+          query: { lot: this.lotStepForm.lot }
+        });
+      }
     },
     handleDelete() {},
     handleQuery() {
@@ -291,6 +305,13 @@ export default {
       });
     },
     handleSave() {
+      if (this.lotStepForm.comment === "") {
+        this.$message({
+          type: "warning",
+          message: "请填写备注！"
+        });
+        return;
+      }
       if (this.tableData.length === 0) {
         this.$message({
           type: "warning",
@@ -305,16 +326,17 @@ export default {
         });
         return;
       }
-      this.tableData.forEach(element => {
-        if (element.qtyInQueue <= 0 || element.qtyInWork <= 0) {
-          this.$message({
-            type: "warning",
-            message:
-              "LOT必须在某一步骤为”排队中“或”工作中“的状态，才允许执行”保存“操作"
-          });
-          return;
-        }
+      const tempList = this.tableData.filter(item => {
+        return item.stepStatus === "排队中" || item.stepStatus === "工作中";
       });
+      if (tempList.length === 0) {
+        this.$message({
+          type: "warning",
+          message:
+            "LOT必须在某一步骤为”排队中“或”工作中“的状态，才允许执行”保存“操作"
+        });
+        return;
+      }
 
       //保存成功清空步骤记录数组
       // this.stepStatusList = [];
