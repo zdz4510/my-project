@@ -36,15 +36,16 @@
             ref="form2"
             label-width="100px"
             class="demo-ruleForm"
+            style="width:400px"
           >
             <el-form-item label="描述：" prop="description">
-              <dsn-input style="width:194px" v-model="form.description" placeholder="描述"></dsn-input>
+              <dsn-input  v-model="form.description" placeholder="描述"></dsn-input>
             </el-form-item>
             <el-form-item label="当前版本：" prop="currentRevision">
               <el-checkbox v-model="form.currentRevision"></el-checkbox>
             </el-form-item>
             <el-form-item label="类型" prop="routerType">
-              <dsn-select v-model="form.routerType" placeholder="请选择">
+              <dsn-select  style="width:100%" v-model="form.routerType" placeholder="请选择">
                 <el-option
                   v-for="item in options"
                   :key="item.value"
@@ -54,7 +55,7 @@
               </dsn-select>
             </el-form-item>
             <el-form-item label="状态" prop="status">
-              <dsn-select v-model="form.status" placeholder="请选择">
+              <dsn-select style="width:100%"  v-model="form.status" placeholder="请选择">
                 <el-option
                   v-for="item in options2"
                   :key="item.value"
@@ -69,7 +70,7 @@
           <pannel ref="panel" :search="searchValue"  :modelCustomizedFieldDefInfoList="list2" />
         </el-tab-pane>
         <el-tab-pane label="自定义字段">
-          <DsnData style="width:300px"  v-model="form.customizedFieldDefInfoList"></DsnData>
+          <DsnData style="width:500px"  v-model="form.customizedFieldDefInfoList"></DsnData>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -143,9 +144,9 @@ export default {
       //工单表信息
       searchrules: {
         router: [
-          { required: true, message: "工艺路线不能为空", trigger: "change" }
+          { required: true, validator:this.validatorRouter , trigger: "change" }
         ],
-        revision: [{ required: true, message: "版本不能为空", trigger: "blur" }]
+        revision: [{ required: true,validator:this.validatorRevision, trigger: "change" }]
       },
       rules: {
         description: [
@@ -186,6 +187,30 @@ export default {
        console.log(item)
        this.form.revision = item.revision;
        this.form.router = item.router;
+    },
+    validatorRouter(rule, value, callback){
+
+      if(value==''){
+        callback(new Error("工艺路线不能为空"));
+      }
+        let reg = /[A-Z,0-9,-,_,/]/;
+        if (!reg.test(value)) {
+           callback(new Error("工艺路线输入不合法"));
+        }
+       
+      callback();
+    },
+     validatorRevision(rule, value, callback){
+
+      if(value==''){
+        callback(new Error("当前版本不能为空"));
+      }
+        let reg = /[A-Z,0-9,-,_,/]/;
+        if (!reg.test(value)) {
+           callback(new Error("当前版本输入不合法"));
+        }
+       
+      callback();
     },
     handleListRouterPage(){
       listRouterPage().then(data=>{
