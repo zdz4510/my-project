@@ -33,7 +33,7 @@
           size="small"
           type="primary"
           icon="el-icon-edit"
-          :disabled="selectionList.length <= 0"
+          :disabled="selectionList.length !== 1"
           @click.native="handleEdit"
         >修改</dsn-button>
         <dsn-button
@@ -169,7 +169,7 @@ export default {
     //当前选中行
     handleSelectionChange(val) {
       this.selectionList = val;
-      console.log(this.selectionList);
+      console.log(this.selectionList.length);
     },
     //更改当前页码,再次请求数据
     handleCurrentChange(currentChange) {
