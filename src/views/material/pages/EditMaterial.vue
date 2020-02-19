@@ -94,7 +94,7 @@
                             <el-option
                               v-for="item in units"
                               :key="item.label"
-                              :label="item.label"
+                              :label="PCS"
                               :value="item.label"
                             ></el-option>
                           </dsn-select>

@@ -180,7 +180,7 @@ export default {
         ]
       },
       //穿梭框
-      titles: ["未关联物料", "已关联物料"],
+      // titles: ["未关联物料", "已关联物料"],
       transferData: [],
       untransferData:[],
       value: [],
@@ -205,12 +205,16 @@ export default {
     this.operateType = this.$route.query.operateType;
     this.cloneList = JSON.parse(JSON.stringify(this.materialGroupList));
     this.materialGroupForm = this.cloneList[0];
-    this.init();
     if (this.operateType === "edit") {
       this.isEditResource = true;
-      this.materialGroupForm.materialList.forEach(element => {
-        this.value.push(element.material);
-      });
+      // console.log(JSON.parse(JSON.stringify(this.materialGroupList)),"数据是？")
+      this.transferData=this.materialGroupForm.materialList;
+      this.untransferData=this.materialGroupForm.outerMaterialList;
+      // .forEach(element => {
+      //   this.value.push(element.material);
+      // });
+    }else{
+      this.init();
     }
   },
   methods: {
@@ -242,7 +246,7 @@ export default {
       getAllDistinctHttp().then(data => {
         const res = data.data;
         if (res.code === 200) {
-          this.transferData = res.data;
+          this.untransferData = res.data;
           return;
         }
         this.$message({
@@ -293,7 +297,7 @@ export default {
     },
     handleSave() {
       //穿梭框右侧数据
-      const relatived = this.transferData;
+      const relatived = this.untransferData;
       const tempArr = [
         {
           groupDes: this.materialGroupForm.groupDes,

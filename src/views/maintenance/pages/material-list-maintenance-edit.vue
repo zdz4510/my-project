@@ -52,10 +52,10 @@
               label-width="150px"
               :rules="rules"
             >
-              <el-form-item label="版本号" prop="currentRev">
+              <el-form-item label="当前版本" prop="currentRev">
                 <el-checkbox v-model="baseInfo.currentRev">当前版本:</el-checkbox>
               </el-form-item>
-              <el-form-item label="当前版本" prop="bomRev">
+              <el-form-item label="版本号" prop="bomRev">
                 <dsn-input 
                   v-model="baseInfo.bomRev"
                 />

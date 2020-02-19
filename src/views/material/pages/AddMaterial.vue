@@ -88,17 +88,17 @@
                 </el-row>
                 <el-row>
                   <el-col :span="8">
-                    <el-form-item label="投放数量1:" prop="qtyRequired1">
+                    <el-form-item label="投放数量1:" prop="qtyRequired1" required>
                       <dsn-input v-model="addForm.qtyRequired1"></dsn-input>
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
-                    <el-form-item label="投放数量2:" prop="qtyRequired2">
+                    <el-form-item label="投放数量2:" prop="qtyRequired2" required>
                       <dsn-input v-model="addForm.qtyRequired2"></dsn-input>
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
-                    <el-form-item label="投放数量3:" prop="qtyRequired3">
+                    <el-form-item label="投放数量3:" prop="qtyRequired3" required>
                       <dsn-input v-model="addForm.qtyRequired3"></dsn-input>
                     </el-form-item>
                   </el-col>
@@ -294,6 +294,26 @@ export default {
       }
       callback();
     };
+    var materialRule = (rule, value, callback) => {
+      var reg = /^[A-Z0-9]?$/;
+      if (!value) {
+        callback();
+      }
+      if (!reg.test(value)) {
+        return callback(new Error("只能为大写字母或数字组成"));
+      }
+      callback();
+    };
+    var materialRevRule = (rule, value, callback) => {
+      var reg = /^[A-Z0-9]?$/;
+      if (!value) {
+        callback();
+      }
+      if (!reg.test(value)) {
+        return callback(new Error("只能为大写字母或数字组成"));
+      }
+      callback();
+    };
     return {
       formLabelWidth: "120px",
       activeName: "first",
@@ -325,24 +345,24 @@ export default {
         }
       ],
       rules: {
-        material: [{ required: true, message: "物料号必填", trigger: "blur" }],
+        material: [{ required: true, validator: materialRule, trigger: "blur" }],
         materialRev: [
-          { required: true, message: "版本号必填", trigger: "blur" }
+          { required: true, validator: materialRevRule, trigger: "blur" }
         ],
         qtyRequired1: [
-          { required: false, validator: qtyRequired, trigger: "blur" }
+          { required: true, validator: qtyRequired, trigger: "blur" }
         ],
         qtyRequired2: [
-          { required: false, validator: qtyRequired, trigger: "blur" }
+          { required: true, validator: qtyRequired, trigger: "blur" }
         ],
         qtyRequired3: [
-          { required: false, validator: qtyRequired, trigger: "blur" }
+          { required: true, validator: qtyRequired, trigger: "blur" }
         ]
       },
       addForm: {
         material: "",
         materialRev: "",
-        currentRev: "",
+        currentRev: true,
         materialDes: "",
         unit1: "",
         unit2: "",
@@ -357,17 +377,17 @@ export default {
         vendorMaterial: "",
         materialStatus: "",
         modified_user_id: "",
-        length: "1",
-        lengthErrorRange: "1",
-        lengthUnit: "MM",
-        width: "1",
-        widthErrorRange: "1",
-        widthUnit: "MM",
-        thickness: "1",
-        thicknessErrorRange: "1",
-        thicknessUnit: "MM",
-        weight: "1",
-        weightErrorRange: "1",
+        length: "0",
+        lengthErrorRange: "0",
+        lengthUnit: "mm",
+        width: "0",
+        widthErrorRange: "0",
+        widthUnit: "mm",
+        thickness: "0",
+        thicknessErrorRange: "0",
+        thicknessUnit: "mm",
+        weight: "0",
+        weightErrorRange: "0",
         weightUnit: "g"
       },
       options: [
@@ -405,10 +425,15 @@ export default {
         },
         {
           value: "1000",
-          label: "Kg"
+          label: "kg"
         }
       ]
     };
+  },
+  created(){
+      this.addForm.unit1=this.addForm.unit2=this.addForm.unit3="PCS";
+      this.addForm.materialType="成品";
+      this.addForm.materialStatus="已启用"
   },
   methods: {
     save(formName) {
@@ -416,7 +441,6 @@ export default {
         if (valid) {
           console.log(this.addForm);
           let params = this.addForm;
-          // params.currentRev = this.addForm.currentRev ? 20 : 10
           params.tenantSiteCode = "test";
           insertMaterial(params).then(data => {
             if (data.data.code == 200) {
