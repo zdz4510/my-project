@@ -302,7 +302,10 @@ export default {
       if (!reg.test(value)) {
         return callback(new Error("只能为字母、数字、-、_、/组成"));
       }
-      this.addForm.material = parseInt(value);
+      if ((value + "").length > 30) {
+        return callback(new Error("只能输入30位以内"));
+      }
+      this.addForm.material = value.toUpperCase();
       callback();
     };
     var materialRevRule = (rule, value, callback) => {
@@ -313,7 +316,10 @@ export default {
       if (!reg.test(value)) {
         return callback(new Error("只能为字母、数字、-、_、/组成"));
       }
-      this.addForm.materialRev = parseInt(value);
+      if ((value + "").length > 30) {
+        return callback(new Error("只能输入30位以内"));
+      }
+      this.addForm.materialRev = value.toUpperCase();
       callback();
     };
     return {
@@ -376,6 +382,7 @@ export default {
         qtyRequired3: "",
         materialType: "辅料",
         client: "",
+        clientmaterial: "",
         clientMaterial: "",
         vebdor: "",
         vendorMaterial: "",
