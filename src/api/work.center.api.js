@@ -63,7 +63,7 @@ export const getRelationData = data => {
  * 获取所有用户
  * url /mes/workCenter/findAllUser
  */
-export const getUserList = () => {
+export const findAllUserList = () => {
   return request.post(`${window.VUE_APP_URL}/mes/workCenter/findAllUser`);
 };
 

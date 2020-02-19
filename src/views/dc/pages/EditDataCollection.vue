@@ -725,20 +725,12 @@ export default {
       },
       collectionType: [
         {
-          value: "10",
-          label: "物料"
+          value: 10,
+          label: "LOT"
         },
         {
-          value: "20",
+          value: 20,
           label: "资源"
-        },
-        {
-          value: "30",
-          label: "工序"
-        },
-        {
-          value: "40",
-          label: "工单"
         }
       ],
       status: [

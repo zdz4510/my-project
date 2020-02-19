@@ -138,7 +138,7 @@
             <el-table-column label="条件明细" width="300">
               <template
                 slot-scope="scope"
-              >{{ scope.row.material+','+scope.row.materialGroup+','+scope.row.shopOrder+','+scope.row.workCenter+','+scope.row.resource+','+scope.row.shopOrder }}</template>
+              >{{ scope.row.material+','+scope.row.materialGroup+','+scope.row.shopOrder+','+scope.row.workCenter+','+scope.row.resourceGroup+','+scope.row.shopOrder }}</template>
             </el-table-column>
           </dsn-table>
         </el-tab-pane>
@@ -409,11 +409,11 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="设备类型:" prop="resource">
+            <el-form-item label="设备类型:" prop="resourceGroup">
               <!-- <dsn-input v-model="addSetUpForm.resourceGroup"></dsn-input> -->
               <el-autocomplete
                 popper-class="my-autocomplete"
-                v-model="addSetUpForm.resource"
+                v-model="addSetUpForm.resourceGroup"
                 :fetch-suggestions="querySearchResourceGroup"
                 placeholder="请输入设备类型"
                 @select="handleSelectResourceGroup"
@@ -466,6 +466,9 @@ export default {
     };
     let validatorUpper = (rule, value, callback) => {
       if (this.addParamForm.valueType == 10) {
+        if (!value) {
+          callback();
+        }
         let reg = /^((\d{1,5}\.\d{0,3})||(\d{1,5}))$/g;
         if (!reg.test(value)) {
           return callback(new Error("只能输入整数5位以内，小数3位以内"));
@@ -473,18 +476,21 @@ export default {
         if (value <= this.addParamForm.targetValue) {
           return callback(new Error("只能输入比标准值大的数字"));
         }
-        this.addParamForm.upperSpecLimit = Number(
-          this.addParamForm.upperSpecLimit
-        ).toFixed(3);
-        this.addParamForm.upperWarnLimit = Number(
-          this.addParamForm.upperWarnLimit
-        ).toFixed(3);
+        // this.addParamForm.upperSpecLimit = Number(
+        //   this.addParamForm.upperSpecLimit
+        // ).toFixed(3);
+        // this.addParamForm.upperWarnLimit = Number(
+        //   this.addParamForm.upperWarnLimit
+        // ).toFixed(3);
         callback();
       }
       callback();
     };
     let validatorLower = (rule, value, callback) => {
       if (this.addParamForm.valueType == 10) {
+        if (!value) {
+          callback();
+        }
         let reg = /^((\d{1,5}\.\d{0,3})||(\d{1,5}))$/g;
         if (!reg.test(value)) {
           return callback(new Error("只能输入整数5位以内，小数3位以内"));
@@ -492,12 +498,35 @@ export default {
         if (value >= this.addParamForm.targetValue) {
           return callback(new Error("只能输入比标准值小的数字"));
         }
-        this.addParamForm.lowerSpecLimit = Number(
-          this.addParamForm.lowerSpecLimit
-        ).toFixed(3);
-        this.addParamForm.lowerWarnLimit = Number(
-          this.addParamForm.lowerWarnLimit
-        ).toFixed(3);
+        // this.addParamForm.lowerSpecLimit = Number(
+        //   this.addParamForm.lowerSpecLimit
+        // ).toFixed(3);
+        // this.addParamForm.lowerWarnLimit = Number(
+        //   this.addParamForm.lowerWarnLimit
+        // ).toFixed(3);
+        callback();
+      }
+      callback();
+    };
+    let validateResource = (rule, value, callback) => {
+      let reg = /^([A-Za-z0-9]{1,30})$/g;
+      if (!value) {
+        callback();
+      }
+      if (!reg.test(value)) {
+        return callback(new Error("只能输入字母或者数字，最长30位"));
+      }
+      this.addSetUpForm.resourceGroup = this.addSetUpForm.resourceGroup.toUpperCase();
+      callback();
+    };
+    let validateBoolean = (rule, value, callback) => {
+      if (this.addParamForm.valueType == 30) {
+        if (!value) {
+          return callback(new Error("请填写标准值"));
+        }
+        if ((value + "").length > 5) {
+          return callback(new Error("只能输入5位以内"));
+        }
         callback();
       }
       callback();
@@ -506,6 +535,7 @@ export default {
       targetValueRequired,
       validatorUpper,
       validatorLower,
+      validateBoolean,
       formLabelWidth: "120px",
       activeName: "first",
       paramsDialogVisible: false,
@@ -518,7 +548,11 @@ export default {
           { required: true, message: "请选择数据收集类型", trigger: "change" }
         ]
       },
-      srules: {},
+      srules: {
+        resourceGroup: [
+          { required: false, validator: validateResource, trigger: "change" }
+        ]
+      },
       MeasureInfoList: [],
       SetupInfoList: [],
       addForm: {
@@ -550,17 +584,17 @@ export default {
         material: "",
         workCenter: "",
         shopOrder: "",
-        resource: "",
+        resourceGroup: "",
         dcGroup: "",
         tenantSiteCode: "test"
       },
       collectionType: [
         {
-          value: "10",
+          value: 10,
           label: "LOT"
         },
         {
-          value: "20",
+          value: 20,
           label: "资源"
         }
       ],
@@ -649,10 +683,20 @@ export default {
         return {
           ...prules,
           trueValue: [
-            { required: true, message: "请输入真值名称", trigger: "blur" }
+            {
+              required: true,
+              validator: this.validateBoolean,
+              message: "请输入真值名称",
+              trigger: "blur"
+            }
           ],
           falseValue: [
-            { required: true, message: "请输入假值名称", trigger: "blur" }
+            {
+              required: true,
+              validator: this.validateBoolean,
+              message: "请输入假值名称",
+              trigger: "blur"
+            }
           ],
           targetValue: [
             {
@@ -676,6 +720,31 @@ export default {
           upperWarnLimit: [{ validator: this.validatorUpper, trigger: "blur" }],
           lowerWarnLimit: [{ validator: this.validatorLower, trigger: "blur" }]
         };
+      }
+    },
+    valueTypeText() {
+      return this.addParamForm.valueType;
+    }
+  },
+  watch: {
+    valueTypeText(val) {
+      if (val === 30) {
+        this.addParamForm.upperSpecLimit = "";
+        this.addParamForm.lowerSpecLimit = "";
+        this.addParamForm.upperWarnLimit = "";
+        this.addParamForm.lowerWarnLimit = "";
+      }
+      if (val === 20) {
+        this.addParamForm.falseValue = "true";
+        this.addParamForm.trueValue = "false";
+        this.addParamForm.upperSpecLimit = "";
+        this.addParamForm.lowerSpecLimit = "";
+        this.addParamForm.upperWarnLimit = "";
+        this.addParamForm.lowerWarnLimit = "";
+      }
+      if (val === 10) {
+        this.addParamForm.falseValue = "true";
+        this.addParamForm.trueValue = "false";
       }
     }
   },
@@ -1161,7 +1230,7 @@ export default {
       cb(results);
     },
     handleSelectResourceGroup(item) {
-      this.addSetUpForm.resource = item.resourceGroup;
+      this.addSetUpForm.resourceGroup = item.resourceGroup;
     }
     // 查询设备类型信息end
   }
