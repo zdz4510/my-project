@@ -1,133 +1,159 @@
 <template>
   <div class="dc-collection">
-    <el-tabs type="border-card" class="left">
-      <el-tab-pane label="收集值">
-      <el-form
-        :inline="true"
-        :model="searchForm"
-        ref="searchForm"
-        :rules="rules"
-        class="form-style"
-        :label-width="formLabelWidth"
-      >
-        <!-- <el-form-item label="物料号:" prop="material">
-          <dsn-input v-model="searchForm.material"></dsn-input>
-        </el-form-item>
-        <el-form-item label="设备ID:" prop="resource">
-          <dsn-input v-model="searchForm.resource"></dsn-input>
-        </el-form-item>
-        <el-form-item label="工单号:" prop="shopOrder">
-          <dsn-input v-model="searchForm.shopOrder"></dsn-input>
-        </el-form-item>
-        <el-form-item label="工序:" prop="operation">
-          <dsn-input v-model="searchForm.operation"></dsn-input>
-        </el-form-item> -->
-        <el-form-item label="收集类型:" prop="collectionType" required>
-          <dsn-select v-model="searchForm.collectionType" filterable clearable placeholder="请选择">
-            <el-option
-              v-for="item in collectionType"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </dsn-select>
-        </el-form-item>
-        <el-form-item>
-          <dsn-button
-            size="small"
-            type="primary"
-            icon="el-icon-search"
-            @click="search('searchForm')"
-          >查询</dsn-button>
-          <dsn-button
-            size="small"
-            type="primary"
-            icon="el-icon-refresh"
-            @click="resetForm('searchForm')"
-          >重置</dsn-button>
-        </el-form-item>
-      </el-form>
-      <!-- 查询条件end -->
-    </el-tab-pane>
-    </el-tabs>
-   <el-tabs type="border-card" class="right"> 
-      <el-tab-pane label="基础关系信息"> 
-        <!-- <div>
-        <el-form :model="baseInfoForm" ref="baseInfoForm" :label-width="formLabelWidth">
-            <el-form-item label="设备类型:" prop="resourceGroup">
-              <dsn-input v-model="baseInfoForm.resourceGroup" disabled></dsn-input>
-            </el-form-item>
-            <el-form-item label="工作中心:" prop="workCenter">
-              <dsn-input v-model="baseInfoForm.workCenter" disabled></dsn-input>
-            </el-form-item>
-            <el-form-item label="物料组:" prop="materialGroup">
-              <dsn-input v-model="baseInfoForm.materialGroup" disabled></dsn-input>
-            </el-form-item>
-          </el-form>
-        </div> -->
-        1111
-     </el-tab-pane>
-   </el-tabs>
-    
-    <!-- <div class="content">
-      <el-row>
-        <el-col :span="2" class="tr">
-          <dsn-button type="primary">基础信息</dsn-button>
+    <div class="top">
+      <el-row :gutter="8">
+        <el-col :span="10">
+          <el-tabs type="border-card">
+            <el-tab-pane label="收集值">
+              <el-form
+                :inline="true"
+                :model="searchForm"
+                ref="searchForm"
+                :rules="rules"
+                class="form-style"
+                :label-width="formLabelWidth"
+              >
+                <el-form-item label="收集类型:" prop="collectionType" required>
+                  <dsn-select
+                    v-model="searchForm.collectionType"
+                    filterable
+                    clearable
+                    placeholder="请选择"
+                  >
+                    <el-option
+                      v-for="item in collectionType"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    ></el-option>
+                  </dsn-select>
+                </el-form-item>
+                <el-form-item label="接收值:" prop="resourceGroup">
+                  <dsn-input v-model="baseInfoForm.resourceGroup" disabled></dsn-input>
+                </el-form-item>
+                <el-form-item>
+                  <dsn-button
+                    size="small"
+                    type="primary"
+                    icon="el-icon-search"
+                    @click="search('searchForm')"
+                  >查询</dsn-button>
+                  <dsn-button
+                    size="small"
+                    type="primary"
+                    icon="el-icon-refresh"
+                    @click="resetForm('searchForm')"
+                  >重置</dsn-button>
+                </el-form-item>
+              </el-form>
+              <!-- 查询条件end -->
+            </el-tab-pane>
+          </el-tabs>
         </el-col>
-        <el-col :span="6">
-         
-        </el-col>
-      </el-row>
-    </div> -->
-    <el-tabs type="border-card" class="Middle">
-        <el-tab-pane label="参数输入">
-    <div class="content">
-      <el-row>
-        
-        <el-col :span="22">
-          <el-table :data="paramsTableData" class="parm-table" border>
-            <el-table-column label="参数名" width="180">
-              <template slot-scope="scope">
-                <span style="margin-left: 10px">{{ scope.row.parameter }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="参数描述" width="180">
-              <template slot-scope="scope">
-                <span style="margin-left: 10px">{{ scope.row.parameterDes }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="参数值" width="180">
-              <template slot-scope="scope">
-                <dsn-input v-model="scope.row.parameterValue"></dsn-input>
-              </template>
-            </el-table-column>
-          </el-table>
-          <div class="btn">
-            <dsn-button class="mr25 pad1025" size="small" type="primary" @click="save">提交</dsn-button>
-            <dsn-button class="mr25 pad1025" size="small" type="primary" @click="reset">重置</dsn-button>
-            <dsn-button class="mr25 pad1025" size="small" type="primary" @click="check">校验</dsn-button>
-          </div>
+        <el-col :span="14">
+          <el-tabs type="border-card">
+            <el-tab-pane label="基础关系信息">
+              <el-form :model="baseInfoForm" ref="baseInfoForm" :label-width="formLabelWidth">
+                <el-row>
+                  <el-col :span="12">
+                    <el-form-item label="工单:" prop="resourceGroup">
+                      <dsn-input v-model="baseInfoForm.resourceGroup" disabled></dsn-input>
+                    </el-form-item>
+                    <el-form-item label="物料:" prop="workCenter">
+                      <dsn-input v-model="baseInfoForm.workCenter" disabled></dsn-input>
+                    </el-form-item>
+                    <el-form-item label="物料组:" prop="materialGroup">
+                      <dsn-input v-model="baseInfoForm.materialGroup" disabled></dsn-input>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="设备类型:" prop="resourceGroup">
+                      <dsn-input v-model="baseInfoForm.resourceGroup" disabled></dsn-input>
+                    </el-form-item>
+                    <el-form-item label="工序:" prop="workCenter">
+                      <dsn-input v-model="baseInfoForm.workCenter" disabled></dsn-input>
+                    </el-form-item>
+                    <el-form-item label="工作中心:" prop="materialGroup">
+                      <dsn-input v-model="baseInfoForm.materialGroup" disabled></dsn-input>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </el-form>
+            </el-tab-pane>
+            <el-tab-pane label="查看多个关系明细">222</el-tab-pane>
+          </el-tabs>
         </el-col>
       </el-row>
     </div>
-    </el-tab-pane>
-    </el-tabs>
-    <!-- <el-tabs type="border-card" class="tail">
-      <el-tab-pane label="日志记录">
-    <!- <div class="content">
-      <el-row>
-        
-        <el-col :span="22">
-          <div class="log">
-            <div v-for="(item, index) in this.logList" :key="index">{{item}}</div>
-          </div>
+    <div class="middle">
+      <el-row :gutter="8">
+        <el-col :span="14">
+          <el-tabs type="border-card">
+            <el-tab-pane label="数据收集组">
+              <h3 class="content" style="text-align:center">涉及数据收集组</h3>
+              <el-table
+                ref="multipleTable"
+                :data="tableData"
+                tooltip-effect="dark"
+                style="width: 100%"
+                @selection-change="handleSelectionChange"
+              >
+                <el-table-column type="selection" width="55"></el-table-column>
+                <el-table-column label="日期" width="120">
+                  <template slot-scope="scope">{{ scope.row.date }}</template>
+                </el-table-column>
+                <el-table-column prop="name" label="姓名" width="120"></el-table-column>
+                <el-table-column prop="address" label="地址" show-overflow-tooltip></el-table-column>
+              </el-table>
+            </el-tab-pane>
+          </el-tabs>
+        </el-col>
+        <el-col :span="10">
+          <el-tabs type="border-card">
+            <el-tab-pane label="参数输入">
+              <div class="content">
+                <el-row>
+                  <el-col :span="22">
+                    <el-table :data="paramsTableData" class="parm-table" border>
+                      <el-table-column label="参数名" width="180">
+                        <template slot-scope="scope">
+                          <span style="margin-left: 10px">{{ scope.row.parameter }}</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column label="参数描述" width="180">
+                        <template slot-scope="scope">
+                          <span style="margin-left: 10px">{{ scope.row.parameterDes }}</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column label="参数值" width="180">
+                        <template slot-scope="scope">
+                          <dsn-input v-model="scope.row.parameterValue"></dsn-input>
+                        </template>
+                      </el-table-column>
+                    </el-table>
+                    <div class="btn">
+                      <dsn-button size="small" type="primary" @click="save">提交</dsn-button>
+                      <dsn-button size="small" type="primary" @click="reset">重置</dsn-button>
+                      <dsn-button size="small" type="primary" @click="check">校验</dsn-button>
+                    </div>
+                  </el-col>
+                </el-row>
+              </div>
+            </el-tab-pane>
+            <el-tab-pane label="查看参数明细">111</el-tab-pane>
+          </el-tabs>
         </el-col>
       </el-row>
-    </div> -->
-    <!-- 
-    </el-tab-pane>
-    </el-tabs> --> 
-    <!-- <div class="tailss"></div> -->
+    </div>
+    <div class="bottom">
+      <el-tabs type="border-card">
+        <el-tab-pane label="日志记录">
+          <div class="content">
+            <div v-for="(item,index) in logList" :key="index">{{item}}</div>
+          </div>
+        </el-tab-pane>
+      </el-tabs>
+    </div>
     <el-dialog title :visible.sync="dialog">
       <el-table :data="tableData" class="dialog-table" @select="selectedList">
         <el-table-column label="涉及数据收集组">
@@ -142,7 +168,6 @@
         <dsn-button type="primary" @click="handleSave">确 定</dsn-button>
       </span>
     </el-dialog>
-   
   </div>
 </template>
 
@@ -173,7 +198,14 @@ export default {
         workCenter: "",
         materialGroup: ""
       },
-      tableData: [],
+      tableData: [
+        {
+          date: "2016-05-03",
+          name: "王小虎",
+          address: "上海市普陀区金沙江路 1518 弄"
+        }
+      ],
+      selectionList: [],
       paramsTableData: [],
       logList: [],
       checkedList: [],
@@ -293,6 +325,9 @@ export default {
           this.$message.error(data.data.message);
         }
       });
+    },
+    handleSelectionChange(val) {
+      this.selectionList = val;
     }
   }
 };
@@ -300,62 +335,8 @@ export default {
 
 <style lang="scss">
 .dc-collection {
-  .tailss{
-     width: 100%;
-height: 300px;
-background:red;
-
+  .el-tabs {
+    margin: 10px;
   }
-  .left{
-width: 44%;
-height: 200px;
-float: left;
-  }
-  .right{
-    width: 55%;
-height: 200px;
-float: right;
-  }
-  .Middle{
- width: 55%;
-height: 300px;
-float: right;
-  }
-  
-  // .search-bar {
-  //   background: #ffffff;
-  //   .form-style {
-  //     margin: 0 !important;
-  //     padding: 0 0 0 30px !important;
-  //     height: 146px !important;
-  //     position: relative;
-  //     top: 20px;
-  //     // transform: translateY(-50%);
-  //   }
-  // }
-  // .content {
-  //   background: #ffffff;
-  //   padding-top: 20px;
-  // }
-  // .tr {
-  //   text-align: right;
-  // }
-
-  // .btn {
-  //   margin: 20px 0 20px 100px;
-  // }
-  // .log {
-  //   height: 160px;
-  //   border: 1px solid #dcdfe6;
-  //   margin-left: 50px;
-  //   overflow: scroll;
-  // }
-  // .dialog-table,
-  // .el-table {
-  //   margin-left: 0px;
-  // }
-  // .parm-table {
-  //   margin-left: 50px;
-  // }
 }
 </style>
