@@ -5,7 +5,7 @@
         <el-form-item label="工艺路线:"  prop="router">
           <dsn-input   v-model="form.router" placeholder="">
             <template slot="append">
-              <dsn-select  @change="handleSelectChange"  style="width:150px" placeholder="请输入工艺路线" v-model="form.router">
+              <dsn-select  @focus="handleFocus"  @change="handleSelectChange"  style="width:150px" placeholder="请输入工艺路线" v-model="form.router">
            <el-option :label="item.router" :value="item" v-for="(item) in selectList" :key="item.router+item.revision">
              {{item.router}} - {{item.revision}}
            </el-option>
@@ -177,6 +177,9 @@ export default {
     this.handleListRouterPage()
   },
   methods: {
+    handleFocus(){
+        this.handleListRouterPage()
+    },
     init() {
       this.$nextTick(() => {
         this.$refs["panel"].init();
