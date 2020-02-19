@@ -1,7 +1,10 @@
 <template>
   <div class="dc-collection">
-    <el-tabs type="border-card" class="left">
-      <el-tab-pane label="收集值">
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索条件</span>
+      </div>
+      <!-- 查询条件start -->
       <el-form
         :inline="true"
         :model="searchForm"
@@ -10,7 +13,7 @@
         class="form-style"
         :label-width="formLabelWidth"
       >
-        <!-- <el-form-item label="物料号:" prop="material">
+        <el-form-item label="物料号:" prop="material">
           <dsn-input v-model="searchForm.material"></dsn-input>
         </el-form-item>
         <el-form-item label="设备ID:" prop="resource">
@@ -21,7 +24,7 @@
         </el-form-item>
         <el-form-item label="工序:" prop="operation">
           <dsn-input v-model="searchForm.operation"></dsn-input>
-        </el-form-item> -->
+        </el-form-item>
         <el-form-item label="收集类型:" prop="collectionType" required>
           <dsn-select v-model="searchForm.collectionType" filterable clearable placeholder="请选择">
             <el-option
@@ -48,12 +51,16 @@
         </el-form-item>
       </el-form>
       <!-- 查询条件end -->
-    </el-tab-pane>
-    </el-tabs>
-   <el-tabs type="border-card" class="right"> 
-      <el-tab-pane label="基础关系信息"> 
-        <!-- <div>
-        <el-form :model="baseInfoForm" ref="baseInfoForm" :label-width="formLabelWidth">
+    </DsnPanel>
+
+    <el-divider></el-divider>
+    <div class="content">
+      <el-row>
+        <el-col :span="2" class="tr">
+          <dsn-button type="primary">基础信息</dsn-button>
+        </el-col>
+        <el-col :span="6">
+          <el-form :model="baseInfoForm" ref="baseInfoForm" :label-width="formLabelWidth">
             <el-form-item label="设备类型:" prop="resourceGroup">
               <dsn-input v-model="baseInfoForm.resourceGroup" disabled></dsn-input>
             </el-form-item>
@@ -64,26 +71,15 @@
               <dsn-input v-model="baseInfoForm.materialGroup" disabled></dsn-input>
             </el-form-item>
           </el-form>
-        </div> -->
-        1111
-     </el-tab-pane>
-   </el-tabs>
-    
-    <!-- <div class="content">
-      <el-row>
-        <el-col :span="2" class="tr">
-          <dsn-button type="primary">基础信息</dsn-button>
-        </el-col>
-        <el-col :span="6">
-         
         </el-col>
       </el-row>
-    </div> -->
-    <el-tabs type="border-card" class="Middle">
-        <el-tab-pane label="参数输入">
+    </div>
+    <el-divider></el-divider>
     <div class="content">
       <el-row>
-        
+        <el-col :span="2" class="tr">
+          <dsn-button type="primary">参数输入</dsn-button>
+        </el-col>
         <el-col :span="22">
           <el-table :data="paramsTableData" class="parm-table" border>
             <el-table-column label="参数名" width="180">
@@ -110,24 +106,19 @@
         </el-col>
       </el-row>
     </div>
-    </el-tab-pane>
-    </el-tabs>
-    <!-- <el-tabs type="border-card" class="tail">
-      <el-tab-pane label="日志记录">
-    <!- <div class="content">
+    <el-divider></el-divider>
+    <div class="content">
       <el-row>
-        
+        <el-col :span="2" class="tr">
+          <dsn-button type="primary">日志记录</dsn-button>
+        </el-col>
         <el-col :span="22">
           <div class="log">
             <div v-for="(item, index) in this.logList" :key="index">{{item}}</div>
           </div>
         </el-col>
       </el-row>
-    </div> -->
-    <!-- 
-    </el-tab-pane>
-    </el-tabs> --> 
-    <!-- <div class="tailss"></div> -->
+    </div>
     <el-dialog title :visible.sync="dialog">
       <el-table :data="tableData" class="dialog-table" @select="selectedList">
         <el-table-column label="涉及数据收集组">
@@ -142,7 +133,6 @@
         <dsn-button type="primary" @click="handleSave">确 定</dsn-button>
       </span>
     </el-dialog>
-   
   </div>
 </template>
 
@@ -300,28 +290,6 @@ export default {
 
 <style lang="scss">
 .dc-collection {
-  .tailss{
-     width: 100%;
-height: 300px;
-background:red;
-
-  }
-  .left{
-width: 44%;
-height: 200px;
-float: left;
-  }
-  .right{
-    width: 55%;
-height: 200px;
-float: right;
-  }
-  .Middle{
- width: 55%;
-height: 300px;
-float: right;
-  }
-  
   // .search-bar {
   //   background: #ffffff;
   //   .form-style {
