@@ -93,7 +93,7 @@
         :current-page="this.tableData.page.currentPage"
         :page-sizes="[1, 10, 15, 20, 30, 50]"
         :page-size="this.tableData.page.pageSize"
-        layout="->, total, prev, pager, next, sizes"
+        layout="->, total, prev, pager, next, sizes, jumper"
         :total="this.tableData.page.total"
       ></dsn-pagination>
       <!-- 分页end -->

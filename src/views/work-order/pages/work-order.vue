@@ -9,10 +9,17 @@
            
           </el-form-item> -->
             <el-form-item label="工单:">
-              <el-input size="small" placeholder="请输入工单" v-model="shopOrder">
-                <!-- <i slot="append" class="el-icon-document-copy"></i> -->
+              <el-row>
+                <el-col :span="22">
+                  <dsn-input size="small" placeholder="请输入工单" v-model="shopOrder"></dsn-input>
+                </el-col>
+                <el-col :span="2">
+                  <i class="el-icon-document" @click="orderHandler"></i>
+                </el-col>
+              </el-row>
+              <!-- <el-input size="small" placeholder="请输入工单" v-model="shopOrder">
                 <el-button slot="append" icon="el-icon-document-copy" @click="orderHandler"></el-button>
-              </el-input>
+              </el-input> -->
             </el-form-item>
             <el-form-item>
                 <dsn-button size="small"  type="primary" icon="el-icon-search" @click.native="getOrder">查询</dsn-button>
@@ -32,13 +39,14 @@
         <dsn-button size="small" type="primary" @click='reset'>重置</dsn-button>
       </div>
     </div> -->
-    <div class="operate">
-      <dsn-button size="small" type="primary" @click.native="handleSave">保存</dsn-button>
-      <dsn-button size="small" type="danger" icon="el-icon-delete" @click.native="handleDelete">删除</dsn-button>
-    </div>
+    
     <DsnPanel>
       <div slot="header" class="title clearfix">
         <span>搜索结果</span>
+      </div>
+      <div class="operate">
+        <dsn-button size="small" type="primary" @click.native="handleSave">保存</dsn-button>
+        <dsn-button size="small" type="danger" icon="el-icon-delete" @click.native="handleDelete">删除</dsn-button>
       </div>
     <div class="showInfo">
       <el-tabs type="border-card">
@@ -67,9 +75,17 @@
               </dsn-select>
             </el-form-item>
             <el-form-item label="计划物料:" prop="material">
-              <el-col :span="9" style="margin-right:7px;">
+              <!-- <el-col :span="9" style="margin-right:7px;">
                 <el-input size="small" placeholder="请输入计划物料" v-model="ruleForm.plannedMaterial"><el-button size="small" slot="append" icon="el-icon-document-copy" @click="materialHandler"></el-button></el-input>
-              </el-col>
+              </el-col> -->
+              <el-row>
+                <el-col :span="22">
+                  <dsn-input size="small" placeholder="请输入计划物料" v-model="ruleForm.plannedMaterial"></dsn-input>
+                </el-col>
+                <el-col :span="2">
+                  <i class="el-icon-document" @click="materialHandler"></i>
+                </el-col>
+              </el-row>
               <!-- <div class="choiceBox">
                 <i class="el-icon-document-copy"></i>
               </div> -->
@@ -85,9 +101,17 @@
               </div>
             </el-form-item>
             <el-form-item label="计划工艺路线:" label-width="150">
-              <el-col :span="9" style="margin-right:7px;">
+              <el-row>
+                <el-col :span="22">
+                  <dsn-input size="small" placeholder="请输入计划工艺路线" v-model="ruleForm.plannedRouter"></dsn-input>
+                </el-col>
+                <el-col :span="2">
+                  <i class="el-icon-document" @click="routerHandler"></i>
+                </el-col>
+              </el-row>
+              <!-- <el-col :span="9" style="margin-right:7px;">
                 <el-input size="small" placeholder="计划工艺路线" v-model="ruleForm.plannedRouter"><el-button slot="append"  size="small" icon="el-icon-document-copy" @click.native="routerHandler"></el-button></el-input>
-              </el-col>
+              </el-col> -->
               <!-- <div class="choiceBox">
                 <i class="el-icon-document-copy"></i>
               </div> -->
@@ -103,7 +127,7 @@
               </div>
             </el-form-item>
             <el-form-item label="生产数量:" prop="number">
-              <el-col :span="9" style="margin-right:31px;">
+              <el-col :span="4" style="margin-right:31px;">
                 <dsn-input placeholder="请输入生产数量" v-model="ruleForm.productQty"></dsn-input>
               </el-col>
               <!--已下达数量-->
@@ -122,22 +146,30 @@
         <el-tab-pane label="自定义字段">
           <el-form :rules="rules">
             <el-form-item :label="item.fieldName" v-for="(item,index) in customizedFieldDefInfoList" :key="index" v-show="item.fieldType =='C'" prop="custom">
-              <el-col :span="14">
+              <el-col :span="4">
                 <dsn-input v-model="item.fieldValue"></dsn-input>
               </el-col>
             </el-form-item>
             <el-form-item :label="item.fieldName" v-for="(item,index) in customizedFieldDefInfoList" :key="index+item" v-show="item.fieldType !=='C'">
-              <el-col :span="14">
+              <el-col :span="4">
                 <el-input v-model="item.fieldValue"></el-input>
               </el-col>
             </el-form-item>
             <el-form-item label="Kay_自定义字段3：">
-              <el-col :span="14" style="margin-right:7px;">
+              <el-row>
+                <el-col :span="22">
+                  <dsn-input size="small" :disabled="true" v-model="ruleForm.kays_3"></dsn-input>
+                </el-col>
+                <el-col :span="2">
+                  <i class="el-icon-document"></i>
+                </el-col>
+              </el-row>
+              <!-- <el-col :span="14" style="margin-right:7px;">
                 <dsn-input v-model="ruleForm.kays_3" :disabled="true"></dsn-input>
               </el-col>
               <div class="choiceBox">
                 <i class="el-icon-document-copy"></i>
-              </div>
+              </div> -->
             </el-form-item>
           </el-form>
         </el-tab-pane>

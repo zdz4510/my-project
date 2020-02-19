@@ -88,17 +88,17 @@
                 </el-row>
                 <el-row>
                   <el-col :span="8">
-                    <el-form-item label="投放数量1:" prop="qtyRequired1">
+                    <el-form-item label="投放数量1:" prop="qtyRequired1" required>
                       <dsn-input v-model="addForm.qtyRequired1"></dsn-input>
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
-                    <el-form-item label="投放数量2:" prop="qtyRequired2">
+                    <el-form-item label="投放数量2:" prop="qtyRequired2" required>
                       <dsn-input v-model="addForm.qtyRequired2"></dsn-input>
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
-                    <el-form-item label="投放数量3:" prop="qtyRequired3">
+                    <el-form-item label="投放数量3:" prop="qtyRequired3" required>
                       <dsn-input v-model="addForm.qtyRequired3"></dsn-input>
                     </el-form-item>
                   </el-col>
@@ -146,10 +146,10 @@
                   <el-col :span="8">
                     <el-form-item
                       label="供应商物料号:"
-                      prop="vebdorMaterial"
+                      prop="vendorMaterial"
                       v-if="addForm.materialType=='辅料' || addForm.materialType=='原材料'"
                     >
-                      <dsn-input v-model="addForm.vebdorMaterial"></dsn-input>
+                      <dsn-input v-model="addForm.vendorMaterial"></dsn-input>
                     </el-form-item>
                   </el-col>
                 </el-row>
@@ -294,6 +294,34 @@ export default {
       }
       callback();
     };
+    var materialRule = (rule, value, callback) => {
+      let reg = /^([A-Z]|[a-z]|[0-9]|_|-|\/)+$/;
+      if (!value) {
+        callback();
+      }
+      if (!reg.test(value)) {
+        return callback(new Error("只能为字母、数字、-、_、/组成"));
+      }
+      if ((value + "").length > 30) {
+        return callback(new Error("只能输入30位以内"));
+      }
+      this.addForm.material = value.toUpperCase();
+      callback();
+    };
+    var materialRevRule = (rule, value, callback) => {
+      let reg = /^([A-Z]|[a-z]|[0-9]|_|-|\/)+$/;
+      if (!value) {
+        callback();
+      }
+      if (!reg.test(value)) {
+        return callback(new Error("只能为字母、数字、-、_、/组成"));
+      }
+      if ((value + "").length > 30) {
+        return callback(new Error("只能输入30位以内"));
+      }
+      this.addForm.materialRev = value.toUpperCase();
+      callback();
+    };
     return {
       formLabelWidth: "120px",
       activeName: "first",
@@ -325,24 +353,26 @@ export default {
         }
       ],
       rules: {
-        material: [{ required: true, message: "物料号必填", trigger: "blur" }],
+        material: [
+          { required: true, validator: materialRule, trigger: "blur" }
+        ],
         materialRev: [
-          { required: true, message: "版本号必填", trigger: "blur" }
+          { required: true, validator: materialRevRule, trigger: "blur" }
         ],
         qtyRequired1: [
-          { required: false, validator: qtyRequired, trigger: "blur" }
+          { required: true, validator: qtyRequired, trigger: "blur" }
         ],
         qtyRequired2: [
-          { required: false, validator: qtyRequired, trigger: "blur" }
+          { required: true, validator: qtyRequired, trigger: "blur" }
         ],
         qtyRequired3: [
-          { required: false, validator: qtyRequired, trigger: "blur" }
+          { required: true, validator: qtyRequired, trigger: "blur" }
         ]
       },
       addForm: {
         material: "",
         materialRev: "",
-        currentRev: "",
+        currentRev: true,
         materialDes: "",
         unit1: "",
         unit2: "",
@@ -352,22 +382,23 @@ export default {
         qtyRequired3: "",
         materialType: "辅料",
         client: "",
+        clientmaterial: "",
         clientMaterial: "",
         vebdor: "",
-        vebdorMaterial: "",
+        vendorMaterial: "",
         materialStatus: "",
         modified_user_id: "",
-        length: "1",
-        lengthErrorRange: "1",
-        lengthUnit: "MM",
-        width: "1",
-        widthErrorRange: "1",
-        widthUnit: "MM",
-        thickness: "1",
-        thicknessErrorRange: "1",
-        thicknessUnit: "MM",
-        weight: "1",
-        weightErrorRange: "1",
+        length: "0",
+        lengthErrorRange: "0",
+        lengthUnit: "mm",
+        width: "0",
+        widthErrorRange: "0",
+        widthUnit: "mm",
+        thickness: "0",
+        thicknessErrorRange: "0",
+        thicknessUnit: "mm",
+        weight: "0",
+        weightErrorRange: "0",
         weightUnit: "g"
       },
       options: [
@@ -405,10 +436,15 @@ export default {
         },
         {
           value: "1000",
-          label: "Kg"
+          label: "kg"
         }
       ]
     };
+  },
+  created() {
+    this.addForm.unit1 = this.addForm.unit2 = this.addForm.unit3 = "PCS";
+    this.addForm.materialType = "成品";
+    this.addForm.materialStatus = "已启用";
   },
   methods: {
     save(formName) {
@@ -416,7 +452,6 @@ export default {
         if (valid) {
           console.log(this.addForm);
           let params = this.addForm;
-          // params.currentRev = this.addForm.currentRev ? 20 : 10
           params.tenantSiteCode = "test";
           insertMaterial(params).then(data => {
             if (data.data.code == 200) {
@@ -424,9 +459,7 @@ export default {
                 type: "success",
                 message: "保存成功!"
               });
-              setTimeout(() => {
-                this.$router.push({ path: "/material/materialInfo" });
-              }, 1000);
+              this.$router.push({ path: "/material/materialInfo" });
             } else {
               this.$message.error(data.data.message);
             }
@@ -438,7 +471,7 @@ export default {
       });
     },
     resetForm() {
-      this.addForm={
+      this.addForm = {
         material: "",
         materialRev: "",
         currentRev: "",
@@ -453,7 +486,7 @@ export default {
         client: "",
         clientMaterial: "",
         vebdor: "",
-        vebdorMaterial: "",
+        vendorMaterial: "",
         materialStatus: "",
         modified_user_id: "",
         length: "1",
@@ -468,7 +501,7 @@ export default {
         weight: "1",
         weightErrorRange: "1",
         weightUnit: "g"
-      }
+      };
       // this.$refs[formName].resetFields();
     },
     goBack() {

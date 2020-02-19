@@ -1,11 +1,18 @@
 <template>
   <div id="layout">
-    <DsnHeader @handleCloseOrOpen="handleCloseOrOpen" @themeLeftMenu="HandlthemeLeftMenu($event)"/>
-    <DsnLeftMenu  ref="leftMenu" @handleCollapse="handleCollapse" :theme='themeLeftMenu'/>
+    <DsnHeader
+      @handleCloseOrOpen="handleCloseOrOpen"
+      @themeLeftMenu="HandlthemeLeftMenu($event)"
+    />
+    <DsnLeftMenu
+      ref="leftMenu"
+      @handleCollapse="handleCollapse"
+      :theme="themeLeftMenu"
+    />
     <div class="content" :class="isCollapse ? 'active' : ''">
       <div class="pageContent">
         <div class="routerHistory">
-          <dsn-router-history :isCollapse = isCollapse>
+          <dsn-router-history :isCollapse="isCollapse">
             <dsn-router-history-item
               :class="item.name === $route.name ? 'active' : ''"
               @close="close"
@@ -20,7 +27,6 @@
         <div class="well">
           <router-view></router-view>
         </div>
-        
       </div>
     </div>
     <DsnFooter v-if="false" />
@@ -31,7 +37,7 @@
 import DsnFooter from "./dsn-footer";
 import DsnHeader from "./dsn-header";
 import DsnLeftMenu from "./dsn-left-menu";
-import { mapGetters, mapMutations,mapActions } from "vuex";
+import { mapGetters, mapMutations, mapActions } from "vuex";
 import { getSystemList } from "@/api/login.api.js";
 export default {
   name: "Layout",
@@ -43,52 +49,47 @@ export default {
   computed: {
     ...mapGetters(["historyList"])
   },
-  created(){
-      this.getSystwmId('MES')
+  created() {
+    this.getSystwmId("MES");
   },
   data() {
     return {
       isCollapse: true,
-      themeLeftMenu: 'dark'
+      themeLeftMenu: "dark"
     };
   },
   methods: {
-    ...mapMutations(["PUSH","POP"]),
-     ...mapActions([
-          'getUserInfo'
-      ]),
+    ...mapMutations(["PUSH", "POP"]),
+    ...mapActions(["getUserInfo"]),
     handleCollapse(status) {
       this.isCollapse = status == 1 ? true : false;
     },
-    handleCloseOrOpen(){
-        this.isCollapse = !this.isCollapse 
-        this.$refs['leftMenu'].toggle();
+    handleCloseOrOpen() {
+      this.isCollapse = !this.isCollapse;
+      this.$refs["leftMenu"].toggle();
     },
     close(item) {
-       this.POP(item)
+      this.POP(item);
     },
-    toPage(item){
-      
-      this.$router.push({name:item.name})
+    toPage(item) {
+      this.$router.push({ path: item.fullPath });
     },
-     getSystwmId(type){
-      getSystemList().then(
-        data=>{
-          const res = data.data;
-          if(res.code==200){
-                const arr = res.data;
-               const item = arr.find(item=>{
-                    return item.key==type
-                })
+    getSystwmId(type) {
+      getSystemList().then(data => {
+        const res = data.data;
+        if (res.code == 200) {
+          const arr = res.data;
+          const item = arr.find(item => {
+            return item.key == type;
+          });
 
-                this.getUserInfo(item.id)
-            }
+          this.getUserInfo(item.id);
         }
-      )
+      });
     },
     // 设置左侧主题
     HandlthemeLeftMenu(theme) {
-      this.themeLeftMenu = theme
+      this.themeLeftMenu = theme;
     }
   }
 };
@@ -96,9 +97,9 @@ export default {
 
 <style lang="scss" scoped>
 #layout {
-   position: relative;
-   height: 100%;
-    background: #f5f7f9;
+  position: relative;
+  height: 100%;
+  background: #f5f7f9;
   .well {
     min-height: calc(100% - 44px);
     width: 100%;
@@ -106,15 +107,14 @@ export default {
     // background: #fff;
     // padding: 15px;
     border-radius: 4px;
-   
+
     position: relative;
-    
   }
   .content {
     padding: 64px 0px 10px 60px;
     background: #f5f7f9;
     display: flex;
-     height: 100%;
+    height: 100%;
     box-sizing: border-box;
     flex-direction: column;
     &.active {
@@ -123,7 +123,7 @@ export default {
     .routerHistory {
       width: 100%;
       white-space: nowrap;
-      overflow: hidden;  
+      overflow: hidden;
       height: 44px;
       position: relative;
       // &::-webkit-scrollbar-thumb {
@@ -147,8 +147,6 @@ export default {
       // flex: 1;
       // overflow: hidden;
       // overflow-y: scroll;
-     
-      
     }
   }
 }

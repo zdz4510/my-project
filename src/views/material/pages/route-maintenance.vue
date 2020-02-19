@@ -2,9 +2,15 @@
   <div class="route-maintenance">
     <DsnPanel>
       <el-form :inline="true" class="typeForm" :model="form" :rules="searchrules" ref="form">
-        <el-form-item label="工艺路线:" prop="router">
-          <dsn-input placeholder="请输入工艺路线" v-model="form.router">
-            <i slot="append" class="el-icon-document-copy"></i>
+        <el-form-item label="工艺路线:"  prop="router">
+          <dsn-input   v-model="form.router" placeholder="">
+            <template slot="append">
+              <dsn-select  @focus="handleFocus"  @change="handleSelectChange"  style="width:150px" placeholder="请输入工艺路线" v-model="form.router">
+           <el-option :label="item.router" :value="item" v-for="(item) in selectList" :key="item.router+item.revision">
+             {{item.router}} - {{item.revision}}
+           </el-option>
+          </dsn-select>
+            </template>
           </dsn-input>
         </el-form-item>
         <el-form-item label="版本:" prop="revision">
@@ -14,12 +20,12 @@
           <dsn-button size="small" type="primary" icon="el-icon-search" @click="handleQuery">查询</dsn-button>
           <dsn-button size="small" type="primary" icon="el-icon-refresh" @click.native="reset">重置</dsn-button>
           <dsn-button size="small" type="danger" icon="el-icon-delete" @click="clearCanvas">清除</dsn-button>
-          <dsn-button size="small" type="success" icon="el-icon-check" @click="handleSave">保存</dsn-button>
+          <dsn-button size="small" type="success" icon="el-icon-check" @click="validForm">保存</dsn-button>
         </el-form-item>
       </el-form>
     </DsnPanel>
     <div class="showInfo">
-      <el-tabs type="border-card">
+      <el-tabs type="border-card" v-model='tabselect'>
         <el-tab-pane>
           <span slot="label">
             <i class="el-icon-date"></i> 一般
@@ -30,15 +36,16 @@
             ref="form2"
             label-width="100px"
             class="demo-ruleForm"
+            style="width:400px"
           >
             <el-form-item label="描述：" prop="description">
-              <dsn-input style="width:194px" v-model="form.description" placeholder="描述"></dsn-input>
+              <dsn-input  v-model="form.description" placeholder="描述"></dsn-input>
             </el-form-item>
             <el-form-item label="当前版本：" prop="currentRevision">
               <el-checkbox v-model="form.currentRevision"></el-checkbox>
             </el-form-item>
             <el-form-item label="类型" prop="routerType">
-              <dsn-select v-model="form.routerType" placeholder="请选择">
+              <dsn-select  style="width:100%" v-model="form.routerType" placeholder="请选择">
                 <el-option
                   v-for="item in options"
                   :key="item.value"
@@ -48,7 +55,7 @@
               </dsn-select>
             </el-form-item>
             <el-form-item label="状态" prop="status">
-              <dsn-select v-model="form.status" placeholder="请选择">
+              <dsn-select style="width:100%"  v-model="form.status" placeholder="请选择">
                 <el-option
                   v-for="item in options2"
                   :key="item.value"
@@ -60,10 +67,10 @@
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="附加工序">
-          <pannel ref="panel" :search="searchValue" />
+          <pannel ref="panel" :search="searchValue"  :modelCustomizedFieldDefInfoList="list2" />
         </el-tab-pane>
         <el-tab-pane label="自定义字段">
-          <DsnData  :data="form.customizedFieldDefInfoList"></DsnData>
+          <DsnData style="width:450px"  ref="dsntable"  v-model="form.customizedFieldDefInfoList"></DsnData>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -74,17 +81,24 @@
 import {
   createRouter,
   getRouter,
-  updateRouter
+  updateRouter,
+  findCustomizedFieldDefList,
+  listRouterPage
 } from "@/api/material/route.maintenance.api";
 import Pannel from "../components/pannel";
 import handleData from "../components/handleData.js";
 import handleRightData from "../components/handleRightData";
+
 export default {
   components: {
     Pannel
   },
   data() {
     return {
+      tabselect:'0',
+      list:[],
+      list2:[],
+      selectList:[],
       searchValue: "",
       form: {
         customizedFieldDefInfoList:[],
@@ -92,8 +106,8 @@ export default {
         currentRevision: true, // 当前版本
         routerType: "",
         status: "Releasable",
-        router: "AAAAAA",
-        revision: "BBBBBB"
+        router: "",
+        revision: ""
       },
       options: [
         {
@@ -131,9 +145,9 @@ export default {
       //工单表信息
       searchrules: {
         router: [
-          { required: true, message: "工艺路线不能为空", trigger: "blur" }
+          { required: true, validator:this.validatorRouter , trigger: "change" }
         ],
-        revision: [{ required: true, message: "版本不能为空", trigger: "blur" }]
+        revision: [{ required: true,validator:this.validatorRevision, trigger: "change" }]
       },
       rules: {
         description: [
@@ -158,12 +172,85 @@ export default {
   },
   created() {
     this.init();
+    this.hanldeFindCustomizedFieldDefList(1);
+    this.hanldeFindCustomizedFieldDefList(2);
+    this.handleListRouterPage()
   },
   methods: {
+    handleFocus(){
+        this.handleListRouterPage()
+    },
     init() {
       this.$nextTick(() => {
         this.$refs["panel"].init();
       });
+    },
+    handleSelectChange(v){
+      console.log(v)
+       let item= this.selectList.find(item=>item==v);
+       console.log(item)
+       this.form.revision = item.revision;
+       this.form.router = item.router;
+    },
+    validatorRouter(rule, value, callback){
+
+      if(value==''){
+        callback(new Error("工艺路线不能为空"));
+      }
+        let reg = /[A-Z,0-9,-,_,/]/;
+        if (!reg.test(value)) {
+           callback(new Error("工艺路线输入不合法"));
+        }
+       
+      callback();
+    },
+    validForm2(){
+        this.$refs['form2'].validate((flag)=>{
+            if(!flag)
+            {
+              this.$message({
+                type:'warning',
+                message:'标签栏【一般】表单输入不合法'
+              })
+              this.tabselect ='0'
+              return ;
+            }
+
+            this.valid();
+            
+        })
+    },
+    validForm(){
+        this.$refs['form'].validate((flag)=>{
+          if(!flag){
+            this.$message({
+              type:'warning',
+              message:'工艺路线或者版本输入不合法'
+            })
+            return ;
+          }
+          this.validForm2()
+        })
+    },
+     validatorRevision(rule, value, callback){
+
+      if(value==''){
+        callback(new Error("当前版本不能为空"));
+      }
+        let reg = /[A-Z,0-9,-,_,/]/;
+        if (!reg.test(value)) {
+           callback(new Error("当前版本输入不合法"));
+        }
+       
+      callback();
+    },
+    handleListRouterPage(){
+      listRouterPage().then(data=>{
+        const res = data.data;
+        if(res.code==200){
+          this.selectList = res.data.data;
+        }
+      })
     },
     clearCanvas(){
         this.$refs["panel"].clearCanvas()
@@ -180,11 +267,24 @@ export default {
       }
       //  this.$refs["form"].resetFields();
     },
+    valid(){
+      this.$refs['dsntable'].valid((flag)=>{
+        if(!flag){
+          this.$message({
+            type:'warning',
+            message:'标签栏[自定义字段]输入不合法'
+          })
+          this.tabselect ='2'
+          return ;
+        }
 
+        this.handleSave();
+      })
+    },
     //保存
     handleSave() {
+      
       if (this.form.modifyTime && this.form.reference) {
-        console.log("save");
         this.handleUpdateRoute();
         return;
       }
@@ -196,7 +296,7 @@ export default {
 
       const params = {
         currentRevision: this.form.currentRevision, // 当前版本
-        customizedData: [], //  自定义的数据
+        customizedFieldDefInfoList: this.form.customizedFieldDefInfoList, //  自定义的数据
         description: this.form.description, //  描述
         entryRouterStep: entryRouterStep, //  附加工序的根结点
         routerSteps: routerSteps, //  附加工序的数据
@@ -251,7 +351,7 @@ export default {
 
       const params = {
         currentRevision: this.form.currentRevision, // 当前版本
-        customizedData: [], //  自定义的数据
+        customizedFieldDefInfoList: this.form.customizedFieldDefInfoList,
         description: this.form.description, //  描述
         entryRouterStep: entryRouterStep, //  附加工序的根结点
         routerSteps: routerSteps, //  附加工序的数据
@@ -274,6 +374,19 @@ export default {
           });
         }
       });
+    },
+    hanldeFindCustomizedFieldDefList(type){
+        findCustomizedFieldDefList(type).then(data=>{
+          const res= data.data;
+          if(res.code==200){
+              if(type==1){
+                this.list = res.data.customizedFieldDefInfoList;
+                this.form.customizedFieldDefInfoList = this.list
+              }else{
+                 this.list2 = res.data.customizedFieldDefInfoList;
+              }
+          }
+        })
     },
     handleQuery() {
       this.$refs["form"].validate(valid => {
