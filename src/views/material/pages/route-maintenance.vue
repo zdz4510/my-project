@@ -20,12 +20,12 @@
           <dsn-button size="small" type="primary" icon="el-icon-search" @click="handleQuery">查询</dsn-button>
           <dsn-button size="small" type="primary" icon="el-icon-refresh" @click.native="reset">重置</dsn-button>
           <dsn-button size="small" type="danger" icon="el-icon-delete" @click="clearCanvas">清除</dsn-button>
-          <dsn-button size="small" type="success" icon="el-icon-check" @click="handleSave">保存</dsn-button>
+          <dsn-button size="small" type="success" icon="el-icon-check" @click="validForm2">保存</dsn-button>
         </el-form-item>
       </el-form>
     </DsnPanel>
     <div class="showInfo">
-      <el-tabs type="border-card">
+      <el-tabs type="border-card" v-model='tabselect'>
         <el-tab-pane>
           <span slot="label">
             <i class="el-icon-date"></i> 一般
@@ -70,7 +70,7 @@
           <pannel ref="panel" :search="searchValue"  :modelCustomizedFieldDefInfoList="list2" />
         </el-tab-pane>
         <el-tab-pane label="自定义字段">
-          <DsnData style="width:500px"  v-model="form.customizedFieldDefInfoList"></DsnData>
+          <DsnData style="width:450px"  ref="dsntable"  v-model="form.customizedFieldDefInfoList"></DsnData>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -95,6 +95,7 @@ export default {
   },
   data() {
     return {
+      tabselect:'0',
       list:[],
       list2:[],
       selectList:[],
@@ -105,8 +106,8 @@ export default {
         currentRevision: true, // 当前版本
         routerType: "",
         status: "Releasable",
-        router: "AAAAAA",
-        revision: "BBBBBB"
+        router: "",
+        revision: ""
       },
       options: [
         {
@@ -200,6 +201,22 @@ export default {
        
       callback();
     },
+    validForm2(){
+        this.$refs['form2'].validate((flag)=>{
+            if(!flag)
+            {
+              this.$message({
+                type:'warning',
+                message:'标签栏【一般】表单输入不合法'
+              })
+              this.tabselect ='0'
+              return ;
+            }
+
+            this.valid();
+            
+        })
+    },
      validatorRevision(rule, value, callback){
 
       if(value==''){
@@ -235,9 +252,23 @@ export default {
       }
       //  this.$refs["form"].resetFields();
     },
+    valid(){
+      this.$refs['dsntable'].valid((flag)=>{
+        if(!flag){
+          this.$message({
+            type:'warning',
+            message:'标签栏[自定义字段]输入不合法'
+          })
+          this.tabselect ='2'
+          return ;
+        }
 
+        this.handleSave();
+      })
+    },
     //保存
     handleSave() {
+      
       if (this.form.modifyTime && this.form.reference) {
         this.handleUpdateRoute();
         return;
