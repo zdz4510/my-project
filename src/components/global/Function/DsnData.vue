@@ -1,10 +1,10 @@
 <template>
   <div class="custom-data">
-    <el-form :model="form" class="demo-ruleForm">
+    <el-form :model="form" class="demo-ruleForm"   label-width="100px">
       <el-form-item
         :label="item.fieldLabel + ':'"
         :prop="item.fieldName"
-        label-width="100px"
+      
         :rules="computedRules(item)"
         v-for="item in data"
         :key="item.lable"
@@ -23,7 +23,7 @@
           v-if="item.fieldType == 'N'"
           v-model="form[`${item.fieldName}`]"
         ></dsn-input>
-        <!-- <dsn-select
+        <dsn-select
           style="width:100%"
           @focus="selectFocus(item)"
           v-if="item.fieldType == 'C'"
@@ -35,7 +35,7 @@
             :value="item"
             v-for="item in list"
           ></el-option>
-        </dsn-select> -->
+        </dsn-select>
       </el-form-item>
     </el-form>
   </div>
