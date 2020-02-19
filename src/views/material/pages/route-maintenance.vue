@@ -20,7 +20,7 @@
           <dsn-button size="small" type="primary" icon="el-icon-search" @click="handleQuery">查询</dsn-button>
           <dsn-button size="small" type="primary" icon="el-icon-refresh" @click.native="reset">重置</dsn-button>
           <dsn-button size="small" type="danger" icon="el-icon-delete" @click="clearCanvas">清除</dsn-button>
-          <dsn-button size="small" type="success" icon="el-icon-check" @click="validForm2">保存</dsn-button>
+          <dsn-button size="small" type="success" icon="el-icon-check" @click="validForm">保存</dsn-button>
         </el-form-item>
       </el-form>
     </DsnPanel>
@@ -215,6 +215,18 @@ export default {
 
             this.valid();
             
+        })
+    },
+    validForm(){
+        this.$refs['form'].validate((flag)=>{
+          if(!flag){
+            this.$message({
+              type:'warning',
+              message:'工艺路线或者版本输入不合法'
+            })
+            return ;
+          }
+          this.validForm2()
         })
     },
      validatorRevision(rule, value, callback){
