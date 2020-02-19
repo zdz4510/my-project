@@ -2,7 +2,8 @@ const lotStepDetail = {
   // 初始化状态
   state: {
     lotStepDetailList: {},
-    lotQueryList: []
+    lotQueryList: [],
+    lotStepAllInfo: []
   },
   // 编写动作
   mutations: {
@@ -11,6 +12,9 @@ const lotStepDetail = {
     },
     LOTQUERYLIST(state, data) {
       state.lotQueryList = data;
+    },
+    LOTSTEPALLINFO(state, data) {
+      state.lotStepAllInfo = data;
     }
   },
   // 取值
@@ -20,6 +24,9 @@ const lotStepDetail = {
     },
     lotQueryList: function(state) {
       return state.lotQueryList;
+    },
+    lotStepAllInfo: function(state) {
+      return state.lotStepAllInfo;
     }
   },
   // 创建驱动，可异步

@@ -155,8 +155,8 @@ export default {
         )
     },
     {
-      path: "lotNum",
-      name: "lotNum",
+      path: "LotNum",
+      name: "LotNum",
       meta: {
         title: "Lot 数量调整",
         requiresAuth:true

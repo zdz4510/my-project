@@ -69,7 +69,7 @@
             </el-row>
             <el-row>
               <el-col :span="24">
-                <el-form-item label="上岗证:" prop="certOperation" required>
+                <el-form-item label="上岗证:" prop="certOperation">
                   <dsn-select v-model="addForm.certOperation">
                     <el-option
                       v-for="item in certList"
@@ -93,30 +93,38 @@
 import {
   saveOperation,
   getAllResourceGroup,
-  getAllCert
+  getUnassignedCert
 } from "../../../api/operation.maintain.api.js";
 export default {
   name: "add-operation-maintain",
   data() {
+    const operationRequired = (rule, value, callback) => {
+      const reg = /^[0-9A-Z_/-]{1,}$/;
+      if (value.length > 30) {
+        return callback(new Error("只能填写数字，大写字母，-，_,/;30个字符以内"));
+      }
+      if (!reg.test(value)) {
+        return callback(new Error("只能填写数字，大写字母，-，_,/;30个字符以内"));
+      }
+      callback();
+    };
     return {
       activeName: "first",
       formLabelWidth: "80px",
       rules: {
         operation: [
-          { required: true, message: "请填写工序名称", trigger: "blur" }
+          { required: true, message: "请填写工序名称", trigger: "blur" },
+          { validator: operationRequired, trigger: "change" }
         ],
         status: [{ required: true, message: "请选择状态", trigger: "change" }],
         resourceGroup: [
           { required: true, message: "请选择设备组", trigger: "change" }
         ],
-        certOperation: [
-          { required: true, message: "请选择上岗证", trigger: "change" }
-        ]
       },
       addForm: {
         operation: "",
         operationDes: "",
-        status: "",
+        status: true,
         certOperation: "",
         reportingStep: "",
         resourceGroup: ""
@@ -144,7 +152,7 @@ export default {
         this.$message.error(data.data.message);
       }
     });
-    getAllCert().then(data => {
+    getUnassignedCert({cert: ''}).then(data => {
       if (data.data.code == 200) {
         this.certList = data.data.data;
       } else {

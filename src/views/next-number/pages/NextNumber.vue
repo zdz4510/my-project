@@ -173,8 +173,8 @@ export default {
     return {
       formLabelWidth: "120px",
       searchForm: {
-        definedBy: "",
-        nextNumberType: "",
+        definedBy: "MATERIAL",
+        nextNumberType: "S",
         value: "",
         materialRev: "",
         commitType: ""
@@ -268,7 +268,7 @@ export default {
     ...mapMutations(["SETNEXTNUMBEREDITLIST"]),
     definedChange(val) {
       console.log(val);
-      // (this.searchForm.value = ""), (this.searchForm.materialRev = "");
+      (this.searchForm.value = ""), (this.searchForm.materialRev = "");
       if (val == "MATERIAL") {
         searchMat().then(data => {
           this.options = data.data.data;
@@ -309,9 +309,12 @@ export default {
               message: "暂无数据"
             });
           }
-          this.tableData.data = data.data.data && data.data.data.sequences;
+          console.log('weqweqweqw', this.tableData)
+          this.tableData.data = data.data.data && data.data.data.sequences || [];
+          
         } else {
           this.$message.error(data.data.message);
+         
         }
       });
     },
@@ -371,7 +374,7 @@ export default {
           }
           sessionStorage.setItem("searchForm", JSON.stringify(this.searchForm));
           this.SETNEXTNUMBEREDITLIST(this.checkedList);
-         this.dialogFlag = true;
+          this.dialogFlag = true;
           this.dialogType = 'edit';
         } else {
           console.log("error submit!!");
@@ -388,13 +391,8 @@ export default {
         .then(() => {
           this.$refs['searchForm'].validate(valid => {
             if (valid) {
-              let params = {};
-              params.nextNumberType = this.searchForm.nextNumberType;
-              params.definedBy = this.searchForm.definedBy;
-              params.material = this.searchForm.value.split("&")[0];
-              params.materialRev = this.searchForm.materialRev;
-              params.commitType = this.searchForm.commitType;
-              params.sequences = [];
+              console.log('delete', this.searchForm)
+              const params = Object.assign({...this.searchForm}, { sequences: [] }, { materialRev: this.searchForm.materialRev || ''});
               deleteNextNumber(params).then(data => {
                 if (data.data.code == 200) {
                   this.$message.success("删除成功");
@@ -545,22 +543,26 @@ export default {
     },
     handleSave(type, item) {
       this.dialogFlag = false;
-      if (type === 'add') {
-        const { data } = this.tableData;
+      const { data } = this.tableData;
+      if (type === 'add') {  
         item.sequence = data.length + 1;
         data.push(item);
       }
       if (type === 'edit') {
-        console.log('editdata', item)
+        const newData = data.map(obj => {
+          const modifyData = item.find(child => child.sequence === obj.sequence);
+          return modifyData || obj;
+        })
+        console.log(newData)
+        this.tableData.data = newData;
       }
     },
     handleSaveData() {
       this.$refs['searchForm'].validate(valid => {
         if (valid) {
-          console.log(this.searchForm, this.tableData.data);
+          console.log('tabledata', this.searchForm, this.tableData);
           const { searchForm, tableData: { data } } = this;
           const params = Object.assign(searchForm, { sequences: data } );
-          console.log(params)
           saveNextNumber({updateList: [{...params}]}).then(data => {
             if (data.data.code == 200) {
               this.$message.success("操作成功");

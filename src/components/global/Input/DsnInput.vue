@@ -11,9 +11,10 @@
     :type="type"
     :disabled="disabled"
     clearable
-    :maxlength:="maxlength"
+    :maxlength="maxlength"
     :minlength="minlength"
     :showWordLimit="showWordLimit"
+    show-word-limit
     :autocomplete="autocomplete"
     :showPassword="showPassword"
     :prefixIcon="prefixIcon"
@@ -70,7 +71,7 @@ export default {
       default: false
     },
     maxlength: {
-      type: Number,
+      type: [Number,String],
       required: false
     },
     minlength: {

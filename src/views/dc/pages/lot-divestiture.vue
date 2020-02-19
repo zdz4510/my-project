@@ -62,10 +62,10 @@
                 <el-input v-model.trim="showInfo.shopOrder" size="small" :disabled="true"></el-input>
               </el-form-item>
               <el-form-item label="物料（版本）：">
-                <el-input v-model.trim="showInfo.materialRev" size="small" :disabled="true"></el-input>
+                <el-input v-model.trim="showInfo.materialInfo" size="small" :disabled="true"></el-input>
               </el-form-item>
               <el-form-item label="工艺路线（版本）：">
-                <el-input v-model.trim="showInfo.routerRev" size="small" :disabled="true"></el-input>
+                <el-input v-model.trim="showInfo.routerInfo" size="small" :disabled="true"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -162,7 +162,9 @@ export default {
         quantity: "",
         shopOrder: "",
         materialRev: "",
-        routerRev: ""
+        routerRev: "",
+        materialInfo: "",
+        routerInfo: ""
       },
       lotDialog: false,
       lotDivestitureForm: {
@@ -202,6 +204,8 @@ export default {
           this.showInfo.operationList = operations;
           const resources = res.data.resourceList.join(",");
           this.showInfo.resourceList = resources;
+          this.showInfo.materialInfo = `${res.data.material}(${res.data.materialRev})`;
+          this.showInfo.routerInfo = `${res.data.router}(${res.data.routerRev})`;
         }
       });
     },

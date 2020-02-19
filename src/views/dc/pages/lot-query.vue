@@ -44,7 +44,7 @@
                     ></dsn-input>
                   </el-col>
                   <el-col :span="2">
-                    <i class="el-icon-document"></i>
+                    <i class="el-icon-document" @click="queryMaterial"></i>
                   </el-col>
                   <el-col :span="8">
                     <el-row>
@@ -68,7 +68,7 @@
                     ></dsn-input>
                   </el-col>
                   <el-col :span="2">
-                    <i class="el-icon-document"></i>
+                    <i class="el-icon-document" @click="queryRouter"></i>
                   </el-col>
                   <el-col :span="8">
                     <el-row>
@@ -94,7 +94,7 @@
                     ></dsn-input>
                   </el-col>
                   <el-col :span="2">
-                    <i class="el-icon-document"></i>
+                    <i class="el-icon-document" @click="queryShopOrder"></i>
                   </el-col>
                 </el-row>
               </el-form-item>
@@ -108,7 +108,7 @@
                     ></dsn-input>
                   </el-col>
                   <el-col :span="2">
-                    <i class="el-icon-document"></i>
+                    <i class="el-icon-document" @click="queryOperation"></i>
                   </el-col>
                 </el-row>
               </el-form-item>
@@ -122,7 +122,7 @@
                     ></dsn-input>
                   </el-col>
                   <el-col :span="2">
-                    <i class="el-icon-document"></i>
+                    <i class="el-icon-document" @click="queryResource"></i>
                   </el-col>
                 </el-row>
               </el-form-item>
@@ -201,14 +201,76 @@
         </div>
       </DsnPanel>
     </div>
+    <!-- 物料弹框start -->
+    <el-dialog title="物料" :visible.sync="materialDialog" width="400px">
+      <materialModel :material="materialList" @selectMaterial="selectMaterial"></materialModel>
+      <span slot="footer" class="dialog-footer">
+        <dsn-button @click.native="materialDialog = false">取 消</dsn-button>
+        <dsn-button type="primary" @click.native="handleMaterialComfire">确 定</dsn-button>
+      </span>
+    </el-dialog>
+    <!-- 物料弹框end -->
+    <!-- 工艺路线弹框start -->
+    <el-dialog title="工艺路线" :visible.sync="routerDialog" width="400px">
+      <routerModel :router="routerList" @selectRouter="selectRouter"></routerModel>
+      <span slot="footer" class="dialog-footer">
+        <dsn-button @click.native="routerDialog = false">取 消</dsn-button>
+        <dsn-button type="primary" @click.native="handleRouterComfire">确 定</dsn-button>
+      </span>
+    </el-dialog>
+    <!-- 工艺路线弹框end -->
+    <!-- 工单弹框start -->
+    <el-dialog title="工单" :visible.sync="shopOrderDialog" width="400px">
+      <shopOrderModel :shopOrder="shopOrderList" @selectShopOrder="selectShopOrder"></shopOrderModel>
+      <span slot="footer" class="dialog-footer">
+        <dsn-button @click.native="shopOrderDialog = false">取 消</dsn-button>
+        <dsn-button type="primary" @click.native="handleShopOrderComfire">确 定</dsn-button>
+      </span>
+    </el-dialog>
+    <!-- 工单弹框end -->
+    <!-- 工序弹框start -->
+    <el-dialog title="工序" :visible.sync="operationDialog" width="400px">
+      <operationModel :operation="operationList" @selectOperation="selectOperation"></operationModel>
+      <span slot="footer" class="dialog-footer">
+        <dsn-button @click.native="operationDialog = false">取 消</dsn-button>
+        <dsn-button type="primary" @click.native="handleOperationComfire">确 定</dsn-button>
+      </span>
+    </el-dialog>
+    <!-- 工序弹框end -->
+    <!-- 资源弹框start -->
+    <el-dialog title="资源" :visible.sync="resourceDialog" width="400px">
+      <resourceModel :resource="resourceList" @selectResource="selectResource"></resourceModel>
+      <span slot="footer" class="dialog-footer">
+        <dsn-button @click.native="resourceDialog = false">取 消</dsn-button>
+        <dsn-button type="primary" @click.native="handleResourceComfire">确 定</dsn-button>
+      </span>
+    </el-dialog>
+    <!-- 资源弹框end -->
   </div>
 </template>
 
 <script>
 import { searchLotDetailHttp } from "@/api/dc/lot.step.api.js";
-import { mapMutations } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
+import materialModel from "../components/material-model.vue";
+import { listAllMaterialHttp } from "@/api/material.info.api.js";
+import routerModel from "../components/router-model.vue";
+import { listRouterPage } from "@/api/material/route.maintenance.api.js";
+import shopOrderModel from "../components/shop-order-model.vue";
+import { findShopOrderListRequest } from "@/api/work-order/work-order.api.js";
+import operationModel from "../components/operation-model.vue";
+import { findPageHttp } from "@/api/operation.maintain.api.js";
+import resourceModel from "../components/resource-model.vue";
+import { listAllResourceHttp } from "@/api/device/maintenance.api.js";
 
 export default {
+  components: {
+    materialModel,
+    routerModel,
+    shopOrderModel,
+    operationModel,
+    resourceModel
+  },
   data() {
     return {
       tableData: [],
@@ -226,11 +288,31 @@ export default {
         routerRev: "",
         shopOrder: ""
       },
-      selectionList: []
+      selectionList: [],
+      //物料
+      materialDialog: false,
+      materialList: [],
+      currentRow: {},
+      //工艺路线
+      routerDialog: false,
+      routerList: [],
+      //工单
+      shopOrderDialog: false,
+      shopOrderList: [],
+      //工序
+      operationDialog: false,
+      operationList: [],
+      //资源
+      resourceDialog: false,
+      resourceList: []
     };
   },
   created() {
     this.lotConditionForm.lot = this.$route.query.lot;
+    this.tableData = JSON.parse(JSON.stringify(this.lotQueryList));
+  },
+  computed: {
+    ...mapGetters(["lotQueryList"])
   },
   methods: {
     ...mapMutations(["LOTQUERYLIST"]),
@@ -314,13 +396,133 @@ export default {
         });
         return;
       }
-      const tempArr = [];
-      this.selectionList.forEach(element => {
-        tempArr.push(element.lot);
-      });
+      const tempArr = JSON.parse(JSON.stringify(this.selectionList));
+      // this.selectionList.forEach(element => {
+      //   tempArr.push(element.lot);
+      // });
       this.LOTQUERYLIST(tempArr);
       this.goBack();
+    },
+    //物料查询start
+    queryMaterial() {
+      listAllMaterialHttp().then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.materialList = res.data;
+          this.materialDialog = true;
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
+    },
+    selectMaterial(row) {
+      this.currentRow = row;
+    },
+    handleMaterialComfire() {
+      this.lotConditionForm.materialRev = this.currentRow.materialRev;
+      this.lotConditionForm.material = this.currentRow.material;
+      this.materialDialog = false;
+    },
+    //物料查询end
+    //工艺路线查询start
+    queryRouter() {
+      const data = { pageSize: 0 };
+      listRouterPage(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.routerList = res.data.data;
+          this.routerDialog = true;
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
+    },
+    selectRouter(row) {
+      this.currentRow = row;
+    },
+    handleRouterComfire() {
+      this.lotConditionForm.routerRev = this.currentRow.revision;
+      this.lotConditionForm.router = this.currentRow.router;
+      this.routerDialog = false;
+    },
+    //工艺路线查询end
+    //工单查询start
+    queryShopOrder() {
+      const data = { shopOrder: "" };
+      findShopOrderListRequest(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.shopOrderList = res.data;
+          this.shopOrderDialog = true;
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
+    },
+    selectShopOrder(row) {
+      this.currentRow = row;
+    },
+    handleShopOrderComfire() {
+      this.lotConditionForm.shopOrder = this.currentRow.shopOrder;
+      this.shopOrderDialog = false;
+    },
+    //工单查询end
+    //工序查询start
+    queryOperation() {
+      const data = { pageSize: 0 };
+      findPageHttp(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.operationList = res.data.data;
+          this.operationDialog = true;
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
+    },
+    selectOperation(row) {
+      this.currentRow = row;
+    },
+    handleOperationComfire() {
+      this.lotConditionForm.operation = this.currentRow.operation;
+      this.operationDialog = false;
+    },
+    //工序查询end
+    //资源查询start resource
+    queryResource() {
+      listAllResourceHttp().then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.resourceList = res.data;
+          this.resourceDialog = true;
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
+    },
+    selectResource(row) {
+      this.currentRow = row;
+    },
+    handleResourceComfire() {
+      this.lotConditionForm.resource = this.currentRow.resource;
+      this.resourceDialog = false;
     }
+    //资源查询end
   }
 };
 </script>

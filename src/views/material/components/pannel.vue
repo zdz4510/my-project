@@ -4,9 +4,16 @@
       <!--左侧可以拖动的菜单-->
       <el-col :span="6" ref="nodeMenu">
         <div class="leftMenuBox">
-          <h2 class="title" @click="dataInfo">
+          <!-- <h2 class="title" @click="dataInfo">
             {{ rightData.styleCode }} 款式工艺清单
-          </h2>
+          </h2> -->
+          <div>
+            <dsn-input
+              placeholder="请输入搜索的关键字"
+              @input="handleKeyInput"
+              v-model="key"
+            ></dsn-input>
+          </div>
           <node-menu
             :menuList="menuList"
             @addNode="addNode"
@@ -110,18 +117,27 @@ import { getDataC } from "./data_C";
 import { getAllOperation } from "@/api/material/route.maintenance.api";
 import { getCraftProcess } from "@/api/process-flow/process.flow.api/";
 import "./handleData.js";
+
 export default {
   name: "pannel",
   props: {
     search: {
       type: String,
       required: true
+    },
+    modelCustomizedFieldDefInfoList: {
+      type: Array,
+      default: () => {
+        return [];
+      }
     }
   },
   data() {
     return {
+      key: "",
       scale: 1, // 画布比例
       menuList: [],
+      cloneMenuList: [],
       // jsPlumb 实例
       jsPlumb: null,
       easyFlowVisible: true,
@@ -194,7 +210,8 @@ export default {
         description: "",
         nodeList: [],
         lineList: []
-      }
+      },
+      offsetY: 0
     };
   },
   components: {
@@ -209,8 +226,32 @@ export default {
       this.jsPlumbInit();
     });
   },
-  mounted() {},
+  mounted() {
+    let dom = document.getElementsByClassName("pannerBox")[0];
+    dom.addEventListener("scroll", this.hadleScroll);
+  },
+  beforeDestroy() {
+    let dom = document.getElementsByClassName("pannerBox")[0];
+    dom.removeEventListener("scroll", this.hadleScroll);
+  },
   methods: {
+    handleKeyInput(key) {
+      if (!this.menuList[1]) {
+        return;
+      }
+      
+      if (key == "") {
+        this.menuList[1].children = lodash.cloneDeep(this.cloneMenuList[1].children);
+        return;
+      }
+      let children = this.cloneMenuList[1].children;
+      this.menuList[1].children = children.filter(item => {
+        return item.operationDes.indexOf(key) != -1;
+      });
+    },
+    hadleScroll() {
+      this.offsetY = document.getElementsByClassName("pannerBox")[0].scrollTop;
+    },
     // 进度缩放
     changeScale(val) {
       this.$refs.flowContainer.setAttribute("style", `transform:scale(${val})`);
@@ -232,12 +273,12 @@ export default {
         );
       }
     },
-    clearCanvas(){
-      const data={
-        nodeList:[],
-        lineList:[]
-      }
-      this.dataReload(data)
+    clearCanvas() {
+      const data = {
+        nodeList: [],
+        lineList: []
+      };
+      this.dataReload(data);
     },
     init() {
       if (!this.jsPlumb) {
@@ -259,7 +300,7 @@ export default {
           resourceGroup: item.resourceGroup,
           routerComponentType: "O", // 工艺路线类型
           ico: "el-icon-user-solid",
-          customizedData: [],
+          customizedFieldDefInfoList: [],
           operation: item.operation, // 工序id
           isLastReportingStep: false, //最后包工步骤checkbox
           description: "", //  描述
@@ -298,6 +339,7 @@ export default {
             id: "-1",
             type: "-1",
             name: "开始",
+            operationDes: "开始",
             componentCode: "-1",
             craftNum: "-1",
             ico: "el-icon-odometer",
@@ -316,6 +358,7 @@ export default {
             id: "A",
             type: "A",
             name: "返回置任一步骤",
+            operationDes: "返回置任一步骤",
             ico: "el-icon-odometer",
             routerComponentType: "R",
             retrunType: "A"
@@ -324,6 +367,7 @@ export default {
             id: "N",
             type: "N",
             name: "返回置上一步骤",
+            operationDes: "返回置上一步骤",
             ico: "el-icon-odometer",
             routerComponentType: "R",
             retrunType: "N"
@@ -332,6 +376,7 @@ export default {
             id: "O",
             type: "O",
             name: "返回置原始步骤",
+            operationDes: "返回置原始步骤",
             routerComponentType: "R",
             ico: "el-icon-odometer",
             retrunType: "O"
@@ -340,6 +385,7 @@ export default {
             id: "P",
             type: "P",
             name: "返回置下一步骤",
+            operationDes: "返回置下一步骤",
             ico: "el-icon-odometer",
             routerComponentType: "R",
             retrunType: "P"
@@ -348,6 +394,7 @@ export default {
       };
 
       this.menuList = [startAndEnd, craft, handle];
+      this.cloneMenuList = lodash.cloneDeep(this.menuList);
     },
     getLeftData() {
       getAllOperation({}).then(data => {
@@ -555,14 +602,20 @@ export default {
 
       let left = mousePosition.left;
       let top = mousePosition.top;
-      console.log(evt.originalEvent.clientY)
+      // console.log(evt.originalEvent.clientY)
       if (left < 0) {
         left = evt.originalEvent.layerX - width;
       }
       if (top < 0) {
-        top = evt.originalEvent.clientY - 270;
+        let offsetY =
+          document.getElementsByClassName("showInfo")[0].offsetTop - 98;
+        top = evt.originalEvent.clientY - 270 + this.offsetY - offsetY;
       }
 
+      const len = this.rightData.nodeList.filter(item => item.id != "-1")
+        .length;
+      const v = ((len + 1) * 10).toString().padStart(4, "0");
+      console.log(top, this.offsetY);
       let node = {
         ...nodeMenu,
         left: left + "px",
@@ -570,7 +623,11 @@ export default {
         ico: nodeMenu.ico,
         show: true,
         id: nodeId,
-        type: nodeId
+        type: nodeId,
+        stepId: v,
+        customizedFieldDefInfoList: lodash.cloneDeep(
+          this.modelCustomizedFieldDefInfoList
+        )
       };
       /**
        * 这里可以进行业务判断、是否能够添加该节点
@@ -755,7 +812,6 @@ export default {
     },
     // 加载流程图
     dataReload(data) {
-     
       console.log(data);
       this.easyFlowVisible = false;
       this.rightData.nodeList = [];

@@ -78,7 +78,7 @@ export default {
       this.$emit("selectLot", row);
     },
     searchLot() {
-      console.log(this.search.lot);
+      console.log(this.search.lot,"数九");
     }
   }
 };

@@ -15,7 +15,12 @@
         <el-form-item label="LOT" prop="lot">
           <el-row>
             <el-col :span="22">
-              <dsn-input class="lot" v-model.trim="lotStepForm.lot" placeholder="请输入LOT"></dsn-input>
+              <dsn-input
+                class="lot"
+                v-model.trim="lotStepForm.lot"
+                placeholder="请输入LOT"
+                @clear="clearLot"
+              ></dsn-input>
             </el-col>
             <el-col :span="2">
               <i class="el-icon-document" @click="goQuery"></i>
@@ -51,7 +56,7 @@
             <el-dropdown-item command="stepDone">将步骤标记为已完成</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <dsn-button size="small" type="primary" @click="handleSave">保存</dsn-button>
+        <dsn-button size="small" type="primary" @click="checkSaveRule">保存</dsn-button>
       </div>
       <div class="showInfo">
         <el-table
@@ -100,7 +105,9 @@
 <script>
 import {
   findLotStepStatusHttp,
-  setLotsStatusDoneHttp
+  setLotsStatusDoneHttp,
+  saveLotStepStatusHttp,
+  getLotStepChangRuleHttp
 } from "@/api/dc/lot.step.api.js";
 import { mapMutations, mapGetters } from "vuex";
 
@@ -122,26 +129,38 @@ export default {
       // total: 0,
       deleteDialog: false,
       queryLots: [
-        "FIXED2020/01/1300000116MAT1",
-        "FIXED2020/01/1300000118MAT1",
-        "FIXED2020/01/1300000120MAT1"
+        // "FIXED2020/01/1300000116MAT1",
+        // "FIXED2020/01/1300000118MAT1",
+        // "FIXED2020/01/1300000120MAT1"
       ],
-      stepStatusList: []
+      stepStatusList: [],
+      stepIdList: [],
+      cloneLotQueryList: []
     };
   },
   created() {
+    if (this.lotStepAllInfo.length > 0) {
+      this.lotStepForm = this.lotStepAllInfo[0].lotStepForm;
+      this.queryLots = this.lotStepAllInfo[0].queryLots;
+      this.stepStatusList = this.lotStepAllInfo[0].stepStatusList;
+      this.stepIdList = this.lotStepAllInfo[0].stepIdList;
+      this.tableData = this.lotStepAllInfo[0].tableData;
+    }
+    console.log(this.lotStepAllInfo);
     if (this.lotQueryList.length === 1) {
-      this.lotStepForm.lot = this.lotQueryList[0];
+      console.log(this.lotQueryList.length);
+      this.lotStepForm.lot = this.lotQueryList[0].lot;
     }
     if (this.lotQueryList.length > 1) {
       this.lotStepForm.lot = "已选择" + this.lotQueryList.length + "个";
     }
+    this.cloneLotQueryList = JSON.parse(JSON.stringify(this.lotQueryList));
   },
   computed: {
-    ...mapGetters(["lotQueryList"])
+    ...mapGetters(["lotQueryList", "lotStepDetailList", "lotStepAllInfo"])
   },
   methods: {
-    ...mapMutations(["LOTSTEPDETAILLIST"]),
+    ...mapMutations(["LOTSTEPDETAILLIST", "LOTQUERYLIST", "LOTSTEPALLINFO"]),
     toggleSelection(rows) {
       if (rows) {
         rows.forEach(row => {
@@ -154,37 +173,48 @@ export default {
     //当前选中行
     handleSelectionChange(val) {
       this.selectionList = val;
-      console.log(this.selectionList);
+      this.stepIdList = [];
+      this.selectionList.forEach(element => {
+        this.stepIdList.push(element.stepId);
+      });
     },
     //双击单元格
     cellDblClick(row) {
       this.LOTSTEPDETAILLIST(row);
+      const tempData = [
+        {
+          lotStepForm: this.lotStepForm,
+          tableData: this.tableData,
+          queryLots: this.queryLots,
+          stepStatusList: this.stepStatusList,
+          stepIdList: this.stepIdList
+        }
+      ];
+      console.log(tempData);
+      this.LOTSTEPALLINFO(tempData);
       this.$router.push({ name: "lotStepDetail" });
     },
     //点击步骤操作菜单栏
     handleCommand(command) {
-      // if (this.selectionList.length === 0) {
-      //   this.$message({
-      //     message: "请至少选择一行数据进行操作！",
-      //     type: "warning"
-      //   });
-      //   return;
-      // }
+      if (this.selectionList.length === 0) {
+        this.$message({
+          message: "请至少选择一行数据进行操作！",
+          type: "warning"
+        });
+        return;
+      }
+
       //清除步骤
       if (command === "clear") {
-        this.stepStatusList.push({
-          changeType: "CLEAR",
-          stepId: this.selectionList[0].stepId
-        });
-        this.stepOperate("");
+        this.stepOperate("", "CLEAR");
       }
       //步骤绕过
       if (command === "byPass") {
-        this.stepOperate("已绕过");
+        this.stepOperate("已绕过", "BYPASS");
       }
       //步骤已完成
       if (command === "stepDone") {
-        this.stepOperate("已完成");
+        this.stepOperate("已完成", "STEPDONE");
       }
       //整个数量置于队列中
       if (command === "inQueue") {
@@ -192,28 +222,85 @@ export default {
       }
     },
     //步骤操作
-    stepOperate(stepStatus) {
-      this.tableData.forEach(element1 => {
-        this.selectionList.forEach(element2 => {
-          if (JSON.stringify(element1) === JSON.stringify(element2)) {
-            element1.stepStatus = stepStatus;
-            element1.qtyInQueue = 0;
-            element1.qtyInQueue = 0;
+    stepOperate(stepStatus, changeType) {
+      this.stepIdList.forEach(stepId => {
+        this.tableData.find(item => {
+          if (item.stepId === stepId) {
+            item.stepStatus = stepStatus;
+            item.qtyInQueue = 0;
+            item.qtyInWork = 0;
           }
+        });
+      });
+      this.selectionList.forEach(element => {
+        this.stepStatusList.push({
+          changeType,
+          stepId: element.stepId
         });
       });
     },
     //整个数量置于队列中
-    inQueue() {},
+    inQueue() {
+      let stepSequence = 0;
+      this.selectionList.forEach(element => {
+        if (element.stepSequence > stepSequence) {
+          stepSequence = element.stepSequence;
+        }
+      });
+      console.log(stepSequence);
+      let count = 1;
+      this.tableData.forEach(element => {
+        if (element.stepSequence === stepSequence) {
+          element.stepStatus = "排队中";
+          element.qtyInQueue = count++; //待修改
+          element.qtyInWork = 0;
+        }
+        if (element.stepSequence > stepSequence) {
+          element.stepStatus = "";
+          element.qtyInQueue = 0;
+          element.qtyInWork = 0;
+        }
+        if (
+          element.stepSequence < stepSequence &&
+          element.stepStatus !== "已完成"
+        ) {
+          element.stepStatus = "已绕过";
+          element.qtyInQueue = 0;
+          element.qtyInWork = 0;
+        }
+      });
+      this.selectionList.forEach(element => {
+        this.stepStatusList.push({
+          changeType: "INQUEUE",
+          stepId: element.stepId
+        });
+      });
+    },
     //跳转到查询LOT界面
     goQuery() {
-      this.$router.push({
-        name: "lotQuery",
-        query: { lot: this.lotStepForm.lot }
-      });
+      if (this.queryLots.length > 1) {
+        this.LOTQUERYLIST(this.cloneLotQueryList);
+        this.$router.push({
+          name: "lotQuery",
+          query: { lot: "" }
+        });
+      } else {
+        this.$router.push({
+          name: "lotQuery",
+          query: { lot: this.lotStepForm.lot }
+        });
+      }
     },
     handleDelete() {},
     handleQuery() {
+      this.queryLots = [];
+      if (this.cloneLotQueryList.length > 0) {
+        this.cloneLotQueryList.forEach(element => {
+          this.queryLots.push(element.lot);
+        });
+      } else {
+        this.queryLots.push(this.lotStepForm.lot);
+      }
       const data = this.queryLots;
       findLotStepStatusHttp(data).then(data => {
         const res = data.data;
@@ -228,8 +315,13 @@ export default {
       });
     },
     handleReset() {
+      this.lotStepForm.comment = "";
       this.lotStepForm.lot = "";
       this.tableData = [];
+      this.queryLots = [];
+      this.stepStatusList = [];
+      this.cloneLotQueryList = [];
+      this.stepIdList = [];
     },
     handleSetFinish() {
       if (this.tableData.length === 0) {
@@ -239,13 +331,31 @@ export default {
         });
         return;
       }
-      if (this.lotStepForm.comment === "") {
+      getLotStepChangRuleHttp({ ruler: "COMMENT_REQUIRED" }).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          if (res.data === "yes") {
+            if (this.lotStepForm.comment === "") {
+              this.$message({
+                type: "warning",
+                message: "请填写备注！"
+              });
+              return;
+            }
+            this.confirmStatusIdFinish();
+          } else {
+            this.confirmStatusIdFinish();
+          }
+          return;
+        }
         this.$message({
-          type: "warning",
-          message: "请填写备注！"
+          message: res.message,
+          type: "warning"
         });
-        return;
-      }
+      });
+    },
+    //是否确认将LOT的状态置为完成弹框
+    confirmStatusIdFinish() {
       this.$confirm("是否确认将LOT的状态置为完成？", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -261,7 +371,7 @@ export default {
           });
         });
     },
-    //请求
+    //请求LOT的状态置为完成
     setFinishHttp() {
       const lots = [];
       this.selectionList.forEach(element => {
@@ -274,16 +384,40 @@ export default {
       setLotsStatusDoneHttp(data).then(data => {
         const res = data.data;
         if (res.code === 200) {
-          console.log(res.data);
+          this.handleQuery();
           this.$message({
             type: "success",
-            message: "操作成功!"
+            message: res.message
           });
           return;
         }
         this.$message({
           type: "warning",
           message: res.message
+        });
+      });
+    },
+    checkSaveRule() {
+      getLotStepChangRuleHttp({ ruler: "COMMENT_REQUIRED" }).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          if (res.data === "yes") {
+            if (this.lotStepForm.comment === "") {
+              this.$message({
+                type: "warning",
+                message: "请填写备注！"
+              });
+              return;
+            }
+            this.handleSave();
+          } else {
+            this.handleSave();
+          }
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
         });
       });
     },
@@ -302,16 +436,44 @@ export default {
         });
         return;
       }
-      this.tableData.forEach(element => {
-        if (element.qtyInQueue <= 0 || element.qtyInWork <= 0) {
+      const tempList = this.tableData.filter(item => {
+        return item.stepStatus === "排队中" || item.stepStatus === "工作中";
+      });
+      if (tempList.length === 0) {
+        this.$message({
+          type: "warning",
+          message:
+            "LOT必须在某一步骤为”排队中“或”工作中“的状态，才允许执行”保存“操作"
+        });
+        return;
+      }
+      const data = {
+        comment: this.lotStepForm.comment,
+        lots: this.queryLots,
+        stepStatus: this.stepStatusList
+      };
+      saveLotStepStatusHttp(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
           this.$message({
-            type: "warning",
-            message:
-              "LOT必须在某一步骤为”排队中“或”工作中“的状态，才允许执行”保存“操作"
+            type: "success",
+            message: res.message
           });
+          //保存成功清空步骤记录数组
+          this.stepStatusList = [];
           return;
         }
+        this.$message({
+          type: "error",
+          message: res.message
+        });
       });
+    },
+    //lot输入框清空
+    clearLot() {
+      this.queryLots = [];
+      this.stepStatusList = [];
+      this.cloneLotQueryList = [];
     }
   }
 };

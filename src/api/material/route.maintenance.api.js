@@ -1,41 +1,35 @@
 import request from "@/service/";
 /**
- *  
+ *
  *  获取所有工序
  *  url /mes/operation/getAllOperation
  */
 export const getAllOperation = () => {
-    return request.get(
-      `${window.VUE_APP_URL}/mes/operation/getAllOperation`,
-    );
-  };
+  return request.get(`${window.VUE_APP_URL}/mes/operation/getAllOperation`);
+};
 
-
-  /**
- *  
+/**
+ *
  *  创建工艺路线
  *  url /mes/router/createRouter
  */
 export const createRouter = data => {
-    return request.post(
-      `${window.VUE_APP_URL}/mes/router/createRouter`,
-      data
-    );
-  };
+  return request.post(`${window.VUE_APP_URL}/mes/router/createRouter`, data);
+};
 
-  /**
-   *  查询单条工艺路线
-   *  /mes/router/getRouter
-   * @param {*} data 
-   */
-  export const getRouter = data => {
-    return request.get(
-      `${window.VUE_APP_URL}/mes/router/getRouter`,{
-          params:data
-      }
-    );
-  };
+/**
+ *  查询单条工艺路线
+ *  /mes/router/getRouter
+ * @param {*} data
+ */
+export const getRouter = data => {
+  return request.get(`${window.VUE_APP_URL}/mes/router/getRouter`, {
+    params: data
+  });
+};
 
+
+  
   /**
    * /mes/router/listRouterPage  查询工艺路线列表: 分页和不分页
    */
@@ -52,13 +46,23 @@ export const createRouter = data => {
  */
 
 export const updateRouter = data => {
-    return request.post(
-      `${window.VUE_APP_URL}/mes/router/updateRouter`,data
-    );
-  };
+  return request.post(`${window.VUE_APP_URL}/mes/router/updateRouter`, data);
+};
 
+export const findDataByLimitGeneralCode = data => {
+  return request.get(
+    `${window.VUE_APP_URL}/mes/generalCodeDataService/findDataByLimitGeneralCode`,
+    {
+      params: data
+    }
+  );
+};
 
-
-
-
-  
+export const findCustomizedFieldDefList = type => {
+  return request.get(
+    `${window.VUE_APP_URL}/mes/customizedFieldDef/findCustomizedFieldDefList`,
+    {
+      params: { customizedItem:(type==1) ? "CMF_ROUTER" : "CMF_ROUTER_STEP_OPERATION" }
+    }
+  );
+};

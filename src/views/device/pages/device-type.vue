@@ -22,7 +22,13 @@
         <span>搜索结果</span>
       </div>
       <div class="operate">
-        <dsn-button size="small" icon="el-icon-folder-add" type="success" @click.native="handleAdd">新增</dsn-button>
+        <dsn-button
+          size="small"
+          icon="el-icon-folder-add"
+          type="success"
+          @click.native="handleAdd"
+          :disabled="selectionList.length > 0"
+        >新增</dsn-button>
         <dsn-button
           size="small"
           type="primary"
@@ -45,7 +51,6 @@
           :data="tableData"
           tooltip-effect="dark"
           style="width: 100%"
-          height="350px"
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55"></el-table-column>

@@ -65,7 +65,7 @@
               @click="del"
               :disabled="this.pCheckedList.length === 0"
             >删除</dsn-button>
-            <dsn-button @click.native="handleCopy">粘贴行</dsn-button>
+            <!-- <dsn-button @click.native="handleCopy">粘贴行</dsn-button> -->
             <dsn-button
               size="40"
               type="text"
@@ -89,7 +89,7 @@
           >
             <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
             <el-table-column type="index" label="序号"></el-table-column>
-            <el-table-column prop="parameter" label="参数名称" sortable width="100"></el-table-column>
+            <el-table-column prop="parameter" label="参数名称" width="100"></el-table-column>
             <el-table-column label="软检查">
               <template slot-scope="scope">{{ scope.row.softCheck ? '启用' : '不启用' }}</template>
             </el-table-column>
@@ -129,7 +129,7 @@
             ref="sTable"
             :data="this.SetupInfoList"
             tooltip-effect="dark"
-            row-key="dcGroup"
+            row-key="index"
             @selection-change="handleSelectionChange2"
             style="width: 100%"
           >
@@ -138,7 +138,7 @@
             <el-table-column label="条件明细" width="300">
               <template
                 slot-scope="scope"
-              >{{ scope.row.material+','+scope.row.materialGroup+','+scope.row.shopOrder+','+scope.row.workCenter+','+scope.row.resourceGroup+','+scope.row.shopOrder }}</template>
+              >{{ scope.row.material+','+scope.row.materialGroup+','+scope.row.shopOrder+','+scope.row.workCenter+','+scope.row.resource+','+scope.row.shopOrder }}</template>
             </el-table-column>
           </dsn-table>
         </el-tab-pane>
@@ -409,11 +409,11 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="设备类型:" prop="resourceGroup">
+            <el-form-item label="设备类型:" prop="resource">
               <!-- <dsn-input v-model="addSetUpForm.resourceGroup"></dsn-input> -->
               <el-autocomplete
                 popper-class="my-autocomplete"
-                v-model="addSetUpForm.resourceGroup"
+                v-model="addSetUpForm.resource"
                 :fetch-suggestions="querySearchResourceGroup"
                 placeholder="请输入设备类型"
                 @select="handleSelectResourceGroup"
@@ -447,7 +447,7 @@ import { findShopOrderListRequest } from "@/api/work-order/work-order.api.js";
 import { getOperationList } from "@/api/operation.maintain.api.js";
 import { findPageHttp } from "@/api/work.center.api.js";
 import { listAllResourceGroupHttp } from "@/api/device/type.api.js";
-import _ from "lodash";
+// import _ from "lodash";
 export default {
   name: "add-data-collection",
   data() {
@@ -550,7 +550,7 @@ export default {
         material: "",
         workCenter: "",
         shopOrder: "",
-        resourceGroup: "",
+        resource: "",
         dcGroup: "",
         tenantSiteCode: "test"
       },
@@ -684,16 +684,16 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           const tempDcSetupInfoList = this.SetupInfoList;
-          // tempDcSetupInfoList.forEach(element => {
-          //   element.material = element.material;
-          //   element.materialGroup = element.materialGroup;
+          // tempDcSetupInfoList.forEach((element, index) => {
+          //   element.parameterOrder = index+1;
           // });
           const tempMeasureInfoList = this.MeasureInfoList;
-          tempMeasureInfoList.forEach(element => {
+          tempMeasureInfoList.forEach((element, index) => {
             element.lowerSpecLimit = parseFloat(element.lowerSpecLimit);
             element.lowerWarnLimit = parseFloat(element.lowerWarnLimit);
             element.upperSpecLimit = parseFloat(element.upperSpecLimit);
             element.upperWarnLimit = parseFloat(element.upperWarnLimit);
+            element.parameterOrder = index + 1;
           });
           console.log(tempMeasureInfoList);
           const params = {
@@ -773,7 +773,6 @@ export default {
           let tempObj = JSON.parse(JSON.stringify(this.addSetUpForm));
           let dcGroup = tempObj.dcGroup;
           tempObj.dcGroup = "";
-          console.log(tempObj);
           for (const key in tempObj) {
             if (tempObj.hasOwnProperty(key)) {
               if (tempObj[key] === "") {
@@ -824,7 +823,6 @@ export default {
         );
         this.$message.success("操作成功");
       }
-      console.log(this.SetupInfoList);
       this.$refs.sTable.clearSelection();
       this.setUpDialogVisible = false;
       this.$refs[formName].resetFields();
@@ -849,12 +847,7 @@ export default {
     addSet() {
       this.setUpDialogVisible = true;
       this.currentOperation = "add";
-      this.queryMaterialGroup();
-      this.queryMaterial();
-      this.queryShopOrder();
-      this.queryOperation();
-      this.queryWorkCenter();
-      this.queryResourceGroup();
+      this.queryData();
     },
     edit() {
       this.paramsDialogVisible = true;
@@ -862,11 +855,20 @@ export default {
       console.log(this.pCheckedList, "pc");
       this.addParamForm = JSON.parse(JSON.stringify(this.pCheckedList[0]));
     },
+    queryData() {
+      this.queryMaterialGroup();
+      this.queryMaterial();
+      this.queryShopOrder();
+      this.queryOperation();
+      this.queryWorkCenter();
+      this.queryResourceGroup();
+    },
     editSet() {
       this.setUpDialogVisible = true;
       this.currentOperation = "edit";
       console.log(this.sCheckedList, "pc");
       this.addSetUpForm = JSON.parse(JSON.stringify(this.sCheckedList[0]));
+      this.queryData();
     },
     del() {
       this.$confirm("是否删除所选数据?", "提示", {
@@ -924,28 +926,28 @@ export default {
     tableRowClassName(row, rowIndex) {
       console.log(row, rowIndex);
     },
-    // 复制动作的操作
-    handleCopy() {
-      if (this.pCheckedList.length != 1) {
-        this.$message({
-          type: "warning",
-          message: "请先选中一行，然后粘贴"
-        });
-        return;
-      }
-      const selectItem = this.pCheckedList[0];
-      //  复制取当前后面的序号
-      const index = this.MeasureInfoList.findIndex(item => {
-        return item === selectItem;
-      });
+    // // 复制动作的操作
+    // handleCopy() {
+    //   if (this.pCheckedList.length != 1) {
+    //     this.$message({
+    //       type: "warning",
+    //       message: "请先选中一行，然后粘贴"
+    //     });
+    //     return;
+    //   }
+    //   const selectItem = this.pCheckedList[0];
+    //   //  复制取当前后面的序号
+    //   const index = this.MeasureInfoList.findIndex(item => {
+    //     return item === selectItem;
+    //   });
 
-      // const len = this.MeasureInfoList.length;
-      const copyItem = _.cloneDeep({
-        ...selectItem
-      });
-      this.MeasureInfoList.splice(index + 1, 0, copyItem);
-      // this.lockOpeAction = true; //  锁定操作
-    },
+    //   // const len = this.MeasureInfoList.length;
+    //   const copyItem = _.cloneDeep({
+    //     ...selectItem
+    //   });
+    //   this.MeasureInfoList.splice(index + 1, 0, copyItem);
+    //   // this.lockOpeAction = true; //  锁定操作
+    // },
     // 上排序
     handleUpCraft() {
       if (this.pCheckedList.length != 1) {
@@ -957,7 +959,6 @@ export default {
       }
       const selectOne = this.pCheckedList[0];
       const index = this.MeasureInfoList.findIndex(item => item === selectOne);
-      console.log(index);
       // 无法上移动
       if (index <= 0) {
         return;
@@ -965,6 +966,7 @@ export default {
       const topOne = this.MeasureInfoList[index - 1];
       this.MeasureInfoList.splice(index, 1, topOne);
       this.MeasureInfoList.splice(index - 1, 1, selectOne);
+      console.log(this.MeasureInfoList);
     },
     //下移
     handleDownCraft() {
@@ -1159,7 +1161,7 @@ export default {
       cb(results);
     },
     handleSelectResourceGroup(item) {
-      this.addSetUpForm.resourceGroup = item.resourceGroup;
+      this.addSetUpForm.resource = item.resourceGroup;
     }
     // 查询设备类型信息end
   }

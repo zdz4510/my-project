@@ -146,10 +146,10 @@
                   <el-col :span="8">
                     <el-form-item
                       label="供应商物料号:"
-                      prop="vebdorMaterial"
+                      prop="vendorMaterial"
                       v-if="addForm.materialType=='辅料' || addForm.materialType=='原材料'"
                     >
-                      <dsn-input v-model="addForm.vebdorMaterial"></dsn-input>
+                      <dsn-input v-model="addForm.vendorMaterial"></dsn-input>
                     </el-form-item>
                   </el-col>
                 </el-row>
@@ -354,7 +354,7 @@ export default {
         client: "",
         clientMaterial: "",
         vebdor: "",
-        vebdorMaterial: "",
+        vendorMaterial: "",
         materialStatus: "",
         modified_user_id: "",
         length: "1",
@@ -424,9 +424,7 @@ export default {
                 type: "success",
                 message: "保存成功!"
               });
-              setTimeout(() => {
-                this.$router.push({ path: "/material/materialInfo" });
-              }, 1000);
+              this.$router.push({ path: "/material/materialInfo" });
             } else {
               this.$message.error(data.data.message);
             }
@@ -453,7 +451,7 @@ export default {
         client: "",
         clientMaterial: "",
         vebdor: "",
-        vebdorMaterial: "",
+        vendorMaterial: "",
         materialStatus: "",
         modified_user_id: "",
         length: "1",

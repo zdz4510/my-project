@@ -188,7 +188,7 @@ import {
   findResourceMaintenanceListHttp,
   saveResourceMaintenanceHttp
 } from "@/api/device/maintenance.api.js";
-import { getAllList } from "@/api/work.center.api.js";
+import { getAllLevel1Http } from "@/api/work.center.api.js";
 import workCenterModel from "../components/work-center-model.vue";
 import _ from "lodash";
 
@@ -555,6 +555,7 @@ export default {
       formName.forEach(element => {
         if (element === "upkeepConfigForm") {
           this.$refs[element].resetFields();
+          this.$refs.multipleTable.clearSelection();
         }
       });
     },
@@ -597,10 +598,7 @@ export default {
     },
     //查询工作中心
     queryWorkCenter() {
-      const data = {
-        workCenter: this.maintenanceForm.workCenter
-      };
-      getAllList(data).then(data => {
+      getAllLevel1Http().then(data => {
         const res = data.data;
         if (res.code === 200) {
           this.$message({

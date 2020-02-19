@@ -60,7 +60,7 @@
             <el-input type="textarea" rows="4" v-model.trim="materialGroupForm.groupDes"></el-input>
           </el-form-item>
         </el-form>
-        <el-transfer
+        <!-- <el-transfer
           ref="transfer"
           filterable
           filter-placeholder="请输入物料号"
@@ -80,7 +80,69 @@
             option.materialDes
             }}-{{ option.materialStatus }}
           </span>
-        </el-transfer>
+        </el-transfer> -->
+          <div class="operate" style="padding-bottom: 14px"> 
+          <el-row>
+            <el-col :span="11">
+              <dsn-table
+                :data="transferData.filter(data => !material1 || data.material.toLowerCase().includes(material1.toLowerCase()))"
+                @select="check1"
+                @select-all="check1"
+              >
+                <el-table-column label="关联物料:">
+                  <el-table-column type="selection" width="100"></el-table-column>
+                  <el-table-column prop="material" label="物料"></el-table-column>
+                </el-table-column>
+                <el-table-column label>
+                  <template slot="header">
+                    <dsn-input v-model="material1" placeholder="输入物料搜索" />
+                  </template>
+                  <!-- <el-table-column label="分类">
+                    <template
+                      slot-scope="scope"
+                    >{{ scope.row.materialLevelFlag == 10 ? '提示' : (scope.row.materialLevelFlag == 20 ? '警告' : '错误') }}</template>
+                  </el-table-column> -->
+                  <el-table-column prop="materialType" label="物料分类"></el-table-column>
+                  <el-table-column prop="materialDes" label="物料描述"></el-table-column>
+                  <el-table-column prop="materialRev" label="物料状态"></el-table-column>
+                </el-table-column>
+              </dsn-table>
+            </el-col>
+            <el-col :span="2">
+              <div class="direction mt70">
+                <i class="el-icon-caret-right" @click="right"></i>
+              </div>
+              <div class="direction">
+                <i class="el-icon-caret-left" @click="left"></i>
+              </div>
+            </el-col>
+            <el-col :span="11">
+              <dsn-table
+                :data="untransferData.filter(data => !material2 || data.material.toLowerCase().includes(material2.toLowerCase()))"
+                @select="check2"
+                @select-all="check2"
+              >
+                <el-table-column label="待关联物料:">
+                  <el-table-column type="selection" width="100"></el-table-column>
+                  <el-table-column prop="material" label="物料"></el-table-column>
+                </el-table-column>
+                <el-table-column label>
+                  <template slot="header">
+                    <dsn-input v-model="material2" placeholder="输入物料搜索" />
+                  </template>
+                  <!-- <el-table-column label="分类">
+                    <template
+                      slot-scope="scope"
+                    >{{ scope.row.materialLevelFlag == 10 ? '提示' : (scope.row.materialLevelFlag == 20 ? '警告' : '错误') }}</template>
+                  </el-table-column> -->
+                  <el-table-column prop="materialType" label="物料分类"></el-table-column>
+                  <el-table-column prop="materialDes" label="物料描述"></el-table-column>
+                  <el-table-column prop="materialRev" label="物料状态"></el-table-column>
+                </el-table-column>
+              </dsn-table>
+            </el-col>
+          </el-row>
+        </div>
       </div>
     </div>
     <el-dialog title="保存" :visible.sync="saveDialog" :width="defaltDialogWidth">
@@ -95,6 +157,7 @@
 
 <script>
 import { mapGetters, mapMutations } from "vuex";
+import _ from "lodash";
 import {
   getAllDistinctHttp,
   saveHttp
@@ -119,12 +182,20 @@ export default {
       //穿梭框
       titles: ["未关联物料", "已关联物料"],
       transferData: [],
+      untransferData:[],
       value: [],
       cloneForm: [],
       relatived: [],
       unrelatived: [],
       saveDialog: false,
-      isEditResource: false
+      isEditResource: false,
+      selectedList:[],
+      selectedList2:[],
+      material1:"",
+      material2:"",
+      cloneUntransferData: [],
+      cloneAllocateData: []
+
     };
   },
   computed: {
@@ -144,6 +215,29 @@ export default {
   },
   methods: {
     ...mapMutations(["MATERIALGROUPLIST"]),
+    check1(val) {
+      this.selectedList = val;
+    },
+    check2(val) {
+      this.selectedList2 = val;
+    },
+    right() {
+      this.untransferData = _.concat(this.untransferData, this.selectedList);
+      this.untransferData = _.uniq(this.untransferData);
+      this.transferData = _.difference(this.transferData, this.selectedList);
+      console.log(this.untransferData, "un");
+      this.cloneAllocateData = _.cloneDeep(this.transferData);
+    },
+    left() {
+      this.transferData = _.concat(this.transferData, this.selectedList2);
+      this.transferData = _.uniq(this.transferData);
+      this.untransferData = _.difference(
+        this.untransferData,
+        this.selectedList2
+      );
+      console.log(this.untransferData, "all");
+      this.cloneAllocateData = _.cloneDeep(this.transferData);
+    },
     init() {
       getAllDistinctHttp().then(data => {
         const res = data.data;
@@ -187,7 +281,6 @@ export default {
     checkAdd(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          // console.log("aaaaa")
           this.saveDialog = true;
         } else {
           this.$message({
@@ -200,7 +293,7 @@ export default {
     },
     handleSave() {
       //穿梭框右侧数据
-      const relatived = this.$refs["transfer"].targetData;
+      const relatived = this.transferData;
       const tempArr = [
         {
           groupDes: this.materialGroupForm.groupDes,
@@ -239,6 +332,15 @@ export default {
   padding: 0 30px;
   .operate {
     padding: 10px 5px;
+    .direction {
+      color: #409eff;
+      font-size: 40px;
+      cursor: pointer;
+      text-align: center;
+    }
+    .mt70 {
+      margin-top: 70px;
+    }
   }
   .showInfo {
     display: flex;

@@ -65,7 +65,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="进制:" prop="numBase" required>
-              <dsn-input-number v-model="addForm.numBase" :min="2" :max="36" label></dsn-input-number>
+              <el-input-number v-model="addForm.numBase" :min="2" :max="36" label></el-input-number>
             </el-form-item>
           </el-col>
         </el-row>
@@ -126,7 +126,7 @@ export default {
   data() {
     var fiexedStringRequired = (rule, value, callback) => {
       var reg = /^[0-9a-zA-Z_/-]{1,}$/;
-      if (!value || value.length > 30) {
+      if (value.length > 30) {
         return callback(new Error("只能填写数字，字母，-，_,/;30个字符以内"));
       }
       if (!reg.test(value)) {
@@ -138,7 +138,8 @@ export default {
       formLabelWidth: "120px",
       rules: {
         fixedString: [
-          { required: true, validator: fiexedStringRequired, trigger: "change" }
+          { required: true, message:'请输入固定字符串', trigger: "change" },
+          { validator: fiexedStringRequired, trigger: "change"}
         ],
         status: [{ required: true, message: "请选择状态", trigger: "change" }],
         resourceGroup: [
