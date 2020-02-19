@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="节点信息" :close-on-click-modal="false" :visible.sync="visible">
+  <el-dialog title="节点信息" :close-on-click-modal="false"  width="500px" :visible.sync="visible">
     <el-tabs type="border-card">
       <el-tab-pane>
         <span slot="label">
@@ -44,18 +44,24 @@
       </el-tab-pane>
     </el-tabs>
     <span slot="footer" class="dialog-footer">
-      <dsn-button @click="visible = false" icon="el-icon-close">取消</dsn-button>
+      <dsn-button @click="cancle" icon="el-icon-close">取消</dsn-button>
       <dsn-button type="primary" icon="el-icon-check" @click="visible = false">确定</dsn-button>
     </span>
   </el-dialog>
 </template>
 
 <script>
+import _ from 'lodash'
 export default {
   data() {
     return {
       visible: false,
-      node: {}
+      node: {},
+      cloneNode:{
+
+      },
+      index:0,
+      arr:[],
     };
   },
   methods: {
@@ -66,11 +72,19 @@ export default {
      */
     init(data, id) {
       this.visible = true;
-      data.nodeList.filter(node => {
+      data.nodeList.forEach((node,index) => {
+       
         if (node.id === id) {
           this.node = node;
+          this.index = index;
+          this.cloneNode = _.cloneDeep(this.node);
         }
       });
+    },
+    cancle(){
+     
+       this.$emit('cancle',this.index, this.cloneNode);
+        this.visible = false;
     }
   }
 };
