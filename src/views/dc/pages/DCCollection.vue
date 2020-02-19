@@ -21,15 +21,15 @@
                     placeholder="请选择"
                   >
                     <el-option
-                      v-for="item in collectionType"
+                      v-for="item in collectionTypes"
                       :key="item.value"
                       :label="item.label"
                       :value="item.value"
                     ></el-option>
                   </dsn-select>
                 </el-form-item>
-                <el-form-item label="接收值:" prop="resourceGroup">
-                  <dsn-input v-model="baseInfoForm.resourceGroup" disabled></dsn-input>
+                <el-form-item label="接收值:" prop="acceptValue">
+                  <dsn-input v-model="searchForm.acceptValue" ></dsn-input>
                 </el-form-item>
                 <el-form-item>
                   <dsn-button
@@ -56,11 +56,11 @@
               <el-form :model="baseInfoForm" ref="baseInfoForm" :label-width="formLabelWidth">
                 <el-row>
                   <el-col :span="12">
-                    <el-form-item label="工单:" prop="resourceGroup">
-                      <dsn-input v-model="baseInfoForm.resourceGroup" disabled></dsn-input>
+                    <el-form-item label="工单号:" prop="shopOrder">
+                      <dsn-input v-model="baseInfoForm.shopOrder" disabled></dsn-input>
                     </el-form-item>
-                    <el-form-item label="物料:" prop="workCenter">
-                      <dsn-input v-model="baseInfoForm.workCenter" disabled></dsn-input>
+                    <el-form-item label="物料:" prop="material">
+                      <dsn-input v-model="baseInfoForm.material" disabled></dsn-input>
                     </el-form-item>
                     <el-form-item label="物料组:" prop="materialGroup">
                       <dsn-input v-model="baseInfoForm.materialGroup" disabled></dsn-input>
@@ -70,11 +70,11 @@
                     <el-form-item label="设备类型:" prop="resourceGroup">
                       <dsn-input v-model="baseInfoForm.resourceGroup" disabled></dsn-input>
                     </el-form-item>
-                    <el-form-item label="工序:" prop="workCenter">
-                      <dsn-input v-model="baseInfoForm.workCenter" disabled></dsn-input>
+                    <el-form-item label="工序:" prop="operation">
+                      <dsn-input v-model="baseInfoForm.operation" disabled></dsn-input>
                     </el-form-item>
-                    <el-form-item label="工作中心:" prop="materialGroup">
-                      <dsn-input v-model="baseInfoForm.materialGroup" disabled></dsn-input>
+                    <el-form-item label="工作中心:" prop="workCenter">
+                      <dsn-input v-model="baseInfoForm.workCenter" disabled></dsn-input>
                     </el-form-item>
                   </el-col>
                 </el-row>
@@ -90,21 +90,16 @@
         <el-col :span="14">
           <el-tabs type="border-card">
             <el-tab-pane label="数据收集组">
-              <h3 class="content" style="text-align:center">涉及数据收集组</h3>
-              <el-table
-                ref="multipleTable"
-                :data="tableData"
-                tooltip-effect="dark"
-                style="width: 100%"
-                @selection-change="handleSelectionChange"
-              >
-                <el-table-column type="selection" width="55"></el-table-column>
-                <el-table-column label="日期" width="120">
-                  <template slot-scope="scope">{{ scope.row.date }}</template>
-                </el-table-column>
-                <el-table-column prop="name" label="姓名" width="120"></el-table-column>
-                <el-table-column prop="address" label="地址" show-overflow-tooltip></el-table-column>
-              </el-table>
+          
+        <el-table :data="tableData" class="dialog-table" @select="selectedList">
+        <el-table-column label="涉及数据收集组">
+          <el-table-column type="selection" width="55"></el-table-column>
+          <el-table-column prop="dcGroup" label="数据收集组"></el-table-column>
+          <el-table-column prop="dcGroupDes" label="数据收集组描述"></el-table-column>
+          <el-table-column prop="paramNum" label="参数数量"></el-table-column>
+          <el-table-column prop="conditionNum" label="收集条件"></el-table-column>
+        </el-table-column>
+      </el-table>
             </el-tab-pane>
           </el-tabs>
         </el-col>
@@ -186,25 +181,20 @@ export default {
       formLabelWidth: "85px",
       dialog: false,
       searchForm: {
-        material: "",
-        resource: "",
-        shopOrder: "",
-        operation: "",
-        collectionType: "",
-        tenantSiteCode: "test"
+        tenantSiteCode: "test",
+        acceptValue:"",
+        collectionType:"",
       },
       baseInfoForm: {
+        material: "",
+       
+        shopOrder: "",
+        operation: "",
         resourceGroup: "",
         workCenter: "",
         materialGroup: ""
       },
-      tableData: [
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        }
-      ],
+      tableData: [],
       selectionList: [],
       paramsTableData: [],
       logList: [],
@@ -214,7 +204,8 @@ export default {
           { required: true, message: "请选择收集类型", trigger: "change" }
         ]
       },
-      collectionType: [
+      dcParameterMeasureInfoList:[],
+      collectionTypes: [
         {
           value: "10",
           label: "工单"
@@ -254,6 +245,7 @@ export default {
           let params = this.searchForm;
           getCollectionData(params).then(data => {
             this.baseInfoForm = data.data.data;
+            console.log("888888",this.baseInfoForm)
             if (data.data.data.dcParameterMeasureList) {
               this.paramsTableData = data.data.data.dcParameterMeasureList;
             } else {
@@ -306,17 +298,19 @@ export default {
     },
     save() {
       let params = this.checkedList[0];
+      console.log(params)
       params.dcParameterMeasureInfoList = this.paramsTableData;
       params.collectionType = this.searchForm.collectionType;
       params.dcGroup = this.checkedList[0].dcGroup;
-      params.material = this.searchForm.material;
-      params.operation = this.searchForm.operation;
-      params.resource = this.searchForm.resource;
+      params.material = this.baseInfoForm.material;
+      params.operation = this.baseInfoForm.operation;
+      // params.resource = this.searchForm.resource;
       params.tenantSiteCode = this.searchForm.tenantSiteCode;
-      params.shopOrder = this.searchForm.shopOrder;
-      params.materialGroup = this.baseInfoForm.material;
+      params.shopOrder = this.baseInfoForm.shopOrder;
+      params.materialGroup = this.baseInfoForm.materialGroup;
       params.resourceGroup = this.baseInfoForm.resourceGroup;
       params.workCenter = this.baseInfoForm.workCenter;
+      params.acceptValue =this.searchForm.acceptValue;
       saveCollectionData(params).then(data => {
         this.logList.push(data.data.data.msg);
         if (data.data.message == "success") {

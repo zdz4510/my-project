@@ -63,8 +63,8 @@
 																<dsn-input v-model="operation1" placeholder="输入工序搜索"/>
 															</template>
 															<el-table-column type="selection" width="50"></el-table-column>
-															<el-table-column prop="operation" label="工序"></el-table-column>
-															<el-table-column prop="operationDes" label="工序描述" width="300"></el-table-column>
+															<el-table-column prop="operation" label="工序" width="120"></el-table-column>
+															<el-table-column prop="operationDes" label="工序描述" width="280"></el-table-column>
 															</el-table-column>
 													</el-table-column>
 												</dsn-table>
@@ -81,8 +81,8 @@
 																<dsn-input v-model="operation2" placeholder="输入工序搜索"/>
 															</template>
 															<el-table-column type="selection" width="50"></el-table-column>
-															<el-table-column prop="operation" label="工序"></el-table-column>
-															<el-table-column prop="operationDes" label="工序描述" width="300"></el-table-column>
+															<el-table-column prop="operation" label="工序" width="120"></el-table-column>
+															<el-table-column prop="operationDes" label="工序描述" width="280"></el-table-column>
 															</el-table-column>
 													</el-table-column>
 												</dsn-table>
