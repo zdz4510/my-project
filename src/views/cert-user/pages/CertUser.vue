@@ -138,9 +138,11 @@ export default {
       this.search();
     },
     search() {
-      let params = this.searchForm;
+      const params = this.searchForm;
       params.pageSize = this.tableData.page.pageSize;
       params.currentPage = this.tableData.page.currentPage;
+      if (!params.name) delete params.name;
+      if (!params.user) delete params.user;
       getCertUserList(params).then(data => {
         if (data.data.code == 200) {
           this.tableData.data = data.data.data.data;
