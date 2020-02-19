@@ -335,25 +335,25 @@ export default {
     },
     //查询前验证查询条件
     handleQueryCheck() {
-      const tempObj = JSON.parse(JSON.stringify(this.lotConditionForm));
-      //删除属性
-      delete tempObj.materialRev;
-      delete tempObj.routerRev;
-      let count = 0;
-      for (const key in tempObj) {
-        if (tempObj.hasOwnProperty(key)) {
-          if (tempObj[key] === "") {
-            count++;
-          }
-        }
-      }
-      if (count >= 7) {
-        this.$message({
-          message: "请至少输入一个查询条件",
-          type: "warning"
-        });
-        return;
-      }
+      // const tempObj = JSON.parse(JSON.stringify(this.lotConditionForm));
+      // //删除属性
+      // delete tempObj.materialRev;
+      // delete tempObj.routerRev;
+      // let count = 0;
+      // for (const key in tempObj) {
+      //   if (tempObj.hasOwnProperty(key)) {
+      //     if (tempObj[key] === "") {
+      //       count++;
+      //     }
+      //   }
+      // }
+      // if (count >= 7) {
+      //   this.$message({
+      //     message: "请至少输入一个查询条件",
+      //     type: "warning"
+      //   });
+      //   return;
+      // }
       this.queryHttp();
     },
     //查询请求数据

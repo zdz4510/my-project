@@ -29,7 +29,7 @@
                   </dsn-select>
                 </el-form-item>
                 <el-form-item label="接收值:" prop="acceptValue">
-                  <dsn-input v-model="searchForm.acceptValue" ></dsn-input>
+                  <dsn-input v-model="searchForm.acceptValue"></dsn-input>
                 </el-form-item>
                 <el-form-item>
                   <dsn-button
@@ -90,16 +90,15 @@
         <el-col :span="14">
           <el-tabs type="border-card">
             <el-tab-pane label="数据收集组">
-          
-        <el-table :data="tableData" class="dialog-table" @select="selectedList">
-        <el-table-column label="涉及数据收集组">
-          <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column prop="dcGroup" label="数据收集组"></el-table-column>
-          <el-table-column prop="dcGroupDes" label="数据收集组描述"></el-table-column>
-          <el-table-column prop="paramNum" label="参数数量"></el-table-column>
-          <el-table-column prop="conditionNum" label="收集条件"></el-table-column>
-        </el-table-column>
-      </el-table>
+              <el-table :data="tableData" class="dialog-table" @select="selectedList">
+                <el-table-column label="涉及数据收集组">
+                  <el-table-column type="selection" width="55"></el-table-column>
+                  <el-table-column prop="dcGroup" label="数据收集组"></el-table-column>
+                  <el-table-column prop="dcGroupDes" label="数据收集组描述"></el-table-column>
+                  <el-table-column prop="paramNum" label="参数数量"></el-table-column>
+                  <el-table-column prop="conditionNum" label="收集条件"></el-table-column>
+                </el-table-column>
+              </el-table>
             </el-tab-pane>
           </el-tabs>
         </el-col>
@@ -182,12 +181,12 @@ export default {
       dialog: false,
       searchForm: {
         tenantSiteCode: "test",
-        acceptValue:"",
-        collectionType:"",
+        acceptValue: "",
+        collectionType: ""
       },
       baseInfoForm: {
         material: "",
-       
+
         shopOrder: "",
         operation: "",
         resourceGroup: "",
@@ -204,22 +203,22 @@ export default {
           { required: true, message: "请选择收集类型", trigger: "change" }
         ]
       },
-      dcParameterMeasureInfoList:[],
+      dcParameterMeasureInfoList: [],
       collectionTypes: [
         {
-          value: "10",
+          value: 10,
           label: "工单"
         },
         {
-          value: "20",
+          value: 20,
           label: "物料"
         },
         {
-          value: "30",
+          value: 30,
           label: "资源"
         },
         {
-          value: "40",
+          value: 40,
           label: "工序"
         }
       ]
@@ -245,7 +244,7 @@ export default {
           let params = this.searchForm;
           getCollectionData(params).then(data => {
             this.baseInfoForm = data.data.data;
-            console.log("888888",this.baseInfoForm)
+            console.log("888888", this.baseInfoForm);
             if (data.data.data.dcParameterMeasureList) {
               this.paramsTableData = data.data.data.dcParameterMeasureList;
             } else {
@@ -298,7 +297,7 @@ export default {
     },
     save() {
       let params = this.checkedList[0];
-      console.log(params)
+      console.log(params);
       params.dcParameterMeasureInfoList = this.paramsTableData;
       params.collectionType = this.searchForm.collectionType;
       params.dcGroup = this.checkedList[0].dcGroup;
@@ -310,7 +309,7 @@ export default {
       params.materialGroup = this.baseInfoForm.materialGroup;
       params.resourceGroup = this.baseInfoForm.resourceGroup;
       params.workCenter = this.baseInfoForm.workCenter;
-      params.acceptValue =this.searchForm.acceptValue;
+      params.acceptValue = this.searchForm.acceptValue;
       saveCollectionData(params).then(data => {
         this.logList.push(data.data.data.msg);
         if (data.data.message == "success") {

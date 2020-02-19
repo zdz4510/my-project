@@ -350,7 +350,7 @@ export default {
         const res = data.data;
         if (res.code === 200) {
           this.$message({
-            message: res.message,
+            message: "保存成功",
             type: "success"
           });
           this.saveDialog = false;
