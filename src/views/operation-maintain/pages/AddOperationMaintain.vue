@@ -10,7 +10,6 @@
         <span>添加数据</span>
       </div>
       <el-form
-        :inline="true"
         :model="addForm"
         ref="addForm"
         :rules="rules"
@@ -19,11 +18,11 @@
         :label-width="formLabelWidth"
       >
         <el-form-item label="工序:" prop="operation" required>
-          <dsn-input v-model="addForm.operation"></dsn-input>
+          <dsn-input style="width: 215px" v-model="addForm.operation"></dsn-input>
         </el-form-item>
         <el-form-item label="描述:" prop="operationDes">
           <dsn-input
-            maxlength="80"
+            style="width: 215px"
             show-word-limit
             type="textarea"
             :autosize="{ minRows: 2, maxRows: 4}"

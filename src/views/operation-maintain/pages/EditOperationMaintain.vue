@@ -3,6 +3,7 @@
     <div class="operate">
       <dsn-button size="small" type="primary" @click.native="goBack">返回</dsn-button>
       <dsn-button size="small" type="primary" @click.native="handleSave('editForm')">保存</dsn-button>
+      <dsn-button size="small" type="primary" @click.native="resetForm('editForm')">重置</dsn-button>
     </div>
     <el-row :gutter="20" class="bgw">
       <el-col :span="6">
@@ -61,10 +62,10 @@
                   <dsn-input v-model="editForm.operation" disabled></dsn-input>
                 </el-form-item>
               </el-col>
-              <el-col :span="12">
+              <el-col :span="24">
                 <el-form-item label="描述:" prop="operationDes">
                   <dsn-input
-                    maxlength="80"
+                    style="width: 215px"
                     show-word-limit
                     type="textarea"
                     :autosize="{ minRows: 2, maxRows: 4}"
@@ -377,7 +378,7 @@ export default {
               }
             } else {
               this.$message({
-                message: res.data,
+                message: res.message,
                 type: "error"
               });
               this.saveDialog = false;
