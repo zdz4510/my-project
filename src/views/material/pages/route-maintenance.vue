@@ -348,7 +348,7 @@ export default {
 
       const params = {
         currentRevision: this.form.currentRevision, // 当前版本
-        customizedData: [], //  自定义的数据
+        customizedFieldDefInfoList: this.form.customizedFieldDefInfoList,
         description: this.form.description, //  描述
         entryRouterStep: entryRouterStep, //  附加工序的根结点
         routerSteps: routerSteps, //  附加工序的数据
