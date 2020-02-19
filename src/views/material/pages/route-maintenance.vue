@@ -2,9 +2,15 @@
   <div class="route-maintenance">
     <DsnPanel>
       <el-form :inline="true" class="typeForm" :model="form" :rules="searchrules" ref="form">
-        <el-form-item label="工艺路线:" prop="router">
-          <dsn-input placeholder="请输入工艺路线" v-model="form.router">
-            <i slot="append" class="el-icon-document-copy"></i>
+        <el-form-item label="工艺路线:"  prop="router">
+          <dsn-input   v-model="form.router" placeholder="">
+            <template slot="append">
+              <dsn-select  @change="handleSelectChange"  style="width:150px" placeholder="请输入工艺路线" v-model="form.router">
+           <el-option :label="item.router" :value="item" v-for="(item) in selectList" :key="item.router+item.revision">
+             {{item.router}} - {{item.revision}}
+           </el-option>
+          </dsn-select>
+            </template>
           </dsn-input>
         </el-form-item>
         <el-form-item label="版本:" prop="revision">
@@ -60,10 +66,10 @@
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="附加工序">
-          <pannel ref="panel" :search="searchValue" />
+          <pannel ref="panel" :search="searchValue"  :modelCustomizedFieldDefInfoList="list2" />
         </el-tab-pane>
         <el-tab-pane label="自定义字段">
-          <DsnData  :data="form.customizedFieldDefInfoList"></DsnData>
+          <DsnData style="width:300px"  v-model="form.customizedFieldDefInfoList"></DsnData>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -74,17 +80,23 @@
 import {
   createRouter,
   getRouter,
-  updateRouter
+  updateRouter,
+  findCustomizedFieldDefList,
+  listRouterPage
 } from "@/api/material/route.maintenance.api";
 import Pannel from "../components/pannel";
 import handleData from "../components/handleData.js";
 import handleRightData from "../components/handleRightData";
+
 export default {
   components: {
     Pannel
   },
   data() {
     return {
+      list:[],
+      list2:[],
+      selectList:[],
       searchValue: "",
       form: {
         customizedFieldDefInfoList:[],
@@ -131,7 +143,7 @@ export default {
       //工单表信息
       searchrules: {
         router: [
-          { required: true, message: "工艺路线不能为空", trigger: "blur" }
+          { required: true, message: "工艺路线不能为空", trigger: "change" }
         ],
         revision: [{ required: true, message: "版本不能为空", trigger: "blur" }]
       },
@@ -158,12 +170,30 @@ export default {
   },
   created() {
     this.init();
+    this.hanldeFindCustomizedFieldDefList(1);
+    this.hanldeFindCustomizedFieldDefList(2);
+    this.handleListRouterPage()
   },
   methods: {
     init() {
       this.$nextTick(() => {
         this.$refs["panel"].init();
       });
+    },
+    handleSelectChange(v){
+      console.log(v)
+       let item= this.selectList.find(item=>item==v);
+       console.log(item)
+       this.form.revision = item.revision;
+       this.form.router = item.router;
+    },
+    handleListRouterPage(){
+      listRouterPage().then(data=>{
+        const res = data.data;
+        if(res.code==200){
+          this.selectList = res.data.data;
+        }
+      })
     },
     clearCanvas(){
         this.$refs["panel"].clearCanvas()
@@ -184,7 +214,6 @@ export default {
     //保存
     handleSave() {
       if (this.form.modifyTime && this.form.reference) {
-        console.log("save");
         this.handleUpdateRoute();
         return;
       }
@@ -196,7 +225,7 @@ export default {
 
       const params = {
         currentRevision: this.form.currentRevision, // 当前版本
-        customizedData: [], //  自定义的数据
+        customizedFieldDefInfoList: this.form.customizedFieldDefInfoList, //  自定义的数据
         description: this.form.description, //  描述
         entryRouterStep: entryRouterStep, //  附加工序的根结点
         routerSteps: routerSteps, //  附加工序的数据
@@ -274,6 +303,19 @@ export default {
           });
         }
       });
+    },
+    hanldeFindCustomizedFieldDefList(type){
+        findCustomizedFieldDefList(type).then(data=>{
+          const res= data.data;
+          if(res.code==200){
+              if(type==1){
+                this.list = res.data.customizedFieldDefInfoList;
+                this.form.customizedFieldDefInfoList = this.list
+              }else{
+                 this.list2 = res.data.customizedFieldDefInfoList;
+              }
+          }
+        })
     },
     handleQuery() {
       this.$refs["form"].validate(valid => {

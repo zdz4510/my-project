@@ -15,12 +15,12 @@
           @submit.native.prevent
         >
           <el-form-item label="Lot:" prop="lot" required>
-            <dsn-select v-model="searchForm.lot" placeholder="请选择" filterable>
+            <dsn-select v-model="searchForm.lot" placeholder="请输入或选择" filterable>
               <el-option v-for="item in lot" :key="item.lot" :label="item.lot" :value="item.lot"></el-option>
             </dsn-select>
           </el-form-item>
           <el-form-item label="工序:" prop="operation">
-            <dsn-select v-model="searchForm.operation" placeholder="请选择" filterable clearable>
+            <dsn-select v-model="searchForm.operation" placeholder="请输入或选择" filterable clearable>
               <el-option
                 v-for="item in operation"
                 :key="item.operation"
@@ -30,7 +30,7 @@
             </dsn-select>
           </el-form-item>
           <el-form-item label="设备:" prop="resource">
-            <dsn-select v-model="searchForm.resource" placeholder="请选择" filterable clearable>
+            <dsn-select v-model="searchForm.resource" placeholder="请输入或选择" filterable clearable>
               <el-option
                 v-for="item in resource"
                 :key="item.resource"

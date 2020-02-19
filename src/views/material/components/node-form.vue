@@ -39,7 +39,9 @@
           </el-form-item>
         </el-form>
       </el-tab-pane>
-      <el-tab-pane label="自定义字段">自定义字段</el-tab-pane>
+      <el-tab-pane v-if="node.routerComponentType && node.routerComponentType == 'O'" label="自定义字段"  >
+        <DsnData   v-if="node.routerComponentType == 'O'"  v-model="node.customizedFieldDefInfoList"></DsnData>
+      </el-tab-pane>
     </el-tabs>
     <span slot="footer" class="dialog-footer">
       <dsn-button @click="visible = false" icon="el-icon-close">取消</dsn-button>
