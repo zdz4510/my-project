@@ -154,7 +154,7 @@
         <el-row v-if="addSetForm.fieldType == 'C'">
           <el-col :span="12">
             <el-form-item label="代码名:" prop="limitGeneralCode" required>
-              <el-select v-model="addSetForm.limitGeneralCode">
+              <el-select @change="handleChangeGeneralCode" v-model="addSetForm.limitGeneralCode">
                 <el-option
                   v-for="item in code"
                   :key="item.generalCode"
@@ -166,7 +166,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="字段:" prop="limitGeneralField" required>
-              <el-select v-model="addSetForm.limitGeneralField">
+              <el-select :disabled="!addSetForm.limitGeneralCode" v-model="addSetForm.limitGeneralField">
                 <el-option
                   v-for="item in field"
                   :key="item.fieldName"
@@ -302,22 +302,8 @@ export default {
     };
   },
   created() {
-    let p1 = {
-      fieldName: "",
-      generalCode: "CUSTOMIZED_FIELD"
-    };
-    let p2 = {
-      generalCode: "",
-      generalCodeGroup: "S"
-    };
-    getField(p1).then(data => {
-      if (data.data.code == 200) {
-        this.field = data.data.data;
-      } else {
-        this.$message.error(data.data.message);
-      }
-    });
-    getCode(p2).then(data => {
+    
+    getCode().then(data => {
       if (data.data.code == 200) {
         this.code = data.data.data;
       } else {
@@ -426,6 +412,19 @@ export default {
     handleSelectionChange2(val) {
       this.sCheckedList = val;
       console.log(val, "va");
+    },
+    handleChangeGeneralCode(val) {
+      const params = {
+        fieldType: "C",
+        limitGeneralCode: val
+      };
+      getField(params).then(data => {
+        if (data.data.code == 200) {
+          this.field = data.data.data;
+        } else {
+          this.$message.error(data.data.message);
+        }
+      });
     },
     onChange() {
       this.addSetForm.targetValue = "";
