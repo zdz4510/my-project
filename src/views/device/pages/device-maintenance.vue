@@ -28,7 +28,12 @@
         <span>搜索结果</span>
       </div>
       <div class="operate">
-        <dsn-button icon="el-icon-folder-add" size="small" type="success" @click.native="handleAdd">新增</dsn-button>
+        <dsn-button
+          icon="el-icon-folder-add"
+          size="small"
+          type="success"
+          @click.native="handleAdd"
+        >新增</dsn-button>
         <dsn-button
           size="small"
           type="primary"
@@ -43,7 +48,12 @@
           :disabled="selectionList.length <= 0"
           @click.native="handleDelete"
         >删除</dsn-button>
-        <dsn-button icon="el-icon-upload2" size="small" type="primary" @click.native="handleExport">导出</dsn-button>
+        <dsn-button
+          icon="el-icon-upload2"
+          size="small"
+          type="primary"
+          @click.native="handleExport"
+        >导出</dsn-button>
       </div>
       <div class="showInfo">
         <dsn-table
@@ -206,7 +216,7 @@ export default {
       this.selectionList = [];
       const emptyObj = {
         resource: "",
-        groupDes: "",
+        resourceDes: "",
         resourceStatus: "",
         workCenter: ""
       };
