@@ -20,6 +20,7 @@
   box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.03);
   .el-button {
       margin-right: 10px;
+      margin-bottom: 0;
   }
 }
 </style>
