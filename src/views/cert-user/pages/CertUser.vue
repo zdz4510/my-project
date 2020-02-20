@@ -27,9 +27,16 @@
     </DsnPanel>
     <DsnPanel>
       <div slot="header" class="title clearfix">
-          <span>搜索结果</span>
-        </div>
+        <span>搜索结果</span>
+      </div>
       <div class="operate">
+        <dsn-button
+          icon="el-icon-folder-add"
+          size="small"
+          type="success"
+          @click.native="add"
+          :disabled="this.checkedList.length>0"
+        >新增</dsn-button>
         <!-- <dsn-button class="mr25 pad1025" size="small" type="primary" @click="add" :disabled="this.checkedList.length>0">新增</dsn-button> 逻辑变更，此功能去掉，注意后面去掉路由配置信息 -->
         <dsn-button
           size="small"
@@ -45,14 +52,19 @@
           @click.native="del"
           :disabled="this.checkedList.length === 0"
         >删除</dsn-button>
-        <dsn-button icon="el-icon-upload2" size="small" type="primary" @click.native="handleExport">导出</dsn-button>
+        <dsn-button
+          icon="el-icon-upload2"
+          size="small"
+          type="primary"
+          @click.native="handleExport"
+        >导出</dsn-button>
       </div>
       <div>
         <dsn-table
           ref="multipleTable"
           :data="this.tableData.data"
           tooltip-effect="dark"
-          row-key="user"
+          row-key="index"
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
@@ -61,10 +73,10 @@
           <el-table-column prop="name" label="姓名"></el-table-column>
           <el-table-column prop="cert" label="上岗证"></el-table-column>
           <el-table-column prop="certDes" label="上岗证描述"></el-table-column>
-          <el-table-column label="状态">
-            <template slot-scope="scope">{{ scope.row.status == true ? '已启用' : '未启用' }}</template>
+          <el-table-column label="状态" prop="status">
+            <template slot-scope="scope" >{{ scope.row.status == true ? '已启用' : '未启用' }}</template>
           </el-table-column>
-          <el-table-column label="持续时间类型">
+          <el-table-column label="持续时间类型" prop="certType">
             <template slot-scope="scope">{{ scope.row.certType == true ? '永久' : '临时' }}</template>
           </el-table-column>
           <el-table-column prop="certTime" label="上岗证截止日期"></el-table-column>
@@ -138,7 +150,7 @@ export default {
       this.search();
     },
     search() {
-      const params = this.searchForm;
+     const params = this.searchForm;
       params.pageSize = this.tableData.page.pageSize;
       params.currentPage = this.tableData.page.currentPage;
       if (!params.name) delete params.name;
@@ -254,7 +266,6 @@ export default {
 .cert-user {
   padding: 10px 0;
   .search-bar {
-		
   }
 }
 </style>
