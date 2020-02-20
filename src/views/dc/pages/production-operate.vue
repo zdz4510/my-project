@@ -64,7 +64,7 @@
       </div>
       <dsn-table
         ref="multipleTable"
-        :data="row"
+        :data="list"
         tooltip-effect="dark"
         style="width: 100%"
         height="514"
@@ -77,27 +77,97 @@
           prop="lot"
           label="LOT编号"
           width="120"
-        ></el-table-column>
+        >
+          <template slot="header">
+            <div class="inputChoice">
+              <div class="input-left">LOT编号</div>
+              <div class="input-right">
+                <input
+                  v-model="v"
+                  class="input"
+                  v-on:input="changeWork"
+                  placeholder="请输入LOT编号"
+                />
+              </div>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column
           prop="status"
           label="LOT状态"
           show-overflow-tooltip
-        ></el-table-column>
+        >
+          <template slot="header">
+            <div class="inputChoice">
+              <div class="input-left">LOT状态</div>
+              <div class="input-right">
+                <input
+                  v-model="v2"
+                  class="input"
+                  v-on:input="changeWorkS"
+                  placeholder="请输入LOT状态"
+                />
+              </div>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column
           prop="shopOrder"
           label="工单"
           show-overflow-tooltip
-        ></el-table-column>
+        >
+          <template slot="header">
+            <div class="inputChoice">
+              <div class="input-left">工单</div>
+              <div class="input-right">
+                <input
+                  v-model="v3"
+                  class="input"
+                  v-on:input="changeWorkO"
+                  placeholder="请输入工单"
+                />
+              </div>
+            </div>
+          </template>
+          </el-table-column>
         <el-table-column
           prop="material"
           label="物料"
           show-overflow-tooltip
-        ></el-table-column>
+        >
+          <template slot="header">
+            <div class="inputChoice">
+              <div class="input-left">物料</div>
+              <div class="input-right">
+                <input
+                  v-model="v4"
+                  class="input"
+                  v-on:input="changeWorkM"
+                  placeholder="请输入物料"
+                />
+              </div>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column
           prop="router"
           label="工艺路线"
           show-overflow-tooltip
-        ></el-table-column>
+        >
+          <template slot="header">
+            <div class="inputChoice">
+              <div class="input-left">工艺路线</div>
+              <div class="input-right">
+                <input
+                  v-model="v5"
+                  class="input"
+                  v-on:input="changeWorkR"
+                  placeholder="请输入工艺路线"
+                />
+              </div>
+            </div>
+          </template>
+        </el-table-column>
       </dsn-table>
     </DsnPanel>
 
@@ -158,7 +228,7 @@ export default {
         }
       ],
       tableData: [],
-      row: [],
+      list: [],
       lotDatas: [],
       currentLot: {},
       //工序搜索建议
@@ -166,7 +236,12 @@ export default {
       operationList: [],
       //设备搜索建议
       resourceFn: null,
-      resourceList: []
+      resourceList: [],
+      v:"",
+      v2:"",
+      v3:"",
+      v4:"",
+      v5:""
     };
   },
   created() {
@@ -174,6 +249,46 @@ export default {
     this.deBounceSearchResource();
   },
   methods: {
+    changeWork() {
+      let arr = this.list.filter(item => {
+        if(item.lot.indexOf(this.v)>=0){
+          return  item.lot;
+        }
+      });
+      this.list=arr;
+    },
+    changeWorkS() {
+      let arr = this.list.filter(item => {
+        if(item.status.indexOf(this.v2)>=0){
+          return  item.status;
+        }
+      });
+      this.list=arr;
+    },
+    changeWorkO() {
+      let arr = this.list.filter(item => {
+        if(item.shopOrder.indexOf(this.v3)>=0){
+          return  item.shopOrder;
+        }
+      });
+      this.list=arr;
+    },
+    changeWorkM() {
+      let arr = this.list.filter(item => {
+        if(item.material.indexOf(this.v4)>=0){
+          return  item.material;
+        }
+      });
+      this.list=arr;
+    },
+    changeWorkR() {
+      let arr = this.list.filter(item => {
+        if(item.router.indexOf(this.v5)>=0){
+          return  item.router;
+        }
+      });
+      this.list=arr;
+    },
     //工序搜索建议请求
     deBounceSearchOperation() {
       this.operationFn = _.debounce(cb => {
@@ -287,7 +402,7 @@ export default {
       listPodLotHttp(data).then(data => {
         const res = data.data;
         if (res.code === 200) {
-          this.row =res.data;
+          this.list =res.data;
           return;
         }
         this.$message({
@@ -302,6 +417,20 @@ export default {
 <style lang="scss" scoped>
 .jieBao {
   padding: 30px 30px;
+  .inputChoice{
+    .input-left{
+      text-align:center;
+      line-height:24px;
+    }
+    .input-right{
+      input{
+        width:100%;
+        text-align:center;
+        height:40px;
+        border:1px #ededed solid;
+      }
+    }
+  }
 }
 .operation {
   padding: 10px 5px;

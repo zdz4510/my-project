@@ -172,7 +172,7 @@
           <el-table-column prop="lotStatus" label="状态"></el-table-column>
           <el-table-column prop="operation" label="工序">
             <template slot-scope="scope">
-              <span>{{ scope.row.operationList.join(",") }}</span>
+              <span>{{ scope.row.operationList?scope.row.operationList.join(","):scope.row.operationList }}</span>
             </template>
           </el-table-column>
           <el-table-column label="物料/版本">
@@ -310,6 +310,7 @@ export default {
   created() {
     this.lotConditionForm.lot = this.$route.query.lot;
     this.tableData = JSON.parse(JSON.stringify(this.lotQueryList));
+    this.total = this.tableData.length;
   },
   computed: {
     ...mapGetters(["lotQueryList"])
@@ -335,25 +336,25 @@ export default {
     },
     //查询前验证查询条件
     handleQueryCheck() {
-      const tempObj = JSON.parse(JSON.stringify(this.lotConditionForm));
-      //删除属性
-      delete tempObj.materialRev;
-      delete tempObj.routerRev;
-      let count = 0;
-      for (const key in tempObj) {
-        if (tempObj.hasOwnProperty(key)) {
-          if (tempObj[key] === "") {
-            count++;
-          }
-        }
-      }
-      if (count >= 7) {
-        this.$message({
-          message: "请至少输入一个查询条件",
-          type: "warning"
-        });
-        return;
-      }
+      // const tempObj = JSON.parse(JSON.stringify(this.lotConditionForm));
+      // //删除属性
+      // delete tempObj.materialRev;
+      // delete tempObj.routerRev;
+      // let count = 0;
+      // for (const key in tempObj) {
+      //   if (tempObj.hasOwnProperty(key)) {
+      //     if (tempObj[key] === "") {
+      //       count++;
+      //     }
+      //   }
+      // }
+      // if (count >= 7) {
+      //   this.$message({
+      //     message: "请至少输入一个查询条件",
+      //     type: "warning"
+      //   });
+      //   return;
+      // }
       this.queryHttp();
     },
     //查询请求数据
@@ -396,11 +397,19 @@ export default {
         });
         return;
       }
-      const tempArr = JSON.parse(JSON.stringify(this.selectionList));
       // this.selectionList.forEach(element => {
-      //   tempArr.push(element.lot);
+      //   console.log(element);
+      //   console.log(this.lotQueryList.indexOf(element));
+      //   if (this.lotQueryList.indexOf(element) === -1) {
+      //     this.lotQueryList.push(JSON.parse(JSON.stringify(element)));
+      //   }
       // });
-      this.LOTQUERYLIST(tempArr);
+      this.selectionList.forEach(item => {
+        if (!this.lotQueryList.find(item2 => item2.lot === item.lot)) {
+          this.lotQueryList.push(item);
+        }
+      });
+      this.LOTQUERYLIST(JSON.parse(JSON.stringify(this.lotQueryList)));
       this.goBack();
     },
     //物料查询start

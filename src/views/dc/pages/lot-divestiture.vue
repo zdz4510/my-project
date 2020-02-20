@@ -131,21 +131,22 @@ export default {
       if (value === "") {
         callback("lot不能为空");
       }
-      let reg = /^([A-Z]|[0-9]|_|-|\/)+$/;
+      let reg = /^([A-Z]|[a-z]|[0-9]|_|-|\/)+$/;
       if (!reg.test(value)) {
-        callback("lot格式应只包含（[A-Z,0-9,_,-,/]）");
+        callback("lot格式应只包含（字母,数字,_,-,/）");
       }
+      this.lotForm.lot = value.toUpperCase();
       callback();
     };
     const validatorNewLot = (rule, value, callback) => {
-      // debugger;
       if (value === "") {
         callback("lot不能为空");
       }
-      let reg = /^([A-Z]|[0-9]|_|-|\/)+$/;
+      let reg = /^([A-Z]|[a-z]|[0-9]|_|-|\/)+$/;
       if (!reg.test(value)) {
         callback("lot格式应只包含（[A-Z,0-9,_,-,/]）");
       }
+      this.lotDivestitureForm.lot = value.toUpperCase();
       callback();
     };
     return {
@@ -206,7 +207,12 @@ export default {
           this.showInfo.resourceList = resources;
           this.showInfo.materialInfo = `${res.data.material}(${res.data.materialRev})`;
           this.showInfo.routerInfo = `${res.data.router}(${res.data.routerRev})`;
+          return;
         }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
       });
     },
     //重置
@@ -256,7 +262,8 @@ export default {
       splitLotHttp(data).then(data => {
         const res = data.data;
         if (res.code === 200) {
-          this.$refs["lotDivestitureForm"].resetFields();
+          // this.$refs["lotDivestitureForm"].resetFields();
+          this.handleQuery();
           this.$message({
             message: res.message,
             type: "success"
