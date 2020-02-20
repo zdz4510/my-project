@@ -1,59 +1,63 @@
 <template>
   <div class="dc-collection">
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>收集值</span>
+      </div>
+      <el-form
+        :inline="true"
+        :model="searchForm"
+        ref="searchForm"
+        :rules="rules"
+        class="form-style"
+        :label-width="formLabelWidth"
+      >
+        <el-form-item label="收集类型:" prop="collectionType" required>
+          <dsn-select v-model="searchForm.collectionType" filterable clearable placeholder="请选择">
+            <el-option
+              v-for="item in collectionTypes"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </dsn-select>
+        </el-form-item>
+        <el-form-item label="接收值:" prop="acceptValue">
+          <dsn-input v-model="searchForm.acceptValue"></dsn-input>
+        </el-form-item>
+        <el-form-item>
+          <dsn-button
+            size="small"
+            type="primary"
+            icon="el-icon-search"
+            @click="search('searchForm')"
+          >查询</dsn-button>
+          <dsn-button
+            size="small"
+            type="primary"
+            icon="el-icon-refresh"
+            @click="resetForm('searchForm')"
+          >重置</dsn-button>
+        </el-form-item>
+      </el-form>
+      <!-- 查询条件end -->
+    </DsnPanel>
     <div class="top">
       <el-row :gutter="8">
-        <el-col :span="10">
+        <el-col :span="12">
           <el-tabs type="border-card">
-            <el-tab-pane label="收集值">
-              <el-form
-                :inline="true"
-                :model="searchForm"
-                ref="searchForm"
-                :rules="rules"
-                class="form-style"
-                :label-width="formLabelWidth"
-              >
-                <el-form-item label="收集类型:" prop="collectionType" required>
-                  <dsn-select
-                    v-model="searchForm.collectionType"
-                    filterable
-                    clearable
-                    placeholder="请选择"
-                  >
-                    <el-option
-                      v-for="item in collectionTypes"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    ></el-option>
-                  </dsn-select>
-                </el-form-item>
-                <el-form-item label="接收值:" prop="acceptValue">
-                  <dsn-input v-model="searchForm.acceptValue"></dsn-input>
-                </el-form-item>
-                <el-form-item>
-                  <dsn-button
-                    size="small"
-                    type="primary"
-                    icon="el-icon-search"
-                    @click="search('searchForm')"
-                  >查询</dsn-button>
-                  <dsn-button
-                    size="small"
-                    type="primary"
-                    icon="el-icon-refresh"
-                    @click="resetForm('searchForm')"
-                  >重置</dsn-button>
-                </el-form-item>
-              </el-form>
-              <!-- 查询条件end -->
-            </el-tab-pane>
+            <el-tab-pane label="收集值"></el-tab-pane>
           </el-tabs>
         </el-col>
-        <el-col :span="14">
+        <el-col :span="12">
           <el-tabs type="border-card">
             <el-tab-pane label="基础关系信息">
-              <el-form :model="baseInfoForm" ref="baseInfoForm" :label-width="formLabelWidth">
+              <el-form
+                :model="baseInfoForm"
+                ref="baseInfoForm"
+                :label-width="formLabelWidth"
+                class="baseInfoForm"
+              >
                 <el-row>
                   <el-col :span="12">
                     <el-form-item label="工单号:" prop="shopOrder">
@@ -207,19 +211,11 @@ export default {
       collectionTypes: [
         {
           value: 10,
-          label: "工单"
+          label: "LOT"
         },
         {
           value: 20,
-          label: "物料"
-        },
-        {
-          value: 30,
           label: "资源"
-        },
-        {
-          value: 40,
-          label: "工序"
         }
       ]
     };
@@ -330,6 +326,11 @@ export default {
 .dc-collection {
   .el-tabs {
     margin: 10px;
+  }
+  .baseInfoForm {
+    .el-form-item {
+      margin-bottom: 0px;
+    }
   }
 }
 </style>

@@ -172,7 +172,7 @@
           <el-table-column prop="lotStatus" label="状态"></el-table-column>
           <el-table-column prop="operation" label="工序">
             <template slot-scope="scope">
-              <span>{{ scope.row.operationList.join(",") }}</span>
+              <span>{{ scope.row.operationList?scope.row.operationList.join(","):scope.row.operationList }}</span>
             </template>
           </el-table-column>
           <el-table-column label="物料/版本">
