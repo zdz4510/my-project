@@ -3,6 +3,7 @@
 		<div class="operate">
 			<dsn-button size="small" type="primary" @click.native="goBack">返回</dsn-button>
 			<dsn-button size="small" type="primary" @click.native="handleSave('editForm')">保存</dsn-button>
+			<dsn-button size="small" type="primary" @click="resetForm">重置</dsn-button>
 		</div>
 		<el-row :gutter="24">
 			<el-col :span="6">
@@ -108,6 +109,8 @@ export default {
 			cloneModify: {}, //  克隆的表单的一份副本
 			rules: {},
       editForm: {
+				name:"",
+				user:"",
 				alarmGroup:'',
 				groupDes:'',
 				alarmList:[],
@@ -151,6 +154,19 @@ export default {
 		})
   },
   methods: {
+		resetForm() {
+ this.$nextTick(() => {
+      this.init();
+		});
+		let params = {
+			user:this.certUserEditList[0].user
+		}
+		findCert(params).then(data=>{
+			console.log(data.data.data,'d')
+			this.allocateData = data.data.data.certUser
+			this.unallocateData = data.data.data.outerCertUser
+		})
+			},
     ...mapMutations(["SETCERTUSEREditList"]),
     //初始化的操作
     init() {

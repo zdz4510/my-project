@@ -1,21 +1,21 @@
 <template>
 	<div>
 		<div class="operate mtb10">
-			<el-button class="mr25 pad1025" size="small" type="primary" @click="goBack">返回</el-button>
-			<el-button class="mr25 pad1025" size="small" type="primary" @click="save('addForm')">保存</el-button>
-			<el-button class="mr25 pad1025" size="small" type="primary" @click="resetForm('addForm')">重置</el-button>
+			<dsn-button  size="small" type="primary" @click="goBack">返回</dsn-button>
+			<dsn-button  size="small" type="primary" @click="save('addForm')">保存</dsn-button>
+			<dsn-button  size="small" type="primary" @click="resetForm('addForm')">重置</dsn-button>
 		</div>
 		<div class="addForm">
 			<el-form :inline="true" :model="addForm" ref="addForm" :rules="rules" class="form-style" label-position="right" :label-width="formLabelWidth">
 				<el-row>
 					<el-col :span="8">
 						<el-form-item label="用户:" prop="user">
-							<el-input v-model="addForm.user"></el-input>
+							<dsn-input v-model="addForm.user"></dsn-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="8">
 						<el-form-item label="姓名:" prop="name">
-							<el-input v-model="addForm.name"></el-input>
+							<dsn-input v-model="addForm.name"></dsn-input>
 						</el-form-item>
 					</el-col>
 				</el-row>
@@ -27,35 +27,35 @@
 									<el-col :span="24">
 										<el-row>
 											<el-col :span="8">
-												<el-table :data="allocateData.filter(data => !cert1 || data.cert.toLowerCase().includes(cert1.toLowerCase()))" @select="check1" @select-all="check1">
+												<dsn-table :data="allocateData.filter(data => !cert1 || data.cert.toLowerCase().includes(cert1.toLowerCase()))" @select="check1" @select-all="check1">
 													<el-table-column label="上岗证:">
 														<el-table-column type="selection" width="100"></el-table-column>
 														<el-table-column prop="cert" label="上岗证"></el-table-column>
 													</el-table-column>
 													<el-table-column label="">
 														<template slot="header">
-															<el-input v-model="cert1" placeholder="输入上岗证搜索"/></template>
+															<dsn-input v-model="cert1" placeholder="输入上岗证搜索"/></template>
 														<el-table-column prop="certDes" label="上岗证描述"></el-table-column>
 													</el-table-column>
-												</el-table>
+												</dsn-table>
 											</el-col>
 											<el-col :span="2">
 												<div class="direction mt70"><i class="el-icon-caret-right" @click="right"></i></div>
 												<div class="direction"><i class="el-icon-caret-left" @click="left"></i></div>
 											</el-col>
 											<el-col :span="8">
-												<el-table :data="unallocateData.filter(data => !cert2 || data.cert.toLowerCase().includes(cert2.toLowerCase()))" @select="check2" @select-all="check2">
+												<dsn-table :data="unallocateData.filter(data => !cert2 || data.cert.toLowerCase().includes(cert2.toLowerCase()))" @select="check2" @select-all="check2">
 													<el-table-column label="上岗证:">
 														<el-table-column type="selection" width="100"></el-table-column>
 														<el-table-column prop="cert" label="上岗证"></el-table-column>
 													</el-table-column>
 													<el-table-column label="">
 														<template slot="header">
-															<el-input v-model="cert2" placeholder="输入上岗证搜索" />
+															<dsn-input v-model="cert2" placeholder="输入上岗证搜索" />
 														</template>
 														<el-table-column prop="certDes" label="上岗证描述"></el-table-column>
 													</el-table-column>
-												</el-table>
+												</dsn-table>
 											</el-col>
 										</el-row>
 									</el-col>
@@ -109,6 +109,7 @@
 			},
 			resetForm(formName) {
 				this.$refs[formName].resetFields();
+				this.allocateData=[];
 			},
 			save(formName){
 				this.$refs[formName].validate((valid) => {
@@ -119,7 +120,7 @@
 							arr.push(item.cert)
 						})
 						params.certUserList = arr
-						saveData({createList:[params]}).then(data => {
+						saveData({updateList:[params]}).then(data => {
 							if(data.data.message == 'success'){
 								this.$message({
 									type: 'success',
