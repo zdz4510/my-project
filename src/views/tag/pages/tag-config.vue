@@ -8,7 +8,7 @@
         :inline="true" 
         :model="tagConfigForm"
         ref="tagConfigForm"
-        label-width="100px"
+        label-width="60px"
         class="tagConfigForm"
       >
         <el-form-item label="标签ID" prop="label">
@@ -37,27 +37,26 @@
         <dsn-advance-table
           ref="multipleTable"
           :paramData="params"
-          tooltip-effect="dark"
+        
           style="width: 100%"
           :httpFn="httpFn"
-          height="350px"
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55"> </el-table-column>
-          <el-table-column prop="label" label="标签ID" width="120">
+          <el-table-column prop="label" label="标签ID">
           </el-table-column>
-          <el-table-column prop="resourceCount" label="标签描述" width="120">
+          <el-table-column prop="labelDes" label="标签描述" >
           </el-table-column>
-          <el-table-column prop="groupDes" label="标签内存大小" width="170">
+          <el-table-column prop="labelStorage" label="标签内存大小" >
           </el-table-column>
 
-          <el-table-column prop="createUserName" label="命令行打印" width="120">
+          <el-table-column prop="labelCommand" label="命令行打印" >
           </el-table-column>
-          <el-table-column prop="createTime" label="创建人" width="170">
+          <el-table-column prop="createUserName" label="创建人" >
           </el-table-column>
-          <el-table-column prop="modifyUserName" label="创建时间" width="120">
+          <el-table-column prop="createTime" label="创建时间" >
           </el-table-column>
-          <el-table-column prop="createTime" label="修改人" width="170">
+          <el-table-column prop="modifyUserName" label="修改人">
           </el-table-column>
           <el-table-column
             prop="modifyTime"
@@ -81,7 +80,8 @@
 </template>
 
 <script>
-import { exportExcelHttp } from "@/api/device/type.api.js";
+// import { exportExcelHttp } from "@/api/device/type.api.js";
+import { exportExcel } from "@/until/excel.js";
 import { deleteTagConfig, getTagConfigList } from "@/api/tag/tag.config.api";
 import { mapMutations } from "vuex";
 
@@ -112,7 +112,7 @@ export default {
   methods: {
     ...mapMutations(["TAGCONFIGLIST"]),
     init() {
-      console.log(this.$refs["multipleTable"]);
+     
       this.$refs["multipleTable"].search();
     },
     toggleSelection(rows) {
@@ -196,12 +196,43 @@ export default {
       this.tagConfigForm.label = "";
     },
     handleExport() {
-      const data = {
-        label: this.tagConfigForm.label,
-        groupDes: this.tagConfigForm.groupDes
-      };
-      exportExcelHttp(data);
-    }
+      //导出部分
+      const tHeader=[
+        "标签ID",
+        "标签描述",
+        "标签内存大小",
+        "命令行打印",
+        "创建人",
+        "创建时间",
+        "修改人",
+        "修改时间"
+      ]
+      const filterVal=[
+        "label",
+        "labelDes",
+        "labelStorage",
+        "labelCommand",
+        "createUserName",
+        "createTime",
+        "modifyUserName",
+        "modifyTime"
+      ];
+      const fileName ="标签配置表";
+      if(this.selectionList.length>0){
+          exportExcel(tHeader, filterVal, this.selectionList, fileName);
+          return
+      }
+      this.exportExcelAll(tHeader,filterVal,fileName)
+      //导出全部
+    },
+    exportExcelAll(tHeader,filterVal,fileName){
+        getTagConfigList().then(data=>{
+          const res = data.data;
+          if(res.code==200){
+               exportExcel(tHeader, filterVal, res.data.data, fileName);
+          }
+        })
+    },
   }
 };
 </script>

@@ -106,6 +106,8 @@
         </el-button>
       </span>
     </el-dialog>
+
+    <DsnFooter ><dsn-button @click="handlePrintConfig">打印配置</dsn-button></DsnFooter>
   </div>
 </template>
 
@@ -116,7 +118,11 @@ import {
   searchLabelIdListByMat
 } from "@/api/tag/tag.print.api.js";
 import TagPrintConfig from "./tag-print-config";
+import DsnFooter from "@/views/layout/dsn-footer";
 export default {
+  comments:{
+    DsnFooter
+  },
   data() {
     return {
       form: {
@@ -144,6 +150,10 @@ export default {
     TagPrintConfig
   },
   methods: {
+    // 打印配置
+    handlePrintConfig(){
+
+    },
     //  检索
     handleSearchByLotNo() {
       searchByLotNo({
