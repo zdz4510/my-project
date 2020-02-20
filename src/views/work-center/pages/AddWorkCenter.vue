@@ -225,7 +225,7 @@ export default {
     };
   },
   created() {
-    getAllList({ workCenter: "" }).then(data => {
+    getAllList().then(data => {
       if (data.data.code == 200) {
         this.unallocateData = data.data.data;
       } else {
@@ -245,6 +245,7 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           let arr = [];
+          console.log('saa', this.allocateData)
           this.allocateData.map(item => {
             arr.push(item.workCenter);
           });
@@ -256,12 +257,18 @@ export default {
                 workCenterType: this.addForm.workCenterType,
                 workCenterDes: this.addForm.workCenterDes,
                 workCenter: this.addForm.workCenter,
-                workCenterRelation: arr,
+                workCenterRelation: this.allocateData.length > 0 && this.allocateData.map(item => (
+                  {
+                    tenantSiteCode: item.tenantSiteCode,
+                    workCenter: item.workCenter,
+                    workCenterRelation: [],
+                    userList: []
+                  }
+                )) || [],
                 userList: this.allocateUser
               }
             ]
           };
-          console.log(params, "ppp");
           saveWorkCenter(params).then(data => {
             if (data.data.code == 200) {
               this.$message.success("保存成功");
@@ -300,7 +307,6 @@ export default {
       this.unallocateData = _.concat(this.unallocateData, this.selectedList);
       this.unallocateData = _.uniq(this.unallocateData);
       this.allocateData = _.difference(this.allocateData, this.selectedList);
-      console.log(this.unallocateData, "un");
       this.cloneAllocateData = _.cloneDeep(this.allocateData);
     },
     left() {
@@ -310,7 +316,6 @@ export default {
         this.unallocateData,
         this.selectedList2
       );
-      console.log(this.unallocateData, "all");
       this.cloneAllocateData = _.cloneDeep(this.allocateData);
     },
     rightUser() {
@@ -323,7 +328,6 @@ export default {
         this.allocateUser,
         this.selectedListUser
       );
-      console.log(this.unallocateUser, "unuser");
       this.cloneAllocateData = _.cloneDeep(this.allocateUser);
     },
     leftUser() {
@@ -333,7 +337,6 @@ export default {
         this.unallocateUser,
         this.selectedListUser2
       );
-      console.log(this.unallocateUser, "allUser");
       this.cloneAllocateData = _.cloneDeep(this.allocateUser);
     }
   }
