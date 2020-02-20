@@ -363,10 +363,11 @@ export default {
   created() {
     this.deBounceSearch();
     this.operateType = this.$route.query.operateType;
-    if (this.maintenanceList.length > 0) {
-      this.cloneList = JSON.parse(JSON.stringify(this.maintenanceList));
-      this.maintenanceForm = JSON.parse(JSON.stringify(this.cloneList[0]));
-    }
+    console.log(this.maintenanceList);
+    // if (this.maintenanceList.length > 0) {
+    //   this.cloneList = JSON.parse(JSON.stringify(this.maintenanceList));
+    //   this.maintenanceForm = JSON.parse(JSON.stringify(this.cloneList[0]));
+    // }
     if (this.operateType === "edit") {
       this.isEditResource = true;
     }

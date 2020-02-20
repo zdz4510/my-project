@@ -1,7 +1,20 @@
 const maintenanceEdit = {
   // 初始化状态
   state: {
-    maintenanceList: []
+    maintenanceList: [
+      {
+        maintenanceForm: {
+          //设备编号
+          resource: "",
+          //设备名称
+          resourceDes: "",
+          //设备状态
+          resourceStatus: "",
+          //工作中心
+          workCenter: ""
+        }
+      }
+    ]
   },
   // 编写动作
   mutations: {
