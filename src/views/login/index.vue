@@ -31,7 +31,7 @@
           <el-input v-model="loginForm.password" type="password"></el-input>
         </el-form-item>
 
-        <el-form-item label="登陆系统:">
+        <el-form-item label="登录系统:">
           <el-select v-model="loginForm.systemKey" placeholder="请选择">
             <el-option label="SYS" value="SYS"> </el-option>
             <el-option label="MES" value="MES"> </el-option>
@@ -42,7 +42,7 @@
           class="btn-login"
           type="primary"
           @click="submitForm('loginForm')"
-          >登陆</el-button
+          >登录</el-button
         >
       </el-form>
     </div>
