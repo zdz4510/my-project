@@ -157,7 +157,6 @@ export default {
           });
           this.addForm.alarmList = arr;
 
-          console.log(this.addForm);
           let params = this.addForm;
           checkExists(params).then(data => {
             console.log(data.statusText, "ddaaa");
@@ -171,6 +170,8 @@ export default {
                   setTimeout(() => {
                     this.$router.push({ path: "/alarm/alarmGroup" });
                   }, 1000);
+                } else {
+                  this.$message.error(data.data.message);
                 }
               });
             } else {
@@ -285,7 +286,7 @@ export default {
     }
   }
   .direction {
-    color: #182027;
+    color: #409eff;
     font-size: 40px;
     cursor: pointer;
     text-align: center;
