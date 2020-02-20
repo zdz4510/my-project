@@ -5,7 +5,7 @@
         <dsn-button size="small" type="primary" @click="handleBack">
           返回
         </dsn-button>
-        <dsn-button size="small" type="primary" @click="handleSave">
+        <dsn-button size="small" type="primary" @click="validFrom">
           保存
         </dsn-button>
         <dsn-button size="small" type="primary" @click="handleReset">
@@ -444,7 +444,18 @@ export default {
       console.log(val);
     },
     handleTabClick() {},
-    handleReset() {},
+    handleReset() {
+      this.tagConfigForm={
+        // tagDes: "",
+        //标签ID
+        label: "",
+        // checked: true,
+        // labelUseType: "",
+        // previewImage: "",
+        // labelCommand: "",
+        // labelLinkList: [],
+      }
+    },
     //选择设备
     handleCurrentChange(currentRow) {
       this.tagConfigForm = JSON.parse(JSON.stringify(currentRow));
@@ -562,7 +573,26 @@ export default {
         }
       });
     },
+    validFrom(){
+      this.$refs['tagConfigFormOne'].validate((flag)=>{
+        if(!flag){
+           return
+        }
+        //验证第二个form
+      })
+    },
+     //  验证tab 里的数据
+      validFrom2(){
+      this.$refs['tagConfigFormTwo'].validate((flag)=>{
+        if(!flag){
 
+           return
+        }
+
+        this.handleSave();
+        //验证第二个form
+      })
+    },
     //  新增保存
     handleSave() {
       if (this.isEditResource) {
