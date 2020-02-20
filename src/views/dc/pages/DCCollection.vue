@@ -153,7 +153,7 @@
       </el-tabs>
     </div>
     <!-- 查看参数明细start -->
-    <el-dialog title="查看参数明细" :visible.sync="paramsDialog">
+    <el-dialog title="查看参数明细" :visible.sync="paramsDialog" @close="closeParams">
       <h3 style="text-align:center">涉及数据收集组</h3>
       <dsn-table :data="tableData" @select="selectedList">
         <el-table-column type="selection" width="35"></el-table-column>
@@ -179,7 +179,7 @@
     </el-dialog>
     <!-- 查看参数明细end -->
     <!-- 查看多个关系明细start -->
-    <el-dialog title="查看多个关系明细" :visible.sync="detailDialog" width="500px">
+    <el-dialog title="查看多个关系明细" :visible.sync="detailDialog" width="500px" @close="closeDetail">
       <el-tabs type="border-card">
         <el-tab-pane label="物料组">
           <h3 style="text-align:center">涉及关系明细</h3>
@@ -221,7 +221,7 @@
 
 <script>
 import {
-  getCollectionData,
+  findDcGroupDataHttp,
   checkParamData,
   getParamsList,
   saveCollectionData,
@@ -289,15 +289,16 @@ export default {
     search(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          let params = this.searchForm;
-          getCollectionData(params).then(data => {
+          const data = {
+            acceptValue: this.searchForm.acceptValue,
+            collectionType: this.searchForm.collectionType
+          };
+          findDcGroupDataHttp(data).then(data => {
             this.baseInfoForm = data.data.data;
-            console.log("888888", this.baseInfoForm);
             if (data.data.data.dcParameterMeasureList) {
               this.paramsTableData = data.data.data.dcParameterMeasureList;
             } else {
               this.tableData = data.data.data.dcGroupList;
-              this.paramsDialog = true;
             }
           });
         } else {
@@ -388,6 +389,15 @@ export default {
       if (tab.name === "paramsDetail") {
         this.paramsDialog = true;
       }
+    },
+    //关闭左边弹框
+    closeParams() {
+      this.activeNameLeft = "baseRelation";
+      console.log(this.activeNameLeft);
+    },
+    //关闭右边弹框
+    closeDetail() {
+      this.activeNameRight = "paramsInput";
     }
   }
 };
