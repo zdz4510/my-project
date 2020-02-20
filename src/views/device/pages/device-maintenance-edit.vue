@@ -372,7 +372,6 @@ export default {
     }
     this.upkeepConfigForm.startTime = this.formate(new Date().getTime());
     this.queryUserGroup();
-    console.log(this.maintenanceForm);
   },
   mounted() {
     this.init();
@@ -509,7 +508,6 @@ export default {
         return;
       }
       if (count >= 2 && this.saveType === "upkeepConfig") {
-        console.log(this.upkeepConfigForm);
         const copyObj = JSON.parse(JSON.stringify(this.upkeepConfigForm));
         copyObj.resource = this.maintenanceForm.resource;
         this.tableData.push(copyObj);
@@ -635,7 +633,6 @@ export default {
       this.tableData = this.tableData.filter(item => {
         return this.selectionList.includes(item) == false;
       });
-      console.log(this.upkeepConfigForm);
     },
     handleSaveUpkeepConfig() {
       const data = JSON.parse(JSON.stringify(this.tableData));
@@ -699,7 +696,6 @@ export default {
         const res = data.data;
         if (res.code === 200) {
           this.userList = res.data;
-          console.log(this.userList);
           return;
         }
         this.$message({ type: "warning", message: res.message });

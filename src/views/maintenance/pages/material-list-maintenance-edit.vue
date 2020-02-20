@@ -160,7 +160,7 @@
 
 <script>
 import { queryMaterialAll, saveBom } from "@/api/maintenance/materialList.api";
-
+import _ from "lodash";
 import { mapGetters, mapMutations } from "vuex";
 // import _ from "lodash";
 export default {
@@ -239,8 +239,7 @@ export default {
   created() {
     this.getMaterialAll();
     this.operateType = this.$route.query.operateType;
-    console.log('vuex', this.materialList)
-    this.cloneList = JSON.parse(JSON.stringify(this.materialList));
+    this.cloneList = _.cloneDeep(JSON.parse(JSON.stringify(this.materialList)))
     if (this.operateType === "edit") {
       this.baseInfo = this.cloneList[0] || JSON.parse(localStorage.getItem('materialList'))[0];
       this.bomMaterialList = this.baseInfo.bomMaterialList;
@@ -387,9 +386,9 @@ export default {
         //     this.$refs[element].resetFields();
         //   }
         // });
-        // console.log('reset', this.cloneList[0])
+        console.log('reset', this.cloneList[0])
         // this.bomMaterialList = !this.cloneList.length ? JSON.parse(localStorage.getItem('materialList'))[0].bomMaterialList : this.cloneList[0].bomMaterialList
-        this.baseInfo = this.cloneList[0] || JSON.parse(localStorage.getItem('materialList'))[0];
+        this.baseInfo =JSON.parse(localStorage.getItem('materialList'))[0];
         this.bomMaterialList = this.baseInfo.bomMaterialList;
         this.isEditStation = true;
         return;
