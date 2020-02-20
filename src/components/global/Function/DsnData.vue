@@ -1,6 +1,6 @@
 <template>
   <div class="custom-data">
-    <el-form :model="form" class="demo-ruleForm"   label-width="100px">
+    <el-form :model="form"  ref="form" class="demo-ruleForm"   label-width="100px">
       <el-form-item
         :label="item.fieldLabel + ':'"
         :prop="item.fieldName"
@@ -139,6 +139,11 @@ export default {
           this.list = res.data;
         }
       });
+    },
+    valid(callback){
+        this.$refs['form'].validate((flag)=>{
+          callback(flag)
+        })
     }
   }
 };

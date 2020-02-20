@@ -295,23 +295,31 @@ export default {
       callback();
     };
     var materialRule = (rule, value, callback) => {
-      var reg = /^[A-Z0-9]?$/;
+      let reg = /^([A-Z]|[a-z]|[0-9]|_|-|\/)+$/;
       if (!value) {
         callback();
       }
       if (!reg.test(value)) {
-        return callback(new Error("只能为大写字母或数字组成"));
+        return callback(new Error("只能为字母、数字、-、_、/组成"));
       }
+      if ((value + "").length > 30) {
+        return callback(new Error("只能输入30位以内"));
+      }
+      this.addForm.material = value.toUpperCase();
       callback();
     };
     var materialRevRule = (rule, value, callback) => {
-      var reg = /^[A-Z0-9]?$/;
+      let reg = /^([A-Z]|[a-z]|[0-9]|_|-|\/)+$/;
       if (!value) {
         callback();
       }
       if (!reg.test(value)) {
-        return callback(new Error("只能为大写字母或数字组成"));
+        return callback(new Error("只能为字母、数字、-、_、/组成"));
       }
+      if ((value + "").length > 30) {
+        return callback(new Error("只能输入30位以内"));
+      }
+      this.addForm.materialRev = value.toUpperCase();
       callback();
     };
     return {
@@ -345,7 +353,9 @@ export default {
         }
       ],
       rules: {
-        material: [{ required: true, validator: materialRule, trigger: "blur" }],
+        material: [
+          { required: true, validator: materialRule, trigger: "blur" }
+        ],
         materialRev: [
           { required: true, validator: materialRevRule, trigger: "blur" }
         ],
@@ -372,6 +382,7 @@ export default {
         qtyRequired3: "",
         materialType: "辅料",
         client: "",
+        clientmaterial: "",
         clientMaterial: "",
         vebdor: "",
         vendorMaterial: "",
@@ -430,10 +441,10 @@ export default {
       ]
     };
   },
-  created(){
-      this.addForm.unit1=this.addForm.unit2=this.addForm.unit3="PCS";
-      this.addForm.materialType="成品";
-      this.addForm.materialStatus="已启用"
+  created() {
+    this.addForm.unit1 = this.addForm.unit2 = this.addForm.unit3 = "PCS";
+    this.addForm.materialType = "成品";
+    this.addForm.materialStatus = "已启用";
   },
   methods: {
     save(formName) {
@@ -460,7 +471,7 @@ export default {
       });
     },
     resetForm() {
-      this.addForm={
+      this.addForm = {
         material: "",
         materialRev: "",
         currentRev: "",
@@ -490,7 +501,7 @@ export default {
         weight: "1",
         weightErrorRange: "1",
         weightUnit: "g"
-      }
+      };
       // this.$refs[formName].resetFields();
     },
     goBack() {

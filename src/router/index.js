@@ -512,7 +512,8 @@ router.beforeEach((to, from, next) => {
   store.commit("PUSH", {
     name: to.name,
     title: to.meta.title || "",
-    path: to.path
+    path: to.path,
+    fullPath:to.fullPath,
   });
   let auth = to.matched.some(record => record.meta.requiresAuth);
   if (auth) {

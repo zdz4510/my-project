@@ -378,11 +378,13 @@ export default {
         this.init();
         return;
       }
-      this.$message({
-        message: response.message,
-        type: "warning"
+      const msgList = response.message.split("。");
+      let msg = "";
+      msgList.forEach(element => {
+        msg = msg + element + "<br/>";
       });
-      console.log(response);
+      this.$alert(msg, "导入异常信息", { dangerouslyUseHTMLString: true });
+      this.importDialog = false;
     },
     //上传失败
     handleError(err) {

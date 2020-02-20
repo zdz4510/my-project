@@ -100,7 +100,7 @@
       :data="rightData"
     ></flow-info>
     <!-- 流程数据表单 -->
-    <flow-node-form v-if="nodeFormVisible" ref="nodeForm"></flow-node-form>
+    <flow-node-form v-if="nodeFormVisible" @cancle="handleCancle"   ref="nodeForm" ></flow-node-form>
   </div>
 </template>
 
@@ -235,6 +235,13 @@ export default {
     dom.removeEventListener("scroll", this.hadleScroll);
   },
   methods: {
+    // 取消事件
+    handleCancle(index,node){
+  
+      this.rightData.nodeList.splice(
+          index,1,node
+      )
+    },
     handleKeyInput(key) {
       if (!this.menuList[1]) {
         return;
@@ -776,6 +783,7 @@ export default {
     editNode(nodeId) {
       this.nodeFormVisible = true;
       this.$nextTick(function() {
+       
         this.$refs.nodeForm.init(this.rightData, nodeId);
       });
     },

@@ -5,16 +5,19 @@
         <span>搜索信息</span>
       </div>
       <div class="query">
-       <el-form :model="typeForm" ref="typeForm" class="typeForm" :inline="true">
+        <el-form :model="typeForm" ref="typeForm" class="typeForm" :inline="true">
           <el-form-item label="设备类型" prop="resourceGroup">
-            <dsn-input style="width: 200px" v-model.trim="typeForm.resourceGroup" placeholder="请输入设备类型"></dsn-input>
+            <dsn-input
+              style="width: 200px"
+              v-model.trim="typeForm.resourceGroup"
+              placeholder="请输入设备类型"
+            ></dsn-input>
           </el-form-item>
           <el-form-item label prop>
             <dsn-button size="small" type="primary" @click.native="handleQuery">查询</dsn-button>
             <dsn-button size="small" type="primary" @click.native="handleReset">重置</dsn-button>
           </el-form-item>
         </el-form>
-        
       </div>
     </DsnPanel>
     <DsnPanel>
@@ -33,7 +36,7 @@
           size="small"
           type="primary"
           icon="el-icon-edit"
-          :disabled="selectionList.length <= 0"
+          :disabled="selectionList.length !== 1"
           @click.native="handleEdit"
         >修改</dsn-button>
         <dsn-button
@@ -43,7 +46,12 @@
           :disabled="selectionList.length <= 0"
           @click.native="deleteDialog = true"
         >删除</dsn-button>
-        <dsn-button icon="el-icon-upload2" size="small" type="primary" @click.native="handleExport">导出</dsn-button>
+        <dsn-button
+          icon="el-icon-upload2"
+          size="small"
+          type="primary"
+          @click.native="handleExport"
+        >导出</dsn-button>
       </div>
       <div class="showInfo">
         <dsn-table
@@ -169,7 +177,7 @@ export default {
     //当前选中行
     handleSelectionChange(val) {
       this.selectionList = val;
-      console.log(this.selectionList);
+      console.log(this.selectionList.length);
     },
     //更改当前页码,再次请求数据
     handleCurrentChange(currentChange) {
@@ -235,6 +243,7 @@ export default {
     },
     handleReset() {
       this.typeForm.resourceGroup = "";
+      this.init();
     },
     //未选择导出请求数据
     exportHttp() {

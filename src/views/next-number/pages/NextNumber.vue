@@ -34,7 +34,15 @@
             </dsn-select>
           </el-form-item>
           <el-form-item label prop="value" v-if="searchForm.definedBy !== 'MATERIAL_GROUP'">
-            <dsn-select v-model="searchForm.value" placeholder="请选择" @change="onChange" filterable>
+            <dsn-select
+              v-model="searchForm.value"
+              placeholder="请选择"
+              @change="onChange"
+              filterable
+              remote
+              :remote-method="searchMaterialList"
+              :loading="loading"
+            >
               <el-option
                 v-for="item in options"
                 :key="item.material+'&'+item.materialRev"
@@ -47,7 +55,12 @@
             </dsn-select>
           </el-form-item>
           <el-form-item label prop="value" v-if="searchForm.definedBy == 'MATERIAL_GROUP'">
-            <dsn-select v-model="searchForm.value" placeholder="请选择" @change="onChange" filterable>
+            <dsn-select
+              v-model="searchForm.value"
+              placeholder="请选择"
+              @change="onChange"
+              filterable
+            >
               <el-option
                 v-for="item in options"
                 :key="item.materialGroup"
@@ -172,6 +185,7 @@ export default {
   data() {
     return {
       formLabelWidth: "120px",
+      loading: false,
       searchForm: {
         definedBy: "MATERIAL",
         nextNumberType: "S",
@@ -187,7 +201,8 @@ export default {
       },
       checkedList: [],
       options: [],
-
+      listPageSize: 20,
+      listCurrentPage: 1,
       rules: {
         nextNumberType: [
           { required: true, message: "请选择编号类型", trigger: "change" }
@@ -251,32 +266,60 @@ export default {
   },
   created() {
     // this.search()
+    const params = {
+      pageSize: this.listPageSize,
+      currentPage: this.listCurrentPage
+    }
     if (sessionStorage.getItem("searchForm")) {
       this.searchForm = JSON.parse(sessionStorage.getItem("searchForm"));
     }
     if (this.searchForm.definedBy == "MATERIAL") {
-      searchMat().then(data => {
-        this.options = data.data.data;
+      params.material = '';
+      searchMat(params).then(data => {
+        this.options = data.data.data.data;
       });
     } else if (this.searchForm.definedBy == "MATERIAL_GROUP") {
-      searchMatGroup().then(data => {
-        this.options = data.data.data;
+      params.materialGroup = '';
+      searchMatGroup(params).then(data => {
+        this.options = data.data.data.data;
       });
     }
   },
   methods: {
     ...mapMutations(["SETNEXTNUMBEREDITLIST"]),
     definedChange(val) {
-      console.log(val);
       (this.searchForm.value = ""), (this.searchForm.materialRev = "");
+      this.listPageSize = 20;
+      this.listCurrentPage = 1;
+      const params = {
+        currentPage: this.listCurrentPage,
+        pageSize: this.listPageSize,
+      }
       if (val == "MATERIAL") {
-        searchMat().then(data => {
-          this.options = data.data.data;
+        params.material = '';
+        searchMat(params).then(data => {
+          this.options = data.data.data.data;
         });
       } else if (val == "MATERIAL_GROUP") {
-        searchMatGroup().then(data => {
-          this.options = data.data.data;
+        params.materialGroup = '';
+        searchMatGroup(params).then(data => {
+          this.options = data.data.data.data;
         });
+      }
+    },
+    searchMaterialList(value) {
+      console.log('value', value);
+      this.loading = true
+      const params = {
+        currentPage: this.listCurrentPage,
+        pageSize: this.listPageSize
+      }
+      if (this.searchForm.definedBy == "MATERIAL") {
+        params.material = value;
+        searchMat(params).then(res => {
+          this.loading = false
+          this.options = res.data.data.data;
+        })
       }
     },
     search(formName) {

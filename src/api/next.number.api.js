@@ -1,4 +1,5 @@
 import request from  "@/service/"
+import qs from 'qs';
 
 /* 编码规则 */
 /**
@@ -13,16 +14,16 @@ export const getNextNumberList = data => {
  * 物料组搜索
  *  url /mes/nextNumberService/getMatGroupList
  */
-export const searchMatGroup = data => {
-  return request.post(`${window.VUE_APP_URL}/mes/nextNumberService/getMatGroupList`, data);
+export const searchMatGroup = params => {
+  return request.post(`${window.VUE_APP_URL}/mes/nextNumberService/getMatGroupList?${qs.stringify(params)}`);
 };
 
 /**
  * 物料搜索
  *  url /mes/nextNumberService/getMatList
  */
-export const searchMat = data => {
-  return request.post(`${window.VUE_APP_URL}/mes/nextNumberService/getMatList`, data);
+export const searchMat = params => {
+  return request.post(`${window.VUE_APP_URL}/mes/nextNumberService/getMatList?${qs.stringify(params)}`);
 };
 
 

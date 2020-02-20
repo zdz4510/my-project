@@ -35,21 +35,32 @@
               label-width="120px"
               class="demo-maintenanceForm"
             >
-              <el-form-item label="设备描述:">
-                <dsn-input style="width: 200px" type="textarea" v-model.trim="maintenanceForm.resourceDes"></dsn-input>
+              <!-- <el-form-item label="设备描述:" prop="resourceDes">
+                <dsn-input
+                  style="width: 200px"
+                  type="textarea"
+                  v-model.trim="maintenanceForm.resourceDes"
+                ></dsn-input>
+              </el-form-item>-->
+              <el-form-item label="设备描述:" prop="resourceDes">
+                <dsn-input style="width: 200px" v-model.trim="maintenanceForm.resourceDes"></dsn-input>
               </el-form-item>
+
               <el-form-item label="状态:" prop="resourceStatus">
                 <el-radio-group v-model="maintenanceForm.resourceStatus" @change="selectStatus">
-                  <el-radio :label="10">待用</el-radio>
-                  <el-radio :label="20">作业中</el-radio>
-                  <el-radio :label="30">待修</el-radio>
-                  <el-radio :label="40">报废</el-radio>
+                  <el-radio :label="10" :value="10">待用</el-radio>
+                  <el-radio :label="20" :value="20">作业中</el-radio>
+                  <el-radio :label="30" :value="30">待修</el-radio>
+                  <el-radio :label="40" :value="40">报废</el-radio>
                 </el-radio-group>
               </el-form-item>
               <el-form-item label="所在工作中心:" prop="workCenter">
-                <dsn-input style="width: 200px" v-model.trim="maintenanceForm.workCenter" class="workCenter"></dsn-input>
+                <dsn-input
+                  style="width: 200px"
+                  v-model.trim="maintenanceForm.workCenter"
+                  class="workCenter"
+                ></dsn-input>
                 <i class="el-icon-document" @click="queryWorkCenter"></i>
-                <!-- <div slot="error" slot-scope="error">{{error}}</div> -->
               </el-form-item>
             </el-form>
           </el-tab-pane>
@@ -86,11 +97,24 @@
                 ></dsn-input>
               </el-form-item>
               <el-form-item label="保养人员" prop="maintenanceUserId">
-                <dsn-input
+                <!-- <dsn-input
                   v-model.trim="upkeepConfigForm.maintenanceUserId"
                   placeholder="请输入保养人员"
                   size="small"
-                ></dsn-input>
+                ></dsn-input>-->
+                <el-select
+                  v-model="upkeepConfigForm.maintenanceUserId"
+                  filterable
+                  placeholder="请选择保养人员"
+                  size="small"
+                >
+                  <el-option
+                    v-for="(item,index) in userList"
+                    :key="index"
+                    :label="item.id"
+                    :value="item.id"
+                  ></el-option>
+                </el-select>
               </el-form-item>
               <el-form-item label="预警事件" prop="alarm">
                 <el-autocomplete
@@ -105,7 +129,7 @@
               <el-form-item label="保养周期" prop="maintenancePeriod">
                 <dsn-input
                   v-model.number="upkeepConfigForm.maintenancePeriod"
-                  style="width: 120px"
+                  style="width: 105px"
                   placeholder="保养周期"
                   class="upkeepCycle"
                   size="small"
@@ -115,6 +139,7 @@
                   label="upkeepConfigForm.periodUnit"
                   class="upkeepCycle"
                   size="small"
+                  style="width: 110px"
                 >
                   <el-option label="天数" :value="1">天数</el-option>
                   <el-option label="月份" :value="30">月份</el-option>
@@ -131,9 +156,9 @@
               </el-form-item>
               <el-form-item label="保养地址">
                 <el-radio-group v-model="upkeepConfigForm.maintenanceLocation">
-                  <el-radio label="在线">在线</el-radio>
-                  <el-radio label="任意">任意</el-radio>
-                  <el-radio label="设备店">设备店</el-radio>
+                  <el-radio label="在线" value="在线">在线</el-radio>
+                  <el-radio label="任意" value="任意">任意</el-radio>
+                  <el-radio label="设备店" value="设备店">设备店</el-radio>
                 </el-radio-group>
               </el-form-item>
             </el-form>
@@ -188,7 +213,7 @@ import {
   findResourceMaintenanceListHttp,
   saveResourceMaintenanceHttp
 } from "@/api/device/maintenance.api.js";
-import { getAllLevel1Http } from "@/api/work.center.api.js";
+import { getAllLevel1Http, findAllUserList } from "@/api/work.center.api.js";
 import workCenterModel from "../components/work-center-model.vue";
 import _ from "lodash";
 
@@ -197,7 +222,18 @@ export default {
   components: {
     workCenterModel
   },
+
   data() {
+    let validateMaintenancePeriod = (rule, value, callback) => {
+      let reg = /^([0-9]+)$/g;
+      if (!reg.test(value)) {
+        return callback(new Error("只能输入数字"));
+      }
+      if (parseInt(value) <= 0) {
+        return callback(new Error("只能输入大于0的数"));
+      }
+      callback();
+    };
     return {
       list: [],
       maintenanceForm: {
@@ -210,6 +246,7 @@ export default {
         //工作中心
         workCenter: ""
       },
+      validateMaintenancePeriod,
       // rules: this.rules,
       //验证基础信息表单ref
       refArrBaseInfo: ["maintenanceFormOne", "maintenanceFormTwo"],
@@ -249,7 +286,8 @@ export default {
       currentRow: {},
       workCenterDialog: false,
       currentWorkCenter: {},
-      workCenterData: []
+      workCenterData: [],
+      userList: []
     };
   },
   filters: {
@@ -309,8 +347,12 @@ export default {
           { required: true, message: "请输入预警功能", trigger: "change" }
         ],
         maintenancePeriod: [
-          { required: true, message: "请输入保养周期", trigger: "change" },
-          { type: "number", message: "保养周期必须为数字值" }
+          { type: "number", message: "保养周期必须为数字值" },
+          {
+            required: true,
+            validator: this.validateMaintenancePeriod,
+            trigger: "blur"
+          }
         ],
         periodUnit: [
           { required: true, message: "请输入周期单位", trigger: "change" }
@@ -321,12 +363,16 @@ export default {
   created() {
     this.deBounceSearch();
     this.operateType = this.$route.query.operateType;
-    this.cloneList = JSON.parse(JSON.stringify(this.maintenanceList));
-    this.maintenanceForm = JSON.parse(JSON.stringify(this.cloneList[0]));
+    if (this.maintenanceList.length > 0) {
+      this.cloneList = JSON.parse(JSON.stringify(this.maintenanceList));
+      this.maintenanceForm = JSON.parse(JSON.stringify(this.cloneList[0]));
+    }
     if (this.operateType === "edit") {
       this.isEditResource = true;
     }
     this.upkeepConfigForm.startTime = this.formate(new Date().getTime());
+    this.queryUserGroup();
+    console.log(this.maintenanceForm);
   },
   mounted() {
     this.init();
@@ -405,7 +451,9 @@ export default {
         this.upkeepConfigForm = _.cloneDeep(this.selectionList[0]);
       } else {
         const { upkeepConfigForm } = this;
-        Object.keys(upkeepConfigForm).map(item => (upkeepConfigForm[item] = ''))
+        Object.keys(upkeepConfigForm).map(
+          item => (upkeepConfigForm[item] = "")
+        );
       }
     },
     selectable(row) {
@@ -413,7 +461,7 @@ export default {
       if (!selectionList.length) return true;
       const { conditionName } = selectionList[0];
       const { conditionName: rowConditionName } = row;
-      return conditionName === rowConditionName
+      return conditionName === rowConditionName;
     },
     handleChangeRadio(val) {
       this.maintenanceForm.resourceStatus = val;
@@ -552,6 +600,19 @@ export default {
       });
     },
     handleLocalAdd(formName) {
+      let count = 0;
+      this.tableData.forEach(element => {
+        if (this.upkeepConfigForm.conditionName === element.conditionName) {
+          count++;
+        }
+      });
+      if (count > 0) {
+        this.$message({
+          message: "该保养条件名称已存在，请重新输入",
+          type: "warning"
+        });
+        return;
+      }
       formName.forEach(element => {
         if (element === "upkeepConfigForm") {
           this.$refs[element].resetFields();
@@ -571,7 +632,6 @@ export default {
         return;
       }
 
-      
       this.tableData = this.tableData.filter(item => {
         return this.selectionList.includes(item) == false;
       });
@@ -624,6 +684,26 @@ export default {
     handleSelectWorkCenter() {
       this.maintenanceForm.workCenter = this.currentWorkCenter.workCenter;
       this.workCenterDialog = false;
+    },
+    //搜索建议调用方法
+    createFilter(queryString) {
+      return item => {
+        return (
+          item.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+        );
+      };
+    },
+    //查询保养人员信息start
+    queryUserGroup() {
+      findAllUserList().then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.userList = res.data;
+          console.log(this.userList);
+          return;
+        }
+        this.$message({ type: "warning", message: res.message });
+      });
     }
   }
 };
@@ -635,7 +715,7 @@ export default {
     padding: 14px 14px 0;
     background: #fff;
     margin-bottom: 14px;
-		border-radius: 4px;
+    border-radius: 4px;
   }
   .deviceUpkeepSetting {
     .el-form {
@@ -649,7 +729,6 @@ export default {
             }
           }
         }
-
       }
     }
   }

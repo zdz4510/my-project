@@ -66,7 +66,7 @@
     </div>
 
     <div >
-      <dsn-button class="mr25 pad1025" size="small" type="primary" @click="save">保存</dsn-button>
+    
 
       <dsn-table
         border
@@ -101,13 +101,14 @@
     </div>
  </DsnPanel>
     <div class="add">
+        <dsn-button class="mr25 pad1025" size="small" type="primary" @click="save">保存</dsn-button>
       <el-row>
         <el-col :span="24" class="title">新增不合格</el-col>
       </el-row>
       <el-row>
         <el-col :span="8" class="title">
           <dsn-table
-
+             highlight-current-row
             border
             ref="ncGroup"
             :data="this.ncGroupData"
@@ -122,6 +123,7 @@
         </el-col>
         <el-col :span="8" class="title">
           <dsn-table
+           highlight-current-row
             border
             ref="ncCode"
             :data="this.ncCodeData"
@@ -135,6 +137,7 @@
         </el-col>
         <el-col :span="8" class="title">
           <dsn-table
+           highlight-current-row
             border
             ref="ncCodeAdd"
             :data="this.ncCodeDataAdd"
@@ -305,6 +308,7 @@ export default {
       this.ncCodeDataAdd = [];
       this.ncGroupData = [];
       this.ncCodeData = [];
+      this.tableData.data =[];
     },
     handleClick(row) {
       let params = {

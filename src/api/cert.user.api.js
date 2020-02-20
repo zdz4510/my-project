@@ -1,5 +1,5 @@
 import request from "@/service/";
-
+import qs from 'qs';
 /* 用户证明分配*/
 
 /**
@@ -8,7 +8,7 @@ import request from "@/service/";
  */
 export const getCertUserList = data => {
   return request.post(
-    `${window.VUE_APP_URL}/mes/certUser/findPage?currentPage=${data.currentPage}&pageSize=${data.pageSize}&user=${data.user}&name=${data.name}`);
+    `${window.VUE_APP_URL}/mes/certUser/findPage?${qs.stringify(data)}`);
 };
 
 
