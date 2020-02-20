@@ -382,13 +382,16 @@ export default {
         //     }
         //   }
         // }
-        formName.forEach(element => {
-          if (element === "baseInfoTwo") {
-            this.$refs[element].resetFields();
-          }
-        });
-        console.log('reset', this.baseInfo)
-        this.bomMaterialList = !this.cloneList.length ? JSON.parse(localStorage.getItem('materialList'))[0].bomMaterialList : this.cloneList[0].bomMaterialList
+        // formName.forEach(element => {
+        //   if (element === "baseInfoTwo") {
+        //     this.$refs[element].resetFields();
+        //   }
+        // });
+        // console.log('reset', this.cloneList[0])
+        // this.bomMaterialList = !this.cloneList.length ? JSON.parse(localStorage.getItem('materialList'))[0].bomMaterialList : this.cloneList[0].bomMaterialList
+        this.baseInfo = this.cloneList[0] || JSON.parse(localStorage.getItem('materialList'))[0];
+        this.bomMaterialList = this.baseInfo.bomMaterialList;
+        this.isEditStation = true;
         return;
       }
     }
