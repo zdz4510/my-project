@@ -4,58 +4,43 @@
       <div slot="header" class="title clearfix">
         <span>搜索信息</span>
       </div>
-      <el-form
-        :inline="true"
-        :model="workCertificateForm"
-        ref="workCertificateForm"
-        label-width="100px"
-      >
-        <el-form-item label="物料清单">
-          <dsn-input
-            v-model="bom"
-            placeholder="请输入物料清单"
-          ></dsn-input>
+      <el-form :inline="true" :model="materilList" ref="materilList" :rules="materilListRules">
+        <el-form-item label="物料清单" prop="bom">
+          <dsn-input v-model="materilList.bom" placeholder="请输入物料清单"></dsn-input>
         </el-form-item>
         <el-form-item>
-          <dsn-button size="small" type="primary" icon="el-icon-search" @click="handleQuery">
-            查询
-          </dsn-button>
-          <dsn-button size="small" type="primary" icon="el-icon-refresh" @click="handleReset">
-            重置
-          </dsn-button>
+          <dsn-button size="small" type="primary" icon="el-icon-search" @click="handleQuery">查询</dsn-button>
+          <dsn-button size="small" type="primary" icon="el-icon-refresh" @click="handleReset">重置</dsn-button>
         </el-form-item>
       </el-form>
     </DsnPanel>
-    
+
     <DsnPanel>
       <div slot="header" class="title clearfix">
         <span>搜索结果</span>
       </div>
       <div class="operation">
-      <dsn-button 
-        size="small" 
-        type="success" 
-        icon="el-icon-folder-add"
-        :disabled="false"
-        @click.native="handleAdd">新增</dsn-button>
-      <dsn-button
-        size="small"
-        type="primary"
-        icon="el-icon-edit"
-        :disabled="selectionList.length !== 1"
-        @click="handleEdit"
-      >
-        修改
-      </dsn-button>
-      <dsn-button
-        size="small"
-        type="danger"
-        icon="el-icon-delete"
-        :disabled="selectionList.length <= 0"
-        @click="deleteDialog = true"
-        >
-          删除
-        </dsn-button>
+        <dsn-button
+          size="small"
+          type="success"
+          icon="el-icon-folder-add"
+          :disabled="false"
+          @click.native="handleAdd"
+        >新增</dsn-button>
+        <dsn-button
+          size="small"
+          type="primary"
+          icon="el-icon-edit"
+          :disabled="selectionList.length !== 1"
+          @click="handleEdit"
+        >修改</dsn-button>
+        <dsn-button
+          size="small"
+          type="danger"
+          icon="el-icon-delete"
+          :disabled="selectionList.length <= 0"
+          @click="deleteDialog = true"
+        >删除</dsn-button>
       </div>
       <dsn-table
         ref="multipleTable"
@@ -66,10 +51,10 @@
       >
         <el-table-column type="selection" width="55" />
         <el-table-column type="index" label="序号" />
-        
+
         <el-table-column prop="bom" label="物料清单" />
         <el-table-column prop="bomRev" label="当前版本号" />
-        <el-table-column prop="bomDes" label="物料清单描述"/>
+        <el-table-column prop="bomDes" label="物料清单描述" />
         <el-table-column prop="bomType" label="类型" />
         <el-table-column prop="status" label="状态">
           <template slot-scope="scope">
@@ -78,27 +63,24 @@
           </template>
         </el-table-column>
       </dsn-table>
-    <div class="pagination">
-      <dsn-pagination
-        background
-        layout="->,total,prev,pager,next,sizes"
-        :total="total"
-        :page-size="pageSize"
-        :page-sizes="[5, 10, 15, 20]"
-        :current-page="currentPage"
-        @size-change="handlePagesize"
-        @current-change="handleCurrentChange"
-      >
-      </dsn-pagination>
-    </div>
+      <div class="pagination">
+        <dsn-pagination
+          background
+          layout="->,total,prev,pager,next,sizes"
+          :total="total"
+          :page-size="pageSize"
+          :page-sizes="[5, 10, 15, 20]"
+          :current-page="currentPage"
+          @size-change="handlePagesize"
+          @current-change="handleCurrentChange"
+        ></dsn-pagination>
+      </div>
     </DsnPanel>
     <el-dialog title="删除" :visible.sync="deleteDialog" :width="defaltDialogWidth">
       <span>是否确认删除{{ selectionList.length }}条数据？</span>
       <span slot="footer" class="dialog-footer">
         <dsn-button @click="deleteDialog = false">取 消</dsn-button>
-        <dsn-button type="primary" @click="handleDelete">
-          确 定
-        </dsn-button>
+        <dsn-button type="primary" @click="handleDelete">确 定</dsn-button>
       </span>
     </el-dialog>
   </div>
@@ -112,14 +94,27 @@ import {
 import { mapMutations } from "vuex";
 // import { filter } from "minimatch";
 export default {
-  inject:['defaltDialogWidth'],
+  inject: ["defaltDialogWidth"],
   data() {
+    const valiBom = (rule, value, callback) => {
+      if (value === "") {
+        callback();
+      }
+      let reg = /^([A-Z]|[a-z]|[0-9]|_|-|\/)+$/;
+      if (!reg.test(value)) {
+        callback("物料清单格式应只包含（[A-Z,0-9,_,-,/]）");
+      }
+      this.materilList.bom = this.materilList.bom.toUpperCase();
+      callback();
+    };
     return {
-      workCertificateForm: {
-        //上岗证
-        cert: ""
+      materilList: {
+        bom: ""
       },
-      bom: '',
+      materilListRules: {
+        bom: [{ validator: valiBom, trigger: "blur" }]
+      },
+      bom: "",
       currentPage: 1,
       pageSize: 10,
       total: 0,
@@ -150,38 +145,29 @@ export default {
     ...mapMutations(["MATERIALLIST"]),
     //初始化数据
     getMaterialList() {
-      const { 
-        currentPage,
-        pageSize,
-        bom
-      } = this;
       const params = {
-        currentPage,
-        pageSize,
-        bom
+        bom: this.materilList.bom,
+        currentPage: this.currentPage,
+        pageSize: this.pageSize
       };
       queryMaterialList(params).then(res => {
-        console.log('res', res)
+        console.log("res", res);
         const {
           data: {
-            data: {
-              data,
-              total
-            },
+            data: { data, total },
             code,
             message
-          },
+          }
         } = res;
         if (code === 200) {
           this.total = total;
-          data.forEach(item=>{
-            if(item.bomType==="ORDER"){
-              item.bomType="订单"
-            }else if(item.bomType==="MATERIAL"){
-              item.bomType="主数据"
+          data.forEach(item => {
+            if (item.bomType === "ORDER") {
+              item.bomType = "订单";
+            } else if (item.bomType === "MATERIAL") {
+              item.bomType = "主数据";
             }
-            
-          })
+          });
           this.tableData = data;
           return;
         }
@@ -189,7 +175,7 @@ export default {
           message,
           type: "warning"
         });
-      })
+      });
     },
     //更改当前页码,再次请求数据
     handleCurrentChange(currentChange) {
@@ -212,11 +198,17 @@ export default {
     },
     //查询
     handleQuery() {
-      this.getMaterialList();
+      this.$refs["materilList"].validate(valid => {
+        if (valid) {
+          this.getMaterialList();
+        } else {
+          return false;
+        }
+      });
     },
     //重置
     handleReset() {
-      this.bom = "";
+      this.material.bom = "";
       this.getMaterialList();
     },
     //新增
@@ -231,7 +223,7 @@ export default {
     handleEdit() {
       const tempArr = JSON.parse(JSON.stringify(this.selectionList));
       this.MATERIALLIST(tempArr);
-      localStorage.setItem('materialList', JSON.stringify(this.selectionList))
+      localStorage.setItem("materialList", JSON.stringify(this.selectionList));
       this.$router.push({
         name: "materialListEdit",
         query: { operateType: "edit" }
@@ -242,7 +234,7 @@ export default {
       const params = selectionList.map(item => ({
         bom: item.bom,
         bomRev: item.bomRev
-      }))
+      }));
       deleteMaterial(params).then(data => {
         const res = data.data;
         if (res.code === 200) {
@@ -260,8 +252,7 @@ export default {
         });
         this.deleteDialog = false;
       });
-    },
-  
+    }
   }
 };
 </script>
