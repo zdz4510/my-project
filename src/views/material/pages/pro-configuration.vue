@@ -192,7 +192,7 @@ export default {
           {
             buttionDesc: "",
             buttonId: "",
-            groupFlag: "",
+            groupFlag: true,
             imageIcon: "",
             location: "",
             podActivities: [
@@ -379,6 +379,12 @@ export default {
     },
     // 跳转新增界面
     handleAdd() {
+      if(this.selectedList.length>1){
+        this.$message({
+            message: "只能选择一个去添加",
+            type: "warning"
+          });
+      }
       this.$router.push({ path: "/material/newAddGroup" });
     },
     //保存操作
