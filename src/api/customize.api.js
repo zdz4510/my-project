@@ -31,7 +31,7 @@ export const saveData = data => {
  */
 export const getField = data => {
   return request.get(
-    `${window.VUE_APP_URL}/mes/generalCodeService/findField?generalCode=${data.generalCode}&fieldName=${data.fieldName}`
+    `${window.VUE_APP_URL}/mes/generalCodeService/findLimitGeneralField?${qs.stringify(data)}`
   );
 };
 
@@ -39,9 +39,9 @@ export const getField = data => {
  * 根据代码类型，（代码）模糊查询通用代码
  *  url /mes/generalCodeService/findRecord
  */
-export const getCode = data => {
+export const getCode = () => {
   return request.get(
-    `${window.VUE_APP_URL}/mes/generalCodeService/findRecord?generalCodeGroup=${data.generalCodeGroup}&generalCode=${data.generalCode}`
+    `${window.VUE_APP_URL}/mes/generalCodeService/findLimitGeneralCode?fieldType=C`
   );
 };
 
