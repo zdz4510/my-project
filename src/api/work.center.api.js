@@ -37,9 +37,9 @@ export const deleteWorkCenter = data => {
  * 查询所有
  * url /mes/workCenter/listAll
  */
-export const getAllList = data => {
+export const getAllList = () => {
   return request.post(
-    `${window.VUE_APP_URL}/mes/workCenter/listAll?workCenter=${data.workCenter}`
+    `${window.VUE_APP_URL}/mes/workCenter/listLevel2`
   );
 };
 // export const listAllHttp = data => {
@@ -64,7 +64,7 @@ export const getRelationData = data => {
  * url /mes/workCenter/findAllUser
  */
 export const getUserList = () => {
-  return request.post(`${window.VUE_APP_URL}/mes/workCenter/findAllUser`);
+  return request.post(`${window.VUE_APP_URL}/mes/workCenter/listOuterUser`);
 };
 
 /**
