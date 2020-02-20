@@ -13,7 +13,12 @@
         :label-width="formLabelWidth"
       >
         <el-form-item label="收集类型:" prop="collectionType" required>
-          <dsn-select v-model="searchForm.collectionType" filterable clearable placeholder="请选择">
+          <dsn-select
+            v-model="searchForm.collectionType"
+            filterable
+            clearable
+            placeholder="请选择收集类型"
+          >
             <el-option
               v-for="item in collectionTypes"
               :key="item.value"
@@ -23,7 +28,7 @@
           </dsn-select>
         </el-form-item>
         <el-form-item label="接收值:" prop="acceptValue">
-          <dsn-input v-model="searchForm.acceptValue"></dsn-input>
+          <dsn-input v-model="searchForm.acceptValue" placeholder="请输入接收值"></dsn-input>
         </el-form-item>
         <el-form-item>
           <dsn-button
@@ -42,16 +47,19 @@
       </el-form>
       <!-- 查询条件end -->
     </DsnPanel>
-    <div class="top">
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索结果</span>
+      </div>
       <el-row :gutter="8">
         <el-col :span="12">
-          <el-tabs type="border-card">
-            <el-tab-pane label="收集值"></el-tab-pane>
-          </el-tabs>
-        </el-col>
-        <el-col :span="12">
-          <el-tabs type="border-card">
-            <el-tab-pane label="基础关系信息">
+          <el-tabs
+            type="border-card"
+            style="height:180px"
+            v-model="activeNameLeft"
+            @tab-click="handleClickLeft"
+          >
+            <el-tab-pane label="基础关系信息" name="baseRelation">
               <el-form
                 :model="baseInfoForm"
                 ref="baseInfoForm"
@@ -61,88 +69,80 @@
                 <el-row>
                   <el-col :span="12">
                     <el-form-item label="工单号:" prop="shopOrder">
-                      <dsn-input v-model="baseInfoForm.shopOrder" disabled></dsn-input>
+                      <el-input v-model="baseInfoForm.shopOrder" size="small" disabled></el-input>
                     </el-form-item>
                     <el-form-item label="物料:" prop="material">
-                      <dsn-input v-model="baseInfoForm.material" disabled></dsn-input>
+                      <el-input v-model="baseInfoForm.material" size="small" disabled></el-input>
                     </el-form-item>
                     <el-form-item label="物料组:" prop="materialGroup">
-                      <dsn-input v-model="baseInfoForm.materialGroup" disabled></dsn-input>
+                      <el-input v-model="baseInfoForm.materialGroup" size="small" disabled></el-input>
                     </el-form-item>
                   </el-col>
                   <el-col :span="12">
                     <el-form-item label="设备类型:" prop="resourceGroup">
-                      <dsn-input v-model="baseInfoForm.resourceGroup" disabled></dsn-input>
+                      <el-input v-model="baseInfoForm.resourceGroup" size="small" disabled></el-input>
                     </el-form-item>
                     <el-form-item label="工序:" prop="operation">
-                      <dsn-input v-model="baseInfoForm.operation" disabled></dsn-input>
+                      <el-input v-model="baseInfoForm.operation" size="small" disabled></el-input>
                     </el-form-item>
                     <el-form-item label="工作中心:" prop="workCenter">
-                      <dsn-input v-model="baseInfoForm.workCenter" disabled></dsn-input>
+                      <el-input v-model="baseInfoForm.workCenter" size="small" disabled></el-input>
                     </el-form-item>
                   </el-col>
                 </el-row>
               </el-form>
             </el-tab-pane>
-            <el-tab-pane label="查看多个关系明细">222</el-tab-pane>
+            <el-tab-pane label="查看多个关系明细" name="lookDetail">222</el-tab-pane>
           </el-tabs>
-        </el-col>
-      </el-row>
-    </div>
-    <div class="middle">
-      <el-row :gutter="8">
-        <el-col :span="14">
           <el-tabs type="border-card">
-            <el-tab-pane label="数据收集组">
-              <el-table :data="tableData" class="dialog-table" @select="selectedList">
-                <el-table-column label="涉及数据收集组">
-                  <el-table-column type="selection" width="55"></el-table-column>
-                  <el-table-column prop="dcGroup" label="数据收集组"></el-table-column>
-                  <el-table-column prop="dcGroupDes" label="数据收集组描述"></el-table-column>
-                  <el-table-column prop="paramNum" label="参数数量"></el-table-column>
-                  <el-table-column prop="conditionNum" label="收集条件"></el-table-column>
-                </el-table-column>
+            <el-tab-pane label="数据收集组" style="height:200px">
+              <h3 style="text-align:center">涉及数据收集组</h3>
+              <el-table :data="tableData" @select="selectedList">
+                <el-table-column type="selection" width="35"></el-table-column>
+                <el-table-column prop="dcGroup" label="数据收集组"></el-table-column>
+                <el-table-column prop="dcGroupDes" label="数据收集组描述" width="110"></el-table-column>
+                <el-table-column prop="paramNum" label="参数数量"></el-table-column>
+                <el-table-column prop="conditionNum" label="收集条件"></el-table-column>
               </el-table>
             </el-tab-pane>
           </el-tabs>
         </el-col>
-        <el-col :span="10">
-          <el-tabs type="border-card">
-            <el-tab-pane label="参数输入">
-              <div class="content">
-                <el-row>
-                  <el-col :span="22">
-                    <el-table :data="paramsTableData" class="parm-table" border>
-                      <el-table-column label="参数名" width="180">
-                        <template slot-scope="scope">
-                          <span style="margin-left: 10px">{{ scope.row.parameter }}</span>
-                        </template>
-                      </el-table-column>
-                      <el-table-column label="参数描述" width="180">
-                        <template slot-scope="scope">
-                          <span style="margin-left: 10px">{{ scope.row.parameterDes }}</span>
-                        </template>
-                      </el-table-column>
-                      <el-table-column label="参数值" width="180">
-                        <template slot-scope="scope">
-                          <dsn-input v-model="scope.row.parameterValue"></dsn-input>
-                        </template>
-                      </el-table-column>
-                    </el-table>
-                    <div class="btn">
-                      <dsn-button size="small" type="primary" @click="save">提交</dsn-button>
-                      <dsn-button size="small" type="primary" @click="reset">重置</dsn-button>
-                      <dsn-button size="small" type="primary" @click="check">校验</dsn-button>
-                    </div>
-                  </el-col>
-                </el-row>
+        <el-col :span="12">
+          <el-tabs
+            type="border-card"
+            style="height:300px"
+            v-model="activeNameRight"
+            @tab-click="handleClickRight"
+          >
+            <el-tab-pane label="参数输入" name="paramsInput">
+              <div class="btn">
+                <dsn-button icon="el-icon-folder-add" size="small" type="success" @click="save">提交</dsn-button>
+                <dsn-button size="small" type="primary" icon="el-icon-refresh" @click="reset">重置</dsn-button>
+                <dsn-button size="small" type="primary" @click="check">校验</dsn-button>
               </div>
+              <el-table :data="paramsTableData">
+                <el-table-column label="参数名">
+                  <template slot-scope="scope">
+                    <span>{{ scope.row.parameter }}</span>
+                  </template>
+                </el-table-column>
+                <el-table-column label="参数描述">
+                  <template slot-scope="scope">
+                    <span>{{ scope.row.parameterDes }}</span>
+                  </template>
+                </el-table-column>
+                <el-table-column label="参数值">
+                  <template slot-scope="scope">
+                    <dsn-input v-model="scope.row.parameterValue"></dsn-input>
+                  </template>
+                </el-table-column>
+              </el-table>
             </el-tab-pane>
-            <el-tab-pane label="查看参数明细">111</el-tab-pane>
+            <el-tab-pane label="查看参数明细" name="paramsDetail">111</el-tab-pane>
           </el-tabs>
         </el-col>
       </el-row>
-    </div>
+    </DsnPanel>
     <div class="bottom">
       <el-tabs type="border-card">
         <el-tab-pane label="日志记录">
@@ -152,20 +152,70 @@
         </el-tab-pane>
       </el-tabs>
     </div>
-    <el-dialog title :visible.sync="dialog">
-      <el-table :data="tableData" class="dialog-table" @select="selectedList">
-        <el-table-column label="涉及数据收集组">
-          <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column prop="dcGroup" label="数据收集组名称"></el-table-column>
-          <el-table-column prop="dcGroupDes" label="数据收集组描述"></el-table-column>
-          <el-table-column prop="paramNum" label="参数数量"></el-table-column>
-        </el-table-column>
-      </el-table>
+    <!-- 查看参数明细start -->
+    <el-dialog title="查看参数明细" :visible.sync="paramsDialog">
+      <h3 style="text-align:center">涉及数据收集组</h3>
+      <dsn-table :data="tableData" @select="selectedList">
+        <el-table-column type="selection" width="35"></el-table-column>
+        <el-table-column prop="parameter" label="参数名称"></el-table-column>
+        <el-table-column prop="parameterDes" label="参数描述"></el-table-column>
+        <el-table-column prop="softCheck" label="软检查"></el-table-column>
+        <el-table-column prop="parameterStatus" label="参数状态"></el-table-column>
+        <el-table-column prop="valueType" label="值类型"></el-table-column>
+        <el-table-column prop="required" label="必须值"></el-table-column>
+        <el-table-column prop="targetValue" label="标准值"></el-table-column>
+        <el-table-column prop="trueValue" label="布尔值TRUE绑定" width="120"></el-table-column>
+        <el-table-column prop="falseValue" label="布尔值FALSE绑定" width="120"></el-table-column>
+        <el-table-column prop="upperSpecLimit" label="标准值上限"></el-table-column>
+        <el-table-column prop="lowerSpecLimit" label="标准值下限"></el-table-column>
+        <el-table-column prop="upperWarnLimit" label="预警发生上限值" width="110"></el-table-column>
+        <el-table-column prop="lowerWarnLimit" label="预警发生下限值" width="110"></el-table-column>
+        <el-table-column prop="alarm" label="预警事件编号" width="110"></el-table-column>
+      </dsn-table>
       <span slot="footer" class="dialog-footer">
         <dsn-button @click="handleCancle">取 消</dsn-button>
         <dsn-button type="primary" @click="handleSave">确 定</dsn-button>
       </span>
     </el-dialog>
+    <!-- 查看参数明细end -->
+    <!-- 查看多个关系明细start -->
+    <el-dialog title="查看多个关系明细" :visible.sync="detailDialog" width="500px">
+      <el-tabs type="border-card">
+        <el-tab-pane label="物料组">
+          <h3 style="text-align:center">涉及关系明细</h3>
+          <el-table :data="tableData">
+            <el-table-column prop="parameter" label="物料组"></el-table-column>
+            <el-table-column prop="parameterDes" label="物料组描述"></el-table-column>
+          </el-table>
+        </el-tab-pane>
+        <el-tab-pane label="设备类型">
+          <h3 style="text-align:center">涉及关系明细</h3>
+          <el-table :data="tableData">
+            <el-table-column prop="parameter" label="设备类型"></el-table-column>
+            <el-table-column prop="parameterDes" label="设备类型描述"></el-table-column>
+          </el-table>
+        </el-tab-pane>
+        <el-tab-pane label="工作中心">
+          <h3 style="text-align:center">涉及关系明细</h3>
+          <el-table :data="tableData">
+            <el-table-column prop="parameter" label="工作中心"></el-table-column>
+            <el-table-column prop="parameterDes" label="工作中心描述"></el-table-column>
+          </el-table>
+        </el-tab-pane>
+        <el-tab-pane label="工序">
+          <h3 style="text-align:center">涉及关系明细</h3>
+          <el-table :data="tableData">
+            <el-table-column prop="parameter" label="工序"></el-table-column>
+            <el-table-column prop="parameterDes" label="工序描述"></el-table-column>
+          </el-table>
+        </el-tab-pane>
+      </el-tabs>
+      <span slot="footer" class="dialog-footer">
+        <dsn-button @click="handleCancle">取 消</dsn-button>
+        <dsn-button type="primary" @click="handleSave">确 定</dsn-button>
+      </span>
+    </el-dialog>
+    <!-- 查看多个关系明细end -->
   </div>
 </template>
 
@@ -182,9 +232,9 @@ export default {
   data() {
     return {
       formLabelWidth: "85px",
-      dialog: false,
+      paramsDialog: false,
+      detailDialog: false,
       searchForm: {
-        tenantSiteCode: "test",
         acceptValue: "",
         collectionType: ""
       },
@@ -217,7 +267,9 @@ export default {
           value: 20,
           label: "资源"
         }
-      ]
+      ],
+      activeNameLeft: "baseRelation",
+      activeNameRight: "paramsInput"
     };
   },
   created() {
@@ -245,7 +297,7 @@ export default {
               this.paramsTableData = data.data.data.dcParameterMeasureList;
             } else {
               this.tableData = data.data.data.dcGroupList;
-              this.dialog = true;
+              this.paramsDialog = true;
             }
           });
         } else {
@@ -275,11 +327,11 @@ export default {
       this.$forceUpdate();
     },
     handleCancle() {
-      this.dialog = false;
+      this.paramsDialog = false;
     },
     handleSave() {
       if (this.checkedList.length == 1) {
-        this.dialog = false;
+        this.paramsDialog = false;
         let params = this.checkedList[0];
         getParamsList(params).then(data => {
           this.paramsTableData = data.data.data;
@@ -315,8 +367,27 @@ export default {
         }
       });
     },
+    //复选框选择
     handleSelectionChange(val) {
       this.selectionList = val;
+    },
+    //左边页签选择
+    handleClickLeft(tab) {
+      if (tab.name === "baseRelation") {
+        this.detailDialog = false;
+      }
+      if (tab.name === "lookDetail") {
+        this.detailDialog = true;
+      }
+    },
+    //右边页签选择
+    handleClickRight(tab) {
+      if (tab.name === "paramsInput") {
+        this.paramsDialog = false;
+      }
+      if (tab.name === "paramsDetail") {
+        this.paramsDialog = true;
+      }
     }
   }
 };
@@ -330,6 +401,10 @@ export default {
   .baseInfoForm {
     .el-form-item {
       margin-bottom: 0px;
+      .el-input__inner {
+        background: #fff;
+        border: 0;
+      }
     }
   }
 }

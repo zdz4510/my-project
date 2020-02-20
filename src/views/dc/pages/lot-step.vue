@@ -92,13 +92,6 @@
       >
       </el-pagination>
     </div>-->
-    <el-dialog title="删除" :visible.sync="deleteDialog" width="30%">
-      <span>是否确认删除{{ selectionList.length }}条数据？</span>
-      <span slot="footer" class="dialog-footer">
-        <dsn-button @click="deleteDialog = false">取 消</dsn-button>
-        <dsn-button type="primary" @click="handleDelete">确 定</dsn-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 
@@ -139,6 +132,7 @@ export default {
     };
   },
   created() {
+    //详情页面返回信息获取
     if (this.lotStepAllInfo.length > 0) {
       this.lotStepForm = this.lotStepAllInfo[0].lotStepForm;
       this.queryLots = this.lotStepAllInfo[0].queryLots;
@@ -146,9 +140,8 @@ export default {
       this.stepIdList = this.lotStepAllInfo[0].stepIdList;
       this.tableData = this.lotStepAllInfo[0].tableData;
     }
-    console.log(this.lotStepAllInfo);
+    //查询页面返回带的数据
     if (this.lotQueryList.length === 1) {
-      console.log(this.lotQueryList.length);
       this.lotStepForm.lot = this.lotQueryList[0].lot;
     }
     if (this.lotQueryList.length > 1) {
@@ -278,8 +271,8 @@ export default {
     },
     //跳转到查询LOT界面
     goQuery() {
-      if (this.queryLots.length > 1) {
-        this.LOTQUERYLIST(this.cloneLotQueryList);
+      this.LOTQUERYLIST(JSON.parse(JSON.stringify(this.cloneLotQueryList)));
+      if (this.lotQueryList.length > 1) {
         this.$router.push({
           name: "lotQuery",
           query: { lot: "" }
@@ -291,7 +284,6 @@ export default {
         });
       }
     },
-    handleDelete() {},
     handleQuery() {
       this.queryLots = [];
       if (this.cloneLotQueryList.length > 0) {

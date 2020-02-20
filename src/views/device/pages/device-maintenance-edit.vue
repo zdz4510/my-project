@@ -59,8 +59,9 @@
                   style="width: 200px"
                   v-model.trim="maintenanceForm.workCenter"
                   class="workCenter"
-                ></dsn-input>
-                <i class="el-icon-document" @click="queryWorkCenter"></i>
+                >
+                  <i class="el-icon-document" slot="append" @click="queryWorkCenter"></i>
+                </dsn-input>
               </el-form-item>
             </el-form>
           </el-tab-pane>
@@ -111,7 +112,7 @@
                   <el-option
                     v-for="(item,index) in userList"
                     :key="index"
-                    :label="item.id"
+                    :label="item.name"
                     :value="item.id"
                   ></el-option>
                 </el-select>
@@ -129,24 +130,25 @@
               <el-form-item label="保养周期" prop="maintenancePeriod">
                 <dsn-input
                   v-model.number="upkeepConfigForm.maintenancePeriod"
-                  style="width: 105px"
                   placeholder="保养周期"
                   class="upkeepCycle"
                   size="small"
-                ></dsn-input>
-                <dsn-select
-                  v-model="upkeepConfigForm.periodUnit"
-                  label="upkeepConfigForm.periodUnit"
-                  class="upkeepCycle"
-                  size="small"
-                  style="width: 110px"
+                  style="width:215px"
                 >
-                  <el-option label="天数" :value="1">天数</el-option>
-                  <el-option label="月份" :value="30">月份</el-option>
-                  <el-option label="季度" :value="90">季度</el-option>
-                  <el-option label="半年" :value="180">半年</el-option>
-                  <el-option label="年" :value="365">年</el-option>
-                </dsn-select>
+                  <dsn-select
+                    v-model="upkeepConfigForm.periodUnit"
+                    label="upkeepConfigForm.periodUnit"
+                    class="upkeepCycle"
+                    size="small"
+                    slot="append"
+                  >
+                    <el-option label="天数" :value="1">天数</el-option>
+                    <el-option label="月份" :value="30">月份</el-option>
+                    <el-option label="季度" :value="90">季度</el-option>
+                    <el-option label="半年" :value="180">半年</el-option>
+                    <el-option label="年" :value="365">年</el-option>
+                  </dsn-select>
+                </dsn-input>
               </el-form-item>
               <el-form-item label="启用预警功能" prop="warningFunction">
                 <el-radio-group v-model="upkeepConfigForm.warningFunction" @change="selectWarnFunc">

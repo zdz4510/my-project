@@ -310,6 +310,7 @@ export default {
   created() {
     this.lotConditionForm.lot = this.$route.query.lot;
     this.tableData = JSON.parse(JSON.stringify(this.lotQueryList));
+    this.total = this.tableData.length;
   },
   computed: {
     ...mapGetters(["lotQueryList"])
@@ -396,11 +397,19 @@ export default {
         });
         return;
       }
-      const tempArr = JSON.parse(JSON.stringify(this.selectionList));
       // this.selectionList.forEach(element => {
-      //   tempArr.push(element.lot);
+      //   console.log(element);
+      //   console.log(this.lotQueryList.indexOf(element));
+      //   if (this.lotQueryList.indexOf(element) === -1) {
+      //     this.lotQueryList.push(JSON.parse(JSON.stringify(element)));
+      //   }
       // });
-      this.LOTQUERYLIST(tempArr);
+      this.selectionList.forEach(item => {
+        if (!this.lotQueryList.find(item2 => item2.lot === item.lot)) {
+          this.lotQueryList.push(item);
+        }
+      });
+      this.LOTQUERYLIST(JSON.parse(JSON.stringify(this.lotQueryList)));
       this.goBack();
     },
     //物料查询start
