@@ -183,6 +183,8 @@ export default {
               this.$message.success("删除成功");
               _this.search();
               this.$refs.multipleTable.clearSelection();
+            } else {
+              this.$message.error(data.data.message)
             }
           });
         })
