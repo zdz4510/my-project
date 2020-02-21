@@ -96,8 +96,10 @@ import {
   saveData
 } from "../../../api/alarm.group.api";
 import _ from "lodash";
+import { mapMutations } from "vuex";
 export default {
   name: "add-alarm-group",
+
   data() {
     return {
       formLabelWidth: "150px",
@@ -148,6 +150,7 @@ export default {
     });
   },
   methods: {
+    ...mapMutations(["POPROUTER"]),
     save(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -168,6 +171,7 @@ export default {
                     message: "保存成功!"
                   });
                   setTimeout(() => {
+                    this.POPROUTER(this.$router.name)
                     this.$router.push({ path: "/alarm/alarmGroup" });
                   }, 1000);
                 } else {
