@@ -67,6 +67,15 @@ export const getUserList = () => {
   return request.post(`${window.VUE_APP_URL}/mes/workCenter/listOuterUser`);
 };
 
+
+/**
+ * 获取所有用户
+ * url /mes/workCenter/findAllUser
+ */
+export const findAllUserHttp = () => {
+  return request.post(`${window.VUE_APP_URL}/mes/workCenter/findAllUser`);
+};
+
 /**
  * 模糊搜索
  * url /workCenter/findPage
