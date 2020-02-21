@@ -137,10 +137,10 @@
                 >
                   <dsn-select
                     v-model="upkeepConfigForm.periodUnit"
-                    label="upkeepConfigForm.periodUnit"
                     class="upkeepCycle"
                     size="small"
                     slot="append"
+                    @change="periodUnit"
                   >
                     <el-option label="天数" :value="1">天数</el-option>
                     <el-option label="月份" :value="30">月份</el-option>
@@ -215,7 +215,7 @@ import {
   findResourceMaintenanceListHttp,
   saveResourceMaintenanceHttp
 } from "@/api/device/maintenance.api.js";
-import { getAllLevel1Http, findAllUserList } from "@/api/work.center.api.js";
+import { getAllLevel1Http, findAllUserHttp } from "@/api/work.center.api.js";
 import workCenterModel from "../components/work-center-model.vue";
 import _ from "lodash";
 
@@ -694,7 +694,7 @@ export default {
     },
     //查询保养人员信息start
     queryUserGroup() {
-      findAllUserList().then(data => {
+      findAllUserHttp().then(data => {
         const res = data.data;
         if (res.code === 200) {
           this.userList = res.data;
@@ -702,6 +702,9 @@ export default {
         }
         this.$message({ type: "warning", message: res.message });
       });
+    },
+    periodUnit(val) {
+      console.log(val);
     }
   }
 };
