@@ -410,7 +410,8 @@ export default {
       this.list2 = _.concat(this.list2, this.leftSelectList);
       this.list2 = _.uniq(this.list2);
       this.list = _.difference(this.list, this.leftSelectList);
-      this.selectionList = [];
+      this.cloneList2= _.cloneDeep(this.list2);
+      // this.selectionList = [];
     },
     fiterRight(item, arr) {
       return arr.filter(subItem => {
