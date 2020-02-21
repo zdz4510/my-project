@@ -1,20 +1,21 @@
 <template>
   <div class="edit-alarm-maintain">
     <div class="operate">
-      <el-button size="small" type="primary" @click="goBack">返回</el-button>
-      <el-button size="small" type="primary" @click="handleSave('editForm')">保存</el-button>
+      <dsn-button size="small" type="primary" @click.native="goBack">返回</dsn-button>
+      <dsn-button size="small" type="primary" @click.native="handleSave('editForm')">保存</dsn-button>
+      <dsn-button size="small" type="primary" @click.native="handleReset">重置</dsn-button>
     </div>
-    <el-row :gutter="20" class="bgw">
+    <el-row :gutter="20">
       <el-col :span="6">
-        <div>
-          <el-select
+        <div class="editList">
+          <dsn-select
             v-model="value"
             clearable
             placeholder="请选择"
             :disabled="selectIsDisabled"
             @clear="handleClearSelect"
             @change="handleChangeOption"
-            @focus="handleSelectFocus"
+            style="margin-bottom: 30px"
             ref="select"
           >
             <el-option
@@ -23,8 +24,8 @@
               :label="item.alarm"
               :value="item.alarm"
             ></el-option>
-          </el-select>
-          <el-table
+          </dsn-select>
+          <dsn-table
             ref="editTable"
             :data="cloneList"
             border
@@ -34,11 +35,11 @@
             @row-click="handleCurrentChange"
           >
             <el-table-column label="事件编号" prop="alarm"></el-table-column>
-          </el-table>
+          </dsn-table>
         </div>
       </el-col>
       <el-col :span="18">
-        <div>
+        <div class="dataList">
           <el-form
             :inline="true"
             :model="editForm"
@@ -46,193 +47,169 @@
             :rules="rules"
             class="form-style"
             label-position="right"
-            :label-width="formLabelWidth"
           >
             <el-row>
               <el-col :span="8">
                 <el-form-item label="事件编号:" prop="alarm" required>
-                  <el-input v-model="editForm.alarm" disabled></el-input>
+                  <dsn-input v-model="editForm.alarm" disabled></dsn-input>
                 </el-form-item>
               </el-col>
               <el-col :span="8">
                 <el-form-item label="事件主题:" prop="theme" required>
-                  <el-input v-model="editForm.theme"></el-input>
+                  <dsn-input v-model="editForm.theme"></dsn-input>
                 </el-form-item>
               </el-col>
             </el-row>
-            <el-row>
-              <el-col :span="24">
-                <el-tabs v-model="activeName" type="card">
-                  <el-tab-pane label="预警事件信息维护" name="first">
-                    <el-row>
-                      <el-col :span="8">
-                        <el-form-item label="预警事件等级:" prop="alarmLevelFlag">
-                          <el-select v-model="editForm.alarmLevelFlag">
-                            <el-option
-                              v-for="item in alarmLevel"
-                              :key="item.value"
-                              :label="item.label"
-                              :value="item.value"
-                            ></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :span="10">
-                        <el-form-item label="事件通知方式:" prop>
-                          <el-checkbox v-model="editForm.actionWeixinFlag">企业微信</el-checkbox>
-                          <el-checkbox v-model="editForm.actionMailFlag">邮箱通知</el-checkbox>
-                          <el-checkbox v-model="editForm.actionSmsFlag">短信通知</el-checkbox>
-                          <el-checkbox v-model="editForm.actionSystemFlag">系统弹窗通知</el-checkbox>
-                        </el-form-item>
-                      </el-col>
-                    </el-row>
-                    <el-row class="input-form">
-                      <el-col :span="15">
-                        <el-tabs v-model="activeImputName">
-                          <el-tab-pane label="企业微信" name="first">
-                            <el-input
-                              type="textarea"
-                              v-model="editForm.weixinInformDetails"
-                              :autosize="{ minRows: 6, maxRows: 10}"
-                              placeholder="请输入事件内容"
-                            ></el-input>
-                          </el-tab-pane>
-                          <el-tab-pane label="邮箱" name="second">
-                            <el-input
-                              type="textarea"
-                              v-model="editForm.mailInformDetails"
-                              :autosize="{ minRows: 6, maxRows: 10}"
-                              placeholder="请输入事件内容"
-                            ></el-input>
-                          </el-tab-pane>
-                          <el-tab-pane label="短信" name="third">
-                            <el-input
-                              type="textarea"
-                              v-model="editForm.smsInformDetails"
-                              :autosize="{ minRows: 6, maxRows: 10}"
-                              placeholder="请输入事件内容"
-                            ></el-input>
-                          </el-tab-pane>
-                          <el-tab-pane label="系统弹窗" name="fourth">
-                            <el-input
-                              type="textarea"
-                              v-model="editForm.systemInformDetails"
-                              :autosize="{ minRows: 6, maxRows: 10}"
-                              placeholder="请输入事件内容"
-                            ></el-input>
-                          </el-tab-pane>
-                        </el-tabs>
-                      </el-col>
-                    </el-row>
-                  </el-tab-pane>
-                  <el-tab-pane label="预警事件通知维护" name="second">
-                    <el-row>
-                      <el-col :span="10" :offset="10">
-                        <el-form-item label="复制事件通知人员:">
-                          <el-select v-model="alarm" clearable filterable @change="onChange">
-                            <el-option
-                              v-for="item in workers"
-                              :key="item.alarm"
-                              :label="item.alarm"
-                              :value="item.alarm"
-                            ></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
-                    </el-row>
-                    <el-row>
-                      <el-col :span="10">
-                        <el-form-item label="输入搜索条件:" prop="width">
-                          <el-input
-                            placeholder="请输入内容"
-                            v-model="input1"
-                            class="input-with-select"
-                            @input="getAllocate"
-                          >
-                            <el-select
-                              v-model="select1"
-                              slot="prepend"
-                              placeholder="请选择"
-                              clearable
-                              @change="getAllocate"
-                            >
-                              <el-option label="个人" value="10"></el-option>
-                              <el-option label="工作中心" value="20"></el-option>
-                            </el-select>
-                          </el-input>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :span="10">
-                        <el-form-item label="输入搜索条件:" prop="width">
-                          <el-input
-                            placeholder="请输入内容"
-                            v-model="input2"
-                            class="input-with-select"
-                            @input="getUnallocate"
-                          >
-                            <el-select
-                              v-model="select2"
-                              slot="prepend"
-                              placeholder="请选择"
-                              clearable
-                              @change="getUnallocate"
-                            >
-                              <el-option label="个人" value="10"></el-option>
-                              <el-option label="工作中心" value="20"></el-option>
-                            </el-select>
-                          </el-input>
-                        </el-form-item>
-                      </el-col>
-                    </el-row>
-                    <el-row>
-                      <el-col :span="9">
-                        <el-table :data="allocateData" @select="check1" @select-all="check1">
-                          <el-table-column label="接收信息用户">
-                            <el-table-column type="selection" width="55"></el-table-column>
-                            <el-table-column prop="informUserId" label="名称"></el-table-column>
-                            <el-table-column label="类型">
-                              <template
-                                slot-scope="scope"
-                              >{{ scope.row.userType == 10 ? '个人' : (scope.row.userType == 20 ? '工作中心' : '--') }}</template>
-                            </el-table-column>
-                            <el-table-column prop label="描述"></el-table-column>
-                          </el-table-column>
-                        </el-table>
-                      </el-col>
-                      <el-col :span="2">
-                        <div class="direction mt70">
-                          <i class="el-icon-caret-right" @click="right"></i>
-                        </div>
-                        <div class="direction">
-                          <i class="el-icon-caret-left" @click="left"></i>
-                        </div>
-                      </el-col>
-                      <el-col :span="9">
-                        <el-table :data="unallocateData" @select="check2" @select-all="check2">
-                          <el-table-column label="未接收信息用户">
-                            <el-table-column type="selection" width="55"></el-table-column>
-                            <el-table-column prop="informUserId" label="名称"></el-table-column>
-                            <el-table-column label="类型">
-                              <template
-                                slot-scope="scope"
-                              >{{ scope.row.userType == 10 ? '个人' : (scope.row.userType == 20 ? '工作中心' : '--') }}</template>
-                            </el-table-column>
-                            <el-table-column prop label="描述"></el-table-column>
-                          </el-table-column>
-                        </el-table>
-                      </el-col>
-                    </el-row>
-                  </el-tab-pane>
-                </el-tabs>
-              </el-col>
-            </el-row>
+          <el-tabs v-model="activeName" type="border-card">
+            <el-tab-pane label="预警事件信息维护" name="first">
+              <el-row>
+                <el-col :span="8">
+                  <el-form-item label="预警事件等级:" prop="alarmLevelFlag">
+                    <dsn-select v-model="editForm.alarmLevelFlag">
+                      <el-option
+                        v-for="item in alarmLevel"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                      ></el-option>
+                    </dsn-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="16">
+                  <el-form-item label="事件通知方式:" prop>
+                    <el-checkbox v-model="editForm.actionWeixinFlag">企业微信</el-checkbox>
+                    <el-checkbox v-model="editForm.actionMailFlag">邮箱通知</el-checkbox>
+                    <el-checkbox v-model="editForm.actionSmsFlag">短信通知</el-checkbox>
+                    <el-checkbox v-model="editForm.actionSystemFlag">系统弹窗通知</el-checkbox>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row class="input-form">
+                <el-col :span="24">
+                  <el-tabs v-model="activeImputName">
+                    <el-tab-pane label="企业微信" name="first">
+                      <dsn-input
+                        type="textarea"
+                        v-model="editForm.weixinInformDetails"
+                        :autosize="{ minRows: 6, maxRows: 10}"
+                        placeholder="请输入事件内容"
+                      ></dsn-input>
+                    </el-tab-pane>
+                    <el-tab-pane label="邮箱" name="second">
+                      <dsn-input
+                        type="textarea"
+                        v-model="editForm.mailInformDetails"
+                        :autosize="{ minRows: 6, maxRows: 10}"
+                        placeholder="请输入事件内容"
+                      ></dsn-input>
+                    </el-tab-pane>
+                    <el-tab-pane label="短信" name="third">
+                      <dsn-input
+                        type="textarea"
+                        v-model="editForm.smsInformDetails"
+                        :autosize="{ minRows: 6, maxRows: 10}"
+                        placeholder="请输入事件内容"
+                      ></dsn-input>
+                    </el-tab-pane>
+                    <el-tab-pane label="系统弹窗" name="fourth">
+                      <dsn-input
+                        type="textarea"
+                        v-model="editForm.systemInformDetails"
+                        :autosize="{ minRows: 6, maxRows: 10}"
+                        placeholder="请输入事件内容"
+                      ></dsn-input>
+                    </el-tab-pane>
+                  </el-tabs>
+                </el-col>
+              </el-row>
+            </el-tab-pane>
+            <el-tab-pane label="预警事件通知维护" name="second">
+              <el-row>
+                <el-col :span="11" :offset="13">
+                  <el-form-item label="复制事件通知人员:">
+                    <dsn-select v-model="alarm" clearable filterable @change="onChange">
+                      <el-option
+                        v-for="item in workers"
+                        :key="item.alarm"
+                        :label="item.alarm"
+                        :value="item.alarm"
+                      ></el-option>
+                    </dsn-select>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col :span="11" :offset="13">
+                  <el-form-item label="输入搜索条件:" prop="width">
+                    <dsn-select
+                      v-model="select2"
+                      style="width: 100px"
+                      placeholder="请选择"
+                      :clearable="false"
+                      @change="getUnallocate"
+                    >
+                      <el-option label="个人" value="10"></el-option>
+                      <el-option label="工作中心" value="20"></el-option>
+                    </dsn-select>
+                    <dsn-input
+                      placeholder="请输入内容"
+                      v-model="input2"
+                      :disabled="!select2"
+                      style="width: 150px"
+                      class="input-with-select"
+                      @input="getUnallocate"
+                    >
+                    </dsn-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col :span="11">
+                  <dsn-table :data="allocateData" @select="check1" @select-all="check1">
+                    <el-table-column label="接收信息用户">
+                      <el-table-column type="selection" width="55"></el-table-column>
+                      <el-table-column prop="informUserId" label="名称"></el-table-column>
+                      <el-table-column label="类型">
+                        <template
+                          slot-scope="scope"
+                        >{{ scope.row.userType == 10 ? '个人' : (scope.row.userType == 20 ? '工作中心' : '--') }}</template>
+                      </el-table-column>
+                      <el-table-column prop label="描述"></el-table-column>
+                    </el-table-column>
+                  </dsn-table>
+                </el-col>
+                <el-col :span="2">
+                  <div class="direction mt70">
+                    <i class="el-icon-caret-right" @click="right"></i>
+                  </div>
+                  <div class="direction">
+                    <i class="el-icon-caret-left" @click="left"></i>
+                  </div>
+                </el-col>
+                <el-col :span="11">
+                  <dsn-table :data="unallocateData" @select="check2" @select-all="check2">
+                    <el-table-column label="未接收信息用户">
+                      <el-table-column type="selection" width="55"></el-table-column>
+                      <el-table-column prop="informUserId" label="名称"></el-table-column>
+                      <el-table-column label="类型">
+                        <template
+                          slot-scope="scope"
+                        >{{ scope.row.userType == 10 ? '个人' : (scope.row.userType == 20 ? '工作中心' : '--') }}</template>
+                      </el-table-column>
+                      <el-table-column prop label="描述"></el-table-column>
+                    </el-table-column>
+                  </dsn-table>
+                </el-col>
+              </el-row>
+            </el-tab-pane>
+          </el-tabs>
           </el-form>
           <!-- 确认模态框 -->
           <el-dialog title="保存" :visible.sync="saveDialog" width="30%">
             <span>是否保存数据？</span>
             <span slot="footer" class="dialog-footer">
-              <el-button @click="handleCancle">取 消</el-button>
-              <el-button type="primary" @click="handleSave('editForm')">确 定</el-button>
+              <dsn-button @click.native="handleCancle">取 消</dsn-button>
+              <dsn-button type="primary" @click.native="handleSave('editForm')">确 定</dsn-button>
             </span>
           </el-dialog>
         </div>
@@ -246,7 +223,8 @@ import { mapGetters, mapMutations } from "vuex";
 import {
   getWorkerInfo,
   updateData,
-  getDataByAlarm
+  getDataByAlarm,
+  getUnallocated,
 } from "../../../api/alarm.maintain.api";
 import _ from "lodash";
 export default {
@@ -321,14 +299,13 @@ export default {
     this.alarm = this.alarmMaintainEditList[0].alarm;
     let params = this.alarm;
     getDataByAlarm(params).then(data => {
-      console.log(data);
       this.workers = data.data.data;
     });
     let p = {
       alarm: this.alarm
     };
     getWorkerInfo(p).then(data => {
-      this.unallocateData = data.data.data;
+      this.unallocateData = [];
       this.cloneUnallocateData = data.data.data;
       this.allocateData = data.data.data;
       this.cloneAllocateData = data.data.data;
@@ -357,30 +334,16 @@ export default {
       }
       //过滤数组
       const tempList = this.cloneList.filter(item => item["alarm"] == row);
-      console.log(tempList);
       this.cloneList = tempList;
       this.editForm = tempList[0];
       this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
       this.setCurrent(tempList[0]);
       let params = this.editForm.alarm;
       getDataByAlarm(params).then(data => {
-        console.log(data);
         this.workers = data.data.data;
       });
     },
-    //下拉列表获取到焦点时触发
-    handleSelectFocus() {
-      // this.oldRow = oldRow;
-      //  当前编辑的和之前的数据不一样就显示弹窗
-      if (JSON.stringify(this.editForm) !== JSON.stringify(this.cloneModify)) {
-        this.saveDialog = true; // 保存弹出框出现
-        this.selectIsDisabled = true; // 禁用下拉框
-        this.$refs["select"].blur();
-      } else {
-        this.saveDialog = false;
-        this.selectIsDisabled = false;
-      }
-    },
+
     //设置某一行被选中
     setCurrent(row) {
       this.$refs.editTable.setCurrentRow(row);
@@ -395,18 +358,17 @@ export default {
     },
     // 点击某一行选中后操作的状态你
     handleCurrentChange(currentRow) {
-      this.oldRow = this.currentRow;
-      this.currentRow = currentRow;
-      if (JSON.stringify(this.editForm) !== JSON.stringify(this.cloneModify)) {
-        this.saveDialog = true; // 弹出保存的提示框
-        return;
-      }
-      this.editForm = currentRow;
-      this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
-      let params = this.editForm.alarm;
-      getDataByAlarm(params).then(data => {
-        console.log(data);
-        this.workers = data.data.data;
+      const { alarmMaintainEditList } = this;
+      this.editForm = _.cloneDeep(alarmMaintainEditList.find(item => item.alarm === currentRow.alarm));
+      const { alarm } = this.editForm;
+      this.alarm = alarm;
+      this.input2 = '';
+      this.select2 = '';
+      getWorkerInfo({alarm}).then(data => {
+        this.unallocateData = [];
+        this.cloneUnallocateData = data.data.data;
+        this.allocateData = data.data.data;
+        this.cloneAllocateData = data.data.data;
       });
     },
     //选中某一行
@@ -453,7 +415,6 @@ export default {
             alarm: this.editForm.alarm
           }));
           this.editForm.alarmDefInformList = this.allocateData;
-          console.log(this.editForm);
           let params = this.editForm;
           updateData(params).then(data => {
             const res = data.data;
@@ -505,14 +466,43 @@ export default {
         }
       });
     },
+
+    handleReset() {
+      const { editForm, alarmMaintainEditList } = this;
+      this.editForm = _.cloneDeep(alarmMaintainEditList.find(item => item.alarm === editForm.alarm));
+      const { alarm } = this.editForm;
+      this.select2 = '';
+      this.input2 = '';
+      this.alarm = alarm;
+      getWorkerInfo({alarm}).then(data => {
+        this.unallocateData = [];
+        this.cloneUnallocateData = data.data.data;
+        this.allocateData = data.data.data;
+        this.cloneAllocateData = data.data.data;
+      });
+    },
+
     onChange(val) {
-      console.log(val);
+      this.select2 ='';
       let params = {
         alarm: val
       };
-      getWorkerInfo(params).then(data => {
-        this.unallocateData = data.data.data;
-        this.cloneUnallocateData = data.data.data;
+      getWorkerInfo(params).then(res => {
+        const { data: {
+          data,
+          code,
+          message
+        }} = res;
+        if (code === 200) {
+          if (this.allocateData.length) {
+            // this.unallocateData = data;
+          this.unallocateData = _.differenceBy(data, this.allocateData, 'informUserId');
+          } else {
+            this.unallocateData = data;
+          }
+        } else {
+          this.$message.error(message);
+        }
       });
     },
     check1(val) {
@@ -525,7 +515,6 @@ export default {
       this.unallocateData = _.concat(this.unallocateData, this.selectedList);
       this.unallocateData = _.uniq(this.unallocateData);
       this.allocateData = _.difference(this.allocateData, this.selectedList);
-      console.log(this.unallocateData, "un");
       this.cloneAllocateData = _.cloneDeep(this.allocateData);
     },
     left() {
@@ -535,36 +524,35 @@ export default {
         this.unallocateData,
         this.selectedList2
       );
-      console.log(this.unallocateData, "all");
       this.cloneAllocateData = _.cloneDeep(this.allocateData);
     },
     getUnallocate() {
-      console.log("ss");
-      if (this.select2) {
-        this.unallocateData = this.cloneUnallocateData;
-        this.unallocateData = this.unallocateData.filter(item => {
-          if (this.input2) {
-            return (
-              item.userType == this.select2 &&
-              item.informUserId.indexOf(this.input2) > -1
-            );
-          } else {
-            return item.userType == this.select2;
-          }
-        });
-      } else {
-        this.unallocateData = this.cloneUnallocateData;
-        this.unallocateData = this.unallocateData.filter(item => {
-          if (this.input2.length > 0) {
-            return item.informUserId.indexOf(this.input2) > -1;
-          } else {
-            return true;
-          }
-        });
+      this.alarm = '';
+      const params = {
+        userType: this.select2,
+        informUserId: this.input2
       }
+      getUnallocated(params).then(res => {
+        const {
+          data: {
+            data,
+            message,
+            code
+          }
+        } = res;
+        if (code === 200) {
+          if (this.allocateData.length) {
+           this.unallocateData = _.differenceBy(data, this.allocateData, 'informUserId');
+            // this.unallocateData = data;
+          } else {
+            this.unallocateData = data;
+          }
+        } else {
+          this.$message.error(message);
+        }
+      })
     },
     getAllocate() {
-      console.log("ds");
       if (this.select1) {
         this.allocateData = this.cloneAllocateData;
         this.allocateData = this.allocateData.filter(item => {
@@ -578,7 +566,6 @@ export default {
           }
         });
       } else {
-        console.log(this.cloneAllocateData, "d");
         this.allocateData = this.cloneAllocateData;
         this.allocateData = this.allocateData.filter(item => {
           if (this.input1.length > 0) {
@@ -596,30 +583,15 @@ export default {
 <style lang="scss">
 .edit-alarm-maintain {
   .operate {
-    background: #ffffff;
-    padding: 10px;
+    padding: 14px 14px 0;
+    background: #fff;
+    margin-bottom: 14px;
+		border-radius: 4px;
   }
-  .editForm {
-    background: #ffffff;
-    padding: 10px;
-    .dec {
-      width: 756px !important;
-    }
-    .el-textarea /deep/ .el-textarea__inner {
-      width: 622px;
-    }
-    .el-table /deep/ .success-row {
-      background: #f0f9eb;
-    }
-    .bgw {
-      background: #ffffff;
-    }
-    .input-form {
-      margin-left: 20px;
-    }
-    .el-select /deep/ .el-input {
-      width: 200px;
-    }
+  .editList, .dataList {
+    padding: 14px;
+    background: #fff;
+		border-radius: 4px;
 
     .mt70 {
       margin-top: 70px;

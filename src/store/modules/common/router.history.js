@@ -25,25 +25,40 @@ const routerHistory = {
       }
     },
     // 删除路由信息
-    POP(state, deleteItem) {
+    POP(state, {deleteItem,current}) {
+      console.log(deleteItem,current)
       const len = state.historyList.length;
       if (len == 1) {
         return;
       }
+      // 如果删除的是当前的
+      if(deleteItem.name===current.name){   // 删除的是当前的路由
+        state.historyList = state.historyList.filter(item => {
+          return item.name != deleteItem.name;
+        });
+        const len = state.historyList.length;
+        const arr =  state.historyList
+        router.push({ name: arr[len - 1].name });
 
-      let flag = false;
-      if (state.historyList[len - 1].name == deleteItem.name) {
-        flag = true;
+        return
       }
+      // 如果删除的不是当前的
+      // let flag = false;
       state.historyList = state.historyList.filter(item => {
         return item.name != deleteItem.name;
       });
+      // if (state.historyList[len - 1].name == deleteItem.name) {
+      //   flag = true;
+      // }
+      // state.historyList = state.historyList.filter(item => {
+      //   return item.name != deleteItem.name;
+      // });
       // 如果删除的是当前的则最后一个高亮
-      if (flag) {
-        let arr = state.historyList;
-        let len = state.historyList.length;
-        router.push({ name: arr[len - 1].name });
-      }
+      // if (flag) {
+      //   let arr = state.historyList;
+      //   let len = state.historyList.length;
+      //   router.push({ name: arr[len - 1].name });
+      // }
     },
     /**
      *  关闭所有

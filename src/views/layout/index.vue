@@ -68,8 +68,12 @@ export default {
       this.isCollapse = !this.isCollapse;
       this.$refs["leftMenu"].toggle();
     },
-    close(item) {
-      this.POP(item);
+    /**
+     *  deleteItem 删除的路由对象 ，current 当前的路由对象
+     */
+    close(item,current) {
+      
+      this.POP({deleteItem:item,current});
     },
     toPage(item) {
       this.$router.push({ path: item.fullPath });

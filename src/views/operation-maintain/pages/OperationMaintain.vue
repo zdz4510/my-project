@@ -125,6 +125,7 @@ export default {
     ...mapMutations(["SETOPERATIONEDITLIST"]),
     resetForm(formName) {
       this.$refs[formName].resetFields();
+      this.$refs['multipleTable'].clearSelection();
       this.search();
     },
     search() {
