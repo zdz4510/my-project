@@ -104,7 +104,7 @@
                   </el-table-column> -->
                   <el-table-column prop="materialType" label="物料分类"></el-table-column>
                   <el-table-column prop="materialDes" label="物料描述"></el-table-column>
-                  <el-table-column prop="materialRev" label="物料状态"></el-table-column>
+                  <el-table-column prop="materialStatus" label="物料状态"></el-table-column>
                 </el-table-column>
               </dsn-table>
             </el-col>
@@ -137,7 +137,9 @@
                   </el-table-column> -->
                   <el-table-column prop="materialType" label="物料分类"></el-table-column>
                   <el-table-column prop="materialDes" label="物料描述"></el-table-column>
-                  <el-table-column prop="materialRev" label="物料状态"></el-table-column>
+                  <el-table-column prop="materialStatus" label="物料状态">
+                    <template slot-scope="scope">{{ scope.row.materialStatus ? '是' : '否' }}</template>
+                  </el-table-column>
                 </el-table-column>
               </dsn-table>
             </el-col>
@@ -221,8 +223,8 @@ export default {
     this.materialGroupForm = this.cloneList[0];
     if (this.operateType === "edit") {
       this.isEditResource = true;
-      // console.log(JSON.parse(JSON.stringify(this.materialGroupList)),"数据是？")
       this.transferData=this.materialGroupForm.materialList;
+       console.log(JSON.parse(JSON.stringify(this.materialGroupForm.materialList)),"数据是？")
       this.untransferData=this.materialGroupForm.outerMaterialList;
       // .forEach(element => {
       //   this.value.push(element.material);
