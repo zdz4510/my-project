@@ -4,6 +4,7 @@
     <div>
       <dsn-button @click.native="addRow">添加</dsn-button>
       <dsn-button @click.native="deleteRow">删除</dsn-button>
+       <dsn-button @click="testPrint">测试打印</dsn-button>
     </div>
     <dsn-table
       :data="tableData"
@@ -12,13 +13,10 @@
       @current-change="handleCurrentChange"
       style="width: 100%"
     >
-      <el-table-column type="index" label="序号" width="50"> </el-table-column>
+      <el-table-column type="index" label="序号" width="50"></el-table-column>
       <el-table-column prop="date" label="打印设备">
-      <template slot-scope="scope">
-          <dsn-select
-            v-model="scope.row.print"
-            @focus="handleGetPrintDevicesAvailable"
-          >
+        <template slot-scope="scope">
+          <dsn-select v-model="scope.row.print" @focus="handleGetPrintDevicesAvailable">
             <el-option
               :label="item"
               :value="item"
@@ -29,11 +27,8 @@
         </template>
       </el-table-column>
       <el-table-column prop="name" label="标签id">
-         <template slot-scope="scope">
-          <dsn-select
-            v-model="scope.row.label"
-            @focus="handleSelectTag"
-          >
+        <template slot-scope="scope">
+          <dsn-select v-model="scope.row.label" @focus="handleSelectTag">
             <el-option
               :label="item.label"
               :value="item.label"
@@ -45,7 +40,7 @@
       </el-table-column>
       <el-table-column prop="address" label="打印数量">
         <template slot-scope="scope">
-          <dsn-input  type="number" v-model="scope.row.num" />
+          <dsn-input type="number" v-model="scope.row.num" />
         </template>
       </el-table-column>
     </dsn-table>
@@ -69,14 +64,14 @@ export default {
       current: null,
       restaurants: [],
       getDeviceList: [],
-      tagSelectList:[]
+      tagSelectList: []
     };
   },
   created() {
-     this.handleSelectTag();
-     this.handleGetPrintDevicesAvailable();
+    this.handleSelectTag();
+    this.handleGetPrintDevicesAvailable();
   },
- 
+
   methods: {
     // 获取标签模板的下拉框内容
     handleSelectTag(label = "") {
@@ -88,6 +83,10 @@ export default {
           this.tagSelectList = res.data.data;
         }
       });
+    },
+    // 测试打印  
+    testPrint(){
+
     },
     // 获取打印设置
     handleGetPrintDevicesAvailable() {

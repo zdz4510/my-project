@@ -23,7 +23,8 @@ export default {
   },
   methods: {
     close() {
-      this.$emit("close", this.item);
+      // console.log(this.$route.name)
+      this.$emit("close", this.item,this.$route.name);
     },
     toPage(item) {
       if (this.$route.name === item.name) {
