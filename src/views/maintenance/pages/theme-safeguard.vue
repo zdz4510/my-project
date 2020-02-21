@@ -196,7 +196,7 @@ export default {
     },
     handleReset() {
       this.themeForm.topic = "";
-      this.tableData = [];
+      this.init();
     },
     //未选择导出请求数据
     // exportHttp() {
