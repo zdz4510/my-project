@@ -144,8 +144,8 @@
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="自定义字段">
-          <el-form :rules="rules">
-            <el-form-item :label="item.fieldName" v-for="(item,index) in customizedFieldDefInfoList" :key="index" v-show="item.fieldType =='C'" prop="custom">
+          <el-form :rules="rules" :label-width="formLabelWidth">
+            <el-form-item  :label="item.fieldName" v-for="(item,index) in customizedFieldDefInfoList" :key="index" v-show="item.fieldType =='C'" prop="custom">
               <el-col :span="4">
                 <dsn-input v-model="item.fieldValue"></dsn-input>
               </el-col>
@@ -193,7 +193,7 @@
               </el-col>
             </el-form-item>
             <el-form-item label="Kay_自定义字段3：">
-              <el-col :span="14" style="margin-right:7px;">
+              <el-col :span="12" style="margin-right:7px;">
                 <dsn-input v-model="ruleForm.kays_3" :disabled="true"></dsn-input>
               </el-col>
               <div class="choiceBox">
@@ -317,6 +317,7 @@ export default {
             router:"",
             kays_3:""
         },
+        formLabelWidth:"150px",
         rules: {
             style: [{ required: true, message: "请选择类型", trigger: "blur" }],
             state: [{ required: true, message: "请选择状态", trigger: "blur" }],

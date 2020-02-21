@@ -97,7 +97,7 @@
       </dsn-table>
     </dsnPanel>
    
-    <el-dialog title="删除" :visible.sync="showConfig" width="400">
+    <el-dialog title="标签配置" :visible.sync="showConfig" width="400">
       <tag-print-config />
       <span slot="footer" class="dialog-footer">
         <el-button @click="showConfig = false">取 消</el-button>
@@ -107,7 +107,10 @@
       </span>
     </el-dialog>
 
-    <DsnFooter ><dsn-button @click="handlePrintConfig">打印配置</dsn-button></DsnFooter>
+    <DsnFooter >
+        <dsn-button @click="handlePrintConfig">打印配置</dsn-button>
+     <!-- <dsn-button @click="handlePrintConfig">打印配置</dsn-button> -->
+    </DsnFooter>
   </div>
 </template>
 
@@ -119,10 +122,9 @@ import {
 } from "@/api/tag/tag.print.api.js";
 import TagPrintConfig from "./tag-print-config";
 import DsnFooter from "@/views/layout/dsn-footer";
+
 export default {
-  comments:{
-    DsnFooter
-  },
+
   data() {
     return {
       form: {
@@ -147,12 +149,13 @@ export default {
     };
   },
   components: {
-    TagPrintConfig
+    TagPrintConfig,
+     DsnFooter
   },
   methods: {
     // 打印配置
     handlePrintConfig(){
-
+        this.showConfig =true;
     },
     //  检索
     handleSearchByLotNo() {
