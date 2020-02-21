@@ -240,7 +240,6 @@ export default {
       },
       baseInfoForm: {
         material: "",
-
         shopOrder: "",
         operation: "",
         resourceGroup: "",
@@ -253,6 +252,9 @@ export default {
       logList: [],
       checkedList: [],
       rules: {
+        acceptValue: [
+          { required: true, message: "请输入接收值", trigger: "blur" }
+        ],
         collectionType: [
           { required: true, message: "请选择收集类型", trigger: "change" }
         ]
