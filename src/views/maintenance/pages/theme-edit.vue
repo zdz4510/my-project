@@ -146,7 +146,7 @@
                           <input
                             v-model="w"
                             class="input"
-                            v-on:input="changeWork"
+                            v-on:input="changeWork2"
                             placeholder="请输入产线"
                           />
                         </div>
@@ -161,7 +161,7 @@
                           <input
                             v-model="w1"
                             class="input"
-                            v-on:input="changeStation"
+                            v-on:input="changeStation2"
                             placeholder="请输入站位"
                           />
                         </div>
@@ -170,19 +170,17 @@
                   </el-table-column>
                   <el-table-column prop="stationDes" label="站位描述">
                     <template slot="header">
-                      <template slot="header">
                       <div class="inputChoice">
                         <div class="input-left">站位描述</div>
                         <div class="input-right">
                           <input
                             v-model="w2"
                             class="input"
-                            v-on:input="changeStationDes"
+                            v-on:input="changeStationDes2"
                             placeholder="请输入站位描述"
                           />
                         </div>
                       </div>
-                    </template>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -243,6 +241,9 @@ export default {
       labelStorageList: [],
       labelCommand:'',
       previewImage:'',
+      // 拷贝当前的
+      cloneList:[],
+      cloneList2:[]
     };
   },
   computed: {
@@ -269,6 +270,9 @@ export default {
         if (res.code === 200) {
           this.list2=res.data.currentAllotStations
           this.list = res.data.unAllotStations;
+          // 拷贝当前的
+          this.cloneList=_.cloneDeep(this.list);
+          this.cloneList2=_.cloneDeep(this.list2);
           let obj={
             currentAllotStations: this.list2,
             unAllotStations: this.list
@@ -347,7 +351,7 @@ export default {
     },
     saveHandle(){
       const data= {...this.themeForm};
-      data.currentAllotStations	=this.list2;
+      data.currentAllotStations	=this.cloneList2;
       updateTopicHttp(data).then(data => {
         const res = data.data;
         if (res.code == 200) {
@@ -390,8 +394,7 @@ export default {
         this.list2,
         this.rightSelectList
       );
-      // this.cloneAllocateData = _.cloneDeep(this.transferData);
-
+      this.cloneList2= _.cloneDeep(this.list2);
     },
     //选择到数据移动到右边
     toRight() {
@@ -403,7 +406,7 @@ export default {
       this.list2 = _.concat(this.list2, this.leftSelectList);
       this.list2 = _.uniq(this.list2);
       this.list = _.difference(this.list, this.leftSelectList);
-      // this.cloneAllocateData = _.cloneDeep(this.transferData);
+      this.cloneList2= _.cloneDeep(this.list2);
     },
     handleLeftSelect(s) {
       this.leftSelectList = s;
