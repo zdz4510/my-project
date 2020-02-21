@@ -95,6 +95,34 @@ import { mapMutations } from "vuex";
 export default {
   name: "material-info",
   data() {
+    var materialRule = (rule, value, callback) => {
+      let reg = /^([A-Z]|[a-z]|[0-9]|_|-|\/)+$/;
+      if (!value) {
+        callback();
+      }
+      if (!reg.test(value)) {
+        return callback(new Error("只能为字母、数字、-、_、/组成"));
+      }
+      if ((value + "").length > 30) {
+        return callback(new Error("只能输入30位以内"));
+      }
+      this.searchForm.material = value.toUpperCase();
+      callback();
+    };
+    var materialRevRule = (rule, value, callback) => {
+      let reg = /^([A-Z]|[a-z]|[0-9]|_|-|\/)+$/;
+      if (!value) {
+        callback();
+      }
+      if (!reg.test(value)) {
+        return callback(new Error("只能为字母、数字、-、_、/组成"));
+      }
+      if ((value + "").length > 30) {
+        return callback(new Error("只能输入30位以内"));
+      }
+      this.searchForm.materialRev = value.toUpperCase();
+      callback();
+    };
     return {
       tHeader: [
         "物料分类",
@@ -126,9 +154,12 @@ export default {
         deleteFlag: false
       },
       rules: {
-        // process: [
-        // 	{ required: true, message: '请输入工序名称', trigger: 'blur' },
-        // ],
+        material: [
+          { required: true, validator: materialRule, trigger: "blur" }
+        ],
+        materialRev: [
+          { required: true, validator: materialRevRule, trigger: "blur" }
+        ],
       },
       tableData: {
         data: [],

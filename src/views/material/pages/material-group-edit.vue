@@ -297,7 +297,7 @@ export default {
     },
     handleSave() {
       //穿梭框右侧数据
-      const relatived = this.untransferData;
+      const relatived = this.transferData;
       const tempArr = [
         {
           groupDes: this.materialGroupForm.groupDes,
