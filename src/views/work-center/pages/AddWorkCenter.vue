@@ -157,7 +157,7 @@
 import {
   getAllList,
   saveWorkCenter,
-  findAllUserList
+  getUserList
 } from "../../../api/work.center.api";
 import _ from "lodash";
 export default {
@@ -232,7 +232,7 @@ export default {
         this.$message.error(data.data.message);
       }
     });
-    findAllUserList().then(data => {
+    getUserList().then(data => {
       if (data.data.code == 200) {
         this.unallocateUser = data.data.data;
       } else {
