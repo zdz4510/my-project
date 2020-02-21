@@ -12,7 +12,7 @@
         class="materialGroupForm"
         :inline="true"
       >
-        <el-form-item label="物料组" prop="materialGroup">
+        <el-form-item label="物料组：" prop="materialGroup">
           <dsn-input v-model.trim="materialGroupForm.materialGroup" placeholder="请输入物料组"></dsn-input>
         </el-form-item>
         <el-form-item>
@@ -32,7 +32,7 @@
           size="small"
           type="primary"
           icon="el-icon-edit"
-          :disabled="selectionList.length <= 0"
+          :disabled="selectionList.length <= 0||selectionList.length>1"
           @click.native="handleEdit"
         >修改</dsn-button>
         <dsn-button
@@ -148,7 +148,7 @@ export default {
       deleteDialog: false,
       groupRules: {
         materialGroup: [
-          { required: true, validator: materialGroupRule, trigger: "blur" }
+          { validator: materialGroupRule, trigger: "blur" }
         ],
       },
     };

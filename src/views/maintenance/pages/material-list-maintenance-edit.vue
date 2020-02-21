@@ -13,10 +13,10 @@
     <div class="showInfo">
       <div class="right">
         <el-form :model="baseInfo" ref="baseInfoOne" label-width="120px" :rules="rules">
-          <el-form-item label="物料清单" prop="bom">
+          <el-form-item label="物料清单:" prop="bom">
             <dsn-input v-model.trim="baseInfo.bom" placeholder="物料清单" :disabled="isEditStation"></dsn-input>
           </el-form-item>
-          <el-form-item label="物料清单描述" prop="bomDes">
+          <el-form-item label="物料清单描述:" prop="bomDes">
             <dsn-input v-model.trim="baseInfo.bomDes" placeholder="请输入物料清单描述"></dsn-input>
           </el-form-item>
         </el-form>
@@ -28,7 +28,7 @@
               <el-form-item label="当前版本" prop="currentRev">
                 <el-checkbox v-model="baseInfo.currentRev">当前版本:</el-checkbox>
               </el-form-item>
-              <el-form-item label="版本号" prop="bomRev">
+              <el-form-item label="版本号:" prop="bomRev">
                 <dsn-input v-model="baseInfo.bomRev" />
               </el-form-item>
               <el-form-item label="状态:" prop="status">

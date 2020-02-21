@@ -5,7 +5,7 @@
         <span>搜索信息</span>
       </div>
       <el-form :inline="true" :model="materilList" ref="materilList" :rules="materilListRules">
-        <el-form-item label="物料清单" prop="bom">
+        <el-form-item label="物料清单:" prop="bom" :label-width="formLabelWidth">
           <dsn-input v-model="materilList.bom" placeholder="请输入物料清单"></dsn-input>
         </el-form-item>
         <el-form-item>
@@ -121,7 +121,8 @@ export default {
       tableData: [],
       selectionList: [],
       stations: [],
-      deleteDialog: false
+      deleteDialog: false,
+      formLabelWidth:"100px"
     };
   },
   filters: {
