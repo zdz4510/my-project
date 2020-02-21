@@ -297,7 +297,7 @@ export default {
 						params.user = this.editForm.user
 						params.name = this.editForm.name
 
-					saveData({updateList:[params]}).then(data => {
+					saveData({updateList:[params],createList:[]}).then(data => {
 						const res = data.data;
 						this.saveDialog = false; // 保存的提示框消失
 						this.selectIsDisabled = false;

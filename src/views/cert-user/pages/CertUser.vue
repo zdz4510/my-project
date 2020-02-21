@@ -19,8 +19,8 @@
             <dsn-input v-model="searchForm.name"></dsn-input>
           </el-form-item>
           <el-form-item>
-            <dsn-button size="small" type="primary" @click.native="search">查询</dsn-button>
-            <dsn-button size="small" type="primary" @click.native="resetForm('searchForm')">重置</dsn-button>
+            <dsn-button size="small" icon="el-icon-search" type="primary" @click.native="search">查询</dsn-button>
+            <dsn-button size="small" icon="el-icon-refresh" type="primary" @click.native="resetForm('searchForm')">重置</dsn-button>
           </el-form-item>
         </el-form>
       </div>
@@ -182,9 +182,9 @@ export default {
         type: "warning"
       })
         .then(() => {
-          this.checkedList.map(item => {
-            item.cert = [];
-          });
+          // this.checkedList.map(item => {
+          //   item.cert = [];
+          // });
           deleteData(this.checkedList).then(data => {
             if (data.data.code == 200) {
               this.$message({
