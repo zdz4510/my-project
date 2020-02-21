@@ -35,7 +35,7 @@
         type="primary"
         @click.native="edit"
         icon="el-icon-edit"
-        :disabled="this.checkedList.length === 0||this.checkedList.length>1"
+        :disabled="this.checkedList.length === 0"
       >编辑</dsn-button>
       <dsn-button
         size="small"

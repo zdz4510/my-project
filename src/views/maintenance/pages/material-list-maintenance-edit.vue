@@ -353,6 +353,15 @@ export default {
         formName.forEach(element => {
           this.$refs[element].resetFields();
         });
+        this.baseInfo = {
+            bom: "",
+            bomDes: "",
+            bomRev: "",
+            bomType: "",
+            currentRev: true,
+            status: ""
+          }
+          this.bomMaterialList=[];
         return;
       }
       if (this.operateType === "edit") {
@@ -369,7 +378,6 @@ export default {
         //     this.$refs[element].resetFields();
         //   }
         // });
-        console.log("reset", this.cloneList[0]);
         // this.bomMaterialList = !this.cloneList.length ? JSON.parse(localStorage.getItem('materialList'))[0].bomMaterialList : this.cloneList[0].bomMaterialList
         this.baseInfo = JSON.parse(localStorage.getItem("materialList"))[0];
         this.bomMaterialList = this.baseInfo.bomMaterialList;
