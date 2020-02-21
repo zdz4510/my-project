@@ -22,6 +22,30 @@
                 :disabled="isEditResource"
               ></dsn-input>
             </el-form-item>
+            <el-form-item label="保养周期" prop="maintenancePeriod">
+              <dsn-input
+                v-model.number="upkeepConfigForm.maintenancePeriod"
+                placeholder="保养周期"
+                class="upkeepCycle"
+                size="small"
+                style="width:215px"
+              >
+                <template slot="append">
+                  <dsn-select
+                    v-model="upkeepConfigForm.periodUnit"
+                    class="upkeepCycle"
+                    size="small"
+                    @change="periodUnit"
+                  >
+                    <el-option label="天数" :value="1">天数</el-option>
+                    <el-option label="月份" :value="30">月份</el-option>
+                    <el-option label="季度" :value="90">季度</el-option>
+                    <el-option label="半年" :value="180">半年</el-option>
+                    <el-option label="年" :value="365">年</el-option>
+                  </dsn-select>
+                </template>
+              </dsn-input>
+            </el-form-item>
           </el-form>
         </div>
 
@@ -114,7 +138,7 @@
                     :key="index"
                     :label="item.name"
                     :value="item.id"
-                  ></el-option>
+                  >{{item.name}}:{{item.commonName}}</el-option>
                 </el-select>
               </el-form-item>
               <el-form-item label="预警事件" prop="alarm">
@@ -135,19 +159,20 @@
                   size="small"
                   style="width:215px"
                 >
-                  <dsn-select
-                    v-model="upkeepConfigForm.periodUnit"
-                    class="upkeepCycle"
-                    size="small"
-                    slot="append"
-                    @change="periodUnit"
-                  >
-                    <el-option label="天数" :value="1">天数</el-option>
-                    <el-option label="月份" :value="30">月份</el-option>
-                    <el-option label="季度" :value="90">季度</el-option>
-                    <el-option label="半年" :value="180">半年</el-option>
-                    <el-option label="年" :value="365">年</el-option>
-                  </dsn-select>
+                  <template slot="append">
+                    <dsn-select
+                      v-model="upkeepConfigForm.periodUnit"
+                      class="upkeepCycle"
+                      size="small"
+                      @change="periodUnit"
+                    >
+                      <el-option label="天数" :value="1">天数</el-option>
+                      <el-option label="月份" :value="30">月份</el-option>
+                      <el-option label="季度" :value="90">季度</el-option>
+                      <el-option label="半年" :value="180">半年</el-option>
+                      <el-option label="年" :value="365">年</el-option>
+                    </dsn-select>
+                  </template>
                 </dsn-input>
               </el-form-item>
               <el-form-item label="启用预警功能" prop="warningFunction">
@@ -187,7 +212,11 @@
               </el-table-column>
               <el-table-column prop="startTime" label="保养起始时间" width="180"></el-table-column>
               <el-table-column prop="maintenanceLocation" label="保养地址" width="120"></el-table-column>
-              <el-table-column prop="maintenanceUserId" label="保养人员" width="120"></el-table-column>
+              <el-table-column prop="maintenanceUserName" label="保养人员" width="120">
+                <template slot-scope="scope">
+                  <span>{{ scope.row.maintenanceUserName}}</span>
+                </template>
+              </el-table-column>
               <el-table-column prop="conditionDes" label="保养条件描述" show-overflow-tooltip></el-table-column>
             </dsn-table>
           </el-tab-pane>
@@ -268,7 +297,7 @@ export default {
         alarm: "",
         warningFunction: "",
         maintenancePeriod: "",
-        periodUnit: "",
+        periodUnit: 1,
         maintenanceLocation: ""
       },
       upkeepConfigRules: this.upkeepConfigRule,
@@ -509,9 +538,16 @@ export default {
         handleType();
         return;
       }
+
       if (count >= 2 && this.saveType === "upkeepConfig") {
         const copyObj = JSON.parse(JSON.stringify(this.upkeepConfigForm));
         copyObj.resource = this.maintenanceForm.resource;
+        this.userList.forEach(element => {
+          if (element.id === copyObj.maintenanceUserId) {
+            copyObj.maintenanceUserName =
+              element.name + ":" + element.commonName;
+          }
+        });
         this.tableData.push(copyObj);
         return;
       }

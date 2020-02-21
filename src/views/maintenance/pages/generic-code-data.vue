@@ -676,6 +676,10 @@ export default {
             return this.selectionList.indexOf(item) === -1;
           });
           this.tableData = tempArr;
+          this.$message({
+            type: "success",
+            message: "数据删除成功"
+          });
         })
         .catch(() => {
           this.$message({

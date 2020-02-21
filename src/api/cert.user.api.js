@@ -1,5 +1,5 @@
 import request from "@/service/";
-import qs from 'qs';
+import qs from "qs";
 /* 用户证明分配*/
 
 /**
@@ -7,11 +7,14 @@ import qs from 'qs';
  *  url /mes/certUser/findPage
  */
 export const getCertUserList = data => {
+  console.log(
+    `${window.VUE_APP_URL}/mes/certUser/findPage?${qs.stringify(data)}`
+  );
   return request.post(
-    `${window.VUE_APP_URL}/mes/certUser/findPage?${qs.stringify(data)}`);
+    `${window.VUE_APP_URL}/mes/certUser/findPage?${qs.stringify(data)}`,
+    data
+  );
 };
-
-
 /**
  * 保存
  *  url /mes/certUser/save
@@ -35,9 +38,8 @@ export const findCert = data => {
  * url /mes/certUser/delete
  */
 export const deleteData = data => {
-  return request.post(`${window.VUE_APP_URL}/mes/certUser/delete`,data);
+  return request.post(`${window.VUE_APP_URL}/mes/certUser/delete`, data);
 };
-
 
 /**
  * 获取所有上岗证

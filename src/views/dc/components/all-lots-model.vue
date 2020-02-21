@@ -10,6 +10,7 @@
     >
       <el-table-column type="index" label="序号" width="80"></el-table-column>
       <el-table-column prop="lot" label="LOT" show-overflow-tooltip></el-table-column>
+      <el-table-column prop="status" label="状态" show-overflow-tooltip></el-table-column>
     </dsn-table>
   </div>
 </template>
