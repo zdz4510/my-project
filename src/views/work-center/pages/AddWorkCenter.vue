@@ -210,11 +210,11 @@ export default {
       ],
       workCenterType: [
         {
-          value: "1",
+          value: "LEVEL1",
           label: "车间"
         },
         {
-          value: "2",
+          value: "LEVEL2",
           label: "产线"
         }
       ],
