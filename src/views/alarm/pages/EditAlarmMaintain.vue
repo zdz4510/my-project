@@ -145,7 +145,7 @@
                       v-model="select2"
                       style="width: 100px"
                       placeholder="请选择"
-                      clearable
+                      :clearable="false"
                       @change="getUnallocate"
                     >
                       <el-option label="个人" value="10"></el-option>
