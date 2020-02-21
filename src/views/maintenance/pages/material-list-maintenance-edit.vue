@@ -12,8 +12,8 @@
     </div>
     <div class="showInfo">
       <div class="right">
-        <el-form :model="baseInfo" ref="baseInfoOne" label-width="120px" :rules="rules">
-          <el-form-item label="物料清单:" prop="bom">
+        <el-form :model="baseInfo" ref="baseInfoOne" label-width="120px" :rules="listRules">
+          <el-form-item label="物料清单:" prop="bom" required>
             <dsn-input v-model.trim="baseInfo.bom" placeholder="物料清单" :disabled="isEditStation"></dsn-input>
           </el-form-item>
           <el-form-item label="物料清单描述:" prop="bomDes">
@@ -28,16 +28,16 @@
               <el-form-item label="当前版本" prop="currentRev">
                 <el-checkbox v-model="baseInfo.currentRev">当前版本:</el-checkbox>
               </el-form-item>
-              <el-form-item label="版本号:" prop="bomRev">
+              <el-form-item label="版本号:" prop="bomRev" required>
                 <dsn-input v-model="baseInfo.bomRev" />
               </el-form-item>
-              <el-form-item label="状态:" prop="status">
+              <el-form-item label="状态:" prop="status" required>
                 <dsn-select v-model="baseInfo.status" filterable placeholder="请选择状态">
                   <el-option label="已启用" :value="true">已启用</el-option>
                   <el-option label="未启用" :value="false">未启用</el-option>
                 </dsn-select>
               </el-form-item>
-              <el-form-item label="物料清单类型:" prop="bomType">
+              <el-form-item label="物料清单类型:" prop="bomType" required>
                 <dsn-select v-model="baseInfo.bomType" placeholder="请选择清单类型">
                   <el-option label="主数据" value="MATERIAL">主数据</el-option>
                   <el-option label="工单" value="ORDER">工单</el-option>
@@ -128,6 +128,17 @@ import { mapGetters, mapMutations } from "vuex";
 // import _ from "lodash";
 export default {
   data() {
+    const valiBom = (rule, value, callback) => {
+      if (value === "") {
+        callback();
+      }
+      let reg = /^([A-Z]|[a-z]|[0-9]|_|-|\/)+$/;
+      if (!reg.test(value)) {
+        callback("物料清单格式应只包含（[A-Z,0-9,_,-,/]）");
+      }
+      this.baseInfo.bom = this.baseInfo.bom.toUpperCase();
+      callback();
+    };
     const valiBomRev = (rule, value, callback) => {
       if (value === "") {
         callback();
@@ -152,7 +163,9 @@ export default {
         currentRev: true,
         status: ""
       },
-      workCertFormRules: this.rules,
+      listRules: {
+        bom: [{ validator: valiBom, trigger: "blur" }]
+      },
       materialAll: [],
       bomMaterialList: [],
       selectionList: [],
@@ -167,22 +180,22 @@ export default {
           {
             required: true,
             message: "请输入物料清单",
-            trigger: "change"
+            trigger: "blur"
           }
         ],
         bomRev: [
           {
             required: true,
             validator: this.valiBomRev,
-            trigger: "change"
+            trigger: "blur"
           }
         ],
-        status: [{ required: true, message: "请选择状态", trigger: "change" }],
+        status: [{ required: true, message: "请选择状态", trigger: "blur" }],
         bomType: [
           {
             required: true,
             message: "请选择物料清单",
-            trigger: "change"
+            trigger: "blur"
           }
         ]
       };
