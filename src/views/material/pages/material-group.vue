@@ -6,12 +6,13 @@
       </div>
       <el-form
         :model="materialGroupForm"
+        :rules="groupRules"
         ref="materialGroupForm"
         label-width="100px"
         class="materialGroupForm"
         :inline="true"
       >
-        <el-form-item label="物料组" prop="materialGroup">
+        <el-form-item label="物料组：" prop="materialGroup">
           <dsn-input v-model.trim="materialGroupForm.materialGroup" placeholder="请输入物料组"></dsn-input>
         </el-form-item>
         <el-form-item>
@@ -31,7 +32,7 @@
           size="small"
           type="primary"
           icon="el-icon-edit"
-          :disabled="selectionList.length <= 0"
+          :disabled="selectionList.length <= 0||selectionList.length>1"
           @click.native="handleEdit"
         >修改</dsn-button>
         <dsn-button
@@ -52,18 +53,18 @@
           height="350px"
           @selection-change="handleSelectionChange"
         >
-          <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column type="index" label="序号" width="50"></el-table-column>
-          <el-table-column prop="materialGroup" label="物料组" width="120"></el-table-column>
-          <el-table-column label="总物料数" width="120">
+          <el-table-column type="selection"></el-table-column>
+          <el-table-column type="index" label="序号"></el-table-column>
+          <el-table-column prop="materialGroup" label="物料组"></el-table-column>
+          <el-table-column label="总物料数">
             <template slot-scope="scope">
               <span>{{ scope.row.materialList.length }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="groupDes" label="物料组描述" width="170"></el-table-column>
-          <el-table-column prop="createUserName" label="创建人" width="120"></el-table-column>
-          <el-table-column prop="createTime" label="创建时间" width="170"></el-table-column>
-          <el-table-column prop="modifyUserName" label="修改人" width="120"></el-table-column>
+          <el-table-column prop="groupDes" label="物料组描述"></el-table-column>
+          <el-table-column prop="createUserId" label="创建人"></el-table-column>
+          <el-table-column prop="createTime" label="创建时间"></el-table-column>
+          <el-table-column prop="modifyUserId" label="修改人"></el-table-column>
           <el-table-column prop="modifyTime" label="修改时间" show-overflow-tooltip></el-table-column>
         </dsn-table>
       </div>
@@ -117,6 +118,20 @@ const fileName = "物料组维护表";
 export default {
   inject: ["defaltDialogWidth"],
   data() {
+    var materialGroupRule = (rule, value, callback) => {
+      let reg = /^([A-Z]|[a-z]|[0-9]|_|-|\/)+$/;
+      if (!value) {
+        callback();
+      }
+      if (!reg.test(value)) {
+        return callback(new Error("只能为字母、数字、-、_、/组成"));
+      }
+      if ((value + "").length > 30) {
+        return callback(new Error("只能输入30位以内"));
+      }
+      this.materialGroupForm.materialGroup = value.toUpperCase();
+      callback();
+    };
     return {
       tHeader,
       filterVal,
@@ -130,7 +145,12 @@ export default {
       currentPage: 1,
       pagesize: 10,
       total: 0,
-      deleteDialog: false
+      deleteDialog: false,
+      groupRules: {
+        materialGroup: [
+          { validator: materialGroupRule, trigger: "blur" }
+        ],
+      },
     };
   },
   created() {

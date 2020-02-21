@@ -49,14 +49,14 @@
           label-width="100px"
           class="materialGroupForm"
         >
-          <el-form-item label="物料组" prop="materialGroup">
+          <el-form-item label="物料组：" prop="materialGroup" required>
             <dsn-input
               v-model.trim="materialGroupForm.materialGroup"
               placeholder="请输入物料组"
               :disabled="isEditResource"
             ></dsn-input>
           </el-form-item>
-          <el-form-item label="组别描述">
+          <el-form-item label="组别描述：">
             <el-input type="textarea" rows="4" v-model.trim="materialGroupForm.groupDes"></el-input>
           </el-form-item>
         </el-form>
@@ -166,6 +166,20 @@ import {
 export default {
   inject: ["defaltDialogWidth"],
   data() {
+    var materialGroupRule = (rule, value, callback) => {
+      let reg = /^([A-Z]|[a-z]|[0-9]|_|-|\/)+$/;
+      if (!value) {
+        callback();
+      }
+      if (!reg.test(value)) {
+        return callback(new Error("只能为字母、数字、-、_、/组成"));
+      }
+      if ((value + "").length > 30) {
+        return callback(new Error("只能输入30位以内"));
+      }
+      this.materialGroupForm.materialGroup = value.toUpperCase();
+      callback();
+    };
     return {
       operateType: "",
       materialGroupForm: {
@@ -176,7 +190,7 @@ export default {
       },
       rules: {
         materialGroup: [
-          { required: true, message: "请输入物料组", trigger: "blur" }
+          { required: true, validator: materialGroupRule, trigger: "blur" }
         ]
       },
       //穿梭框
@@ -226,20 +240,20 @@ export default {
       this.selectedList2 = val;
     },
     right() {
+      console.log(this.untransferData, "un",this.selectedList);
       this.untransferData = _.concat(this.untransferData, this.selectedList);
       this.untransferData = _.uniq(this.untransferData);
       this.transferData = _.difference(this.transferData, this.selectedList);
-      console.log(this.untransferData, "un");
       this.cloneAllocateData = _.cloneDeep(this.transferData);
     },
     left() {
+      console.log(this.untransferData, "all",this.selectedList2);
       this.transferData = _.concat(this.transferData, this.selectedList2);
       this.transferData = _.uniq(this.transferData);
       this.untransferData = _.difference(
         this.untransferData,
         this.selectedList2
       );
-      console.log(this.untransferData, "all");
       this.cloneAllocateData = _.cloneDeep(this.transferData);
     },
     init() {
@@ -297,7 +311,7 @@ export default {
     },
     handleSave() {
       //穿梭框右侧数据
-      const relatived = this.untransferData;
+      const relatived = this.transferData;
       const tempArr = [
         {
           groupDes: this.materialGroupForm.groupDes,

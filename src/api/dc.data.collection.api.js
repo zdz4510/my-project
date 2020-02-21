@@ -9,6 +9,14 @@ export const getCollectionData = data => {
 };
 
 /**
+ * 按条件查找数据收集组
+ *  url /mes/dcData/findDcGroupData
+ */
+export const findDcGroupDataHttp = data => {
+	return request.post(`${window.VUE_APP_URL}/mes/dcData/findDcGroupData`,data);
+};
+
+/**
  * 校验数据收集的参数
  * url /mes/dcData/checkParam
  */
