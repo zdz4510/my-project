@@ -25,14 +25,14 @@ const routerHistory = {
       }
     },
     // 删除路由信息
-    POP(state, {deleteItem,currentName}) {
-      console.log(deleteItem,currentName)
+    POP(state, {deleteItem,current}) {
+      console.log(deleteItem,current)
       const len = state.historyList.length;
       if (len == 1) {
         return;
       }
       // 如果删除的是当前的
-      if(deleteItem.name===currentName){   // 删除的是当前的路由
+      if(deleteItem.name===current.name){   // 删除的是当前的路由
         state.historyList = state.historyList.filter(item => {
           return item.name != deleteItem.name;
         });

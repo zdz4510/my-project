@@ -24,7 +24,7 @@ export default {
   methods: {
     close() {
       // console.log(this.$route.name)
-      this.$emit("close", this.item,this.$route.name);
+      this.$emit("close", this.item,this.$route);
     },
     toPage(item) {
       if (this.$route.name === item.name) {

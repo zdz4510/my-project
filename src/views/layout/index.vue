@@ -68,9 +68,9 @@ export default {
       this.isCollapse = !this.isCollapse;
       this.$refs["leftMenu"].toggle();
     },
-    close(item,currentName) {
+    close(item,current) {
       
-      this.POP({deleteItem:item,currentName});
+      this.POP({deleteItem:item,current});
     },
     toPage(item) {
       this.$router.push({ path: item.fullPath });
