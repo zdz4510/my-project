@@ -143,6 +143,7 @@ export default {
   },
   created() {
     let params = "";
+    console.log('route', this.$route)
     getDataByAlarm(params).then(data => {
       console.log(data);
       this.unallocateData = data.data.data;
@@ -150,7 +151,7 @@ export default {
     });
   },
   methods: {
-    ...mapMutations(["POPROUTER"]),
+    ...mapMutations(["POP"]),
     save(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -171,7 +172,18 @@ export default {
                     message: "保存成功!"
                   });
                   setTimeout(() => {
-                    this.POPROUTER(this.$router.name)
+                    const { name, path } = this.$route;
+                    const parmas = {
+                      deleteItem: {
+                        name,
+                        current: path
+                      },
+                      current: {
+                        name,
+                        current: path
+                      }
+                    }
+                    this.POP(parmas)
                     this.$router.push({ path: "/alarm/alarmGroup" });
                   }, 1000);
                 } else {
