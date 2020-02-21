@@ -85,7 +85,7 @@
           </el-tab-pane>
           <el-tab-pane label="预警事件通知维护" name="second">
             <el-row>
-              <el-col :span="10" :offset="10">
+              <el-col :span="10" :offset="13">
                 <el-form-item label="复制事件通知人员:">
                   <dsn-select v-model="alarm" clearable filterable @change="onChange">
                     <el-option
@@ -99,7 +99,7 @@
               </el-col>
             </el-row>
             <el-row>
-              <el-col :span="10">
+              <!-- <el-col :span="11">
                 <el-form-item label="输入搜索条件:" prop="width">
                   <dsn-input
                     placeholder="请输入内容"
@@ -120,26 +120,27 @@
                     </dsn-select>
                   </dsn-input>
                 </el-form-item>
-              </el-col>
-              <el-col :span="10">
-                <el-form-item label="输入搜索条件:" prop="width">
+              </el-col> -->
+              <el-col :span="11" :offset="13">
+                <el-form-item label="输入搜索条件:" prop="inputAlarm">
+                  <dsn-select
+                    style="width: 100px"
+                    v-model="select2"
+                    placeholder="请选择"
+                    clearable
+                    @change="getUnallocate"
+                  >
+                    <el-option label="个人" value="10"></el-option>
+                    <el-option label="工作中心" value="20"></el-option>
+                  </dsn-select>
                   <dsn-input
                     placeholder="请输入内容"
                     v-model="input2"
                     class="input-with-select"
                     @input="getUnallocate"
+                    :disabled="!select2"
+                    style="width: 150px"
                   >
-                    <dsn-select
-                      style="width: 120px"
-                      v-model="select2"
-                      slot="prepend"
-                      placeholder="请选择"
-                      clearable
-                      @change="getUnallocate"
-                    >
-                      <el-option label="个人" value="10"></el-option>
-                      <el-option label="工作中心" value="20"></el-option>
-                    </dsn-select>
                   </dsn-input>
                 </el-form-item>
               </el-col>
@@ -153,7 +154,7 @@
                   </el-table-column>
                   <el-table-column label>
                     <template slot="header">
-                      <dsn-input v-model="alarm2" placeholder="输入搜索条件" />
+                      <dsn-input v-model="alarm1" placeholder="输入搜索条件" />
                     </template>
                      <el-table-column label="类型">
                       <template
@@ -173,7 +174,7 @@
                 </div>
               </el-col>
               <el-col :span="11">
-                <dsn-table :data="unallocateData" @select="check2" @select-all="check2">
+                <dsn-table :data="unallocateData.filter(data => !alarm2 || data.informUserId.toLowerCase().includes(alarm2.toLowerCase()))" @select="check2" @select-all="check2">
                   <el-table-column label="待收信息用户">
                     <el-table-column type="selection" width="100"></el-table-column>
                     <el-table-column prop="informUserId" label="名称"></el-table-column>
@@ -203,6 +204,7 @@
 import {
   getDataByAlarm,
   getWorkerInfo,
+  getUnallocated,
   saveData
 } from "../../../api/alarm.maintain.api";
 import _ from "lodash";
@@ -217,7 +219,7 @@ export default {
       rules: {
         alarm: [{ required: true, message: "请填写事件编号", trigger: "blur" }],
         theme: [{ required: true, message: "请填写事件主题", trigger: "blur" }],
-        alarmLevelFlag: [{ required: true, message: "请选择事件等级", trigger: 'change'}]
+        alarmLevelFlag: [{ required: true, message: "请选择事件等级", trigger: 'change'}],
       },
       addForm: {
         alarm: "",
@@ -233,6 +235,8 @@ export default {
         systemInformDetails: "",
         alarmDefInformList: []
       },
+      alarm1: '',
+      alarm2: '',
       select1: "",
       input1: "",
       select2: "",
@@ -276,7 +280,6 @@ export default {
             alarm: this.addForm.alarm
           }));
           this.addForm.alarmDefInformList = this.allocateData;
-          console.log(this.addForm);
           let params = this.addForm;
           saveData(params).then(data => {
             if (data.data.code == 200) {
@@ -315,13 +318,26 @@ export default {
       this.$router.push({ path: "/alarm/alarmMaintain" });
     },
     onChange(val) {
-      console.log(val);
+      this.select2 ='';
       let params = {
         alarm: val
       };
-      getWorkerInfo(params).then(data => {
-        this.unallocateData = data.data.data;
-        this.cloneUnallocateData = data.data.data;
+      getWorkerInfo(params).then(res => {
+        const { data: {
+          data,
+          code,
+          message
+        }} = res;
+        if (code === 200) {
+          if (this.allocateData.length) {
+            // this.unallocateData = data;
+           this.unallocateData = _.differenceBy(data, this.allocateData, 'informUserId');
+          } else {
+            this.unallocateData = data;
+          }
+        } else {
+          this.$message.error(message);
+        }
       });
     },
     check1(val) {
@@ -348,8 +364,31 @@ export default {
       this.cloneAllocateData = _.cloneDeep(this.allocateData);
     },
     getUnallocate() {
-      console.log("ss");
-      if (this.select2) {
+      this.alarm = '';
+      const params = {
+        userType: this.select2,
+        informUserId: this.input2
+      }
+      getUnallocated(params).then(res => {
+        const {
+          data: {
+            data,
+            message,
+            code
+          }
+        } = res;
+        if (code === 200) {
+          if (this.allocateData.length) {
+           this.unallocateData = _.differenceBy(data, this.allocateData, 'informUserId');
+            // this.unallocateData = data;
+          } else {
+            this.unallocateData = data;
+          }
+        } else {
+          this.$message.error(message);
+        }
+      })
+      /* if (this.select2) {
         this.unallocateData = this.cloneUnallocateData;
         this.unallocateData = this.unallocateData.filter(item => {
           if (this.input2) {
@@ -370,10 +409,9 @@ export default {
             return true;
           }
         });
-      }
+      } */
     },
     getAllocate() {
-      console.log("ds");
       if (this.select1) {
         this.allocateData = this.cloneAllocateData;
         this.allocateData = this.allocateData.filter(item => {
@@ -387,7 +425,6 @@ export default {
           }
         });
       } else {
-        console.log(this.cloneAllocateData, "d");
         this.allocateData = this.cloneAllocateData;
         this.allocateData = this.allocateData.filter(item => {
           if (this.input1.length > 0) {
@@ -408,6 +445,11 @@ export default {
     padding: 14px 14px 0;
     background: #fff;
     margin-bottom: 14px;
+		border-radius: 4px;
+  }
+  .addForm {
+    padding: 14px 14px 0;
+    background: #fff;
 		border-radius: 4px;
   }
   .direction {
