@@ -5,7 +5,8 @@ const themeEdit = {
     },
     // 编写动作
     mutations: {
-      themeList(state, data) {
+      THEMELIST(state, data) {
+        console.log(data,"111")
         state.themeList = data;
       }
     },

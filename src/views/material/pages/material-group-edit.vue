@@ -242,7 +242,6 @@ export default {
       this.selectedList2 = val;
     },
     right() {
-      console.log(this.untransferData, "un",this.selectedList);
       this.untransferData = _.concat(this.untransferData, this.selectedList);
       this.untransferData = _.uniq(this.untransferData);
       this.transferData = _.difference(this.transferData, this.selectedList);

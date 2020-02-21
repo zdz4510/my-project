@@ -31,7 +31,7 @@
         size="small"
         type="primary"
         icon="el-icon-edit"
-        :disabled="selectionList.length <= 0"
+        :disabled="selectionList.length !=1"
         @click="handleEdit"
       >编辑</dsn-button>
       <dsn-button size="small" type="primary" :disabled="true">保存</dsn-button>
@@ -117,10 +117,10 @@ export default {
     };
   },
   created() {
-    // this.init();
+    this.init();
   },
   methods: {
-    ...mapMutations(["themeList"]),
+    ...mapMutations(["THEMELIST"]),
     init() {
       const data = {
         currentPage: this.currentPage,
@@ -168,8 +168,8 @@ export default {
     handleSelectionChange(val) {
       this.selectionList = val;
       // 将选中的数据获取放到vuex中
-      this.themeList(this.selectionList);
-      // console.log(this.themeList(this.selectionList),"vuex是佛")
+      this.THEMELIST(this.selectionList);
+      // console.log(this.THEMELIST(this.selectionList),"vuex是佛")
       // console.log(this.selectionList);
     },
     //更改当前页码,再次请求数据
@@ -188,7 +188,7 @@ export default {
     },
     handleEdit() {
       console.log(this.selectionList);
-      // this.topicLIST(this.selectionList);
+      this.THEMELIST(this.selectionList);
       this.$router.push({ path: "/maintenance/themeEdit" });
     },
     handleQuery() {
