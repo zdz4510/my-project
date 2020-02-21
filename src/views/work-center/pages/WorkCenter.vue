@@ -64,7 +64,7 @@
           <el-table-column prop="workCenter" label="工作中心"></el-table-column>
           <el-table-column prop="workCenterDes" label="工作中心描述"></el-table-column>
           <el-table-column label="类型">
-            <template slot-scope="scope">{{ scope.row.workCenterType == 1 ? '车间' : '产线' }}</template>
+            <template slot-scope="scope">{{ scope.row.workCenterType === 'LEVEL1' ? '车间' : '产线' }}</template>
           </el-table-column>
           <el-table-column label="状态">
             <template
