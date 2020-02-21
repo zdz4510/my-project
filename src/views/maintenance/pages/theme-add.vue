@@ -38,7 +38,7 @@
           </el-form>
         </div>
 
-        <el-tabs type="border-card" @tab-click="handleTabClick">
+        <el-tabs type="border-card">
           <el-tab-pane class="design">
             <span slot="label">基础信息</span>
             <div class="container">
@@ -215,7 +215,7 @@ export default {
       w1:'',
       w2:'',
       rules:{
-        topic: [{ required: true, message: "请选择类型", trigger: "blur" }],
+        topic: [{ required: true, message: "主题不能为空", trigger: "blur" }],
       },
       themeForm: {
         //主题描述
@@ -250,6 +250,7 @@ export default {
     ...mapGetters(["tagConfigList"])
   },
   created() {
+    this.handleTabClick();
   },
   mounted() {
   },
@@ -263,22 +264,19 @@ export default {
         if (res.code === 200) {
           this.list2 = res.data.currentAllotStations;
           this.list = res.data.unAllotStations;
-          this.messageDetail();
-        }
-        this.$message({
-          message: res.message,
-          type: "warning"
-        });
-      });
-    },
-    // 数据处理
-    messageDetail(){
-      let obj={
+          let obj={
             currentAllotStations: this.list2,
             unAllotStations: this.list
           }
-      // 深拷贝查询出来的表格数据
-      this.allList= _.cloneDeep(obj);
+          // 深拷贝查询出来的表格数据
+          this.allList= _.cloneDeep(obj);
+        }else{
+          this.$message({
+          message: res.message,
+          type: "warning"
+        });
+        }
+      });
     },
     changeWork() {
       let arr = this.list.filter(item => {
@@ -341,7 +339,8 @@ export default {
       });
     },
     saveHandle() {
-      const data = { ...this.themeForm, ...this.allList.currentAllotStations, ...this.allList.unAllotStations };
+      const data = { ...this.themeForm };
+      data.currentAllotStations	=this.list2;
       addTopicHttp(data).then(data => {
         const res = data.data;
         if (res.code == 200) {
@@ -349,13 +348,11 @@ export default {
             type: "success",
             message: "新增成功"
           });
-          this.$router.push({
-            name: "themeSafeguard"
-          });
+          this.handleBack();
         } else {
           this.$message({
             type: "error",
-            message: "新增失败"
+            message: res.message
           });
         }
       });
@@ -389,7 +386,7 @@ export default {
       const arr = this.leftSelectList.filter(item => {
         return this.findItemInArr(item, this.list2).length == 0;
       });
-      console.log(arr,"数据");
+      // console.log(arr,"数据");
       this.list2 = [...this.list2, ...arr];
       // 同时深拷贝来的数据进行操作
       let arr2=this.allList.unAllotStations.filter((item)=>{

@@ -52,6 +52,10 @@ export const getWorkerInfo = data => {
   return request.post(`${window.VUE_APP_URL}/mes/alarmDefInform/list`,data);
 };
 
+export const getUnallocated = data => {
+  return request.post(`${window.VUE_APP_URL}/mes/alarmDefInform/listUnallocated`,data);
+};
+
 /**
  * 批量保存预警事件通知人员信息
  * url /mes/alarmDefInform/saveBatch

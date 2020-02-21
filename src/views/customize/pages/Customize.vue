@@ -23,7 +23,7 @@
             <!-- <el-form-item label="自定义项目:" prop="FIELD_01" required>
               <dsn-input v-model="addForm.FIELD_01"></dsn-input>
             </el-form-item>-->
-            <el-form-item label="自定义项目：" prop="FIELD_01" required class="FIELD_01">
+            <el-form-item label="自定义项目：" prop="FIELD_01" class="FIELD_01">
               <dsn-input style="width: 90%" v-model="addForm.FIELD_01"></dsn-input>
               <i class="el-icon-document" @click="selectCustomize"></i>
             </el-form-item>
@@ -113,7 +113,7 @@
       >
         <el-row>
           <el-col :span="18">
-            <el-form-item label="字段名:" prop="fieldName" required>
+            <el-form-item label="字段名:" prop="fieldName">
               <dsn-input v-model="addSetForm.fieldName"></dsn-input>
             </el-form-item>
           </el-col>
@@ -125,7 +125,7 @@
         </el-row>
         <el-row>
           <el-col :span="18">
-            <el-form-item label="标签:" prop="fieldLabel" required>
+            <el-form-item label="标签:" prop="fieldLabel">
               <dsn-input v-model="addSetForm.fieldLabel"></dsn-input>
             </el-form-item>
           </el-col>
@@ -146,14 +146,14 @@
         </el-row>
         <el-row v-if="addSetForm.fieldType != 'C'">
           <el-col :span="24">
-            <el-form-item label="长度:" prop="fieldSize" required>
+            <el-form-item label="长度:" prop="fieldSize">
               <dsn-input v-model="addSetForm.fieldSize"></dsn-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row v-if="addSetForm.fieldType == 'C'">
           <el-col :span="12">
-            <el-form-item label="代码名:" prop="limitGeneralCode" required>
+            <el-form-item label="代码名:" prop="limitGeneralCode">
               <el-select @change="handleChangeGeneralCode" v-model="addSetForm.limitGeneralCode">
                 <el-option
                   v-for="item in code"
@@ -165,7 +165,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="字段:" prop="limitGeneralField" required>
+            <el-form-item label="字段:" prop="limitGeneralField">
               <el-select :disabled="!addSetForm.limitGeneralCode" v-model="addSetForm.limitGeneralField">
                 <el-option
                   v-for="item in field"
@@ -219,6 +219,7 @@ import {
   findGeneralCodeDataByCustomItemHttp
   // getNames
 } from "../../../api/customize.api.js";
+import _ from 'lodash';
 import defineProgramModel from "../components/define-program-model.vue";
 
 export default {
@@ -235,26 +236,28 @@ export default {
       rules: {
         
         FIELD_01: [
-          { required: true, message: "请填写自定义项目名称", trigger: "blur" }
+          { required: true, message: "请填写自定义项目名称", trigger: ["blur", "change"] }
         ]
       },
       srules: {
         fieldName: [
-          { required: true, message: "请填写字段名", trigger: "blur" }
+          { required: true, message: "请填写字段名", trigger: ["blur", "change"] }
         ],
-        sequence: [{ required: true, message: "请填写序号", trigger: "blur" }],
+        sequence: [{ required: true, message: "请填写序号", trigger: ["blur", "change"]}],
         fieldLabel: [
-          { required: true, message: "请填写标签", trigger: "blur" }
+          { required: true, message: "请填写标签", trigger: ["blur", "change"] }
         ],
         fieldType: [
-          { required: true, message: "请选择格式", trigger: "change" }
+          { required: true, message: "请选择格式", trigger: ["blur", "change"] }
         ],
-        fieldSize: [{ required: true, message: "请填写长度", trigger: "blur" }],
+        fieldSize: [
+          { required: true, message: "请填写长度", trigger: ["blur", "change"] },
+        ],
         limitGeneralCode: [
-          { required: true, message: "请填写代码名", trigger: "blur" }
+          { required: true, message: "请填写代码名", trigger: ["blur", "change"] }
         ],
         limitGeneralField: [
-          { required: true, message: "请填写字段", trigger: "blur" }
+          { required: true, message: "请填写字段", trigger: ["blur", "change"] }
         ]
       },
       SetupInfoList: [],
@@ -442,8 +445,8 @@ export default {
             saveData(data).then(data => {
               if (data.data.code == 200) {
                 this.$message.success("保存成功");
-                this.resetForm("addForm");
-                this.SetupInfoList = [];
+               /*  this.resetForm("addForm");
+                this.SetupInfoList = []; */
               } else {
                 this.$message.error(data.data.message);
               }
@@ -535,7 +538,7 @@ export default {
     //弹框确认选择自定义项目
     confireSelectDefineProgram() {
       this.defineProgramDialog = false;
-      this.addForm = this.currentDefineProgram;
+      this.addForm = _.cloneDeep(this.currentDefineProgram);
     }
   }
 };

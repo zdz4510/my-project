@@ -39,9 +39,8 @@
               placeholder="请选择"
               @change="onChange"
               filterable
-              remote
+              v-loadMore="loadMore"
               :remote-method="searchMaterialList"
-              :loading="loading"
             >
               <el-option
                 v-for="item in options"
@@ -60,6 +59,8 @@
               placeholder="请选择"
               @change="onChange"
               filterable
+              v-loadMore="loadMore"
+              :remote-method="searchMaterialList"
             >
               <el-option
                 v-for="item in options"
@@ -90,13 +91,13 @@
               ></el-option>
             </dsn-select>
           </el-form-item>
-          <el-form-item>
-            <dsn-button size="small" type="primary" @click.native="search('searchForm')">查询</dsn-button>
-            <dsn-button size="small" type="primary" @click.native="resetForm('searchForm')">重置</dsn-button>
-            <dsn-button size="small" type="success" icon="el-icon-folder-add" @click.native="handleSaveData">保存</dsn-button>
-            <dsn-button icon="el-icon-delete" size="small" type="danger" @click.native="del">删除</dsn-button>
-          </el-form-item>
         </el-form>
+        <div style="margin-top: 20px">
+          <dsn-button size="small" type="primary" @click.native="search('searchForm')">查询</dsn-button>
+          <dsn-button size="small" type="primary" @click.native="resetForm('searchForm')">重置</dsn-button>
+          <dsn-button size="small" type="success" icon="el-icon-folder-add" @click.native="handleSaveData">保存</dsn-button>
+          <dsn-button icon="el-icon-delete" size="small" type="danger" @click.native="del">删除</dsn-button>
+        </div>
       </div>
     </DsnPanel>
     <DsnPanel>
@@ -224,6 +225,8 @@ export default {
           }
         ]
       },
+      listTotal: 0,
+      searchText: '',
       tableData: {
         data: [],
         page: {
@@ -277,11 +280,13 @@ export default {
       params.material = '';
       searchMat(params).then(data => {
         this.options = data.data.data.data;
+        this.listTotal = data.data.data.total;
       });
     } else if (this.searchForm.definedBy == "MATERIAL_GROUP") {
       params.materialGroup = '';
       searchMatGroup(params).then(data => {
         this.options = data.data.data.data;
+        this.listTotal = data.data.data.total;
       });
     }
   },
@@ -291,6 +296,7 @@ export default {
       (this.searchForm.value = ""), (this.searchForm.materialRev = "");
       this.listPageSize = 20;
       this.listCurrentPage = 1;
+      this.searchText = '';
       const params = {
         currentPage: this.listCurrentPage,
         pageSize: this.listPageSize,
@@ -299,26 +305,36 @@ export default {
         params.material = '';
         searchMat(params).then(data => {
           this.options = data.data.data.data;
+          this.listTotal = data.data.data.total;
         });
       } else if (val == "MATERIAL_GROUP") {
         params.materialGroup = '';
         searchMatGroup(params).then(data => {
           this.options = data.data.data.data;
+          this.listTotal = data.data.data.total;
         });
       }
     },
     searchMaterialList(value) {
-      console.log('value', value);
-      this.loading = true
+      this.loading = true;
+      this.searchText = value;
       const params = {
         currentPage: this.listCurrentPage,
         pageSize: this.listPageSize
-      }
+      };
       if (this.searchForm.definedBy == "MATERIAL") {
         params.material = value;
         searchMat(params).then(res => {
-          this.loading = false
+          this.loading = false;
           this.options = res.data.data.data;
+          this.listTotal = res.data.data.total;
+        })
+      } else {
+        params.materialGroup = value;
+        searchMatGroup(params).then(res => {
+          this.loading = false;
+          this.options = res.data.data.data;
+          this.listTotal = res.data.data.total;
         })
       }
     },
@@ -365,7 +381,7 @@ export default {
       sessionStorage.removeItem('searchForm');
       this.$refs[formName].resetFields();
       Object.keys(this.searchForm).map(item => this.searchForm[item] = '');
-      
+      this.checkedList = [];
       this.tableData.data = [];
     },
     handleSelectionChange(val) {
@@ -616,6 +632,33 @@ export default {
           })
         }
       });
+    },
+    loadMore() {
+      
+      const { listTotal, options, searchText } = this;
+      console.log('loadmore', options.length, listTotal)
+      if (options.length === listTotal) return;
+      this.loading = true
+      const params = {
+        currentPage: this.listCurrentPage + 1,
+        pageSize: this.listPageSize
+      }
+      console.log('this', this.searchText)
+      if (this.searchForm.definedBy == "MATERIAL") {
+        params.material = searchText;
+        searchMat(params).then(res => {
+          this.loading = false
+           this.options = this.options.concat(res.data.data.data);
+          this.listTotal = res.data.data.total;
+        })
+      } else {
+        params.materialGroup = searchText;
+        searchMatGroup(params).then(res => {
+          this.loading = false
+          this.options = this.options.concat(res.data.data.data);
+          this.listTotal = res.data.data.total;
+        })
+      }
     }
   },
   beforeDestroy() {

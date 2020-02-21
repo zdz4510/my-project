@@ -18,9 +18,11 @@ import "@/components";
 import "./registerServiceWorker";
 import router from "./router";
 import store from "./store";
+import { loadMore } from './directives';
 Vue.use(ElementUI);
 Vue.use(codemirror);
 Vue.use(VueCookies);
+Vue.use(loadMore);
 Vue.component("vue-draggable-resizable", VueDraggableResizable);
 Vue.config.productionTip = false;
 

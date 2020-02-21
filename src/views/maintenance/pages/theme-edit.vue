@@ -38,7 +38,7 @@
           </el-form>
         </div>
 
-        <el-tabs type="border-card" @tab-click="handleTabClick">
+        <el-tabs type="border-card">
           <el-tab-pane class="design"> 
             <span slot="label">基础信息</span>
             <div class="container">
@@ -251,6 +251,7 @@ export default {
   created() {
       // console.log(this.themeListGet,"vusx")
       this.themeForm=this.themeListGet[0];
+      this.handleTabClick();
   },
   mounted() {
   },
@@ -262,7 +263,6 @@ export default {
     // },
     // 导航栏改变发请求渲染两个表的数据
     handleTabClick() {
-      // console.log(this.themeForm,"this.themeForm")
       const data=this.themeForm;
       findStationListHttp(data).then(data => {
         const res = data.data;
@@ -276,11 +276,12 @@ export default {
           // 深拷贝查询出来的表格数据
           this.allList= _.cloneDeep(obj)
           return;
+        }else{
+          this.$message({
+            message: res.message,
+            type: "warning"
+          });
         }
-        this.$message({
-          message: res.message,
-          type: "warning"
-        });
       });
     },
     changeWork() {
@@ -332,7 +333,8 @@ export default {
       this.list2=arr;
     },
     handleReset() {
-      this.themeForm={}
+      this.themeForm=this.themeListGet[0];
+      this.handleTabClick();
     },
     // 返回
     handleBack() {
@@ -344,7 +346,8 @@ export default {
       });
     },
     saveHandle(){
-      const data= {...this.themeForm,...this.list,...this.list2};
+      const data= {...this.themeForm};
+      data.currentAllotStations	=this.list2;
       updateTopicHttp(data).then(data => {
         const res = data.data;
         if (res.code == 200) {
@@ -352,10 +355,11 @@ export default {
             type: "success",
             message: "修改成功"
           });
+          this.handleBack();
         } else {
           this.$message({
             type: "error",
-            message: "新增失败"
+            message: res.message
           });
         }
       });
@@ -371,20 +375,35 @@ export default {
     },
     // 选择的数据移动到左边
     toLeft() {
-      const arr = this.rightSelectList.filter(item => {
-        return this.findItemInArr(item, this.list).length == 0;
-      });
-      this.list = [...this.list, ...arr];
-      this.selectionList = [];
+      // const arr = this.rightSelectList.filter(item => {
+      //   return this.findItemInArr(item, this.list).length == 0;
+      // });
+      // console.log(arr,"222")
+      // this.list2.forEach(item=>{
+      //   console.log(item,"111")
+      // })
+      // this.list = [...this.list, ...arr];
+      // this.selectionList = [];
+      this.list = _.concat(this.list, this.rightSelectList);
+      this.list = _.uniq(this.list);
+      this.list2 = _.difference(
+        this.list2,
+        this.rightSelectList
+      );
+      // this.cloneAllocateData = _.cloneDeep(this.transferData);
 
     },
     //选择到数据移动到右边
     toRight() {
-      const arr = this.leftSelectList.filter(item => {
-        return this.findItemInArr(item, this.list2).length == 0;
-      });
-      this.list2 = [...this.list2, ...arr];
-      this.selectionList = [];
+      // const arr = this.leftSelectList.filter(item => {
+      //   return this.findItemInArr(item, this.list2).length == 0;
+      // });
+      // this.list2 = [...this.list2, ...arr];
+      // this.selectionList = [];
+      this.list2 = _.concat(this.list2, this.leftSelectList);
+      this.list2 = _.uniq(this.list2);
+      this.list = _.difference(this.list, this.leftSelectList);
+      // this.cloneAllocateData = _.cloneDeep(this.transferData);
     },
     handleLeftSelect(s) {
       this.leftSelectList = s;
