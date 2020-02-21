@@ -5,7 +5,7 @@
       <dsn-button size="small" type="primary" @click.native="handleSave('editForm')">保存</dsn-button>
     </div>
     <el-row :gutter="24">
-      <el-col :span="6">
+      <!-- <el-col :span="6">
         <div class="editList" style="padding-bottom:81px">
           <dsn-select
             v-model="value"
@@ -37,8 +37,8 @@
             <el-table-column label="描述" prop="workCenterDes"></el-table-column>
           </dsn-table>
         </div>
-      </el-col>
-      <el-col :span="18">
+      </el-col> -->
+      <el-col :span="24">
         <div class="workList">
           <el-form
             :inline="true"
@@ -88,13 +88,13 @@
                 <el-row>
                   <el-col :span="11">
                     <dsn-table
-                      :data="allocateData&&allocateData.filter(data => {!workCenter1 || data.workCenter.toLowerCase().includes(workCenter1.toLowerCase())})"
+                      :data="allocateData.filter(data => !workCenter1 || data.workCenter.toLowerCase().includes(workCenter1.toLowerCase()))"
                       @select="check1"
                       @select-all="check1"
                     >
                       <el-table-column label="工作中心:">
                         <el-table-column type="selection" width="55"></el-table-column>
-                        <el-table-column prop="workCenterRelation" label="已分配工作中心"></el-table-column>
+                        <el-table-column prop="workCenter" label="已分配工作中心"></el-table-column>
                       </el-table-column>
                       <el-table-column label>
                         <template slot="header">
@@ -114,7 +114,7 @@
                   </el-col>
                   <el-col :span="11">
                     <dsn-table
-                      :data="unallocateData&&unallocateData.filter(data => {!workCenter2 || data.workCenter.toLowerCase().includes(workCenter2.toLowerCase())})"
+                      :data="unallocateData.filter(data => !workCenter2 || data.workCenter.toLowerCase().includes(workCenter2.toLowerCase()))"
                       @select="check2"
                       @select-all="check2"
                     >
@@ -136,7 +136,7 @@
                 <el-row>
                   <el-col :span="11">
                     <dsn-table
-                      :data="allocateUser&&allocateUser.filter(data => {!name1 || data.name.toLowerCase().includes(name1.toLowerCase())})"
+                      :data="allocateUser.filter(data => !name1 || data.name.toLowerCase().includes(name1.toLowerCase()))"
                       @select="checkUser1"
                       @select-all="checkUser1"
                     >
@@ -162,7 +162,7 @@
                   </el-col>
                   <el-col :span="11">
                     <dsn-table
-                      :data="unallocateUser&&unallocateUser.filter(data => {!name2 || data.name.toLowerCase().includes(name2.toLowerCase())})"
+                      :data="unallocateUser.filter(data => !name2 || data.name.toLowerCase().includes(name2.toLowerCase()))"
                       @select="checkUser2"
                       @select-all="checkUser2"
                     >
@@ -205,8 +205,8 @@
 import { mapGetters, mapMutations } from "vuex";
 import {
   saveWorkCenter,
-  getRelationData,
-  getAllList
+  getAllList,
+  getUserList
 } from "../../../api/work.center.api.js";
 import _ from "lodash";
 export default {
@@ -285,23 +285,23 @@ export default {
         this.cloneList = JSON.parse(JSON.stringify(this.workCenterEditList)); //复制一份副本,保证副本和初始列表数据一致性
         this.editForm = this.cloneList[0]; // 默认选中第一行
         this.cloneModify = JSON.parse(JSON.stringify(this.editForm)); // modify 的副本
-        this.setCurrent(this.editForm); // 设置选中第一行
-        this.currentRow = this.editForm; // 设置初始currentRow 为第一行
-        let params = {
-          workCenter: this.editForm.workCenter
-        };
-        getRelationData(params).then(data => {
+       /*  this.setCurrent(this.editForm); // 设置选中第一行
+        this.currentRow = this.editForm; // 设置初始currentRow 为第一行 */
+        console.log('wqeqwe', this.workCenterEditList)
+        getAllList().then(data => {
           if (data.data.code == 200) {
-            this.unallocateData = data.data.data.outerRelations;
-            this.allocateData = data.data.data.relations;
+            this.unallocateData = data.data.data;
+            console.log('this.workCenterEditList.workCenterRelation', this.workCenterEditList.workCenterRelation)
+            this.allocateData = this.workCenterEditList[0].workCenterRelation || [];
           } else {
             this.$message.error(data.data.message);
           }
         });
-        getAllList(params).then(data => {
+        getUserList().then(data => {
           if (data.data.code == 200) {
-            this.unallocateUser = data.data.data.outerUserList;
-            this.allocateUser = data.data.data.userList;
+            this.unallocateUser = data.data.data;
+            console.log('this.workCenterEditList.userList', this.workCenterEditList.userList)
+            this.allocateUser = this.workCenterEditList[0].userList || []
           } else {
             this.$message.error(data.data.message);
           }
@@ -328,21 +328,9 @@ export default {
       this.editForm = tempList[0];
       this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
       this.setCurrent(tempList[0]);
-      let params = {
-        workCenter: this.editForm.workCenter
-      };
-      getRelationData(params).then(data => {
+      getAllList().then(data => {
         if (data.data.code == 200) {
-          this.unallocateData = data.data.data.outerRelations;
-          this.allocateData = data.data.data.relations;
-        } else {
-          this.$message.error(data.data.message);
-        }
-      });
-      getAllList(params).then(data => {
-        if (data.data.code == 200) {
-          this.unallocateUser = data.data.data.outerUserList;
-          this.allocateUser = data.data.data.userList;
+          this.unallocateData = data.data.data;
         } else {
           this.$message.error(data.data.message);
         }
@@ -389,21 +377,16 @@ export default {
       }
       this.editForm = currentRow;
       this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
-      let params = {
-        workCenter: this.editForm.workCenter
-      };
-      getRelationData(params).then(data => {
+      getAllList().then(data => {
         if (data.data.code == 200) {
-          this.unallocateData = data.data.data.outerRelations;
-          this.allocateData = data.data.data.relations;
+          this.unallocateData = data.data.data;
         } else {
           this.$message.error(data.data.message);
         }
       });
-      getAllList(params).then(data => {
+      getUserList().then(data => {
         if (data.data.code == 200) {
-          this.unallocateUser = data.data.data.outerUserList;
-          this.allocateUser = data.data.data.userList;
+          this.unallocateUser = data.data.data;
         } else {
           this.$message.error(data.data.message);
         }
@@ -462,7 +445,14 @@ export default {
                 workCenterType: this.editForm.workCenterType,
                 workCenterDes: this.editForm.workCenterDes,
                 workCenter: this.editForm.workCenter,
-                workCenterRelation: arr,
+                workCenterRelation: this.allocateData.length > 0 && this.allocateData.map(item => (
+                  {
+                    tenantSiteCode: item.tenantSiteCode,
+                    workCenter: item.workCenter,
+                    workCenterRelation: [],
+                    userList: []
+                  }
+                )) || [],
                 userList: this.allocateUser
               }
             ]
@@ -544,7 +534,6 @@ export default {
         this.unallocateData,
         this.selectedList2
       );
-      console.log(this.unallocateData, "all");
       this.cloneAllocateData = _.cloneDeep(this.allocateData);
     },
     rightUser() {
@@ -557,7 +546,6 @@ export default {
         this.allocateUser,
         this.selectedListUser
       );
-      console.log(this.unallocateUser, "unuser");
       this.cloneAllocateData = _.cloneDeep(this.allocateUser);
     },
     leftUser() {
@@ -567,7 +555,6 @@ export default {
         this.unallocateUser,
         this.selectedListUser2
       );
-      console.log(this.unallocateUser, "allUser");
       this.cloneAllocateData = _.cloneDeep(this.allocateUser);
     }
   }

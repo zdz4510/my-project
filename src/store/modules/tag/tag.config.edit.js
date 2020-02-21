@@ -9,6 +9,7 @@ const tagConfigEdit = {
       label:'',  //label
       labelStorage:'',
       labelLinkList:[],
+      clonelabelLinkList:[],
       labelCommand:'',
       previewImage:'',
 

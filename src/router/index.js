@@ -391,7 +391,7 @@ const routes = [
         path: "alarmGroup",
         name: "alarmGroup",
         meta: {
-          title: "预警事件分组编辑"
+          title: "预警事件分组"
         },
         component: () =>
           import(
@@ -402,7 +402,7 @@ const routes = [
         path: "addAlarmGroup",
         name: "addAlarmGroup",
         meta: {
-          title: "预警事件分组编辑"
+          title: "预警事件分组添加"
         },
         component: () =>
           import(

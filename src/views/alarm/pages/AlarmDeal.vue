@@ -13,7 +13,6 @@
               ref="undealSearchForm"
               :rules="rules"
               class="form-style"
-              :label-width="formLabelWidth"
             >
               <el-form-item label="触发序号:" prop="sequence">
                 <dsn-input v-model="undealSearchForm.sequence"></dsn-input>
@@ -63,13 +62,13 @@
                 >确认标记</dsn-button>
               </el-form-item>
               <el-form-item>
-                <dsn-input placeholder="请输入内容" v-model="ackComment" class="des">
+                <dsn-input placeholder="请输入内容" v-model="ackComment" style="vertical-align: middle">
                   <template slot="prepend">确认描述:</template>
                 </dsn-input>
               </el-form-item>
             </el-form>
           </div>
-          <div class>
+          <div style="margin-top: 20px">
             <dsn-table
               ref="undealTable"
               :data="this.undealTableData.data"
@@ -91,18 +90,20 @@
               <el-table-column prop="shopOrder" label="工单"></el-table-column>
               <el-table-column prop="numbersInvolved" label="涉及数量"></el-table-column>
               <el-table-column prop="resource" label="设备编号"></el-table-column>
-              <el-table-column prop="clearFlag" label="初始化与否"></el-table-column>
+              <el-table-column prop="clearFlag" label="初始化与否">
+                <template slot-scope="scope">
+                  {{ !scope.row.clearFlag ? '否' : '是' }}
+                </template>
+              </el-table-column>
               <el-table-column prop="clearTime" label="初始化时间"></el-table-column>
               <el-table-column prop="clearUserId" label="初始化用户"></el-table-column>
               <el-table-column prop="clearComment" label="初始化注释"></el-table-column>
             </dsn-table>
             <dsn-pagination
-              class="mtb20"
               background
               @size-change="handleSizeChangeUndeal"
               @current-change="handleCurrentChangeUndeal"
               :current-page="this.undealTableData.page.currentPage"
-              :page-sizes="[1, 10, 15, 20, 30, 50]"
               :page-size="this.undealTableData.page.pageSize"
               layout="->, total, prev, pager, next, sizes"
               :total="this.undealTableData.page.total"
@@ -122,7 +123,6 @@
               ref="dealSearchForm"
               :rules="rules"
               class="form-style"
-              :label-width="formLabelWidth"
             >
               <el-form-item label="触发序号:" prop="sequence">
                 <dsn-input v-model="dealSearchForm.sequence"></dsn-input>
@@ -181,13 +181,13 @@
                 >初始化</dsn-button>
               </el-form-item>
               <el-form-item>
-                <dsn-input placeholder="请输入内容" v-model="clearComment" class="des">
+                <dsn-input placeholder="请输入内容" v-model="clearComment" style="vertical-align: middle">
                   <template slot="prepend">初始化描述:</template>
                 </dsn-input>
               </el-form-item>
             </el-form>
           </div>
-          <div>
+          <div style="margin-top: 20px">
             <dsn-table
               ref="dealTable"
               :data="this.dealTableData.data"
@@ -209,10 +209,18 @@
               <el-table-column prop="shopOrder" label="工单"></el-table-column>
               <el-table-column prop="numbersInvolved" label="涉及数量"></el-table-column>
               <el-table-column prop="resource" label="设备编号"></el-table-column>
-              <el-table-column prop="ackFlag" label="确认标记"></el-table-column>
+              <el-table-column prop="ackFlag" label="确认标记">
+                <template slot-scope="scope">
+                  {{ !scope.row.ackFlag ? '未确认' : '已确认' }}
+                </template>
+              </el-table-column>
               <el-table-column prop="ackUserId" label="确认人"></el-table-column>
               <el-table-column prop="ackTime" label="确认时间"></el-table-column>
-              <el-table-column prop="clearFlag" label="初始化与否"></el-table-column>
+              <el-table-column prop="clearFlag" label="初始化与否">
+                <template slot-scope="scope">
+                  {{ !scope.row.clearFlag ? '否' : '是' }}
+                </template>
+              </el-table-column>
               <el-table-column prop="clearTime" label="初始化时间"></el-table-column>
               <el-table-column prop="clearUserName" label="初始化用户"></el-table-column>
               <el-table-column prop="clearComment" label="初始化注释"></el-table-column>
@@ -224,7 +232,6 @@
               @size-change="handleSizeChangeDeal"
               @current-change="handleCurrentChangeDeal"
               :current-page="this.dealTableData.page.currentPage"
-              :page-sizes="[1, 10, 15, 20, 30, 50]"
               :page-size="this.dealTableData.page.pageSize"
               layout="->, total, prev, pager, next, sizes"
               :total="this.dealTableData.page.total"
@@ -244,7 +251,6 @@
               ref="searchForm"
               :rules="rules"
               class="form-style"
-              :label-width="formLabelWidth"
             >
               <el-form-item label="触发序号:" prop="sequence">
                 <dsn-input v-model="searchForm.sequence"></dsn-input>
@@ -280,7 +286,11 @@
               <el-table-column prop="shopOrder" label="工单"></el-table-column>
               <el-table-column prop="alarm" label="事件编号"></el-table-column>
               <el-table-column prop="alarmLevel" label="事件等级"></el-table-column>
-              <el-table-column prop="ackFlag" label="确认标记"></el-table-column>
+              <el-table-column prop="ackFlag" label="确认标记">
+                <template slot-scope="scope">
+                  {{ !scope.row.ackFlag ? '未确认' : '已确认' }}
+                </template>
+              </el-table-column>
               <el-table-column prop="workCenter" label="工作中心"></el-table-column>
               <el-table-column prop="workCenterRelation" label="产线"></el-table-column>
               <el-table-column prop="station" label="工序站位"></el-table-column>
@@ -292,7 +302,6 @@
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
               :current-page="this.tableData.page.currentPage"
-              :page-sizes="[1, 10, 15, 20, 30, 50]"
               :page-size="this.tableData.page.pageSize"
               layout="->, total, prev, pager, next, sizes"
               :total="this.tableData.page.total"
@@ -459,7 +468,6 @@ export default {
 
     searchUndeal() {
       let params = this.undealSearchForm;
-      console.log('click')
       params.pageSize = this.undealTableData.page.pageSize;
       params.currentPage = this.undealTableData.page.currentPage;
       getAlarmGroupList(params).then(data => {
@@ -515,10 +523,10 @@ export default {
         arr.push(obj);
       });
       updateAckData(arr).then(data => {
-        console.log(data);
         if (data.data.code == 200) {
           this.$message.success("操作成功");
           this.searchUndeal();
+          this.searchDeal();
         } else {
           this.$message.error(data.data.message);
         }
@@ -536,6 +544,7 @@ export default {
         if (data.data.code == 200) {
           this.$message.success("操作成功");
           this.searchDeal();
+          this.searchUndeal();
         } else {
           this.$message.error(data.data.message);
         }

@@ -164,6 +164,7 @@
           tooltip-effect="dark"
           style="width: 100%"
           @selection-change="handleSelectionChange"
+          @select="onTableSelect"
         >
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column type="index" width="55"></el-table-column>
@@ -304,12 +305,20 @@ export default {
       operationList: [],
       //资源
       resourceDialog: false,
-      resourceList: []
+      resourceList: [],
+      selectedData: []
     };
   },
   created() {
     this.lotConditionForm.lot = this.$route.query.lot;
+    this.selectedData = JSON.parse(JSON.stringify(this.lotQueryList));
     this.tableData = JSON.parse(JSON.stringify(this.lotQueryList));
+    this.total = this.tableData.length;
+  },
+  mounted() {
+    this.selectedData.forEach(element => {
+      this.$refs.multipleTable.toggleRowSelection(element);
+    });
   },
   computed: {
     ...mapGetters(["lotQueryList"])
@@ -320,6 +329,19 @@ export default {
     goBack() {
       this.$router.push({ name: "lotStep" });
     },
+    onTableSelect(selection, row) {
+      let selected = selection.length && selection.indexOf(row) !== -1;
+      if (selected) {
+        if (!this.selectedData.find(item => item.lot === row.lot)) {
+          this.selectedData.push(row);
+        }
+      } else {
+        this.selectedData = this.selectedData.filter(
+          item => item.lot !== row.lot
+        );
+      }
+      console.log(this.selectedData);
+    },
     //当前选中行
     handleSelectionChange(val) {
       this.selectionList = val;
@@ -327,6 +349,9 @@ export default {
     //改变页码
     handleCurrentChange(val) {
       this.currentPage = val;
+      this.selectedData.forEach(element => {
+        this.$refs.multipleTable.toggleRowSelection(element);
+      });
     },
     // 修改页码大小
     handlePagesize(pagesize) {
@@ -374,6 +399,14 @@ export default {
         if (res.code === 200) {
           this.tableData = res.data;
           this.total = this.tableData.length;
+          this.selectedData.forEach(item => {
+            if (!this.tableData.find(item2 => item2.lot === item.lot)) {
+              this.tableData.push(item);
+            }
+          });
+          this.selectedData.forEach(element => {
+            this.$refs.multipleTable.toggleRowSelection(element);
+          });
           return;
         }
         this.$message({
@@ -389,18 +422,27 @@ export default {
     },
     //确认选择Lot
     handleConfirm() {
-      if (this.selectionList.length === 0) {
+      if (this.selectedData.length === 0) {
         this.$message({
           message: "还没有选择哦",
           type: "warning"
         });
         return;
       }
-      const tempArr = JSON.parse(JSON.stringify(this.selectionList));
       // this.selectionList.forEach(element => {
-      //   tempArr.push(element.lot);
+      //   console.log(element);
+      //   console.log(this.lotQueryList.indexOf(element));
+      //   if (this.lotQueryList.indexOf(element) === -1) {
+      //     this.lotQueryList.push(JSON.parse(JSON.stringify(element)));
+      //   }
       // });
-      this.LOTQUERYLIST(tempArr);
+      // this.selectionList.forEach(item => {
+      //   if (!this.lotQueryList.find(item2 => item2.lot === item.lot)) {
+      //     this.lotQueryList.push(item);
+      //   }
+      // });
+      console.log(this.selectedData);
+      this.LOTQUERYLIST(JSON.parse(JSON.stringify(this.selectedData)));
       this.goBack();
     },
     //物料查询start
