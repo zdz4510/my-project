@@ -151,7 +151,7 @@ export default {
     },
     search() {
       const data = {
-        currentPage: this.tableData.page.currentPagee,
+        currentPage:this.tableData.page.currentPage,
         pageSize: this.tableData.page.pageSize,
         name: this.searchForm.name,
         user: this.searchForm.user
@@ -169,7 +169,7 @@ export default {
       });
     },
     handleSizeChange(pageSize) {
-      this.tableData.page.pageSize = pageSize;
+      this.tableData.page.pageSize =pageSize;
       this.search();
     },
     handleCurrentChange(currentPage) {
@@ -177,7 +177,7 @@ export default {
       this.search();
     },
     handleSelectionChange(val) {
-      this.checkedList = val;
+      this.checkedList =val;
     },
     del() {
       this.$confirm("是否删除所选数据?", "提示", {

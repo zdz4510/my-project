@@ -28,7 +28,7 @@
 					</dsn-select>
 					<dsn-table ref="editTable" :data="cloneList" border highlight-current-row  @row-click="handleCurrentChange" >
 						<el-table-column label="用户" prop="user"> </el-table-column>
-						<el-table-column label="姓名" prop="name"> </el-table-column>
+						<el-table-column label="姓名" prop="name" :disabled="true"> </el-table-column>
 					</dsn-table>
 				</div>
 			</el-col>
