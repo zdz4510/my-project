@@ -97,7 +97,7 @@
           <el-tabs type="border-card">
             <el-tab-pane label="数据收集组" style="height:200px">
               <h3 style="text-align:center">涉及数据收集组</h3>
-              <el-table :data="tableData" @select="selectedList">
+              <el-table :data="dcGroupList" @select="selectedList">
                 <el-table-column type="selection" width="45"></el-table-column>
                 <el-table-column prop="dcGroup" label="数据收集组"></el-table-column>
                 <el-table-column prop="dcGroupDes" label="数据收集组描述" width="110"></el-table-column>
@@ -120,7 +120,7 @@
                 <dsn-button size="small" type="primary" icon="el-icon-refresh" @click="reset">重置</dsn-button>
                 <dsn-button size="small" type="primary" @click="check">校验</dsn-button>
               </div>
-              <el-table :data="paramsTableData">
+              <el-table :data="dcParameterMeasureList">
                 <el-table-column label="参数名">
                   <template slot-scope="scope">
                     <span>{{ scope.row.parameter }}</span>
@@ -155,7 +155,7 @@
     <!-- 查看参数明细start -->
     <el-dialog title="查看参数明细" :visible.sync="paramsDialog" @close="closeParams">
       <h3 style="text-align:center">涉及数据收集组</h3>
-      <dsn-table :data="tableData" @select="selectedList">
+      <dsn-table :data="dcGroupList" @select="selectedList">
         <el-table-column type="selection" width="35"></el-table-column>
         <el-table-column prop="parameter" label="参数名称"></el-table-column>
         <el-table-column prop="parameterDes" label="参数描述"></el-table-column>
@@ -173,8 +173,7 @@
         <el-table-column prop="alarm" label="预警事件编号" width="110"></el-table-column>
       </dsn-table>
       <span slot="footer" class="dialog-footer">
-        <dsn-button @click="handleCancle">取 消</dsn-button>
-        <dsn-button type="primary" @click="handleSave">确 定</dsn-button>
+        <dsn-button type="primary" @click="paramsDialog=false">确 定</dsn-button>
       </span>
     </el-dialog>
     <!-- 查看参数明细end -->
@@ -183,36 +182,35 @@
       <el-tabs type="border-card">
         <el-tab-pane label="物料组">
           <h3 style="text-align:center">涉及关系明细</h3>
-          <el-table :data="tableData">
-            <el-table-column prop="parameter" label="物料组"></el-table-column>
-            <el-table-column prop="parameterDes" label="物料组描述"></el-table-column>
+          <el-table :data="relationDetail.materialGroup" height="200px">
+            <el-table-column prop="materialGroup" label="物料组"></el-table-column>
+            <el-table-column prop="groupDes" label="物料组描述"></el-table-column>
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="设备类型">
           <h3 style="text-align:center">涉及关系明细</h3>
-          <el-table :data="tableData">
-            <el-table-column prop="parameter" label="设备类型"></el-table-column>
-            <el-table-column prop="parameterDes" label="设备类型描述"></el-table-column>
+          <el-table :data="relationDetail.resourceGroup">
+            <el-table-column prop="resourceGroup" label="设备类型"></el-table-column>
+            <el-table-column prop="groupDes" label="设备类型描述"></el-table-column>
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="工作中心">
           <h3 style="text-align:center">涉及关系明细</h3>
-          <el-table :data="tableData">
-            <el-table-column prop="parameter" label="工作中心"></el-table-column>
-            <el-table-column prop="parameterDes" label="工作中心描述"></el-table-column>
+          <el-table :data="relationDetail.workCenter">
+            <el-table-column prop="workCenter" label="工作中心"></el-table-column>
+            <el-table-column prop="workCenterDes" label="工作中心描述"></el-table-column>
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="工序">
           <h3 style="text-align:center">涉及关系明细</h3>
-          <el-table :data="tableData">
-            <el-table-column prop="parameter" label="工序"></el-table-column>
-            <el-table-column prop="parameterDes" label="工序描述"></el-table-column>
+          <el-table :data="relationDetail.operation">
+            <el-table-column prop="operation" label="工序"></el-table-column>
+            <el-table-column prop="operationDes" label="工序描述"></el-table-column>
           </el-table>
         </el-tab-pane>
       </el-tabs>
       <span slot="footer" class="dialog-footer">
-        <dsn-button @click="handleCancle">取 消</dsn-button>
-        <dsn-button type="primary" @click="handleSave">确 定</dsn-button>
+        <dsn-button type="primary" @click="detailDialog = false">确 定</dsn-button>
       </span>
     </el-dialog>
     <!-- 查看多个关系明细end -->
@@ -246,9 +244,9 @@ export default {
         workCenter: "",
         materialGroup: ""
       },
-      tableData: [],
+      dcGroupList: [],
       selectionList: [],
-      paramsTableData: [],
+      dcParameterMeasureList: [],
       logList: [],
       checkedList: [],
       rules: {
@@ -271,7 +269,8 @@ export default {
         }
       ],
       activeNameLeft: "baseRelation",
-      activeNameRight: "paramsInput"
+      activeNameRight: "paramsInput",
+      relationDetail: []
     };
   },
   created() {
@@ -296,12 +295,18 @@ export default {
             collectionType: this.searchForm.collectionType
           };
           findDcGroupDataHttp(data).then(data => {
-            this.baseInfoForm = data.data.data;
-            if (data.data.data.dcParameterMeasureList) {
-              this.paramsTableData = data.data.data.dcParameterMeasureList;
-            } else {
-              this.tableData = data.data.data.dcGroupList;
+            const res = data.data;
+            if (res.code === 200) {
+              this.baseInfoForm = res.data;
+              this.dcParameterMeasureList = res.data.dcParameterMeasureList;
+              this.dcGroupList = res.data.dcGroupList;
+              this.relationDetail = res.data.relationDetail;
+              return;
             }
+            this.$message({
+              message: res.message,
+              type: "warning"
+            });
           });
         } else {
           console.log("error submit!!");
@@ -313,20 +318,20 @@ export default {
       this.$refs[formName].resetFields();
     },
     check() {
-      console.log(this.paramsTableData, "tabledata");
-      let params = this.paramsTableData;
+      console.log(this.dcParameterMeasureList, "tabledata");
+      let params = this.dcParameterMeasureList;
       checkParamData(params).then(data => {
         console.log(data.data.data, "ddddd");
         this.logList.push(data.data.data.msg);
       });
     },
     reset() {
-      let arr = this.paramsTableData;
+      let arr = this.dcParameterMeasureList;
       arr.forEach(function(value) {
         value.parameterValue = "";
         console.log(value);
       });
-      this.paramsTableData = JSON.parse(JSON.stringify(arr));
+      this.dcParameterMeasureList = JSON.parse(JSON.stringify(arr));
       this.$forceUpdate();
     },
     handleCancle() {
@@ -337,7 +342,7 @@ export default {
         this.paramsDialog = false;
         let params = this.checkedList[0];
         getParamsList(params).then(data => {
-          this.paramsTableData = data.data.data;
+          this.dcParameterMeasureList = data.data.data;
         });
       } else {
         this.$message.error("请选择一条数据");
@@ -349,7 +354,7 @@ export default {
     save() {
       let params = this.checkedList[0];
       console.log(params);
-      params.dcParameterMeasureInfoList = this.paramsTableData;
+      params.dcParameterMeasureInfoList = this.dcParameterMeasureList;
       params.collectionType = this.searchForm.collectionType;
       params.dcGroup = this.checkedList[0].dcGroup;
       params.material = this.baseInfoForm.material;

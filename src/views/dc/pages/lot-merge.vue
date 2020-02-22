@@ -253,6 +253,9 @@ export default {
           this.showInfo.resourceList = resources;
           this.showInfo.materialRev = `${res.data.material}(${res.data.materialRev})`;
           this.showInfo.routerRev = `${res.data.router}(${res.data.routerRev})`;
+          this.lotMergeForm.lot = "";
+          this.tableData = [];
+          this.selectionList = [];
           return;
         }
         this.$message({
@@ -376,6 +379,10 @@ export default {
           });
           this.tableData = [];
           this.lotMergeForm.lot = "";
+          this.$message({
+            message: `LOT成功合并，数量从${this.showInfo.quantity}调整到${res.data.quantity}`,
+            type: "warning"
+          });
           this.handleQuery();
           return;
         }
