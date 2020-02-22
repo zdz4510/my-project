@@ -225,19 +225,19 @@ export default {
             }
         },
         exportHttpUndeal(){
-            findShopOrderListHttp().then(data => {
-            const res = data.data;
-            if (res.code === 200) {
-            data = res.data;
-            console.log("data",data)
-            this.exportResult(data);
-            return;
-            }
-            this.$message({
-                message: res.message,
-                type: "warning"
-                });
-            });
+            // findShopOrderListHttp().then(data => {
+            // const res = data.data;
+            // if (res.code === 200) {
+            // data = res.data;
+            // console.log("data",data)
+            this.exportResult(this.tableData);
+            // return;
+            // }
+            // this.$message({
+            //     message: res.message,
+            //     type: "warning"
+            //     });
+            // });
         },
         //返回结果，提示信息
         exportResult(data) {
@@ -392,7 +392,7 @@ export default {
             width:50%;
         }
         .topRigt{
-            height:200px;
+            height:170px;
             width:50%;
             background:#fff;
             box-sizing: border-box;
@@ -400,7 +400,7 @@ export default {
             .showData{
                 display: flex;
                 justify-content:space-between;
-                margin:10px;
+                margin:30px;
                 >div{
                     display: flex;
                     justify-content: center;
