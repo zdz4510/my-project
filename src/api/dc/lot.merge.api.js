@@ -10,3 +10,25 @@ export const findLotAtOperationHttpMerge = data => {
     params: data
   });
 };
+
+/**
+ * 2步骤Lot添加接口
+ *  url /mes/mergeLot/addLotAtOperation
+ */
+export const addLotAtOperationHttp = data => {
+  return request.post(
+    `${window.VUE_APP_URL}/mes/mergeLot/addLotAtOperation?lot=${data.lot}`,
+    data.splitLot
+  );
+};
+
+/**
+ * 合并Lot接口
+ *  url /mes/mergeLot/mergeLot
+ */
+export const mergeLotHttp = data => {
+  return request.post(
+    `${window.VUE_APP_URL}/mes/mergeLot/mergeLot?lot=${data.lot}`,
+    data.mergeList
+  );
+};

@@ -13,14 +13,14 @@
         label-width="80px"
       >
         <el-form-item label="代码类型" prop="generalCodeGroup">
-          <dsn-select
+          <el-select
             v-model.trim="genericCodeDefineForm.generalCodeGroup"
-            filterable
+            size="small"
             placeholder="请选择代码类型"
           >
             <el-option label="系统" value="S">系统</el-option>
             <el-option label="用户" value="I">用户</el-option>
-          </dsn-select>
+          </el-select>
         </el-form-item>
         <el-form-item label="代码名" prop="generalCode">
           <el-row>
@@ -123,9 +123,14 @@
       <span>
         <el-form ref="addForm" :model="addForm" label-width="70px" :rules="addFormRules">
           <el-form-item label="字段名" prop="fieldName">
-            <dsn-select v-model.trim="addForm.fieldName" placeholder="请选择字段名" style="width:100%">
+            <dsn-select
+              v-model.trim="addForm.fieldName"
+              placeholder="请选择字段名"
+              style="width:100%"
+              :disabled="operateType === 'edit'"
+            >
               <el-option
-                v-for="(item, index) in fieldNames"
+                v-for="(item, index) in excessFieldNames"
                 :key="index"
                 :label="item"
                 :value="item"
@@ -349,7 +354,7 @@ export default {
         fieldName: "",
         fieldLabel: "",
         fieldType: "A",
-        fieldSize: "",
+        fieldSize: "30",
         limitGeneralCode: "",
         limitGeneralField: ""
       },
@@ -397,7 +402,24 @@ export default {
       dialogWidth: "400px"
     };
   },
-  computed: {},
+  watch: {
+    addFormNew: {
+      handler: function(val) {
+        if (val === "N") {
+          this.addForm.fieldSize = 10;
+        }
+        if (val === "A") {
+          this.addForm.fieldSize = 30;
+        }
+      },
+      deep: true
+    }
+  },
+  computed: {
+    addFormNew() {
+      return JSON.parse(JSON.stringify(this.addForm.fieldType));
+    }
+  },
   filters: {
     filterFieldType(value) {
       if (value === "A") {
@@ -564,7 +586,7 @@ export default {
       this.addForm.fieldName = this.excessFieldNames[0];
       this.addForm.fieldLabel = "";
       this.addForm.fieldType = "A";
-      this.addForm.fieldSize = "";
+      this.addForm.fieldSize = "30";
       this.addForm.limitGeneralCode = "";
       this.addForm.limitGeneralField = "";
     },
@@ -646,8 +668,8 @@ export default {
         });
       }
       this.tableData.push(JSON.parse(JSON.stringify(this.addForm)));
-
-      // this.usedFieldNames.push(this.addForm.fieldName);
+      //对表格数据进行排序
+      this.tableData.sort((a, b) => a.fieldName.localeCompare(b.fieldName));
     },
     //编辑
     handleEdit() {
@@ -682,8 +704,8 @@ export default {
             message: "保存成功",
             type: "success"
           });
-          this.editable = false;
-          this.handleReset();
+          // this.editable = false;
+          // this.handleReset();
           return;
         }
         this.$message({
@@ -701,6 +723,10 @@ export default {
       deleteGeneralCodeHttp(data).then(data => {
         const res = data.data;
         if (res.code === 200) {
+          this.$message({
+            message: "通用代码删除成功",
+            type: "success"
+          });
           this.deleteCodeDialog = false;
           this.handleReset();
           return;
@@ -714,12 +740,33 @@ export default {
     },
     //删除字段名
     handleFieldDelete() {
+      //计算出删除之后剩下的字段名
+      this.selectionList.forEach(element1 => {
+        this.usedFieldNames.forEach(element2 => {
+          if (element1.fieldName === element2) {
+            this.excessFieldNames.push(element2);
+          }
+        });
+      });
+      //对表格数据进行排序
+      this.excessFieldNames.sort((a, b) => a.localeCompare(b));
+      //计算出删除之后已使用的字段名
+      this.usedFieldNames = this.fieldNames.filter(item => {
+        return this.excessFieldNames.indexOf(item) === -1;
+      });
       //计算出删除之后的字段数据
       const tempArr = this.tableData.filter(item => {
         return this.selectionList.indexOf(item) === -1;
       });
       this.tableData = tempArr;
+      // usedFieldNames: fieldNames,
+      // //已使用的字段名
+      // usedFieldNames: [],
       this.deleteFieldDialog = false;
+      this.$message({
+        message: "字段名删除成功",
+        type: "success"
+      });
     },
     //代码名输入框值变化
     inputGeneralCode(val) {

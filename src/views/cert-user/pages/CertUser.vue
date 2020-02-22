@@ -74,7 +74,7 @@
           <el-table-column prop="cert" label="上岗证"></el-table-column>
           <el-table-column prop="certDes" label="上岗证描述"></el-table-column>
           <el-table-column label="状态" prop="status">
-            <template slot-scope="scope" >{{ scope.row.status == true ? '已启用' : '未启用' }}</template>
+            <template slot-scope="scope">{{ scope.row.status == true ? '已启用' : '未启用' }}</template>
           </el-table-column>
           <el-table-column label="持续时间类型" prop="certType">
             <template slot-scope="scope">{{ scope.row.certType == true ? '永久' : '临时' }}</template>
@@ -150,12 +150,16 @@ export default {
       this.search();
     },
     search() {
-     const params = this.searchForm;
-      params.pageSize = this.tableData.page.pageSize;
-      params.currentPage = this.tableData.page.currentPage;
-      if (!params.name) delete params.name;
-      if (!params.user) delete params.user;
-      getCertUserList(params).then(data => {
+      const data = {
+        currentPage: this.tableData.page.currentPagee,
+        pageSize: this.tableData.page.pageSize,
+        name: this.searchForm.name,
+        user: this.searchForm.user
+      };
+      // if (!params.name) delete params.name;
+      // if (!params.user) delete params.user;
+      getCertUserList(data).then(data => {
+        console.log(data.data.data);
         if (data.data.code == 200) {
           this.tableData.data = data.data.data.data;
           this.tableData.page.total = data.data.data.total;

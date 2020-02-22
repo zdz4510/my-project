@@ -311,14 +311,16 @@ export default {
   },
   created() {
     this.lotConditionForm.lot = this.$route.query.lot;
-    this.selectedData = JSON.parse(JSON.stringify(this.lotQueryList));
     this.tableData = JSON.parse(JSON.stringify(this.lotQueryList));
+    this.selectedData = JSON.parse(JSON.stringify(this.lotQueryList));
     this.total = this.tableData.length;
   },
   mounted() {
-    this.selectedData.forEach(element => {
-      this.$refs.multipleTable.toggleRowSelection(element);
-    });
+    setTimeout(() => {
+      this.tableData.forEach(element => {
+        this.$refs.multipleTable.toggleRowSelection(element);
+      });
+    }, 0);
   },
   computed: {
     ...mapGetters(["lotQueryList"])
@@ -330,6 +332,7 @@ export default {
       this.$router.push({ name: "lotStep" });
     },
     onTableSelect(selection, row) {
+      console.log(11111);
       let selected = selection.length && selection.indexOf(row) !== -1;
       if (selected) {
         if (!this.selectedData.find(item => item.lot === row.lot)) {
@@ -344,13 +347,25 @@ export default {
     },
     //当前选中行
     handleSelectionChange(val) {
+      console.log(2222);
       this.selectionList = val;
     },
     //改变页码
     handleCurrentChange(val) {
       this.currentPage = val;
-      this.selectedData.forEach(element => {
-        this.$refs.multipleTable.toggleRowSelection(element);
+      console.log(this.tableData);
+      console.log(this.selectedData);
+      this.tableData.forEach(element1 => {
+        this.selectedData.forEach(element2 => {
+          console.log(
+            element1.lot === element2.lot,
+            element1.lot,
+            element2.lot
+          );
+          if (element1.lot === element2.lot) {
+            this.$refs.multipleTable.toggleRowSelection(element1);
+          }
+        });
       });
     },
     // 修改页码大小

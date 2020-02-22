@@ -1,5 +1,5 @@
 import request from "@/service/";
-import qs from 'qs';
+import qs from "qs";
 /* 用户证明分配*/
 
 /**
@@ -10,8 +10,6 @@ export const getCertUserList = data => {
     return request.post(
         `${window.VUE_APP_URL}/mes/certUser/findPage?${qs.stringify(data)}`);
 };
-
-
 /**
  * 保存
  *  url /mes/certUser/save
@@ -38,21 +36,11 @@ export const deleteData = data => {
     return request.post(`${window.VUE_APP_URL}/mes/certUser/delete`, data);
 };
 
-
 /**
  * 获取所有上岗证
  *  url /mes/certUser/getAllCert
  */
 
 export const getAllCert = () => {
-    return request.post(`${window.VUE_APP_URL}/mes/certUser/getAllCert`);
-};
-/**
- * /certUser/checkUser
-新增时对输入用户进行判断
-
- */
-
-export const checkUser = data => {
-    return request.post(`${window.VUE_APP_URL}/mes/certUser/checkUser?user=${data.user}`, data);
+  return request.post(`${window.VUE_APP_URL}/mes/certUser/getAllCert`);
 };
