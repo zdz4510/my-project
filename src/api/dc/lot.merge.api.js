@@ -12,6 +12,16 @@ export const findLotAtOperationHttpMerge = data => {
 };
 
 /**
+ * 1步骤Lot状态获取接口
+ *  url /mes/mergeLot/findLotAtOperation
+ */
+export const findLotAtOperationHttp = data => {
+  return request.get(`${window.VUE_APP_URL}/mes/mergeLot/findLotAtOperation`, {
+    params: data
+  });
+};
+
+/**
  * 2步骤Lot添加接口
  *  url /mes/mergeLot/addLotAtOperation
  */

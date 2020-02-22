@@ -7,14 +7,16 @@
       <!-- 查询条件start -->
       <el-form :model="lotForm" :inline="true" ref="lotForm" class="lotForm" :rules="lotFormRules">
         <el-form-item label="LOT" prop="lot">
-          <el-row>
-            <el-col :span="22">
-              <dsn-input class="lot" v-model.trim="lotForm.lot" placeholder="请输入LOT"></dsn-input>
-            </el-col>
-            <el-col :span="2">
+          <dsn-input
+            class="lot"
+            v-model.trim="lotForm.lot"
+            style="width:225px;vertical-align:baseline;"
+            placeholder="请输入LOT"
+          >
+            <template slot="append">
               <i class="el-icon-document" @click="goQuery('queryLot')"></i>
-            </el-col>
-          </el-row>
+            </template>
+          </dsn-input>
         </el-form-item>
         <el-form-item>
           <dsn-button
@@ -74,14 +76,16 @@
           :rules="lotMergeFormRule"
         >
           <el-form-item label="合并的LOT" prop="lot">
-            <el-row>
-              <el-col :span="22">
-                <dsn-input class="mergeLot" v-model.trim="lotMergeForm.lot" placeholder="请输入LOT"></dsn-input>
-              </el-col>
-              <el-col :span="2">
+            <dsn-input
+              class="mergeLot"
+              v-model.trim="lotMergeForm.lot"
+              style="width:225px;vertical-align:baseline;"
+              placeholder="请输入LOT"
+            >
+              <template slot="append">
                 <i class="el-icon-document" @click="goQuery('addMergeLot')"></i>
-              </el-col>
-            </el-row>
+              </template>
+            </dsn-input>
           </el-form-item>
           <el-form-item>
             <dsn-button
@@ -164,11 +168,12 @@
 </template>
 
 <script>
+import { listLotHttp } from "@/api/dc/lot.divestiture.api.js";
 import {
-  findLotAtOperationHttp,
-  listLotHttp
-} from "@/api/dc/lot.divestiture.api.js";
-import { addLotAtOperationHttp, mergeLotHttp } from "@/api/dc/lot.merge.api.js";
+  addLotAtOperationHttp,
+  mergeLotHttp,
+  findLotAtOperationHttp
+} from "@/api/dc/lot.merge.api.js";
 import allLotModel from "../components/all-lots-model.vue";
 
 export default {

@@ -36,15 +36,17 @@
               </el-form-item>
               <el-form-item label="物料" prop="material">
                 <el-row>
-                  <el-col :span="14">
+                  <el-col :span="16">
                     <dsn-input
                       v-model.trim="lotConditionForm.material"
                       size="small"
+                      style="width:225px;vertical-align:baseline;"
                       placeholder="请输入物料"
-                    ></dsn-input>
-                  </el-col>
-                  <el-col :span="2">
-                    <i class="el-icon-document" @click="queryMaterial"></i>
+                    >
+                      <template slot="append">
+                        <i class="el-icon-document" @click="queryMaterial"></i>
+                      </template>
+                    </dsn-input>
                   </el-col>
                   <el-col :span="8">
                     <el-row>
@@ -60,15 +62,17 @@
               </el-form-item>
               <el-form-item label="工艺路线" prop="router">
                 <el-row>
-                  <el-col :span="14">
+                  <el-col :span="16">
                     <dsn-input
                       v-model.trim="lotConditionForm.router"
                       size="small"
+                      style="width:225px;vertical-align:baseline;"
                       placeholder="请输入工艺路线"
-                    ></dsn-input>
-                  </el-col>
-                  <el-col :span="2">
-                    <i class="el-icon-document" @click="queryRouter"></i>
+                    >
+                      <template slot="append">
+                        <i class="el-icon-document" @click="queryRouter"></i>
+                      </template>
+                    </dsn-input>
                   </el-col>
                   <el-col :span="8">
                     <el-row>
@@ -85,46 +89,40 @@
             </el-col>
             <el-col :span="11">
               <el-form-item label="工单" prop="shopOrder">
-                <el-row>
-                  <el-col :span="22">
-                    <dsn-input
-                      v-model.trim="lotConditionForm.shopOrder"
-                      size="small"
-                      placeholder="请输入工单"
-                    ></dsn-input>
-                  </el-col>
-                  <el-col :span="2">
+                <dsn-input
+                  v-model.trim="lotConditionForm.shopOrder"
+                  size="small"
+                  style="width:350px;vertical-align:baseline;"
+                  placeholder="请输入工单"
+                >
+                  <template slot="append">
                     <i class="el-icon-document" @click="queryShopOrder"></i>
-                  </el-col>
-                </el-row>
+                  </template>
+                </dsn-input>
               </el-form-item>
               <el-form-item label="工序" prop="operation">
-                <el-row>
-                  <el-col :span="22">
-                    <dsn-input
-                      v-model.trim="lotConditionForm.operation"
-                      size="small"
-                      placeholder="请输入工序"
-                    ></dsn-input>
-                  </el-col>
-                  <el-col :span="2">
+                <dsn-input
+                  v-model.trim="lotConditionForm.operation"
+                  size="small"
+                  style="width:350px;vertical-align:baseline;"
+                  placeholder="请输入工序"
+                >
+                  <template slot="append">
                     <i class="el-icon-document" @click="queryOperation"></i>
-                  </el-col>
-                </el-row>
+                  </template>
+                </dsn-input>
               </el-form-item>
               <el-form-item label="资源" prop="resource">
-                <el-row>
-                  <el-col :span="22">
-                    <dsn-input
-                      v-model.trim="lotConditionForm.resource"
-                      size="small"
-                      placeholder="请输入资源"
-                    ></dsn-input>
-                  </el-col>
-                  <el-col :span="2">
+                <dsn-input
+                  v-model.trim="lotConditionForm.resource"
+                  style="width:350px;vertical-align:baseline;"
+                  size="small"
+                  placeholder="请输入资源"
+                >
+                  <template slot="append">
                     <i class="el-icon-document" @click="queryResource"></i>
-                  </el-col>
-                </el-row>
+                  </template>
+                </dsn-input>
               </el-form-item>
               <el-form-item>
                 <el-row>

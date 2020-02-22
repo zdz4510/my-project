@@ -98,7 +98,7 @@
             <el-tab-pane label="数据收集组" style="height:200px">
               <h3 style="text-align:center">涉及数据收集组</h3>
               <el-table :data="tableData" @select="selectedList">
-                <el-table-column type="selection" width="35"></el-table-column>
+                <el-table-column type="selection" width="45"></el-table-column>
                 <el-table-column prop="dcGroup" label="数据收集组"></el-table-column>
                 <el-table-column prop="dcGroupDes" label="数据收集组描述" width="110"></el-table-column>
                 <el-table-column prop="paramNum" label="参数数量"></el-table-column>
