@@ -5,15 +5,15 @@
         <span>搜索信息</span>
       </div>
       <!-- 卡片内容 -->
-    <div class="search-bar">
-      <el-form :inline="true" :model="searchForm" ref="searchForm" :rules="rules" class="form-style" :label-width="formLabelWidth">
+    <div>
+      <el-form :inline="true" :model="searchForm" ref="searchForm" :rules="rules"  :label-width="formLabelWidth">
         <el-form-item label="输入搜索条件:" prop="width">
-          <el-input placeholder="请输入内容" v-model="searchForm.code" class="input-with-select">
-            <el-select v-model="searchForm.codeType" slot="prepend">
+          <dsn-input placeholder="请输入内容" v-model="searchForm.code" class="input-with-select">
+            <dsn-select v-model="searchForm.codeType" slot="prepend">
               <el-option label="LOT" value="LOT"></el-option>
               <el-option label="容器" value="CON"></el-option>
-            </el-select>
-          </el-input>
+            </dsn-select>
+          </dsn-input>
         </el-form-item>
         <el-form-item label="" prop="">
           <dsn-button  size="small" icon="el-icon-search" type="primary" @click.native="search">查询</dsn-button>
@@ -31,9 +31,9 @@
       <el-tab-pane label="报废" name="first">
         <div class="operate ml30 mtb10">
           <dsn-button class="mr25 pad1025" size="small" type="primary" @click.native="mark" :disabled="this.checkedList.length===0">报废标记</dsn-button>
-          <el-input placeholder="请输入内容" v-model="deleteDes" class="des">
+          <dsn-input placeholder="请输入内容" v-model="deleteDes" class="des">
             <template slot="prepend">报废描述:</template>
-          </el-input>
+          </dsn-input>
         </div>
         <div class="">
           <dsn-table
@@ -76,9 +76,9 @@
       <el-tab-pane label="恢复" name="second">
         <div class="operate ml30 mtb10">
           <dsn-button class="mr25 pad1025" size="small" type="primary" @click.native="recover" :disabled="this.checkedList.length===0">恢复报废</dsn-button>
-          <el-input placeholder="请输入内容" v-model="undeleteDes" class="des">
+          <dsn-input placeholder="请输入内容" v-model="undeleteDes" class="des">
             <template slot="prepend">恢复报废描述:</template>
-          </el-input>
+          </dsn-input>
         </div>
         <div class="">
           <dsn-table
@@ -316,6 +316,9 @@ import {getScrapList, scrapMark, getRecoverList, recoverMark, getLogList} from '
 			top: 20px;
 		}
 	}
+   .input-with-select{
+    top: 6.9px !important;
+  }
 	.content {
 		background: #FFFFFF;
 	}
