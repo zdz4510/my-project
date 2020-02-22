@@ -228,10 +228,8 @@ export default {
             findShopOrderListHttp().then(data => {
             const res = data.data;
             if (res.code === 200) {
-            data = res.data.data;
-            data.forEach(element => {
-                element.shopOrderTotal = element.shopOrderList.length;
-            });
+            data = res.data;
+            console.log("data",data)
             this.exportResult(data);
             return;
             }
@@ -288,6 +286,16 @@ export default {
             }else{
                 this.workOrderIssued.shopOrder=this.orderChoice[0].shopOrder;
                 this.workOrderIssued.numIssued="";
+                this.shopOrderInfo={
+                    status:"",
+                    productQty:"",
+                    plannedMaterialRev:"",
+                    plannedMaterial:"",
+                    plannedRouterRev:"",
+                    plannedRouter:"",
+                    availableQuantity:""
+                }
+                this.tableData=[];
                 this.orderDialog=false;
             }
         },

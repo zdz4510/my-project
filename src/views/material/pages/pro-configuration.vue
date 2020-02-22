@@ -242,7 +242,7 @@ export default {
           {
             buttionDesc: "",
             buttonId: "",
-            groupFlag: "",
+            groupFlag: true,
             imageIcon: "",
             location: "",
             podActivities: [
