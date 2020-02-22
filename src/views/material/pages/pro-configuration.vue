@@ -379,13 +379,7 @@ export default {
     },
     // 跳转新增界面
     handleAdd() {
-      if(this.selectedList.length>1){
-        this.$message({
-            message: "只能选择一个去添加",
-            type: "warning"
-          });
-      }
-      this.$router.push({ path: "/material/newAddGroup" });
+        this.$router.push({ path: "/material/newAddGroCon" });// 默认添加按钮
     },
     //保存操作
     handleSave() {

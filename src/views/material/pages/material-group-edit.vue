@@ -104,7 +104,9 @@
                   </el-table-column> -->
                   <el-table-column prop="materialType" label="物料分类"></el-table-column>
                   <el-table-column prop="materialDes" label="物料描述"></el-table-column>
-                  <el-table-column prop="materialStatus" label="物料状态"></el-table-column>
+                  <el-table-column prop="materialStatus" label="物料状态">
+                    <template slot-scope="scope">{{ scope.row.materialStatus ? '是' : '否' }}</template>
+                  </el-table-column>
                 </el-table-column>
               </dsn-table>
             </el-col>
@@ -210,8 +212,8 @@ export default {
       material1:"",
       material2:"",
       cloneUntransferData: [],
-      cloneAllocateData: []
-
+      cloneAllocateData: [],
+      clonedeep:{}
     };
   },
   computed: {
@@ -220,11 +222,12 @@ export default {
   created() {
     this.operateType = this.$route.query.operateType;
     this.cloneList = JSON.parse(JSON.stringify(this.materialGroupList));
+    this.clonedeep=_.cloneDeep(this.cloneList[0])
     this.materialGroupForm = this.cloneList[0];
     if (this.operateType === "edit") {
       this.isEditResource = true;
       this.transferData=this.materialGroupForm.materialList;
-       console.log(JSON.parse(JSON.stringify(this.materialGroupForm.materialList)),"数据是？")
+      //  console.log(JSON.parse(JSON.stringify(this.materialGroupForm.materialList)),"数据是？")
       this.untransferData=this.materialGroupForm.outerMaterialList;
       // .forEach(element => {
       //   this.value.push(element.material);
@@ -286,15 +289,18 @@ export default {
         this.value.push(element.material);
       });
       if (this.operateType === "edit") {
-        const tempList = JSON.parse(JSON.stringify(this.materialGroupList));
-        this.materialGroupForm = tempList[0];
-        this.materialGroupForm.materialList.forEach(element => {
-          this.value.push(element.material);
-        });
+        this.materialGroupForm = this.clonedeep;
+        this.isEditResource = true;
+        this.transferData=this.materialGroupForm.materialList;
+        //  console.log(JSON.parse(JSON.stringify(this.materialGroupForm.materialList)),"数据是？")
+        this.untransferData=this.materialGroupForm.outerMaterialList;
+        this.selectedList2=[];
+        this.this.selectedList=[]
       }
       if (this.operateType === "add") {
         this.materialGroupForm.materialGroup = "";
         this.materialGroupForm.groupDes = "";
+        this.transferData=[];
       }
     },
     checkAdd(formName) {
