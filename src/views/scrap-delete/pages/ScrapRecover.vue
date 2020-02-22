@@ -142,9 +142,9 @@
             <el-table-column prop="scrapTime" label="报废时间"></el-table-column>
             <el-table-column prop="scrapUserName" label="报废人员"></el-table-column>
             <el-table-column prop="scrapDes" label="报废描述"></el-table-column>
-            <el-table-column prop="unDeleteTime" label="恢复删除时间"></el-table-column>
-            <el-table-column prop="unDeleteUserName" label="恢复删除人员"></el-table-column>
-            <el-table-column prop="unDeleteDes" label="恢复删除描述"></el-table-column>
+             <el-table-column prop="unscrapTime" label="恢复报废时间"></el-table-column>
+            <el-table-column prop="unscrapUserName" label="恢复报废人员"></el-table-column>
+            <el-table-column prop="unscrapDes" label="恢复报废描述"></el-table-column>
           </dsn-table>
           <dsn-pagination class="mtb20"
             background
