@@ -23,19 +23,17 @@
           </el-select>
         </el-form-item>
         <el-form-item label="代码名" prop="generalCode">
-          <el-row>
-            <el-col :span="22">
-              <dsn-input
-                v-model.trim="genericCodeDefineForm.generalCode"
-                placeholder="请输入代码名（[A-Z,0-9,_,-,/]）"
-                @input="inputGeneralCode"
-                @clear="clearGeneralCode"
-              ></dsn-input>
-            </el-col>
-            <el-col :span="2">
+          <dsn-input
+            v-model.trim="genericCodeDefineForm.generalCode"
+            placeholder="请输入代码名（[A-Z,0-9,_,-,/]）"
+            style="width:225px;vertical-align:baseline;"
+            @input="inputGeneralCode"
+            @clear="clearGeneralCode"
+          >
+            <template slot="append">
               <i class="el-icon-document" @click="handleQueryGeneralCode"></i>
-            </el-col>
-          </el-row>
+            </template>
+          </dsn-input>
         </el-form-item>
         <el-form-item label="描述">
           <dsn-input
@@ -161,24 +159,26 @@
             <dsn-input v-model.trim="addForm.fieldSize" max="30" placeholder="请输入长度（小于30的数字）"></dsn-input>
           </el-form-item>
           <el-form-item label="代码名" v-if="addForm.fieldType === 'C'" prop="limitGeneralCode">
-            <el-row>
-              <el-col :span="22">
-                <dsn-input v-model.trim="addForm.limitGeneralCode" placeholder="请输入代码名"></dsn-input>
-              </el-col>
-              <el-col :span="2">
+            <dsn-input
+              v-model.trim="addForm.limitGeneralCode"
+              placeholder="请输入代码名"
+              style="vertical-align:baseline;"
+            >
+              <template slot="append">
                 <i class="el-icon-document" @click="handleQueryDialogGeneralCode"></i>
-              </el-col>
-            </el-row>
+              </template>
+            </dsn-input>
           </el-form-item>
           <el-form-item label="字段" v-if="addForm.fieldType === 'C'" prop="limitGeneralField">
-            <el-row>
-              <el-col :span="22">
-                <dsn-input v-model.trim="addForm.limitGeneralField" placeholder="请输入字段"></dsn-input>
-              </el-col>
-              <el-col :span="2">
+            <dsn-input
+              v-model.trim="addForm.limitGeneralField"
+              placeholder="请输入字段"
+              style="vertical-align:baseline;"
+            >
+              <template slot="append">
                 <i class="el-icon-document" @click="handleQueryField"></i>
-              </el-col>
-            </el-row>
+              </template>
+            </dsn-input>
           </el-form-item>
         </el-form>
       </span>
@@ -261,7 +261,7 @@ import {
   deleteGeneralCodeHttp,
   saveGeneralCodeHttp
 } from "@/api/maintenance/code.definition.api.js";
-
+import _ from "lodash";
 import { mapMutations } from "vuex";
 const fieldNames = [
   "FIELD_01",
@@ -455,7 +455,7 @@ export default {
             return this.usedFieldNames.indexOf(item) === -1;
           });
           this.editable = res.data.editable;
-          console.log(res.data.editable);
+          console.log(this.excessFieldNames);
           return;
         }
         this.$message({
@@ -641,6 +641,7 @@ export default {
       this.tableData = [];
       this.usedFieldNames = [];
       this.editable = false;
+      this.excessFieldNames = _.cloneDeep(this.fieldNames);
     },
     //新增前验证表单
     checkAddForm(formName) {
@@ -779,6 +780,8 @@ export default {
     //代码名清除时清空表格数据
     clearGeneralCode() {
       this.tableData = [];
+      this.excessFieldNames = _.cloneDeep(this.fieldNames);
+      this.usedFieldNames = [];
     }
   }
 };

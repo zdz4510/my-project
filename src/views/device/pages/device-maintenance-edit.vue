@@ -56,7 +56,7 @@
               </el-form-item>
               <el-form-item label="所在工作中心:" prop="workCenter">
                 <dsn-input
-                  style="width: 200px"
+                  style="width: 200px;vertical-align:baseline;"
                   v-model.trim="maintenanceForm.workCenter"
                   class="workCenter"
                 >
@@ -130,7 +130,7 @@
               </el-form-item>
               <el-form-item label="保养周期" prop="maintenancePeriod">
                 <dsn-input
-                  v-model="upkeepConfigForm.maintenancePeriod"
+                  v-model.number="upkeepConfigForm.maintenancePeriod"
                   style="width:215px"
                   placeholder="保养周期"
                 >
@@ -541,6 +541,7 @@ export default {
         }
         const copyObj = JSON.parse(JSON.stringify(this.upkeepConfigForm));
         copyObj.resource = this.maintenanceForm.resource;
+        copyObj.tenantSiteCode = "test";
         this.userList.forEach(element => {
           if (element.id === copyObj.maintenanceUserId) {
             copyObj.maintenanceUserName =
@@ -658,6 +659,7 @@ export default {
           this.$refs.multipleTable.clearSelection();
         }
       });
+      this.upkeepConfigForm.startTime = this.formate(new Date().getTime());
     },
     handleLocalSave() {
       this.checkFormInfo(this.refArrUpkeepConfig, this.handleSaveUpkeepConfig);
