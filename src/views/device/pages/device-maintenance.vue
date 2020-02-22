@@ -11,9 +11,10 @@
             :model="maintenanceForm"
             ref="maintenanceForm"
             class="maintenanceForm"
+            :rules="maintenanceFormRules"
           >
-            <el-form-item label="设备编号">
-              <dsn-input v-model="maintenanceForm.resource" placeholder="请输入设备设备编号"></dsn-input>
+            <el-form-item label="设备编号" prop="resource">
+              <dsn-input v-model="maintenanceForm.resource" placeholder="请输入设备编号"></dsn-input>
             </el-form-item>
             <el-form-item>
               <dsn-button size="small" type="primary" @click.native="handleQuery">查询</dsn-button>
@@ -111,12 +112,31 @@ const filterVal = ["resource", "resourceDes", "workCenter", "resourceStatus"];
 const fileName = "设备维护表";
 export default {
   data() {
+    let validateResource = (rule, value, callback) => {
+      if (value === "") {
+        callback();
+      }
+      let reg = /^([A-Z]|[a-z]|[0-9]|_|-|\/)+$/;
+      if (!reg.test(value)) {
+        callback("设备编号只包含（[A-Z,0-9,_,-,/]）");
+      }
+      this.maintenanceForm.resource = value.toUpperCase();
+      callback();
+    };
     return {
       tHeader,
       filterVal,
       fileName,
       maintenanceForm: {
         resource: ""
+      },
+      maintenanceFormRules: {
+        resource: [
+          {
+            validator: validateResource,
+            trigger: "blur"
+          }
+        ]
       },
       tableData: [],
       selectionList: [],

@@ -11,31 +11,22 @@
           :model="upkeepForm"
           ref="upkeepForm"
           class="upkeepForm"
+          :rules="upkeepFormRules"
         >
           <el-form-item label="设备编号" prop="resource">
-            <dsn-input
-              v-model="upkeepForm.resource"
-              placeholder="请输入设备设备编号"
-            ></dsn-input>
+            <dsn-input v-model="upkeepForm.resource" placeholder="请输入设备编号"></dsn-input>
           </el-form-item>
           <el-form-item label="保养状态">
-            <dsn-select
-              v-model="upkeepForm.maintenanceStatus"
-              placeholder="保养状态"
-            >
+            <dsn-select v-model="upkeepForm.maintenanceStatus" placeholder="保养状态">
               <el-option label="需要保养" value="需要保养"></el-option>
               <el-option label="已保养" value="已保养"></el-option>
               <el-option label="暂无需保养" value="暂无需保养"></el-option>
-              <el-option label="无" value=""></el-option>
+              <el-option label="无" value></el-option>
             </dsn-select>
           </el-form-item>
           <el-form-item>
-            <dsn-button size="small" type="primary" @click.native="handleQuery">
-              查询
-            </dsn-button>
-            <dsn-button size="small" type="primary" @click.native="handleReset">
-              重置
-            </dsn-button>
+            <dsn-button size="small" type="primary" @click.native="handleQuery">查询</dsn-button>
+            <dsn-button size="small" type="primary" @click.native="handleReset">重置</dsn-button>
           </el-form-item>
         </el-form>
       </div>
@@ -57,20 +48,18 @@
               size="small"
               type="success"
               icon="el-icon-folder-add"
+              :disabled="isUpkeep"
               @click.native="handleAffirmUpkeep('additionalDesRules')"
-            >
-              确认保养
-            </dsn-button>
-            <dsn-button icon="el-icon-upload2" size="small" type="primary" @click.native="handleExport"
-              >导出</dsn-button
-            >
+            >确认保养</dsn-button>
+            <dsn-button
+              icon="el-icon-upload2"
+              size="small"
+              type="primary"
+              @click.native="handleExport"
+            >导出</dsn-button>
           </el-form-item>
           <el-form-item label="本次保养附加描述:" prop="additionalDes">
-            <dsn-input
-              v-model="upkeepForm.additionalDes"
-              placeholder="请输入本次保养附加描述"
-              size="small"
-            ></dsn-input>
+            <dsn-input v-model="upkeepForm.additionalDes" placeholder="请输入本次保养附加描述" size="small"></dsn-input>
           </el-form-item>
         </el-form>
       </div>
@@ -82,37 +71,16 @@
           style="width: 100%"
           @selection-change="handleSelectionChange"
         >
-          <el-table-column type="selection" width="55"> </el-table-column>
-          <el-table-column prop="resource" label="设备编号" width="100">
-          </el-table-column>
-          <el-table-column prop="conditionName" label="条件名称·" width="100">
-          </el-table-column>
-          <el-table-column prop="workCenterRelation" label="线体" width="100">
-          </el-table-column>
-          <el-table-column prop="station" label="工站" width="100">
-          </el-table-column>
-          <el-table-column prop="workCenter" label="工作中心" width="100">
-          </el-table-column>
-          <el-table-column prop="maintenanceStatus" label="保养状态" width="100">
-          </el-table-column>
-          <el-table-column
-            prop="maintenanceEndTime"
-            label="最后保养时间"
-            width="160"
-          >
-          </el-table-column>
-          <el-table-column
-            prop="maintenanceUserId"
-            label="最后保养人"
-            width="120"
-          >
-          </el-table-column>
-          <el-table-column
-            prop="additionalDes"
-            label="附加描述"
-            show-overflow-tooltip
-          >
-          </el-table-column>
+          <el-table-column type="selection" width="55"></el-table-column>
+          <el-table-column prop="resource" label="设备编号" width="100"></el-table-column>
+          <el-table-column prop="conditionName" label="条件名称·" width="100"></el-table-column>
+          <el-table-column prop="workCenterRelation" label="线体" width="100"></el-table-column>
+          <el-table-column prop="station" label="工站" width="100"></el-table-column>
+          <el-table-column prop="workCenter" label="工作中心" width="100"></el-table-column>
+          <el-table-column prop="maintenanceStatus" label="保养状态" width="100"></el-table-column>
+          <el-table-column prop="maintenanceEndTime" label="最后保养时间" width="160"></el-table-column>
+          <el-table-column prop="maintenanceUserId" label="最后保养人" width="120"></el-table-column>
+          <el-table-column prop="additionalDes" label="附加描述" show-overflow-tooltip></el-table-column>
         </dsn-table>
         <dsn-pagination
           background
@@ -122,8 +90,7 @@
           :current-page="currentPage"
           @size-change="handlePagesize"
           @current-change="handleCurrentChange"
-        >
-        </dsn-pagination>
+        ></dsn-pagination>
       </div>
     </DsnPanel>
   </div>
@@ -161,6 +128,17 @@ const filterVal = [
 const fileName = "设备保养表";
 export default {
   data() {
+    let validateResource = (rule, value, callback) => {
+      if (value === "") {
+        callback();
+      }
+      let reg = /^([A-Z]|[a-z]|[0-9]|_|-|\/)+$/;
+      if (!reg.test(value)) {
+        callback("设备编号只包含（[A-Z,0-9,_,-,/]）");
+      }
+      this.upkeepForm.resource = value.toUpperCase();
+      callback();
+    };
     return {
       tHeader,
       filterVal,
@@ -169,6 +147,14 @@ export default {
         resource: "",
         maintenanceStatus: "",
         additionalDes: ""
+      },
+      upkeepFormRules: {
+        resource: [
+          {
+            validator: validateResource,
+            trigger: "blur"
+          }
+        ]
       },
       additionalDesRules: {
         additionalDes: [
@@ -179,7 +165,8 @@ export default {
       pageSize: 10,
       currentPage: 1,
       total: 0,
-      selectionList: []
+      selectionList: [],
+      isUpkeep: false
     };
   },
   created() {
@@ -226,9 +213,21 @@ export default {
       this.upkeepForm.resource = "";
       this.upkeepForm.maintenanceStatus = "";
       this.upkeepForm.additionalDes = "";
+      this.init();
     },
     handleSelectionChange(val) {
       this.selectionList = val;
+      let count = 0;
+      this.selectionList.forEach(element => {
+        if (element.maintenanceStatus === "已保养") {
+          count++;
+        }
+      });
+      if (count > 0) {
+        this.isUpkeep = true;
+      } else {
+        this.isUpkeep = false;
+      }
     },
     //确认保养
     handleAffirmUpkeep(formName) {

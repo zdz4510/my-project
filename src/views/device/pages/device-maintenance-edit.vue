@@ -131,7 +131,7 @@
               <el-form-item label="保养周期" prop="maintenancePeriod">
                 <dsn-input
                   v-model.number="upkeepConfigForm.maintenancePeriod"
-                  style="width:215px"
+                  style="width:215px;vertical-align:baseline;"
                   placeholder="保养周期"
                 >
                   <template slot="append">
@@ -155,7 +155,7 @@
                   <el-radio :label="false" :value="false">不启用</el-radio>
                 </el-radio-group>
               </el-form-item>
-              <el-form-item label="保养地址">
+              <el-form-item label="保养地址" prop="maintenanceLocation">
                 <el-radio-group v-model="upkeepConfigForm.maintenanceLocation">
                   <el-radio label="在线" value="在线">在线</el-radio>
                   <el-radio label="任意" value="任意">任意</el-radio>
@@ -227,8 +227,20 @@ export default {
   components: {
     workCenterModel
   },
-
   data() {
+    //设备编号
+    let validateResource = (rule, value, callback) => {
+      if (value === "") {
+        callback("请输入设备编号");
+      }
+      let reg = /^([A-Z]|[a-z]|[0-9]|_|-|\/)+$/;
+      if (!reg.test(value)) {
+        callback("设备编号只包含（[A-Z,0-9,_,-,/]）");
+      }
+      this.maintenanceForm.resource = value.toUpperCase();
+      callback();
+    };
+    //周期
     let validateMaintenancePeriod = (rule, value, callback) => {
       let reg = /^([0-9]+)$/g;
       if (!reg.test(value)) {
@@ -237,6 +249,54 @@ export default {
       if (parseInt(value) <= 0) {
         return callback(new Error("只能输入大于0的数"));
       }
+      callback();
+    };
+    //工作中心
+    let validateWorkCenter = (rule, value, callback) => {
+      if (value === "" && !this.isWorkCenter) {
+        callback();
+      }
+      let reg = /^([A-Z]|[a-z]|[0-9]|_|-|\/)+$/;
+      if (!reg.test(value)) {
+        callback("工作中心格式（[A-Z,0-9,_,-,/]）");
+      }
+      this.maintenanceForm.workCenter = value.toUpperCase();
+      callback();
+    };
+    //条件名称
+    let validateConditionName = (rule, value, callback) => {
+      if (value === "") {
+        callback("请输入条件名称");
+      }
+      let reg = /^([A-Z]|[a-z]|[0-9]|_|-|\/)+$/;
+      if (!reg.test(value)) {
+        callback("条件名称格式（[A-Z,0-9,_,-,/]）");
+      }
+      this.upkeepConfigForm.conditionName = value.toUpperCase();
+      callback();
+    };
+    //保养人员
+    let validateMaintenanceUserId = (rule, value, callback) => {
+      if (value === "") {
+        callback("请输入保养人员");
+      }
+      let reg = /^([A-Z]|[a-z]|[0-9]|_|-|\/)+$/;
+      if (!reg.test(value)) {
+        callback("保养人员格式（[A-Z,0-9,_,-,/]）");
+      }
+      this.upkeepConfigForm.maintenanceUserId = value.toUpperCase();
+      callback();
+    };
+    //预警事件
+    let validateAlarm = (rule, value, callback) => {
+      if (value === "") {
+        callback("请输入预警事件");
+      }
+      let reg = /^([A-Z]|[a-z]|[0-9]|_|-|\/)+$/;
+      if (!reg.test(value)) {
+        callback("预警事件格式（[A-Z,0-9,_,-,/]）");
+      }
+      this.upkeepConfigForm.alarm = value.toUpperCase();
       callback();
     };
     return {
@@ -252,6 +312,11 @@ export default {
         workCenter: ""
       },
       validateMaintenancePeriod,
+      validateResource,
+      validateWorkCenter,
+      validateConditionName,
+      validateMaintenanceUserId,
+      validateAlarm,
       // rules: this.rules,
       //验证基础信息表单ref
       refArrBaseInfo: ["maintenanceFormOne", "maintenanceFormTwo"],
@@ -318,16 +383,32 @@ export default {
     ...mapGetters(["maintenanceList"]),
     rules() {
       return {
-        resource: [{ required: true, message: "请输入设备编号" }],
-        resourceDes: [{ required: false, message: "请输入设备编号" }],
-        resourceStatus: [{ required: true, message: "请选择状态" }],
-        workCenter: [{ required: this.isWorkCenter, message: "请输入工作中心" }]
+        resource: [
+          { required: true, validator: this.validateResource, trigger: "blur" }
+        ],
+        resourceDes: [
+          { required: false, message: "请输入设备编号", trigger: "blur" }
+        ],
+        resourceStatus: [
+          { required: true, message: "请选择状态", trigger: "blur" }
+        ],
+        workCenter: [
+          {
+            required: this.isWorkCenter,
+            validator: this.validateWorkCenter,
+            trigger: "blur"
+          }
+        ]
       };
     },
     upkeepConfigRule() {
       return {
         conditionName: [
-          { required: true, message: "请输入保养条件名称", trigger: "change" }
+          {
+            required: true,
+            validator: this.validateConditionName,
+            trigger: "blur"
+          }
         ],
         startTime: [
           {
@@ -340,12 +421,16 @@ export default {
           { required: true, message: "请输入保养条件描述", trigger: "change" }
         ],
         maintenanceUserId: [
-          { required: true, message: "请输入保养人员", trigger: "change" }
+          {
+            required: true,
+            validator: this.validateMaintenanceUserId,
+            trigger: "change"
+          }
         ],
         alarm: [
           {
             required: this.isRequired,
-            message: "请输入预警事件",
+            validator: this.validateAlarm,
             trigger: "change"
           }
         ],
@@ -362,6 +447,9 @@ export default {
         ],
         periodUnit: [
           { required: true, message: "请输入周期单位", trigger: "change" }
+        ],
+        maintenanceLocation: [
+          { required: true, message: "请输入保养地址", trigger: "blur" }
         ]
       };
     },
