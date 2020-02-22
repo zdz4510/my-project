@@ -177,6 +177,16 @@ const filterVal = [
 const fileName="工单下达表"
 export default {
     data(){
+        const numIssuedRules = (rule, value, callback) => {
+        if (value === "") {
+            callback("下达数量不为空");
+        }
+        let reg = /^[1-9]\d*$/;
+        if (!reg.test(value)) {
+            callback("下达数量应只包含非零整数");
+        }
+        callback();
+        };
         return{
             tHeader,
             filterVal,
@@ -206,7 +216,7 @@ export default {
             total: 0,
             rules:{
                 shopOrder: [{ required: true, message: "请输入工单", trigger: "blur" }],
-                numIssued: [{ required: true, message: "请输入下达数量", trigger: "blur" }],
+                numIssued: [{ required: true, validator: numIssuedRules, trigger: "blur" }],
             }
         }
     },
@@ -332,7 +342,7 @@ export default {
                     const res = data.data
                     if(res.code == 200){
                         this.shopOrderInfo = res.data
-                        console.log('获取工单信息'+JSON.stringify(this.shopOrderInfo))
+                        // console.log('获取工单信息'+JSON.stringify(this.shopOrderInfo))
                     }else{
                         this.$message({
                             message:`${res.message}`,
