@@ -22,30 +22,6 @@
                 :disabled="isEditResource"
               ></dsn-input>
             </el-form-item>
-            <el-form-item label="保养周期" prop="maintenancePeriod">
-              <dsn-input
-                v-model.number="upkeepConfigForm.maintenancePeriod"
-                placeholder="保养周期"
-                class="upkeepCycle"
-                size="small"
-                style="width:215px"
-              >
-                <template slot="append">
-                  <dsn-select
-                    v-model="upkeepConfigForm.periodUnit"
-                    class="upkeepCycle"
-                    size="small"
-                    @change="periodUnit"
-                  >
-                    <el-option label="天数" :value="1">天数</el-option>
-                    <el-option label="月份" :value="30">月份</el-option>
-                    <el-option label="季度" :value="90">季度</el-option>
-                    <el-option label="半年" :value="180">半年</el-option>
-                    <el-option label="年" :value="365">年</el-option>
-                  </dsn-select>
-                </template>
-              </dsn-input>
-            </el-form-item>
           </el-form>
         </div>
 
@@ -101,6 +77,7 @@
               <el-form-item label="保养条件名称" prop="conditionName" inline-message="true">
                 <dsn-input
                   v-model.trim="upkeepConfigForm.conditionName"
+                  :disabled="upkeepConfigOperateType === 'edit'"
                   placeholder="请输入保养条件名称"
                   size="small"
                 ></dsn-input>
@@ -153,18 +130,15 @@
               </el-form-item>
               <el-form-item label="保养周期" prop="maintenancePeriod">
                 <dsn-input
-                  v-model.number="upkeepConfigForm.maintenancePeriod"
-                  placeholder="保养周期"
-                  class="upkeepCycle"
-                  size="small"
+                  v-model="upkeepConfigForm.maintenancePeriod"
                   style="width:215px"
+                  placeholder="保养周期"
                 >
                   <template slot="append">
                     <dsn-select
+                      style="width:80px"
+                      placeholder="单位"
                       v-model="upkeepConfigForm.periodUnit"
-                      class="upkeepCycle"
-                      size="small"
-                      @change="periodUnit"
                     >
                       <el-option label="天数" :value="1">天数</el-option>
                       <el-option label="月份" :value="30">月份</el-option>
@@ -318,7 +292,8 @@ export default {
       workCenterDialog: false,
       currentWorkCenter: {},
       workCenterData: [],
-      userList: []
+      userList: [],
+      upkeepConfigOperateType: "add"
     };
   },
   filters: {
@@ -389,6 +364,22 @@ export default {
           { required: true, message: "请输入周期单位", trigger: "change" }
         ]
       };
+    },
+    selectionListNew() {
+      return JSON.parse(JSON.stringify(this.selectionList));
+    }
+  },
+  watch: {
+    selectionListNew: {
+      handler: function(val) {
+        if (val.length === 0) {
+          this.upkeepConfigOperateType = "add";
+        }
+        if (val.length > 0) {
+          this.upkeepConfigOperateType = "edit";
+        }
+      },
+      deep: true
     }
   },
   created() {
@@ -514,12 +505,6 @@ export default {
       if (this.operateType === "edit") {
         this.maintenanceForm = JSON.parse(JSON.stringify(this.cloneList[0]));
         this.tableData = JSON.parse(JSON.stringify(this.cloneTableData));
-
-        // formName.forEach(element => {
-        //   if (element !== "maintenanceFormOne") {
-        //     this.$refs[element].resetFields();
-        //   }
-        // });
       }
     },
     //验证form表单
@@ -538,8 +523,22 @@ export default {
         handleType();
         return;
       }
-
       if (count >= 2 && this.saveType === "upkeepConfig") {
+        let count = 0;
+        this.tableData.forEach(element => {
+          if (this.upkeepConfigForm.conditionName === element.conditionName) {
+            count++;
+          }
+        });
+        if (this.upkeepConfigOperateType === "add") {
+          if (count > 0) {
+            this.$message({
+              message: "该保养条件名称已存在，请重新输入",
+              type: "warning"
+            });
+            return;
+          }
+        }
         const copyObj = JSON.parse(JSON.stringify(this.upkeepConfigForm));
         copyObj.resource = this.maintenanceForm.resource;
         this.userList.forEach(element => {
@@ -548,7 +547,24 @@ export default {
               element.name + ":" + element.commonName;
           }
         });
-        this.tableData.push(copyObj);
+        if (this.upkeepConfigOperateType === "edit") {
+          this.tableData = this.tableData.filter(
+            item => item.conditionName !== copyObj.conditionName
+          );
+          this.tableData.push(copyObj);
+          this.$message({
+            message: "修改成功",
+            type: "success"
+          });
+        }
+        if (this.upkeepConfigOperateType === "add") {
+          this.tableData.push(copyObj);
+          this.$message({
+            message: "添加成功",
+            type: "success"
+          });
+        }
+        this.handleLocalAdd(this.refArrUpkeepConfig);
         return;
       }
     },
@@ -636,19 +652,6 @@ export default {
       });
     },
     handleLocalAdd(formName) {
-      let count = 0;
-      this.tableData.forEach(element => {
-        if (this.upkeepConfigForm.conditionName === element.conditionName) {
-          count++;
-        }
-      });
-      if (count > 0) {
-        this.$message({
-          message: "该保养条件名称已存在，请重新输入",
-          type: "warning"
-        });
-        return;
-      }
       formName.forEach(element => {
         if (element === "upkeepConfigForm") {
           this.$refs[element].resetFields();

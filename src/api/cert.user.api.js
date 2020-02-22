@@ -7,8 +7,9 @@ import qs from "qs";
  *  url /mes/certUser/findPage
  */
 export const getCertUserList = data => {
-    return request.post(
-        `${window.VUE_APP_URL}/mes/certUser/findPage?${qs.stringify(data)}`);
+  return request.post(
+    `${window.VUE_APP_URL}/mes/certUser/findPage?${qs.stringify(data)}`
+  );
 };
 /**
  * 保存
@@ -16,7 +17,7 @@ export const getCertUserList = data => {
  */
 
 export const saveData = data => {
-    return request.post(`${window.VUE_APP_URL}/mes/certUser/save`, data);
+  return request.post(`${window.VUE_APP_URL}/mes/certUser/save`, data);
 };
 
 /**
@@ -25,7 +26,7 @@ export const saveData = data => {
  */
 
 export const findCert = data => {
-    return request.post(`${window.VUE_APP_URL}/mes/certUser/findCert`, data);
+  return request.post(`${window.VUE_APP_URL}/mes/certUser/findCert`, data);
 };
 
 /**
@@ -33,7 +34,7 @@ export const findCert = data => {
  * url /mes/certUser/delete
  */
 export const deleteData = data => {
-    return request.post(`${window.VUE_APP_URL}/mes/certUser/delete`, data);
+  return request.post(`${window.VUE_APP_URL}/mes/certUser/delete`, data);
 };
 
 /**
@@ -43,4 +44,16 @@ export const deleteData = data => {
 
 export const getAllCert = () => {
   return request.post(`${window.VUE_APP_URL}/mes/certUser/getAllCert`);
+};
+/**
+ * /certUser/checkUser
+新增时对输入用户进行判断
+
+ */
+
+export const checkUser = data => {
+  return request.post(
+    `${window.VUE_APP_URL}/mes/certUser/checkUser?user=${data.user}`,
+    data
+  );
 };
