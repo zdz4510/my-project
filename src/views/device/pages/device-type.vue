@@ -5,7 +5,13 @@
         <span>搜索信息</span>
       </div>
       <div class="query">
-        <el-form :model="typeForm" ref="typeForm" class="typeForm" :inline="true">
+        <el-form
+          :model="typeForm"
+          ref="typeForm"
+          class="typeForm"
+          :inline="true"
+          :rules="typeFormRules"
+        >
           <el-form-item label="设备类型" prop="resourceGroup">
             <dsn-input
               style="width: 200px"
@@ -123,12 +129,31 @@ const filterVal = [
 const fileName = "设备类型表";
 export default {
   data() {
+    let validateResource = (rule, value, callback) => {
+      if (value === "") {
+        callback();
+      }
+      let reg = /^([A-Z]|[a-z]|[0-9]|_|-|\/)+$/;
+      if (!reg.test(value)) {
+        callback("设备编号只包含（[A-Z,0-9,_,-,/]）");
+      }
+      this.typeForm.resourceGroup = value.toUpperCase();
+      callback();
+    };
     return {
       tHeader,
       filterVal,
       fileName,
       typeForm: {
         resourceGroup: ""
+      },
+      typeFormRules: {
+        resourceGroup: [
+          {
+            validator: validateResource,
+            trigger: "blur"
+          }
+        ]
       },
       tableData: [],
       selectionList: [],
@@ -210,7 +235,6 @@ export default {
       });
     },
     handleDelete() {
-      console.log(this.selectionList);
       const data = [];
       this.selectionList.forEach(element => {
         const obj = {
@@ -218,7 +242,6 @@ export default {
         };
         data.push(obj);
       });
-      console.log(data);
       deleteResourceGroupHttp(data).then(data => {
         const res = data.data;
         console.log(res);
