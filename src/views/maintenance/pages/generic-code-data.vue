@@ -23,18 +23,16 @@
           </el-select>
         </el-form-item>
         <el-form-item label="代码名" prop="generalCode">
-          <el-row>
-            <el-col :span="22">
-              <dsn-input
-                v-model.trim="genericCodeDataForm.generalCode"
-                placeholder="请输入代码名"
-                @clear="clearGeneralCode"
-              ></dsn-input>
-            </el-col>
-            <el-col :span="2">
+          <dsn-input
+            v-model.trim="genericCodeDataForm.generalCode"
+            placeholder="请输入代码名"
+            style="width:225px;vertical-align:baseline;"
+            @clear="clearGeneralCode"
+          >
+            <template slot="append">
               <i class="el-icon-document" @click="handleQueryGeneralCode"></i>
-            </el-col>
-          </el-row>
+            </template>
+          </dsn-input>
         </el-form-item>
         <el-form-item label="描述">
           <dsn-input v-model.trim="genericCodeDataForm.generalCodeDes" :disabled="true"></dsn-input>

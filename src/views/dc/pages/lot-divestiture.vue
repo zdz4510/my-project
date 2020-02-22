@@ -7,14 +7,16 @@
       <!-- 查询条件start -->
       <el-form :model="lotForm" :inline="true" ref="lotForm" class="lotForm" :rules="lotFormRules">
         <el-form-item label="LOT" prop="lot">
-          <el-row>
-            <el-col :span="22">
-              <dsn-input class="lot" v-model.trim="lotForm.lot" placeholder="请输入LOT"></dsn-input>
-            </el-col>
-            <el-col :span="2">
+          <dsn-input
+            class="lot"
+            v-model.trim="lotForm.lot"
+            style="width:225px;vertical-align:baseline;"
+            placeholder="请输入LOT"
+          >
+            <template slot="append">
               <i class="el-icon-document" @click="goQuery"></i>
-            </el-col>
-          </el-row>
+            </template>
+          </dsn-input>
         </el-form-item>
         <el-form-item>
           <dsn-button
