@@ -9,7 +9,7 @@
       <el-form :inline="true" :model="searchForm" ref="searchForm" :rules="rules"  :label-width="formLabelWidth">
         <el-form-item label="输入搜索条件:" prop="width">
           <dsn-input placeholder="请输入内容" v-model="searchForm.code" class="input-with-select">
-            <dsn-select v-model="searchForm.codeType" slot="prepend">
+            <dsn-select v-model="searchForm.codeType" slot="prepend" @change="blurSearchFor">
               <el-option label="LOT" value="LOT"></el-option>
               <el-option label="容器" value="CON"></el-option>
             </dsn-select>
@@ -31,7 +31,7 @@
       <el-tab-pane label="报废" name="first">
         <div class="operate ml30 mtb10">
           <dsn-button class="mr25 pad1025" size="small" type="primary" @click.native="mark" :disabled="this.checkedList.length===0">报废标记</dsn-button>
-          <dsn-input placeholder="请输入内容" v-model="deleteDes" class="des">
+          <dsn-input placeholder="请输入内容" v-model="des" class="des">
             <template slot="prepend">报废描述:</template>
           </dsn-input>
         </div>
@@ -76,7 +76,7 @@
       <el-tab-pane label="恢复" name="second">
         <div class="operate ml30 mtb10">
           <dsn-button class="mr25 pad1025" size="small" type="primary" @click.native="recover" :disabled="this.checkedList.length===0">恢复报废</dsn-button>
-          <dsn-input placeholder="请输入内容" v-model="undeleteDes" class="des">
+          <dsn-input placeholder="请输入内容" v-model="unScrapDes" class="des">
             <template slot="prepend">恢复报废描述:</template>
           </dsn-input>
         </div>
@@ -188,14 +188,18 @@ import {getScrapList, scrapMark, getRecoverList, recoverMark, getLogList} from '
             total:0
           }
         },
-        deleteDes:'',
-        undeleteDes:'',
+        des:'',
+        unScrapDes:'',
       }
     },
     created(){
       this.search()
     },
     methods: {
+       //下拉框值改变时调用
+      blurSearchFor(){
+        this.search()
+      },
       handleClick(tab){
         this.activeName = tab.name
         this.$refs.deleteTable.clearSelection()
@@ -253,7 +257,7 @@ import {getScrapList, scrapMark, getRecoverList, recoverMark, getLogList} from '
         let arr = []
         this.checkedList.map(item=>{
           let obj = item
-          obj.deleteDes = this.deleteDes
+          obj.des = this.des
           arr.push(obj)
         })
         let params = {
@@ -265,7 +269,7 @@ import {getScrapList, scrapMark, getRecoverList, recoverMark, getLogList} from '
           if(data.data.code == 200){
             this.$message.success('操作成功')
             this.$refs.deleteTable.clearSelection()
-            this.deleteDes = ''
+            this.des = ''
             this.search()
           }else{
             this.$message.error(data.data.message)
@@ -276,7 +280,7 @@ import {getScrapList, scrapMark, getRecoverList, recoverMark, getLogList} from '
         let arr = []
         this.checkedList.map(item=>{
           let obj = item
-          obj.undeleteDes = this.undeleteDes
+          obj.unScrapDes = this.unScrapDes
           arr.push(obj)
         })
         let params = {
@@ -288,7 +292,7 @@ import {getScrapList, scrapMark, getRecoverList, recoverMark, getLogList} from '
           if(data.data.code == 200){
             this.$message.success('操作成功')
             this.search()
-            this.undeleteDes = ''
+            this.unScrapDes = ''
           }else{
             this.$message.error(data.data.message)
           }
