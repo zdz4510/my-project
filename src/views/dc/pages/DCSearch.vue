@@ -24,14 +24,14 @@
         </el-form-item>
         <el-form-item>
           <dsn-button
-            v-show="searchForm.dcGroup===''"
+            v-if="searchForm.dcGroup===''"
             size="small"
             type="primary"
             icon="el-icon-search"
             @click="searchLeft"
           >查询</dsn-button>
           <dsn-button
-            v-show="searchForm.dcGroup!==''"
+            v-else-if="searchForm.dcGroup!==''"
             size="small"
             type="primary"
             icon="el-icon-search"
@@ -57,14 +57,14 @@
           size="small"
           type="primary"
           icon="el-icon-upload2"
-          v-show="activeName === '清单'"
+          v-if="activeName === '清单'"
           @click="handleExportLeft"
         >导出</dsn-button>
         <dsn-button
           size="small"
           type="primary"
           icon="el-icon-upload2"
-          v-show="activeName === '参数清单'"
+          v-else-if="activeName === '参数清单'"
           @click="handleExportRight"
         >导出</dsn-button>
       </div>
@@ -92,7 +92,9 @@
             <el-table-column prop="shopOrder" label="工单号"></el-table-column>
             <el-table-column prop="workCenter" label="工作中心"></el-table-column>
             <el-table-column prop="operation" label="工序"></el-table-column>
-            <el-table-column prop="testPass" label="校验结果"></el-table-column>
+            <el-table-column prop="testPass" label="校验结果">
+              <template slot-scope="scope">{{ parseInt(scope.row.testPass)===1?"通过":"不通过"}}</template>
+            </el-table-column>
             <el-table-column prop="createUserName" label="创建人"></el-table-column>
             <el-table-column prop="createTime" label="创建时间" width="140"></el-table-column>
           </dsn-table>
