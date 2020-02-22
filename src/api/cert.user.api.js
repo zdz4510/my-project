@@ -7,8 +7,9 @@ import qs from "qs";
  *  url /mes/certUser/findPage
  */
 export const getCertUserList = data => {
-    return request.post(
-        `${window.VUE_APP_URL}/mes/certUser/findPage?${qs.stringify(data)}`);
+  return request.post(
+    `${window.VUE_APP_URL}/mes/certUser/findPage?${qs.stringify(data)}`
+  );
 };
 /**
  * 保存
@@ -16,7 +17,7 @@ export const getCertUserList = data => {
  */
 
 export const saveData = data => {
-    return request.post(`${window.VUE_APP_URL}/mes/certUser/save`, data);
+  return request.post(`${window.VUE_APP_URL}/mes/certUser/save`, data);
 };
 
 /**
@@ -25,7 +26,7 @@ export const saveData = data => {
  */
 
 export const findCert = data => {
-    return request.post(`${window.VUE_APP_URL}/mes/certUser/findCert`, data);
+  return request.post(`${window.VUE_APP_URL}/mes/certUser/findCert`, data);
 };
 
 /**
@@ -33,11 +34,7 @@ export const findCert = data => {
  * url /mes/certUser/delete
  */
 export const deleteData = data => {
-<<<<<<< HEAD
-    return request.post(`${window.VUE_APP_URL}/mes/certUser/delete`, data);
-=======
   return request.post(`${window.VUE_APP_URL}/mes/certUser/delete`, data);
->>>>>>> huyoujuan
 };
 
 /**
@@ -46,8 +43,7 @@ export const deleteData = data => {
  */
 
 export const getAllCert = () => {
-<<<<<<< HEAD
-    return request.post(`${window.VUE_APP_URL}/mes/certUser/getAllCert`);
+  return request.post(`${window.VUE_APP_URL}/mes/certUser/getAllCert`);
 };
 /**
  * /certUser/checkUser
@@ -56,9 +52,8 @@ export const getAllCert = () => {
  */
 
 export const checkUser = data => {
-    return request.post(`${window.VUE_APP_URL}/mes/certUser/checkUser?user=${data.user}`, data);
+  return request.post(
+    `${window.VUE_APP_URL}/mes/certUser/checkUser?user=${data.user}`,
+    data
+  );
 };
-=======
-  return request.post(`${window.VUE_APP_URL}/mes/certUser/getAllCert`);
-};
->>>>>>> huyoujuan

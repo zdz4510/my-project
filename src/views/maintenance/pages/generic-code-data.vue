@@ -13,14 +13,14 @@
         label-width="80px"
       >
         <el-form-item label="代码类型" prop="generalCodeGroup">
-          <dsn-select
+          <el-select
             v-model.trim="genericCodeDataForm.generalCodeGroup"
-            filterable
+            size="small"
             placeholder="请选择代码类型"
           >
             <el-option label="系统" value="S">系统</el-option>
             <el-option label="用户" value="I">用户</el-option>
-          </dsn-select>
+          </el-select>
         </el-form-item>
         <el-form-item label="代码名" prop="generalCode">
           <el-row>
@@ -95,7 +95,7 @@
       <!-- 表格操作end -->
       <!-- 表格数据start -->
       <dsn-table
-        v-show="showTable"
+        v-if="fields.length>0"
         ref="multipleTable"
         :data="tableData"
         tooltip-effect="dark"
@@ -103,10 +103,10 @@
       >
         <el-table-column type="selection"></el-table-column>
         <el-table-column
-          v-for="(field, index) in usedFieldNames"
+          v-for="(field, index) in fields"
           :key="index"
-          :prop="field"
-          :label="field"
+          :prop="field.fieldName"
+          :label="field.fieldLabel"
         ></el-table-column>
       </dsn-table>
       <!-- 表格数据end -->
@@ -116,12 +116,12 @@
       <span>
         <el-form ref="addForm" :model="addForm" label-width="90px" :rules="addFormRules">
           <el-form-item
-            v-for="(field, index) in usedFieldNames"
+            v-for="(field, index) in fields"
             :key="index"
-            :label="field"
-            :prop="field"
+            :prop="field.fieldName"
+            :label="field.fieldLabel"
           >
-            <dsn-input v-model.trim="addForm[`${field}`]" placeholder="请输入字段数据"></dsn-input>
+            <dsn-input v-model="addForm[`${field.fieldName}`]" placeholder="请输入字段数据"></dsn-input>
           </el-form-item>
         </el-form>
       </span>
@@ -226,6 +226,7 @@ export default {
       callback();
     };
     return {
+      totalData: {},
       //已使用的字段名
       usedFieldNames: [],
       //查询表单
@@ -276,7 +277,6 @@ export default {
       //操作类型
       operateType: "",
       //是否显示表格
-      showTable: false,
       //弹框宽度
       dialogWidth: "400px",
       //修改时保存初始数据
@@ -311,8 +311,11 @@ export default {
       findGeneralCodeHttp(data).then(data => {
         const res = data.data;
         if (res.code === 200) {
+          if (JSON.stringify(this.totalData) === JSON.stringify(res.data)) {
+            return;
+          }
+          this.totalData = res.data;
           this.tableData = res.data.definedData;
-          this.showTable = true;
           this.genericCodeDataForm.generalCodeDes = res.data.generalCodeDes;
           this.fields = res.data.fields;
           //获取出所有已使用的字段名
@@ -321,8 +324,8 @@ export default {
           });
           this.editable = res.data.editable;
           //给对象添加属性
-          this.usedFieldNames.forEach(element => {
-            this.$set(this.addForm, element, "");
+          this.fields.forEach(element => {
+            this.$set(this.addForm, element.fieldName, "");
           });
           this.setAddFormRules();
           return;
@@ -335,14 +338,6 @@ export default {
     },
     //动态设置弹出框验证规则
     setAddFormRules() {
-      // element数据
-      // generalCode: "CUSTOMIZED_FIELD_01";
-      // fieldName: "FIELD_01";
-      // fieldLabel: "FIELD_01";
-      // fieldType: "A";
-      // fieldSize: "2";
-      // limitGeneralCode: null;
-      // limitGeneralField: null;
       this.fields.forEach(element => {
         if (element.fieldName === "FIELD_01") {
           this.$set(this.addFormRules, element.fieldName, [
@@ -535,8 +530,6 @@ export default {
     handleQuery(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.usedFieldNames = [];
-          this.tableData = [];
           this.init();
         } else {
           return false;
@@ -583,7 +576,8 @@ export default {
       this.addForm = {};
       this.addFormRules = {};
       this.editable = false;
-      this.showTable = false;
+      this.fields = [];
+      this.totalData = [];
     },
     checkAddForm(formName) {
       this.$refs[formName].validate(valid => {
@@ -699,8 +693,9 @@ export default {
     //代码名清除时清空表格数据
     clearGeneralCode() {
       this.tableData = [];
+      this.fields = [];
       this.editable = false;
-      this.showTable = false;
+      this.totalData = [];
     }
   }
 };

@@ -224,7 +224,6 @@ export default {
     }
   },
   methods: {
-    //
     checkForm(formName, operation) {
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -296,7 +295,7 @@ export default {
 
     //将制定lot添加到本地表格
     handleAddLot() {
-      const data = { lot: this.lotMergeForm.lot, splitLot: this.splitLot };
+      const data = { lot: this.lotMergeForm.lot, parentLot: this.splitLot.lot };
       addLotAtOperationHttp(data).then(data => {
         const res = data.data;
         if (res.code === 200) {

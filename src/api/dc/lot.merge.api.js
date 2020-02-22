@@ -1,5 +1,5 @@
 import request from "@/service/";
-// import qs from "qs";
+import qs from "qs";
 
 /**
  * Lot状态获取接口
@@ -16,9 +16,10 @@ export const findLotAtOperationHttpMerge = data => {
  *  url /mes/mergeLot/addLotAtOperation
  */
 export const addLotAtOperationHttp = data => {
+  const params = qs.stringify(data);
   return request.post(
-    `${window.VUE_APP_URL}/mes/mergeLot/addLotAtOperation?lot=${data.lot}`,
-    data.splitLot
+    `${window.VUE_APP_URL}/mes/mergeLot/addLotAtOperation?${params}`,
+    data
   );
 };
 
