@@ -139,9 +139,9 @@
             <el-table-column prop="finalOperationTime" label="最后作业时间"></el-table-column>
             <el-table-column prop="finalOperationUserName" label="最后作业人员"></el-table-column>
             <el-table-column prop="packingClass" label="容器层级"></el-table-column>
-            <el-table-column prop="scrapTime" label="报废时间"></el-table-column>
-            <el-table-column prop="scrapUserName" label="报废人员"></el-table-column>
-            <el-table-column prop="scrapDes" label="报废描述"></el-table-column>
+            <el-table-column prop="deleteTime" label="删除时间"></el-table-column>
+            <el-table-column prop="deleteUserName" label="删除人员"></el-table-column>
+            <el-table-column prop="deleteDes" label="删除描述"></el-table-column>
             <el-table-column prop="unDeleteTime" label="恢复删除时间"></el-table-column>
             <el-table-column prop="unDeleteUserName" label="恢复删除人员"></el-table-column>
             <el-table-column prop="unDeleteDes" label="恢复删除描述"></el-table-column>
