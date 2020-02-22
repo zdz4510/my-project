@@ -33,11 +33,7 @@ export const findCert = data => {
  * url /mes/certUser/delete
  */
 export const deleteData = data => {
-<<<<<<< HEAD
     return request.post(`${window.VUE_APP_URL}/mes/certUser/delete`, data);
-=======
-  return request.post(`${window.VUE_APP_URL}/mes/certUser/delete`, data);
->>>>>>> huyoujuan
 };
 
 /**
@@ -46,19 +42,5 @@ export const deleteData = data => {
  */
 
 export const getAllCert = () => {
-<<<<<<< HEAD
-    return request.post(`${window.VUE_APP_URL}/mes/certUser/getAllCert`);
-};
-/**
- * /certUser/checkUser
-新增时对输入用户进行判断
-
- */
-
-export const checkUser = data => {
-    return request.post(`${window.VUE_APP_URL}/mes/certUser/checkUser?user=${data.user}`, data);
-};
-=======
   return request.post(`${window.VUE_APP_URL}/mes/certUser/getAllCert`);
 };
->>>>>>> huyoujuan
