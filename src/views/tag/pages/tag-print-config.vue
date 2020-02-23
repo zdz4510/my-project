@@ -11,6 +11,7 @@
       border
       highlight-current-row
       @current-change="handleCurrentChange"
+      @row-click="rowClick"
       style="width: 100%"
     >
       <el-table-column type="index" label="序号" width="50"></el-table-column>
@@ -51,16 +52,34 @@ import { getTagConfigList } from "@/api/tag/tag.config.api";
 import { getPrintDevicesAvailable } from "@/api/tag/tag.print.api";
 export default {
   name: "tagPrintConfig",
+  model:{
+     prop: "tableData",
+    event: "change"
+  },
+  props:{
+    tableData:{
+      type:Array,
+      required:true
+    }
+  },
+  watch:{
+    tableData:{
+      handler:function(){
+        this.$emit('change',this.tableData);
+      },
+      deep:true
+    }
+  },
   data() {
     return {
       selectDeiveName: "",
-      tableData: [
-        {
-          print: "",
-          label: "",
-          num: ""
-        }
-      ],
+      // tableData: [
+      //   {
+      //     print: "",
+      //     label: "",
+      //     num: ""
+      //   }
+      // ],
       current: null,
       restaurants: [],
       getDeviceList: [],
@@ -86,7 +105,12 @@ export default {
     },
     // 测试打印  
     testPrint(){
-
+      if(!this.current){
+        this.$message({
+          type:"warning",
+          message:'清先选中在打印'
+        })
+      }
     },
     // 获取打印设置
     handleGetPrintDevicesAvailable() {
@@ -121,6 +145,9 @@ export default {
       this.tableData.splice(index, 1);
       this.current = null;
     },
+    rowClick(row){
+      this.current = row
+    },
     handleCurrentChange(current) {
       this.current = current;
     },
@@ -140,6 +167,7 @@ export default {
         );
       };
     },
+
     loadAll() {
       return [
         { value: "三全鲜食（北新泾店）", address: "长宁区新渔路144号" },
