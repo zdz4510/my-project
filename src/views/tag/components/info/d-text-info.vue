@@ -147,6 +147,9 @@
             </tr>
           </table>
       </el-tab-pane>
+      <el-tab-pane label="资料源" name="infoSource">
+        <DInfo></DInfo>
+      </el-tab-pane>
     <!-- <el-form
               ref="locationForm"
               :model="locationForm"
@@ -336,6 +339,7 @@
 </template>
 
 <script>
+import DInfo from './d-component-info.vue'
 export default {
   name: "",
   props: {
@@ -343,6 +347,9 @@ export default {
       type: Object,
       required: true
     }
+  },
+  components: {
+    DInfo,
   },
   data() {
     return {

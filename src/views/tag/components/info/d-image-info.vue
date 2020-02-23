@@ -56,6 +56,9 @@
         </tr>
       </table>
     </el-tab-pane>
+    <el-tab-pane label="资料源" name="infoSource">
+      <DInfo></DInfo>
+    </el-tab-pane>
   </el-tabs>
 </template>
 <script>
@@ -64,6 +67,9 @@
       return {
         currentTabs: 'location'
       }
+    },
+    components: {
+      DInfo: ()=> import('./d-component-info'),
     },
   }
 </script>
