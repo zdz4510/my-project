@@ -44,6 +44,17 @@ export const getSetupList = data => {
 };
 
 /**
+ * 查询启用的参数列表
+ * url /mes/dcParameterMeasure/findActiveDcParameterMeasureList
+ */
+export const findActiveDcParameterMeasureListHttp = data => {
+  return request.get(
+    `${window.VUE_APP_URL}/mes/dcParameterMeasure/findActiveDcParameterMeasureList`,
+    { params: data }
+  );
+};
+
+/**
  * 保存
  *  url /mes/dcGroup/addDcGroupBatch
  */
