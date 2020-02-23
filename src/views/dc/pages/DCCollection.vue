@@ -97,7 +97,7 @@
           <el-tabs type="border-card">
             <el-tab-pane label="数据收集组" style="height:200px">
               <h3 style="text-align:center">涉及数据收集组</h3>
-              <el-table :data="dcGroupList" @select="selectedList">
+              <el-table :data="dcGroupList" @select="selectedDcGroup">
                 <el-table-column type="selection" width="45"></el-table-column>
                 <el-table-column prop="dcGroup" label="数据收集组"></el-table-column>
                 <el-table-column prop="dcGroupDes" label="数据收集组描述" width="110"></el-table-column>
@@ -116,11 +116,16 @@
           >
             <el-tab-pane label="参数输入" name="paramsInput">
               <div class="btn">
-                <dsn-button icon="el-icon-folder-add" size="small" type="success" @click="save">提交</dsn-button>
+                <dsn-button
+                  icon="el-icon-folder-add"
+                  size="small"
+                  type="success"
+                  @click="saveParamsValue"
+                >提交</dsn-button>
                 <dsn-button size="small" type="primary" icon="el-icon-refresh" @click="reset">重置</dsn-button>
-                <dsn-button size="small" type="primary" @click="check">校验</dsn-button>
+                <dsn-button size="small" type="primary" @click="checkParamsValue">校验</dsn-button>
               </div>
-              <el-table :data="dcParameterMeasureList">
+              <el-table :data="paramsInputList">
                 <el-table-column label="参数名">
                   <template slot-scope="scope">
                     <span>{{ scope.row.parameter }}</span>
@@ -144,7 +149,10 @@
       </el-row>
     </DsnPanel>
     <div class="bottom">
-      <el-tabs type="border-card">
+      <div class="switchBtn">
+        <dsn-button size="small" type="primary" @click="switchBtn">查看日志</dsn-button>
+      </div>
+      <el-tabs type="border-card" v-show="isViewLog">
         <el-tab-pane label="日志记录">
           <div class="content">
             <div v-for="(item,index) in logList" :key="index">{{item}}</div>
@@ -155,7 +163,7 @@
     <!-- 查看参数明细start -->
     <el-dialog title="查看参数明细" :visible.sync="paramsDialog" @close="closeParams">
       <h3 style="text-align:center">涉及数据收集组</h3>
-      <dsn-table :data="dcGroupList" @select="selectedList">
+      <dsn-table :data="dcParameterMeasureList" @select="selectedDcGroup">
         <el-table-column type="selection" width="35"></el-table-column>
         <el-table-column prop="parameter" label="参数名称"></el-table-column>
         <el-table-column prop="parameterDes" label="参数描述"></el-table-column>
@@ -222,9 +230,11 @@ import {
   findDcGroupDataHttp,
   checkParamData,
   getParamsList,
-  saveCollectionData,
-  getMaterialList
+  saveDataCollectResult
 } from "../../../api/dc.data.collection.api";
+import { findActiveDcParameterMeasureListHttp } from "@/api/data.collection.api.js";
+import _ from "lodash";
+
 export default {
   name: "dc-collection",
   data() {
@@ -236,6 +246,7 @@ export default {
         acceptValue: "",
         collectionType: ""
       },
+      paramsInputForm: {},
       baseInfoForm: {
         material: "",
         shopOrder: "",
@@ -247,6 +258,8 @@ export default {
       dcGroupList: [],
       selectionList: [],
       dcParameterMeasureList: [],
+      paramsInputList: [],
+      isViewLog: false,
       logList: [],
       checkedList: [],
       rules: {
@@ -273,19 +286,7 @@ export default {
       relationDetail: []
     };
   },
-  created() {
-    let params = {
-      material: "",
-      materialRev: "",
-      currentPage: 1,
-      pageSize: 0,
-      tenantSiteCode: "test",
-      deleteFlag: false
-    };
-    getMaterialList(params).then(data => {
-      console.log(data, "d");
-    });
-  },
+  created() {},
   methods: {
     search(formName) {
       this.$refs[formName].validate(valid => {
@@ -298,7 +299,6 @@ export default {
             const res = data.data;
             if (res.code === 200) {
               this.baseInfoForm = res.data;
-              this.dcParameterMeasureList = res.data.dcParameterMeasureList;
               this.dcGroupList = res.data.dcGroupList;
               this.relationDetail = res.data.relationDetail;
               return;
@@ -309,7 +309,6 @@ export default {
             });
           });
         } else {
-          console.log("error submit!!");
           return false;
         }
       });
@@ -317,22 +316,56 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields();
     },
-    check() {
-      console.log(this.dcParameterMeasureList, "tabledata");
-      let params = this.dcParameterMeasureList;
+    checkParamsValue() {
+      this.paramsInputList.find(element => {
+        if (element.required) {
+          if (element.parameterValue === "") {
+            this.$message({
+              message: `参数${element.parameter}的值必填`,
+              type: "warning"
+            });
+            return;
+          }
+        }
+        if (element.valueType === 10) {
+          let reg = /^(((\d){1,5})||((\d){1,5}\.(\d){1,3}))$/;
+          if (!reg.test(element.parameterValue)) {
+            this.$message({
+              message: `参数${element.parameter}的值应为数值，整数5位以内，小数3位以内`,
+              type: "warning"
+            });
+            return;
+          }
+        }
+      });
+      let params = _.cloneDeep(this.paramsInputList);
       checkParamData(params).then(data => {
-        console.log(data.data.data, "ddddd");
-        this.logList.push(data.data.data.msg);
+        const res = data.data;
+        if (res.code === 200) {
+          if (res.data.success) {
+            this.$message({
+              message: "参数值校验成功",
+              type: "warning"
+            });
+          } else {
+            this.$message({
+              message: "参数值校验失败",
+              type: "warning"
+            });
+          }
+          this.logList.push(res.data.msg);
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
       });
     },
     reset() {
-      let arr = this.dcParameterMeasureList;
-      arr.forEach(function(value) {
+      this.dcParameterMeasureList.forEach(value => {
         value.parameterValue = "";
-        console.log(value);
       });
-      this.dcParameterMeasureList = JSON.parse(JSON.stringify(arr));
-      this.$forceUpdate();
     },
     handleCancle() {
       this.paramsDialog = false;
@@ -348,31 +381,53 @@ export default {
         this.$message.error("请选择一条数据");
       }
     },
-    selectedList(val) {
-      this.checkedList = val;
-    },
-    save() {
-      let params = this.checkedList[0];
-      console.log(params);
-      params.dcParameterMeasureInfoList = this.dcParameterMeasureList;
-      params.collectionType = this.searchForm.collectionType;
-      params.dcGroup = this.checkedList[0].dcGroup;
-      params.material = this.baseInfoForm.material;
-      params.operation = this.baseInfoForm.operation;
-      // params.resource = this.searchForm.resource;
-      params.tenantSiteCode = this.searchForm.tenantSiteCode;
-      params.shopOrder = this.baseInfoForm.shopOrder;
-      params.materialGroup = this.baseInfoForm.materialGroup;
-      params.resourceGroup = this.baseInfoForm.resourceGroup;
-      params.workCenter = this.baseInfoForm.workCenter;
-      params.acceptValue = this.searchForm.acceptValue;
-      saveCollectionData(params).then(data => {
-        this.logList.push(data.data.data.msg);
-        if (data.data.message == "success") {
-          this.$message.success("操作成功");
-        } else {
-          this.$message.error(data.data.message);
+    selectedDcGroup(selection, row) {
+      this.checkedList = row;
+      const data = { dcGroup: row.dcGroup };
+      findActiveDcParameterMeasureListHttp(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.dcParameterMeasureList = res.data;
+          this.dcParameterMeasureList.forEach(element => {
+            if (element.parameterStatus) {
+              this.paramsInputList.push(element);
+            }
+          });
+          this.paramsInputList.forEach(element => {
+            element.parameterValue = "";
+          });
+          return;
         }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
+    },
+    saveParamsValue() {
+      let params = _.cloneDeep(this.baseInfoForm);
+      params.dcParameterMeasureInfoList = _.cloneDeep(this.paramsInputList);
+      saveDataCollectResult(params).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          if (res.data.success) {
+            this.$message({
+              message: "参数值提交成功",
+              type: "success"
+            });
+          } else {
+            this.$message({
+              message: "参数值提交失败",
+              type: "warning"
+            });
+          }
+          this.logList.push(res.data.msg);
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
       });
     },
     //复选框选择
@@ -405,6 +460,9 @@ export default {
     //关闭右边弹框
     closeDetail() {
       this.activeNameRight = "paramsInput";
+    },
+    switchBtn() {
+      this.isViewLog = !this.isViewLog;
     }
   }
 };
@@ -422,6 +480,12 @@ export default {
         background: #fff;
         border: 0;
       }
+    }
+  }
+  .bottom {
+    .switchBtn {
+      width: 100%;
+      text-align: center;
     }
   }
 }
