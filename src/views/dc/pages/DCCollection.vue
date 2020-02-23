@@ -92,7 +92,7 @@
                 </el-row>
               </el-form>
             </el-tab-pane>
-            <el-tab-pane label="查看多个关系明细" name="lookDetail">222</el-tab-pane>
+            <el-tab-pane label="查看多个关系明细" name="lookDetail"></el-tab-pane>
           </el-tabs>
           <el-tabs type="border-card">
             <el-tab-pane label="数据收集组" style="height:200px">
@@ -110,7 +110,7 @@
         <el-col :span="12">
           <el-tabs
             type="border-card"
-            style="height:300px"
+            style="height:460px"
             v-model="activeNameRight"
             @tab-click="handleClickRight"
           >
@@ -120,12 +120,12 @@
                   icon="el-icon-folder-add"
                   size="small"
                   type="success"
-                  @click="saveParamsValue"
+                  @click="checkParamsValue(saveParamsValue)"
                 >提交</dsn-button>
                 <dsn-button size="small" type="primary" icon="el-icon-refresh" @click="reset">重置</dsn-button>
-                <dsn-button size="small" type="primary" @click="checkParamsValue">校验</dsn-button>
+                <dsn-button size="small" type="primary" @click="checkParamsValue(null)">校验</dsn-button>
               </div>
-              <el-table :data="paramsInputList">
+              <el-table :data="paramsInputList" height="350px">
                 <el-table-column label="参数名">
                   <template slot-scope="scope">
                     <span>{{ scope.row.parameter }}</span>
@@ -143,7 +143,7 @@
                 </el-table-column>
               </el-table>
             </el-tab-pane>
-            <el-tab-pane label="查看参数明细" name="paramsDetail">111</el-tab-pane>
+            <el-tab-pane label="查看参数明细" name="paramsDetail"></el-tab-pane>
           </el-tabs>
         </el-col>
       </el-row>
@@ -155,7 +155,7 @@
       <el-tabs type="border-card" v-show="isViewLog">
         <el-tab-pane label="日志记录">
           <div class="content">
-            <div v-for="(item,index) in logList" :key="index">{{item}}</div>
+            <div v-for="(item,index) in logList" :key="index">{{index+1}}、{{item}}</div>
           </div>
         </el-tab-pane>
       </el-tabs>
@@ -197,21 +197,21 @@
         </el-tab-pane>
         <el-tab-pane label="设备类型">
           <h3 style="text-align:center">涉及关系明细</h3>
-          <el-table :data="relationDetail.resourceGroup">
+          <el-table :data="relationDetail.resourceGroup" height="200px">
             <el-table-column prop="resourceGroup" label="设备类型"></el-table-column>
             <el-table-column prop="groupDes" label="设备类型描述"></el-table-column>
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="工作中心">
           <h3 style="text-align:center">涉及关系明细</h3>
-          <el-table :data="relationDetail.workCenter">
+          <el-table :data="relationDetail.workCenter" height="200px">
             <el-table-column prop="workCenter" label="工作中心"></el-table-column>
             <el-table-column prop="workCenterDes" label="工作中心描述"></el-table-column>
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="工序">
           <h3 style="text-align:center">涉及关系明细</h3>
-          <el-table :data="relationDetail.operation">
+          <el-table :data="relationDetail.operation" height="200px">
             <el-table-column prop="operation" label="工序"></el-table-column>
             <el-table-column prop="operationDes" label="工序描述"></el-table-column>
           </el-table>
@@ -229,7 +229,6 @@
 import {
   findDcGroupDataHttp,
   checkParamData,
-  getParamsList,
   saveDataCollectResult
 } from "../../../api/dc.data.collection.api";
 import { findActiveDcParameterMeasureListHttp } from "@/api/data.collection.api.js";
@@ -256,7 +255,6 @@ export default {
         materialGroup: ""
       },
       dcGroupList: [],
-      selectionList: [],
       dcParameterMeasureList: [],
       paramsInputList: [],
       isViewLog: false,
@@ -315,52 +313,62 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
+      this.$refs["baseInfoForm"].resetFields();
+      this.dcGroupList = [];
+      this.dcParameterMeasureList = [];
+      this.paramsInputList = [];
+      this.relationDetail = [];
     },
-    checkParamsValue() {
-      this.paramsInputList.find(element => {
-        if (element.required) {
-          if (element.parameterValue === "") {
-            this.$message({
-              message: `参数${element.parameter}的值必填`,
-              type: "warning"
-            });
-            return;
-          }
+    checkParamsValue(operate) {
+      const isFind = this.paramsInputList.find(element => {
+        let reg = /^((\d{1,5}\.(\d){1,3})||(\d{1,5}))$/g;
+        if (element.required && element.parameterValue === "") {
+          this.$message({
+            message: `参数${element.parameter}的值必填`,
+            type: "warning"
+          });
+          return true;
         }
-        if (element.valueType === 10) {
-          let reg = /^(((\d){1,5})||((\d){1,5}\.(\d){1,3}))$/;
-          if (!reg.test(element.parameterValue)) {
-            this.$message({
-              message: `参数${element.parameter}的值应为数值，整数5位以内，小数3位以内`,
-              type: "warning"
-            });
-            return;
-          }
+        if (
+          parseInt(element.valueType) === 10 &&
+          !reg.test(element.parameterValue)
+        ) {
+          this.$message({
+            message: `参数${element.parameter}的值应为数值，整数5位以内，小数3位以内`,
+            type: "warning"
+          });
+          return true;
         }
+        return false;
       });
-      let params = _.cloneDeep(this.paramsInputList);
-      checkParamData(params).then(data => {
-        const res = data.data;
-        if (res.code === 200) {
-          if (res.data.success) {
-            this.$message({
-              message: "参数值校验成功",
-              type: "warning"
-            });
-          } else {
-            this.$message({
-              message: "参数值校验失败",
-              type: "warning"
-            });
+      if (!isFind) {
+        let params = _.cloneDeep(this.paramsInputList);
+        checkParamData(params).then(data => {
+          const res = data.data;
+          if (res.code === 200) {
+            if (res.data.success) {
+              this.$message({
+                message: "参数值校验成功",
+                type: "success"
+              });
+              if (operate !== null) {
+                operate();
+              }
+            } else {
+              this.$message({
+                message: "参数值校验失败",
+                type: "warning"
+              });
+            }
+            this.logList.push(res.data.msg);
+            return;
           }
-          this.logList.push(res.data.msg);
-          return;
-        }
-        this.$message({
-          message: res.message,
-          type: "warning"
+          this.$message({
+            message: res.message,
+            type: "error"
+          });
         });
-      });
+      }
     },
     reset() {
       this.dcParameterMeasureList.forEach(value => {
@@ -370,19 +378,13 @@ export default {
     handleCancle() {
       this.paramsDialog = false;
     },
-    handleSave() {
-      if (this.checkedList.length == 1) {
-        this.paramsDialog = false;
-        let params = this.checkedList[0];
-        getParamsList(params).then(data => {
-          this.dcParameterMeasureList = data.data.data;
-        });
-      } else {
-        this.$message.error("请选择一条数据");
-      }
-    },
     selectedDcGroup(selection, row) {
-      this.checkedList = row;
+      if (
+        this.dcParameterMeasureList.length !== 0 &&
+        this.dcParameterMeasureList[0].dcGroup === row.dcGroup
+      ) {
+        return;
+      }
       const data = { dcGroup: row.dcGroup };
       findActiveDcParameterMeasureListHttp(data).then(data => {
         const res = data.data;
@@ -394,13 +396,13 @@ export default {
             }
           });
           this.paramsInputList.forEach(element => {
-            element.parameterValue = "";
+            this.$set(element, "parameterValue", "");
           });
           return;
         }
         this.$message({
           message: res.message,
-          type: "warning"
+          type: "error"
         });
       });
     },
@@ -426,13 +428,9 @@ export default {
         }
         this.$message({
           message: res.message,
-          type: "warning"
+          type: "error"
         });
       });
-    },
-    //复选框选择
-    handleSelectionChange(val) {
-      this.selectionList = val;
     },
     //左边页签选择
     handleClickLeft(tab) {
@@ -463,6 +461,9 @@ export default {
     },
     switchBtn() {
       this.isViewLog = !this.isViewLog;
+    },
+    input(val) {
+      console.log(val);
     }
   }
 };
