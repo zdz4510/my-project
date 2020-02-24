@@ -1,104 +1,107 @@
 <template>
-  <div class="unpackEdtit">
-    <div class="operation">
+  <div class="unpackEdit">
+    <div class="operate">
       <el-button type="primary" size="small" @click="goback">返回</el-button>
-      <el-button type="primary" size="small" @click="saveForm">保存</el-button>
+      <el-button type="primary" size="small" @click="checkBeforeSave">保存</el-button>
+      <el-button type="primary" size="small" @click="handleReset">重置</el-button>
     </div>
-    <div class="content">
-      <div class="left" v-if="operateType === 'edit'">
-        <el-table
-          stripe
-          ref="multipleTable"
-          :data="tableData"
-          tooltip-effect="dark"
-          style="width: 100%"
-          highlight-current-row
-          @current-change="handleCurrentChange"
-          :header-cell-style="{ background: '#eef1f6', height: '30px' }"
-        >
-          <el-table-column prop="mat" label="物料号" width="120"></el-table-column>
-          <el-table-column prop="packingClass" label="包装层级" show-overflow-tooltip></el-table-column>
-        </el-table>
-      </div>
-      <div class="tableCon">
-        <el-form
-          :model="ruleForm"
-          :rules="rules"
-          ref="ruleForm"
-          label-width="150px"
-          class="demo-ruleForm"
-        >
-          <div class="contentWl">
-            <el-form-item label="物料号:">
-              <el-autocomplete
-                class="inline-input"
-                v-model="ruleForm.mat"
-                :fetch-suggestions="this.querySearch"
-                placeholder="请输入物料号"
-                v-bind:disabled="this.operateType==='edit'"
-              ></el-autocomplete>
-            </el-form-item>
-          </div>
-          <div class="formcon">
-            <el-form-item label="容器编号规则：" prop="mainNumberType">
-              <el-select
-                v-model="ruleForm.mainNumberType"
-                placeholder="手动/调取编号规则"
-                @change="changemainNumberType"
-              >
-                <el-option
-                  v-for="item in this.optionMainNumberType"
-                  :label="item.name"
-                  :value="item.value"
-                  :key="item.value"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="容器编号规则版本：">
-              <el-select v-model="ruleForm.mainNumberRev" v-bind:disabled="this.mainNumberRev">
-                <el-option label="v1.0" value="v1.0"></el-option>
-                <el-option label="v1.1" value="v1.1"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="容器容纳数：" prop="accommodateNumber">
-              <el-input v-model="ruleForm.accommodateNumber"></el-input>
-            </el-form-item>
-            <el-form-item label="容器标签打印：" prop="labelPrinting">
-              <el-select v-model="ruleForm.labelPrinting">
-                <el-option label="是" value="true" key="1"></el-option>
-                <el-option label="否" value="false" key="2"></el-option>
-              </el-select>
-            </el-form-item>
-          </div>
-          <div class="formcon">
-            <el-form-item label="容器类型：" prop="containerType">
-              <el-input v-model="ruleForm.containerType"></el-input>
-            </el-form-item>
-            <el-form-item label="包装层级：" prop="packingClass">
-              <el-input v-model="ruleForm.packingClass" v-bind:disabled="this.packingClassAble"></el-input>
-            </el-form-item>
+    <div class="operate">
+      <el-form
+        :model="ruleForm"
+        :rules="rules"
+        ref="ruleForm"
+        label-width="160px"
+        class="demo-ruleForm"
+      >
+        <div class="contentWl">
+          <el-form-item label="物料号:" prop="mat">
+            <el-autocomplete
+              class="inline-input"
+              size="small"
+              v-model="ruleForm.mat"
+              :fetch-suggestions="this.querySearch"
+              placeholder="请输入物料号"
+              :disabled="this.operateType==='edit'"
+            ></el-autocomplete>
+          </el-form-item>
+        </div>
+        <div class="formcon">
+          <el-row>
+            <el-col :span="8">
+              <el-form-item label="容器编号规则：" prop="mainNumberType">
+                <dsn-select
+                  v-model="ruleForm.mainNumberType"
+                  placeholder="手动/调取编号规则"
+                  @change="changemainNumberType"
+                >
+                  <el-option
+                    v-for="item in this.optionMainNumberType"
+                    :label="item.name"
+                    :value="item.value"
+                    :key="item.value"
+                  ></el-option>
+                </dsn-select>
+              </el-form-item>
+              <el-form-item label="容器编号规则版本：" prop="mainNumberRev">
+                <dsn-select
+                  v-model="ruleForm.mainNumberRev"
+                  :disabled="this.mainNumberRev"
+                  placeholder="请选择容器编号规则版本"
+                >
+                  <el-option label="v1.0" value="v1.0"></el-option>
+                  <el-option label="v1.1" value="v1.1"></el-option>
+                </dsn-select>
+              </el-form-item>
+              <el-form-item label="容器容纳数：" prop="accommodateNumber">
+                <dsn-input v-model="ruleForm.accommodateNumber" placeholder="请选择容器容纳数"></dsn-input>
+              </el-form-item>
+              <el-form-item label="容器标签打印：" prop="labelPrinting">
+                <dsn-select v-model="ruleForm.labelPrinting" placeholder="请选择容器标签打印">
+                  <el-option label="是" :value="true" key="1"></el-option>
+                  <el-option label="否" :value="false" key="2"></el-option>
+                </dsn-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="容器类型：" prop="containerType">
+                <dsn-input v-model="ruleForm.containerType" placeholder="请选择容器类型"></dsn-input>
+              </el-form-item>
+              <el-form-item label="包装层级：" prop="packingClass">
+                <dsn-input
+                  v-model="ruleForm.packingClass"
+                  :disabled="this.packingClassAble"
+                  placeholder="请选择包装层级"
+                ></dsn-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </div>
+        <el-row>
+          <el-col :span="8">
             <el-form-item label="被容器编号规则：" prop="subordinationNumberType">
-              <el-select
+              <dsn-select
                 v-model="ruleForm.subordinationNumberType"
                 @change="changesubordinationNumberType"
+                placeholder="请选择被容器编号规则"
               >
                 <el-option label="LOT" value="30"></el-option>
                 <el-option label="手动" value="20"></el-option>
                 <el-option label="调取编号规则" value="10"></el-option>
-              </el-select>
+              </dsn-select>
             </el-form-item>
-            <el-form-item label="被容器编号规则版本：" prop="name">
-              <el-select
+            <el-form-item label="被容器编号规则版本：" prop="subordinationNumberRev">
+              <dsn-select
                 v-model="ruleForm.subordinationNumberRev"
                 v-bind:disabled="this.subordinationNumberRev"
+                placeholder="请选择被容器编号规则版本"
               >
                 <el-option label="是" value="是"></el-option>
                 <el-option label="否" value="否"></el-option>
-              </el-select>
+              </dsn-select>
             </el-form-item>
-          </div>
-        </el-form>
-      </div>
+          </el-col>
+        </el-row>
+      </el-form>
     </div>
   </div>
 </template>
@@ -127,7 +130,14 @@ export default {
       subordinationNumberRev: false,
       ruleForm: {
         mat: "",
-        labelPrinting: "false"
+        mainNumberType: "",
+        mainNumberRev: "",
+        accommodateNumber: "",
+        labelPrinting: false,
+        containerType: "",
+        packingClass: "",
+        subordinationNumberType: "",
+        subordinationNumberRev: ""
       },
       optionMainNumberType: [
         { name: "手动", value: true },
@@ -135,19 +145,19 @@ export default {
       ],
       rules: {
         mainNumberType: [
-          { required: true, message: "输入框不允许为空", trigger: "blur" }
+          { required: true, message: "容器编号规则不允许为空", trigger: "blur" }
         ],
         accommodateNumber: [
-          { required: true, message: "输入框不允许为空", trigger: "blur" }
+          { required: true, message: "容器容纳数不允许为空", trigger: "blur" }
         ],
         labelPrinting: [
-          { required: true, message: "输入框不允许为空", trigger: "blur" }
+          { required: true, message: "容器标签打印不允许为空", trigger: "blur" }
         ],
         containerType: [
-          { required: true, message: "输入框不允许为空", trigger: "blur" }
+          { required: true, message: "容器类型不允许为空", trigger: "blur" }
         ],
         packingClass: [
-          { required: true, message: "输入框不允许为空", trigger: "blur" },
+          { required: true, message: "包装层级不允许为空", trigger: "blur" },
           {
             pattern: /^[+]{0,1}(\d+)$/,
             message: "只允许输入正整数"
@@ -167,17 +177,27 @@ export default {
     init() {
       this.fetchInfo();
       if (this.operateType === "edit") {
-        this.cloneList = JSON.parse(JSON.stringify(this.unpackEditList));
-        console.log(this.cloneList, "cloneList");
-        this.tableData = this.cloneList;
+        const tempString = JSON.stringify(this.unpackEditList).replace(
+          "null",
+          `""`
+        );
+        this.cloneList = JSON.parse(tempString);
         this.ruleForm = this.cloneList[0];
         this.oldPackClass = this.ruleForm.packingClass;
         this.isEditVal(this.ruleForm.subordinationNumberType);
         this.changemainNumberType(this.ruleForm.mainNumberType);
       }
     },
+    checkBeforeSave() {
+      this.$refs["ruleForm"].validate(valid => {
+        if (valid) {
+          this.saveForm();
+        } else {
+          return false;
+        }
+      });
+    },
     saveForm() {
-      console.log(this.ruleForm);
       const payload = {
         ...this.ruleForm
       };
@@ -280,34 +300,32 @@ export default {
     },
     changesubordinationNumberType(val) {
       this.isEditVal(val);
+    },
+    handleReset() {
+      if (this.operateType === "add") {
+        this.$refs["ruleForm"].resetFields();
+      }
+      if (this.operateType === "edit") {
+        this.cloneList = JSON.parse(this.tempString);
+        this.ruleForm = this.cloneList[0];
+      }
     }
   }
 };
 </script>
-<style lang="scss" scoped>
-.content {
-  padding: 10px 30px;
-  display: flex;
-  .tableCon {
-    margin-right: 30px;
-    display: flex;
-    .left {
-      width: "30%";
+<style lang="scss" >
+.unpackEdit {
+  .operate {
+    padding: 14px 14px 0;
+    background: #fff;
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+    border-radius: 4px;
+    .workCertificateFormTop {
+      .el-form-item {
+        margin-bottom: 0;
+      }
     }
   }
-}
-.contentWl {
-  width: 100%;
-}
-.demo-ruleForm {
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  .formcon {
-    width: 50%;
-  }
-}
-.operation {
-  padding: 10px 30px;
 }
 </style>
