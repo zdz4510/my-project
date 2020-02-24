@@ -201,6 +201,7 @@
        v-model="selectOrderArr"
        :helpText="helpTextOrdere"
        @confirm="handlerOrderChange"
+       @cancle="orderCancle"
       :visible.sync="orderDialog"
       width="500px">
       <!-- <template slot="header">
@@ -400,11 +401,12 @@ export default {
   },
   methods:{
     helpTextOrdere(item){
+      console.log(item,"数据是")
       return item.shopOrder;
     },
     handlerOrderChange(){
-      console.log(this.selectOrderArr,"表格数据");
-      // this.searchForm.shopOrder=this.selectOrderArr.shopOrder;
+      this.searchForm.shopOrder=this.selectOrderArr[0].shopOrder;
+      this.orderDialog=false;
     },
     helpTextMaterial(item){
       this.ruleForm.plannedMaterial=item.material;
@@ -529,9 +531,9 @@ export default {
       }
       this.ruleForm.shopOrderType="生产"; //类型
       this.ruleForm.status="可下达"; //状态
-      this.$refs["orderChoice"].clearSelect();
-      this.$refs["materialChoice"].clearSelect();
-      this.$refs["routerChoice"].clearSelect();
+      // this.$refs["orderChoice"].clearSelect();
+      // this.$refs["materialChoice"].clearSelect();
+      // this.$refs["routerChoice"].clearSelect();
       //shopOrder
       this.searchForm.shopOrder = ''
       //重置oldShopOrder
