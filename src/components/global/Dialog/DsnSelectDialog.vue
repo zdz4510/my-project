@@ -4,6 +4,7 @@
     class="help-dialog"
     :title="title"
     :visible.sync="visible"
+    :before-close="handleCancle"
   >
     <slot name="header"></slot>
     <div class="body">
@@ -14,6 +15,7 @@
         :data="tableData"
         @selection-change="handleSelectChanege"
         @row-click="RowClick"
+        @row-dblclick="RowDoubleClick"
         height="400px"
       >
         <el-table-column
@@ -24,24 +26,26 @@
         <!-- 这里插入的是table 的行 -->
         <slot name="body"></slot>
       </dsn-table>
-      <DsnHelpFooter>
+
+      <DsnHelpFooter :len="totalSelectArr.length" @clear="handleClear">
         <DsnHelpItem
           :key="index"
           :item="item"
-          v-for="(item, index) in selectArr"
+          v-for="(item, index) in totalSelectArr"
           @close="close"
           >{{ helpText(item) }}</DsnHelpItem
         >
       </DsnHelpFooter>
     </div>
     <span slot="footer" class="dialog-footer">
-      <dsn-button @click="cancle">取消</dsn-button>
+      <dsn-button @click="handleCancle">取消</dsn-button>
       <dsn-button type="primary" @click="confirm">确定</dsn-button>
     </span>
   </el-dialog>
 </template>
 
 <script>
+// import _ from 'lodash'
 export default {
   name: "DsnSelectDialog",
   model: {
@@ -95,49 +99,84 @@ export default {
   data() {
     return {
       // 被选中的值
-      selectArr: []
+      selectArr: [],
+      totalSelectArr: []
     };
   },
   created() {},
   methods: {
     handleSelectChanege(arr) {
       this.selectArr = arr;
-      this.$emit("change", this.selectArr);
+      // 选中的数据添加在后面 删除重复的
+      // this.totalSelectArr = [...new Set(this.totalSelectArr),...this.selectArr];
+      // 同步选中的结果
+      // this.$emit("change", this.totalSelectArr);
     },
 
     // 清空选中状态的方法
     clearSelect() {
       this.$refs["table"].clearSelection();
       this.$refs["table"].setCurrentRow();
-      this.selectArr = [];
-      this.$emit("change", this.selectArr);
+      this.selectArr = []; //table 选中的清空
+      // 同步选中的结果
+      // this.$emit("change", this.totalSelectArr);
     },
-    cancle() {
+    handleCancle() {
       this.clearSelect();
       this.$emit("cancle");
       this.$emit("update:visible", false);
     },
     confirm() {
+      if (this.isSingle) {
+        //  _.cloneDeep([])
+        this.totalSelectArr =([...this.selectArr]);
+      } else {
+        this.totalSelectArr =( [
+          ...new Set([...this.totalSelectArr, ...this.selectArr])
+        ]);
+      }
+      this.$emit('change',  this.totalSelectArr)
       this.$emit("confirm");
-      this.$emit("update:visible", false);
+      //this.$emit("update:visible", false);
     },
-    close(deleteItem){
-        console.log('close==')
-        if(this.isSingle){
-            this.clearSelect();
-            return
-        }
+    // setSelected(){
+    //   if(this.setCurrentRow){
 
-        this.selectArr = this.selectArr.filter(item=>{
-            return item!=deleteItem;
-        })
-         this.$refs["table"].toggleRowSelection(deleteItem);
-          //this.$emit("change", this.selectArr);
+    //   }
+    //    this.$refs['table'].setCurrentRow();
+    // },
+    close(deleteItem) {
+      // if (this.isSingle) {
+       
+      //   return;
+      // }
+       this.clearSelect();
+      //  从选中的里面删除数据
+      this.totalSelectArr = this.totalSelectArr.filter(item => {
+        return item != deleteItem;
+      });
+     // this.$refs["table"].toggleRowSelection(deleteItem);
+      this.$emit("change", this.totalSelectArr);
     },
     RowClick(row) {
       if (this.isSingle) {
         this.selectArr = [row];
+        // this.totalSelectArr = this.selectArr;
       }
+    },
+    // 双击选中
+    RowDoubleClick(row) {
+      // 选中状态
+      if(!this.isSingle){
+        this.$refs["table"].toggleRowSelection(row);
+      }
+      
+    },
+    handleClear() {
+      this.totalSelectArr = [];
+      this.clearSelect(); //
+      this.$emit("change", this.totalSelectArr);
+      this.$emit("clearAll");
     }
   }
 };

@@ -301,6 +301,7 @@ export default {
         if (res.code == 200) {
           this.tableData.data = res.data.dcDataPage.data;
           this.leftPage.total = res.data.dcDataPage.total;
+          this.leftPage.currentPage = res.data.dcDataPage.currentPage;
           return;
         }
         this.$message({ message: res.message, type: "error" });
@@ -356,6 +357,9 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
+      this.leftPage.currentPage = 1;
+      this.rightPage.currentPage = 1;
+      this.tableParamsData.tableData = [];
       this.searchLeft();
     },
     //左边导出开始

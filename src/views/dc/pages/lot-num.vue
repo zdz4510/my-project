@@ -211,9 +211,13 @@ export default {
       findLotAtOperationHttp(data).then(data => {
         const res = data.data;
         if (res.code === 200) {
-          console.log(res.data,"数据")
+          // console.log(res.data,"数据")
           this.showInfo = res.data;
-          this.lotDivestitureFormRules.quantity=res.data.wipSteps[0].stepQuantity;
+          if(res.data.wipSteps.length>0){
+            this.lotDivestitureFormRules.quantity=res.data.wipSteps[0].stepQuantity;
+          }else{
+            this.lotDivestitureFormRules.quantity="";
+          }
           const operations = res.data.operationList.join(",");
           this.showInfo.operationList = operations;
           const resources = res.data.resourceList.join(",");

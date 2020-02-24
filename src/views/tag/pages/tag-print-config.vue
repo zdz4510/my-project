@@ -19,7 +19,7 @@
       <el-table-column prop="date" label="打印设备">
         <template slot-scope="scope">
           <dsn-select
-            v-model="scope.row.printDevice "
+            v-model="scope.row.printDevice"
             @focus="handleGetPrintDevicesAvailable"
           >
             <el-option
@@ -102,10 +102,26 @@ export default {
   methods: {
     // 同步 打印标签
     async printLabelAysnc(configArr) {
-      configArr.forEach(element => {
-        const data = printLabel(element);
-        console.log(data);
-      });
+      try {
+        for (let index = 0; index < configArr.length; index++) {
+          const element = configArr[index];
+          const data = await printLabel(element);
+          const res = data.data;
+          if (res.code == 200) {
+            this.$message({
+              type: "success",
+              message: "打印成功"
+            });
+          } else {
+            this.$message({
+              type: "error",
+              message: res.message
+            });
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
     },
     // 获取标签模板的下拉框内容
     handleSelectTag(label = "") {
@@ -126,17 +142,18 @@ export default {
           message: "请先选中在打印"
         });
 
-        return ;
+        return;
       }
-    const {label,printCopies ,printDevice } = this.current;
-      if(label===''||printCopies===''||printDevice===''){
-          this.$message({
-          type:"warning",
-          message:'请补全当前选中的行'
-        })
+      const { label, printCopies, printDevice } = this.current;
+      if (label === "" || printCopies === "" || printDevice === "") {
+        this.$message({
+          type: "warning",
+          message: "请补全当前选中的行"
+        });
+
+        return;
       }
-      this.printLabelAysnc([this.current])
-     
+      this.printLabelAysnc([this.current]);
     },
     // 清空表格里面的数据
     clear() {},
@@ -155,16 +172,16 @@ export default {
     //添加行
     addRow() {
       this.tableData.push({
-        printDevice : "",
+        printDevice: "",
         label: "",
-        printCopies : ""
+        printCopies: ""
       });
     },
     //删除行
     deleteRow() {
       //删除index
       if (!this.current) {
-          this.$message({
+        this.$message({
           type: "warning",
           message: "请先选择删除的行"
         });

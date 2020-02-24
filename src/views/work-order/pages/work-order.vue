@@ -134,7 +134,8 @@
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="自定义字段">
-          <el-form :rules="rules" :label-width="formLabelWidth">
+          <DsnData style="width:450px" ref="dsntable" v-model="ruleForm.customizedFieldDefInfoList"></DsnData>
+          <!-- <el-form :rules="rules" :label-width="formLabelWidth">
             <el-form-item  :label="item.fieldName" v-for="(item,index) in customizedFieldDefInfoList" :key="index" v-show="item.fieldType =='C'" prop="custom">
               <el-col :span="4">
                 <dsn-input v-model="item.fieldValue"></dsn-input>
@@ -154,14 +155,8 @@
                   <i class="el-icon-document"></i>
                 </el-col>
               </el-row>
-              <!-- <el-col :span="14" style="margin-right:7px;">
-                <dsn-input v-model="ruleForm.kays_3" :disabled="true"></dsn-input>
-              </el-col>
-              <div class="choiceBox">
-                <i class="el-icon-document-copy"></i>
-              </div> -->
             </el-form-item>
-          </el-form>
+          </el-form> -->
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -200,11 +195,13 @@
     <!--工单选择-->
     <DsnSelectDialog
       title="工单选择"
-      :isSingle="true"
+      :isSingle="false"
       ref="orderChoice"
        :tableData="orderTable"
        v-model="selectOrderArr"
        :helpText="helpTextOrdere"
+       @confirm="handlerOrderChange"
+       @cancle="orderCancle"
       :visible.sync="orderDialog"
       width="500px">
       <!-- <template slot="header">
@@ -316,7 +313,7 @@ import{
     findShopOrderRequest,
     updateShopOrderRequest,
     saveShopOrderRequest,
-    // findFieldRequest,
+    findFieldRequest,
     deleteRequest,
     findShopOrderListHttp,
     listAllRequest,
@@ -360,13 +357,10 @@ export default {
             plannedRouterRev: "", //计划工艺路线版本
             productQty: "", //生产数量
             releasedQuantity: "" ,//已下达数量
-            kay_1: "",
-            kay_2: "",
-            kay_3: "",
             material:"",
             materialRev:"",
             router:"",
-            kays_3:""
+            customizedFieldDefInfoList:[],//自定义字段信息
         },
         selectOrderArr:[],
         selectMaterialArr:[],
@@ -392,7 +386,7 @@ export default {
         tenantSiteCode:'',
         allOrders:[],//获取到的所有工单
         getSearchData:'',//查询获取的工单数据
-        customizedFieldDefInfoList:[],//自定义字段信息
+        
         dialogVisible:false,//删除工单提示框,
         orderDialog:false,//工单选择模态框
         orderTable:[],
@@ -407,8 +401,12 @@ export default {
   },
   methods:{
     helpTextOrdere(item){
-      this.searchForm.shopOrder=item.shopOrder;
+      console.log(item,"数据是")
       return item.shopOrder;
+    },
+    handlerOrderChange(){
+      this.searchForm.shopOrder=this.selectOrderArr[0].shopOrder;
+      this.orderDialog=false;
     },
     helpTextMaterial(item){
       this.ruleForm.plannedMaterial=item.material;
@@ -516,15 +514,15 @@ export default {
     // handlerSelectionRouter(row){
     //   this.routerChoice=row;
     // },
-    //初始化获取自定义字段
-    // getCustom(){
-    //     const params ={
-    //       customizedItem:'永恒之歌'
-    //     }
-    //     findFieldRequest(params).then(data=>{
-    //       console.log("初始化自定义字段"+JSON.stringify(data))
-    //     })
-    //   },
+    // 初始化获取自定义字段
+    getCustom(){
+        const params ={
+          customizedItem:'永恒之歌'
+        }
+        findFieldRequest(params).then(data=>{
+          console.log("初始化自定义字段"+JSON.stringify(data))
+        })
+      },
     //重置
     reset(){
       //把绑定ruleForm的数据清空
@@ -533,14 +531,14 @@ export default {
       }
       this.ruleForm.shopOrderType="生产"; //类型
       this.ruleForm.status="可下达"; //状态
-      this.$refs.orderChoice.clearSelect();
-      this.$refs.materialChoice.clearSelect();
-      this.$refs.routerChoice.clearSelect();
+      // this.$refs["orderChoice"].clearSelect();
+      // this.$refs["materialChoice"].clearSelect();
+      // this.$refs["routerChoice"].clearSelect();
       //shopOrder
       this.searchForm.shopOrder = ''
       //重置oldShopOrder
       this.oldShopOrder = ''
-      this.customizedFieldDefInfoList=[]
+      this.ruleForm.customizedFieldDefInfoList=[]
       // this.getOrder();
     },
       //查询指定工单
@@ -555,6 +553,7 @@ export default {
             if(res.code == 200){
                 this.getSearchData = res.data.shopOrder//工单信息
                 this.oldShopOrder = this.getSearchData.shopOrder
+                console.log(this.getSearchData.shopOrderType,"数据是")
                 this.ruleForm.shopOrderType = this.getSearchData.shopOrderType
                 this.ruleForm.plannedMaterial = this.getSearchData.plannedMaterial
                 this.ruleForm.status = this.getSearchData.status
@@ -563,7 +562,7 @@ export default {
                 this.ruleForm.plannedRouterRev = this.getSearchData.plannedRouterRev
                 this.ruleForm.productQty = this.getSearchData.productQty
                 this.ruleForm.releasedQuantity = this.getSearchData.releasedQuantity
-                this.customizedFieldDefInfoList = res.data.customizedFieldDefInfoList//工单的自定义字段信息
+                this.ruleForm.customizedFieldDefInfoList = res.data.customizedFieldDefInfoList//工单的自定义字段信息
                 this.ruleForm.material = res.data.shopOrder.material
                 this.ruleForm.materialRev = res.data.shopOrder.materialRev
                 this.ruleForm.router = res.data.shopOrder.router
@@ -721,21 +720,19 @@ export default {
             type:'success'
           })
           this.reset();
-          return
         }else{
           this.dialogVisible = false
           this.$message({
             message:res.message,
             type:'warning'
           })
-          return
         }
       })
     }
 
   },
   created(){
-    // this.getCustom()
+    this.getCustom()
   }
 };
 </script>

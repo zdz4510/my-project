@@ -7,7 +7,7 @@
       <!-- 查询条件start -->
       <el-form :inline="true">
         <el-form-item label="生产操作界面:">
-          <dsn-input v-model="podConfigName"></dsn-input>
+          <dsn-input v-model="ruleForm.podConfigName"></dsn-input>
         </el-form-item>
         <el-form-item>
           <dsn-button size="small" type="primary" icon="el-icon-search" @click="handlePodConfig">查询</dsn-button>
@@ -159,7 +159,6 @@ export default {
   data() {
     return {
       dialogVisible: false, //生产操作界面名称弹窗
-      podConfigName: "", //生产操作界面名称
       labelWidth: "120px",
       shopOrder: "", //工单
       proNames: [], //所有生产操作界面名称
@@ -294,7 +293,7 @@ export default {
     },
     //通过名称查询一条生产界面信息
     handlePodConfig() {
-      const params = this.podConfigName;
+      const params = this.ruleForm.podConfigName;
       podConfigRequest(params).then(data => {
         const res = data.data;
         if (res.code == 200) {
@@ -350,7 +349,7 @@ export default {
           let val = this.ruleForm.podButtons.indexOf(this.selectedList[i]);
           if (val > -1) {
             this.ruleForm.podButtons.splice(val, 1);
-            alert("移除成功");
+            // alert("移除成功");
           }
         }
         return this.ruleForm.podButtons;
@@ -358,7 +357,7 @@ export default {
     },
     //删除操作
     handleDelete() {
-      const params = this.podConfigName;
+      const params = this.ruleForm.podConfigName;
       deleteRequest(params).then(data => {
         const res = data.data;
         if (res.code == 200) {
@@ -378,7 +377,7 @@ export default {
     //清除（重置）
     handleReset() {
       this.ruleForm = this.emptyData;
-      this.podConfigName = "";
+      this.ruleForm.podConfigName = "";
     },
     // 跳转新增界面
     handleAdd() {
@@ -389,14 +388,13 @@ export default {
       if (this.ruleForm.podButtons[0].buttionDesc == "") {
         this.ruleForm.podButtons = null;
       }
-      this.ruleForm.podConfigName = this.podConfigName;
       const params = this.ruleForm;
       addOrModiaRequest(params).then(data => {
         console.log("保存操作" + JSON.stringify(data));
         const res = data.data;
         if (res.code == 200) {
           this.$message({
-            message: "新增成功",
+            message: "保存成功",
             type: "success"
           });
         } else {
@@ -411,7 +409,6 @@ export default {
     handleEdit() {
       if (this.selectedList.length === 1) {
         // this.$router.push({ path: "/material/addGroupProCon" });
-        console.log(this.selectedList[0],"数据是111")
         const index=this.ruleForm.podButtons.indexOf(this.selectedList[0]);
         // this.ALLMESSAGE(this.ruleForm)
         this.$router.push({

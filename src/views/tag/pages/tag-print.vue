@@ -114,7 +114,7 @@
     </el-dialog>
 
     <DsnFooter>
-      <dsn-button @click="handlePrintConfig">打印配置</dsn-button>
+      <dsn-button  :disabled="this.info.mat===''" @click="handlePrintConfig">打印配置</dsn-button>
       <!-- <dsn-button @click="handlePrintConfig">打印配置</dsn-button> -->
     </DsnFooter>
   </div>

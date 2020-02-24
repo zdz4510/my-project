@@ -306,6 +306,7 @@ export default {
 
       const params = {
         currentRevision: this.form.currentRevision, // 当前版本
+        
         customizedFieldDefInfoList: this.form.customizedFieldDefInfoList, //  自定义的数据
         description: this.form.description, //  描述
         entryRouterStep: entryRouterStep, //  附加工序的根结点
@@ -390,6 +391,7 @@ export default {
         if (res.code == 200) {
           if (type == 1) {
             this.list = res.data.customizedFieldDefInfoList;
+            console.log("自定义数据是",this.list)
             this.form.customizedFieldDefInfoList = this.list;
           } else {
             this.list2 = res.data.customizedFieldDefInfoList;
