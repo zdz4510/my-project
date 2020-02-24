@@ -124,7 +124,7 @@ export default {
     handleCancle() {
       this.clearSelect();
       // this.$emit("cancle");
-      this.$emit("update:visible", false);
+     // this.$emit("update:visible", false);
     },
     confirm() {
       if (this.isSingle) {
@@ -146,10 +146,11 @@ export default {
     //    this.$refs['table'].setCurrentRow();
     // },
     close(deleteItem) {
-      if (this.isSingle) {
-        this.clearSelect();
-        return;
-      }
+      // if (this.isSingle) {
+       
+      //   return;
+      // }
+       this.clearSelect();
       //  从选中的里面删除数据
       this.totalSelectArr = this.totalSelectArr.filter(item => {
         return item != deleteItem;
