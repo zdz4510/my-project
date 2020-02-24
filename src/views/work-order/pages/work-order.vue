@@ -49,7 +49,7 @@
         <dsn-button size="small" type="danger" icon="el-icon-delete" @click.native="handleDelete">删除</dsn-button>
       </div>
     <div class="showInfo">
-      <el-tabs type="border-card">
+      <el-tabs type="border-card" style="height:600px">
         <el-tab-pane>
           <span slot="label">
             <i class="el-icon-date"></i> 一般
@@ -120,7 +120,7 @@
                   </el-form-item>
                 </el-form>
             </el-form-item>
-            <el-form-item label="生产数量:" prop="number" :label-width="formLabelWidth">
+            <el-form-item label="生产数量:" prop="productQty" :label-width="formLabelWidth">
               <el-col :span="4">
                 <dsn-input placeholder="请输入生产数量" v-model="ruleForm.productQty"></dsn-input>
               </el-col>
@@ -315,6 +315,16 @@ export default {
       this.searchForm.shopOrder = value.toUpperCase();
       callback();
     };
+    const numIssuedRules = (rule, value, callback) => {
+        if (value === "") {
+            callback("生产数量不为空");
+        }
+        let reg = /^[1-9]\d*$/;
+        if (!reg.test(value)) {
+            callback("生产数量应只包含非零整数");
+        }
+        callback();
+        };
     return {
       //工单表信息
         ruleForm: {
@@ -336,7 +346,7 @@ export default {
         },
         formLabelWidth:"150px",
         searchRules:{
-          shopOrder: [{ required: true, validator: shopOrderRule, trigger: "blur" }]
+          shopOrder: [{ validator: shopOrderRule, trigger: "blur" }]
         },
         rules: {
             style: [{ required: true, message: "请选择类型", trigger: "blur" }],
@@ -344,7 +354,7 @@ export default {
             material: [
                 { required: true, message: "请输入计划物料", trigger: "blur" }
             ],
-            number: [{ required: true, message: "请输入数量", trigger: "blur" }],
+            productQty: [{ required: true, validator: numIssuedRules, trigger: "blur" }],
             custom: [{ required: true, message: "请输入自定义字段", trigger: "blur" }],
             
         },
@@ -739,6 +749,9 @@ export default {
 .workOrder .version {
   width: 300px;
   display: inline-block;
+}
+.workOrder .showInfo{
+  height:800px;
 }
 .workOrder .showInfo .el-form-item__content {
   display: flex;
