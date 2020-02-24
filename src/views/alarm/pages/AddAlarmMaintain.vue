@@ -147,12 +147,12 @@
             </el-row>
             <el-row>
               <el-col :span="11">
-                <dsn-table :data="allocateData" @select="check1" @select-all="check1">
+                <dsn-table :data="allocateData.filter(data => !alarm1 || data.informUserId.toLowerCase().includes(alarm1.toLowerCase()))" @select="check1" @select-all="check1">
                   <el-table-column label="接收信息用户">
                     <el-table-column type="selection" width="100"></el-table-column>
                     <el-table-column prop="informUserId" label="名称"></el-table-column>
                   </el-table-column>
-                  <el-table-column label>
+                  <el-table-column>
                     <template slot="header">
                       <dsn-input v-model="alarm1" placeholder="输入搜索条件" />
                     </template>
@@ -211,13 +211,23 @@ import _ from "lodash";
 export default {
   name: "add-alarm-maintain",
   data() {
+    const inputRule = (rule, value, callback) => {
+      const reg = /^[0-9a-zA-Z_/-]{1,}$/;
+      if (value.length > 30) {
+        return callback(new Error("只能填写数字，字母，-，_,/;30个字符以内"));
+      }
+      if (!reg.test(value)) {
+        return callback(new Error("只能填写数字，字母，-，_,/;30个字符以内"));
+      }
+      callback();
+    };
     return {
       activeName: "first",
       activeImputName: "first",
       alarm: "",
       noticeType: [],
       rules: {
-        alarm: [{ required: true, message: "请填写事件编号", trigger: "blur" }],
+        alarm: [{ required: true, message: "请填写事件编号", trigger: "blur" },{validator: inputRule, trigger: ['blur', 'change']}],
         theme: [{ required: true, message: "请填写事件主题", trigger: "blur" }],
         alarmLevelFlag: [{ required: true, message: "请选择事件等级", trigger: 'change'}],
       },

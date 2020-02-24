@@ -165,17 +165,22 @@
               </el-row>
               <el-row>
                 <el-col :span="11">
-                  <dsn-table :data="allocateData" @select="check1" @select-all="check1">
-                    <el-table-column label="接收信息用户">
-                      <el-table-column type="selection" width="55"></el-table-column>
-                      <el-table-column prop="informUserId" label="名称"></el-table-column>
-                      <el-table-column label="类型">
-                        <template
-                          slot-scope="scope"
-                        >{{ scope.row.userType == 10 ? '个人' : (scope.row.userType == 20 ? '工作中心' : '--') }}</template>
-                      </el-table-column>
-                      <el-table-column prop label="描述"></el-table-column>
+                  <dsn-table :data="allocateData.filter(data => !alarm1 || data.informUserId.toLowerCase().includes(alarm1.toLowerCase()))" @select="check1" @select-all="check1">
+                   <el-table-column label="接收信息用户">
+                    <el-table-column type="selection" width="100"></el-table-column>
+                    <el-table-column prop="informUserId" label="名称"></el-table-column>
+                  </el-table-column>
+                  <el-table-column>
+                    <template slot="header">
+                      <dsn-input v-model="alarm1" placeholder="输入搜索条件" />
+                    </template>
+                     <el-table-column label="类型">
+                      <template
+                        slot-scope="scope"
+                      >{{ scope.row.userType == 10 ? '个人' : (scope.row.userType == 20 ? '工作中心' : '--') }}</template>
                     </el-table-column>
+                    <el-table-column prop label="描述"></el-table-column>
+                  </el-table-column>
                   </dsn-table>
                 </el-col>
                 <el-col :span="2">
@@ -187,10 +192,15 @@
                   </div>
                 </el-col>
                 <el-col :span="11">
-                  <dsn-table :data="unallocateData" @select="check2" @select-all="check2">
-                    <el-table-column label="未接收信息用户">
-                      <el-table-column type="selection" width="55"></el-table-column>
+                  <dsn-table :data="unallocateData.filter(data => !alarm2 || data.informUserId.toLowerCase().includes(alarm2.toLowerCase()))" @select="check2" @select-all="check2">
+                    <el-table-column label="待收信息用户">
+                      <el-table-column type="selection" width="100"></el-table-column>
                       <el-table-column prop="informUserId" label="名称"></el-table-column>
+                    </el-table-column>
+                    <el-table-column label>
+                      <template slot="header">
+                        <dsn-input v-model="alarm2" placeholder="输入搜索条件" />
+                      </template>
                       <el-table-column label="类型">
                         <template
                           slot-scope="scope"
@@ -233,6 +243,16 @@ export default {
     ...mapGetters(["alarmMaintainEditList"])
   },
   data() {
+    const inputRule = (rule, value, callback) => {
+      const reg = /^[0-9a-zA-Z_/-]{1,}$/;
+      if (value.length > 30) {
+        return callback(new Error("只能填写数字，字母，-，_,/;30个字符以内"));
+      }
+      if (!reg.test(value)) {
+        return callback(new Error("只能填写数字，字母，-，_,/;30个字符以内"));
+      }
+      callback();
+    };
     return {
       //表单左边宽度
       formLabelWidth: "150px",
@@ -242,7 +262,7 @@ export default {
       alarm: "",
       noticeType: [],
       rules: {
-        alarm: [{ required: true, message: "请填写事件编号", trigger: "blur" }],
+        alarm: [{ required: true, message: "请填写事件编号", trigger: "blur" },{validator: inputRule, trigger: ['blur', 'change']}],
         theme: [{ required: true, message: "请填写事件主题", trigger: "blur" }]
       },
       editForm: {
@@ -265,6 +285,8 @@ export default {
       cloneList: [], // 复制所以可以编辑的数据副本
       value: "",
       selectIsDisabled: false,
+      alarm1: '',
+      alarm2: '',
       select1: "",
       input1: "",
       select2: "",
