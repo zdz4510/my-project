@@ -798,6 +798,7 @@ export default {
     },
     //确认选择lot
     handleConfirmSelectLot() {
+      console.log(this.selectedLotList);
       if (this.selectedLotList.length === 1) {
         this.lotStepForm.lot = this.selectedLotList[0].lot;
       }
