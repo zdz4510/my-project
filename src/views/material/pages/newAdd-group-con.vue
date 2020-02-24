@@ -206,8 +206,9 @@ export default {
       }
     },
     saveMessage(){
-      if(this.$route.params.num){
-        console.log(this.$route.params.num,"数据")
+      console.log(this.$route.params.num,"数字1")
+      if(this.$route.params.num>=0){
+        console.log(this.$route.params.num,"数字2")
         const data={};
         if(this.ruleForm.style==="组"){
           data.groupFlag=true;
@@ -275,6 +276,7 @@ export default {
     },
     setter(){
       console.log("要加的数据",this.transData)
+      this.transData.sequence=this.allMessage.podButtons.length+1;
       this.getData.podButtons.push(this.transData);// 新增的组
       console.log("加后的数据",this.getData)
       this.ALLMESSAGE(this.getData);
@@ -291,7 +293,7 @@ export default {
       this.tableData2.splice(len, 0, {
         buttonName:"",
         buttionDesc:"",
-        groupFlag:""
+        groupFlag:false
       });
     },
     // 新增作业
@@ -301,7 +303,7 @@ export default {
         activity:"",
         activityDes:"",
         activityType:"",
-        clearsLot:"",
+        clearsLot:true,
       });
       // this.lockOpeAction = true;
     },
