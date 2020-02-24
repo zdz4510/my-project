@@ -14,7 +14,7 @@
                   <dsn-input size="small" placeholder="请输入工单" v-model="searchForm.shopOrder"></dsn-input>
                 </el-col>
                 <el-col :span="2">
-                  <i class="el-icon-document" @click="orderHandler"></i>
+                  <i class="el-icon-document" @click="orderDialog=true"></i>
                 </el-col>
               </el-row>
               <!-- <el-input size="small" placeholder="请输入工单" v-model="shopOrder">
@@ -197,32 +197,41 @@
       </span>
     </el-dialog>
     <!--工单选择-->
-    <el-dialog
+    <DsnSelectDialog
       title="工单"
+      :isSingle="true"
+       :tableData="orderTable"
+       :helpText="helpTextOrdere"
       :visible.sync="orderDialog"
       width="500px">
-      <dsn-table
+      <template slot="header">
+        <el-input v-model="v" placeholder=""></el-input>
+        <el-button @click="orderHandler">search</el-button>
+      </template>
+      <!-- <dsn-table
           ref="multipleTable"
           :data="orderTable"
-          tooltip-effect="dark"
+          tooltip-eforderTablefect="dark"
           style="width: 100%"
           height="350px"
           stripe
           highlight-current-row
           border
           @selection-change="handleSelectionChange"
-        >
-          <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column type="index" label="序号" width="50"></el-table-column>
-          <el-table-column prop="shopOrder" label="工单" width="120"></el-table-column>
-          <el-table-column label="状态" prop="status" width="120"></el-table-column>
-          <el-table-column prop="shopOrderType" label="类型"></el-table-column>
-        </dsn-table>
-      <span slot="footer" class="dialog-footer">
+        > -->
+          <!-- <el-table-column type="selection" width="55"></el-table-column> -->
+          <template slot="body">
+            <el-table-column type="index" label="序号" width="50"></el-table-column>
+            <el-table-column prop="shopOrder" label="工单" width="120"></el-table-column>
+            <el-table-column label="状态" prop="status" width="120"></el-table-column>
+            <el-table-column prop="shopOrderType" label="类型"></el-table-column>
+          </template>
+        <!-- </dsn-table> -->
+      <!-- <span slot="footer" class="dialog-footer">
         <dsn-button @click="orderDialog = false">取 消</dsn-button>
         <dsn-button type="primary" @click="sureOrder">确 定</dsn-button>
-      </span>
-    </el-dialog>
+      </span> -->
+    </DsnSelectDialog>
     <!--物料选择-->
     <el-dialog
       title="物料选择"
@@ -344,6 +353,7 @@ export default {
             router:"",
             kays_3:""
         },
+        v:"",
         formLabelWidth:"150px",
         searchRules:{
           shopOrder: [{ validator: shopOrderRule, trigger: "blur" }]
@@ -369,7 +379,6 @@ export default {
         dialogVisible:false,//删除工单提示框,
         orderDialog:false,//工单选择模态框
         orderTable:[],
-        orderChoice:[],//选中的行
         // 物料、版本、当前版本、描述
         materialTable:[],
         materialDialog:false,
@@ -380,6 +389,10 @@ export default {
     };
   },
   methods:{
+    helpTextOrdere(item){
+      this.searchForm.shopOrder=item.shopOrder;
+      return item.shopOrder;
+    },
     routerHandler(){
       listRouterPageHttp().then(data =>{
           const res = data.data
@@ -449,23 +462,7 @@ export default {
       this.orderDialog=true;
     },
     sureOrder(){
-      if(this.orderChoice.length>1){
-        this.$message({
-            message:"只能选择一行数据",
-            type:'warning'
-          })
-          return ;
-      }if(this.orderChoice.length===0){
-        this.$message({
-          message:"还没选择一行数据",
-          type:'warning'
-        })
-        return ;
-      }
-      else{
-        this.searchForm.shopOrder=this.orderChoice[0].shopOrder;
-        this.orderDialog=false;
-      }
+      alert("111")
     },
     sureMaterial(){
       if(this.materialChoice.length>1){
@@ -489,9 +486,6 @@ export default {
     },
     handleSelectionMaterial(row){
       this.materialChoice=row;
-    },
-    handleSelectionChange(row){
-      this.orderChoice=row
     },
     handlerSelectionRouter(row){
       this.routerChoice=row;
