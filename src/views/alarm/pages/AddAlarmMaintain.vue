@@ -350,7 +350,7 @@ export default {
       this.unallocateData = _.concat(this.unallocateData, this.selectedList);
       this.unallocateData = _.uniq(this.unallocateData);
       this.allocateData = _.difference(this.allocateData, this.selectedList);
-      console.log(this.unallocateData, "un");
+
       this.cloneAllocateData = _.cloneDeep(this.allocateData);
     },
     left() {
