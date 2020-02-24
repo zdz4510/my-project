@@ -163,7 +163,8 @@ export default {
             message: "只允许输入正整数"
           }
         ] //只能是数字
-      }
+      },
+      tempString: ""
     };
   },
   created() {
@@ -177,11 +178,11 @@ export default {
     init() {
       this.fetchInfo();
       if (this.operateType === "edit") {
-        const tempString = JSON.stringify(this.unpackEditList).replace(
-          "null",
-          `""`
+        this.tempString = JSON.stringify(this.unpackEditList).replace(
+          /null/g,
+          '""'
         );
-        this.cloneList = JSON.parse(tempString);
+        this.cloneList = JSON.parse(this.tempString);
         this.ruleForm = this.cloneList[0];
         this.oldPackClass = this.ruleForm.packingClass;
         this.isEditVal(this.ruleForm.subordinationNumberType);
