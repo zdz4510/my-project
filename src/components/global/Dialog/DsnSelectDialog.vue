@@ -4,6 +4,7 @@
     class="help-dialog"
     :title="title"
     :visible.sync="visible"
+    :before-close="cancle"
   >
     <slot name="header"></slot>
     <div class="body">
