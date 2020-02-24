@@ -90,14 +90,14 @@
               <el-table-column prop="shopOrder" label="工单"></el-table-column>
               <el-table-column prop="numbersInvolved" label="涉及数量"></el-table-column>
               <el-table-column prop="resource" label="设备编号"></el-table-column>
-              <el-table-column prop="clearFlag" label="初始化与否">
+              <!-- <el-table-column prop="clearFlag" label="初始化与否">
                 <template slot-scope="scope">
                   {{ !scope.row.clearFlag ? '否' : '是' }}
                 </template>
               </el-table-column>
               <el-table-column prop="clearTime" label="初始化时间"></el-table-column>
               <el-table-column prop="clearUserId" label="初始化用户"></el-table-column>
-              <el-table-column prop="clearComment" label="初始化注释"></el-table-column>
+              <el-table-column prop="clearComment" label="初始化注释"></el-table-column> -->
             </dsn-table>
             <dsn-pagination
               background
@@ -215,6 +215,7 @@
                 </template>
               </el-table-column>
               <el-table-column prop="ackUserId" label="确认人"></el-table-column>
+              <el-table-column prop="ackComment" label="确认注释"></el-table-column>
               <el-table-column prop="ackTime" label="确认时间"></el-table-column>
               <el-table-column prop="clearFlag" label="初始化与否">
                 <template slot-scope="scope">
@@ -222,7 +223,7 @@
                 </template>
               </el-table-column>
               <el-table-column prop="clearTime" label="初始化时间"></el-table-column>
-              <el-table-column prop="clearUserName" label="初始化用户"></el-table-column>
+              <el-table-column prop="clearUserId" label="初始化用户"></el-table-column>
               <el-table-column prop="clearComment" label="初始化注释"></el-table-column>
               <el-table-column prop="modifyUserName" label="修改人"></el-table-column>
               <el-table-column prop="modifyTime" label="修改时间"></el-table-column>
@@ -671,7 +672,7 @@ export default {
         "resource",
         "clearFlag",
         "clearTime",
-        "clearUserName",
+        "clearUserId",
         "clearComment"
       ];
       this.fileName = "事件未处理维护表";
@@ -731,7 +732,7 @@ export default {
         "ackTime",
         "clearFlag",
         "clearTime",
-        "clearUserName",
+        "clearUserId",
         "clearComment",
         "modifyUserName",
         "modifyTime"
