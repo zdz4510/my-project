@@ -5,15 +5,15 @@
         <span>搜索信息</span>
       </div>
       <!-- 卡片内容 -->
-    <div class="search-bar">
+    <div >
       <el-form :inline="true" :model="searchForm" ref="searchForm" :rules="rules" class="form-style" :label-width="formLabelWidth">
         <el-form-item label="输入搜索条件:" prop="width">
-          <el-input placeholder="请输入内容" v-model="searchForm.code" class="input-with-select">
-            <el-select v-model="searchForm.codeType" slot="prepend">
+          <dsn-input placeholder="请输入内容" v-model="searchForm.code" class="input-with-select">
+            <dsn-select v-model="searchForm.codeType" slot="prepend"  @change="blurSearchFor">
               <el-option label="LOT" value="LOT"></el-option>
               <el-option label="容器" value="CON"></el-option>
-            </el-select>
-          </el-input>
+            </dsn-select>
+          </dsn-input>
         </el-form-item>
         <el-form-item label="" prop="">
           <dsn-button icon="el-icon-search" size="small" type="primary" @click.native="search">查询</dsn-button>
@@ -31,9 +31,9 @@
       <el-tab-pane label="删除" name="first">
         <div class="operate ml30 mtb10">
           <dsn-button class="mr25 pad1025" size="small" type="primary" @click.native="mark" :disabled="this.checkedList.length===0">删除标记</dsn-button>
-          <el-input placeholder="请输入内容" v-model="deleteDes" class="des">
+          <dsn-input placeholder="请输入内容" v-model="des" class="des">
             <template slot="prepend">删除描述:</template>
-          </el-input>
+          </dsn-input>
         </div>
         <div class="">
           <dsn-table
@@ -76,9 +76,9 @@
       <el-tab-pane label="恢复" name="second">
         <div class="operate ml30 mtb10">
           <dsn-button class="mr25 pad1025" size="small" type="primary" @click.native="recover" :disabled="this.checkedList.length===0">恢复删除</dsn-button>
-          <el-input placeholder="请输入内容" v-model="unDeleteDes" class="des">
+          <dsn-input placeholder="请输入内容" v-model="unDeleteDes" class="des">
             <template slot="prepend">恢复删除描述:</template>
-          </el-input>
+          </dsn-input>
         </div>
         <div class="">
           <dsn-table
@@ -139,9 +139,9 @@
             <el-table-column prop="finalOperationTime" label="最后作业时间"></el-table-column>
             <el-table-column prop="finalOperationUserName" label="最后作业人员"></el-table-column>
             <el-table-column prop="packingClass" label="容器层级"></el-table-column>
-            <el-table-column prop="scrapTime" label="报废时间"></el-table-column>
-            <el-table-column prop="scrapUserName" label="报废人员"></el-table-column>
-            <el-table-column prop="scrapDes" label="报废描述"></el-table-column>
+            <el-table-column prop="deleteTime" label="删除时间"></el-table-column>
+            <el-table-column prop="deleteUserName" label="删除人员"></el-table-column>
+            <el-table-column prop="deleteDes" label="删除描述"></el-table-column>
             <el-table-column prop="unDeleteTime" label="恢复删除时间"></el-table-column>
             <el-table-column prop="unDeleteUserName" label="恢复删除人员"></el-table-column>
             <el-table-column prop="unDeleteDes" label="恢复删除描述"></el-table-column>
@@ -188,7 +188,7 @@ import {getDeleteList, deleteMark, getRecoverList, recoverMark, getLogList} from
             total:0
           }
         },
-        deleteDes:'',
+        des:'',
         unDeleteDes:'',
       }
     },
@@ -196,6 +196,10 @@ import {getDeleteList, deleteMark, getRecoverList, recoverMark, getLogList} from
       this.search()
     },
     methods: {
+      //下拉框值改变时调用
+      blurSearchFor(){
+        this.search()
+      },
       handleClick(tab){
         this.activeName = tab.name
         this.$refs.deleteTable.clearSelection()
@@ -253,7 +257,7 @@ import {getDeleteList, deleteMark, getRecoverList, recoverMark, getLogList} from
         let arr = []
         this.checkedList.map(item=>{
           let obj = item
-          obj.deleteDes = this.deleteDes
+          obj.des = this.des
           arr.push(obj)
         })
         let params = {
@@ -265,7 +269,7 @@ import {getDeleteList, deleteMark, getRecoverList, recoverMark, getLogList} from
           if(data.data.code == 200){
             this.$message.success('操作成功')
             this.$refs.deleteTable.clearSelection()
-            this.deleteDes = ''
+            this.des = ''
             this.search()
           }else{
             this.$message.error(data.data.message)
@@ -316,6 +320,9 @@ import {getDeleteList, deleteMark, getRecoverList, recoverMark, getLogList} from
 			top: 20px;
 		}
 	}
+  .input-with-select{
+    top: 6.9px !important;
+  }
 	.content {
 		background: #FFFFFF;
 	}

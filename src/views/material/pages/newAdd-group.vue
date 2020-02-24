@@ -115,7 +115,7 @@ export default {
     };
   },
   methods: {
-    ...mapMutations(["PROROW"]),
+    ...mapMutations(["PROROW","AllMESSAGE"]),
     handleSelectionChange(rows) {
       this.selectedList = rows;
     },

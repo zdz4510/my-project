@@ -36,15 +36,17 @@
               </el-form-item>
               <el-form-item label="物料" prop="material">
                 <el-row>
-                  <el-col :span="14">
+                  <el-col :span="16">
                     <dsn-input
                       v-model.trim="lotConditionForm.material"
                       size="small"
+                      style="width:225px;vertical-align:baseline;"
                       placeholder="请输入物料"
-                    ></dsn-input>
-                  </el-col>
-                  <el-col :span="2">
-                    <i class="el-icon-document" @click="queryMaterial"></i>
+                    >
+                      <template slot="append">
+                        <i class="el-icon-document" @click="queryMaterial"></i>
+                      </template>
+                    </dsn-input>
                   </el-col>
                   <el-col :span="8">
                     <el-row>
@@ -60,15 +62,17 @@
               </el-form-item>
               <el-form-item label="工艺路线" prop="router">
                 <el-row>
-                  <el-col :span="14">
+                  <el-col :span="16">
                     <dsn-input
                       v-model.trim="lotConditionForm.router"
                       size="small"
+                      style="width:225px;vertical-align:baseline;"
                       placeholder="请输入工艺路线"
-                    ></dsn-input>
-                  </el-col>
-                  <el-col :span="2">
-                    <i class="el-icon-document" @click="queryRouter"></i>
+                    >
+                      <template slot="append">
+                        <i class="el-icon-document" @click="queryRouter"></i>
+                      </template>
+                    </dsn-input>
                   </el-col>
                   <el-col :span="8">
                     <el-row>
@@ -85,46 +89,40 @@
             </el-col>
             <el-col :span="11">
               <el-form-item label="工单" prop="shopOrder">
-                <el-row>
-                  <el-col :span="22">
-                    <dsn-input
-                      v-model.trim="lotConditionForm.shopOrder"
-                      size="small"
-                      placeholder="请输入工单"
-                    ></dsn-input>
-                  </el-col>
-                  <el-col :span="2">
+                <dsn-input
+                  v-model.trim="lotConditionForm.shopOrder"
+                  size="small"
+                  style="width:350px;vertical-align:baseline;"
+                  placeholder="请输入工单"
+                >
+                  <template slot="append">
                     <i class="el-icon-document" @click="queryShopOrder"></i>
-                  </el-col>
-                </el-row>
+                  </template>
+                </dsn-input>
               </el-form-item>
               <el-form-item label="工序" prop="operation">
-                <el-row>
-                  <el-col :span="22">
-                    <dsn-input
-                      v-model.trim="lotConditionForm.operation"
-                      size="small"
-                      placeholder="请输入工序"
-                    ></dsn-input>
-                  </el-col>
-                  <el-col :span="2">
+                <dsn-input
+                  v-model.trim="lotConditionForm.operation"
+                  size="small"
+                  style="width:350px;vertical-align:baseline;"
+                  placeholder="请输入工序"
+                >
+                  <template slot="append">
                     <i class="el-icon-document" @click="queryOperation"></i>
-                  </el-col>
-                </el-row>
+                  </template>
+                </dsn-input>
               </el-form-item>
               <el-form-item label="资源" prop="resource">
-                <el-row>
-                  <el-col :span="22">
-                    <dsn-input
-                      v-model.trim="lotConditionForm.resource"
-                      size="small"
-                      placeholder="请输入资源"
-                    ></dsn-input>
-                  </el-col>
-                  <el-col :span="2">
+                <dsn-input
+                  v-model.trim="lotConditionForm.resource"
+                  style="width:350px;vertical-align:baseline;"
+                  size="small"
+                  placeholder="请输入资源"
+                >
+                  <template slot="append">
                     <i class="el-icon-document" @click="queryResource"></i>
-                  </el-col>
-                </el-row>
+                  </template>
+                </dsn-input>
               </el-form-item>
               <el-form-item>
                 <el-row>
@@ -158,7 +156,7 @@
           <span>搜索结果</span>
         </div>
         <!-- 查询结果start -->
-        <dsn-table
+        <!-- <dsn-table
           ref="multipleTable"
           :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)"
           tooltip-effect="dark"
@@ -186,16 +184,42 @@
               <span>{{ scope.row.router }}/{{ scope.row.routerRev }}</span>
             </template>
           </el-table-column>
-        </dsn-table>
-        <dsn-pagination
-          background
-          layout="->,total,prev,pager,next,sizes"
-          :total="total"
-          :page-size="pagesize"
-          :current-page="currentPage"
-          @current-change="handleCurrentChange"
-          @size-change="handlePagesize"
-        ></dsn-pagination>
+        </dsn-table>-->
+        <DsnSelectDialog
+          width="800px"
+          :isSingle="false"
+          :helpText="helpText"
+          :tableData="tableData"
+          v-model="selectionList"
+          :visible.sync="visible"
+        >
+          <template slot="header">
+            <el-input v-model="search" placeholder></el-input>
+            <el-button @click="query">search</el-button>
+          </template>
+          <template slot="body">
+            <el-table-column type="selection" width="55"></el-table-column>
+            <el-table-column type="index" width="55"></el-table-column>
+            <el-table-column prop="lot" label="LOT" width="200"></el-table-column>
+            <el-table-column prop="shopOrder" label="工单"></el-table-column>
+            <el-table-column prop="lotStatus" label="状态"></el-table-column>
+            <el-table-column prop="operation" label="工序">
+              <template slot-scope="scope">
+                <span>{{ scope.row.operationList?scope.row.operationList.join(","):scope.row.operationList }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="物料/版本">
+              <template slot-scope="scope">
+                <span>{{ scope.row.material }}/{{ scope.row.materialRev }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="modifyTime" label="工艺路线/版本">
+              <template slot-scope="scope">
+                <span>{{ scope.row.router }}/{{ scope.row.routerRev }}</span>
+              </template>
+            </el-table-column>
+          </template>
+        </DsnSelectDialog>
         <div class="confirm">
           <dsn-button size="small" type="primary" @click="handleConfirm">确认</dsn-button>
           <dsn-button size="small" type="primary">取消</dsn-button>
@@ -275,9 +299,6 @@ export default {
   data() {
     return {
       tableData: [],
-      currentPage: 1,
-      pagesize: 10,
-      total: 0,
       lotConditionForm: {
         lot: "",
         lotStatus: "",
@@ -306,19 +327,23 @@ export default {
       //资源
       resourceDialog: false,
       resourceList: [],
-      selectedData: []
+      selectedData: [],
+      search: "",
+      visible: true
     };
   },
   created() {
     this.lotConditionForm.lot = this.$route.query.lot;
-    this.selectedData = JSON.parse(JSON.stringify(this.lotQueryList));
     this.tableData = JSON.parse(JSON.stringify(this.lotQueryList));
+    this.selectedData = JSON.parse(JSON.stringify(this.lotQueryList));
     this.total = this.tableData.length;
   },
   mounted() {
-    this.selectedData.forEach(element => {
-      this.$refs.multipleTable.toggleRowSelection(element);
-    });
+    setTimeout(() => {
+      this.tableData.forEach(element => {
+        this.$refs.multipleTable.toggleRowSelection(element);
+      });
+    }, 0);
   },
   computed: {
     ...mapGetters(["lotQueryList"])
@@ -330,6 +355,7 @@ export default {
       this.$router.push({ name: "lotStep" });
     },
     onTableSelect(selection, row) {
+      console.log(11111);
       let selected = selection.length && selection.indexOf(row) !== -1;
       if (selected) {
         if (!this.selectedData.find(item => item.lot === row.lot)) {
@@ -344,19 +370,8 @@ export default {
     },
     //当前选中行
     handleSelectionChange(val) {
+      console.log(2222);
       this.selectionList = val;
-    },
-    //改变页码
-    handleCurrentChange(val) {
-      this.currentPage = val;
-      this.selectedData.forEach(element => {
-        this.$refs.multipleTable.toggleRowSelection(element);
-      });
-    },
-    // 修改页码大小
-    handlePagesize(pagesize) {
-      this.pagesize = pagesize;
-      this.currentPage = 1;
     },
     //查询前验证查询条件
     handleQueryCheck() {
@@ -563,8 +578,46 @@ export default {
     handleResourceComfire() {
       this.lotConditionForm.resource = this.currentRow.resource;
       this.resourceDialog = false;
-    }
+    },
     //资源查询end
+    //表格start
+    helpText(item) {
+      return item.colorCode;
+    },
+    query() {
+      // getColorPage().then(res => {
+      //   if (res.data.code == 200) {
+      //     this.tableData = res.data.data.data;
+      //   }
+      // });
+    },
+    handleChange(v) {
+      console.log(v);
+    },
+    toggle(V) {
+      console.log("revecied", V);
+    },
+    tableSelectAll() {
+      console.log("用户监听到到事件");
+    },
+    rowClick(row) {
+      console.log("click" + row);
+    },
+    selectionChange(selection) {
+      console.log(selection);
+    },
+    cellClick() {
+      console.log("cell click");
+    },
+    clearSelection() {
+      console.log(this.$refs["table"]);
+      this.$refs["table"].clearSelection();
+      this.paramData = {
+        a: 10
+      };
+      //  this.$refs['table'].search()
+    }
+    //表格end
   }
 };
 </script>

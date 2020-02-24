@@ -58,6 +58,7 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55"></el-table-column>
+        <el-table-column type="index" label="序号" width="45"></el-table-column>
         <el-table-column prop="station" label="站位" width="60"></el-table-column>
         <el-table-column prop="stationDes" label="站位描述" width="100"></el-table-column>
         <el-table-column prop="padIp" label="IP地址" width="120"></el-table-column>

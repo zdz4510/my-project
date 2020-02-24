@@ -7,28 +7,35 @@
         </div>
         <el-form ref="form" :model="form" label-width="100px" :inline="true">
           <el-form-item label="标签应用类型">
-              <el-select
-                size="small"
-                v-model="form.labelUseType"
-                placeholder="请选择标签应用类型"
-              >
-                <el-option label="LOT" value="10"></el-option>
-                <el-option label="容器" value="20"></el-option>
-              </el-select>
+            <el-select
+              size="small"
+              v-model="form.labelUseType"
+              placeholder="请选择标签应用类型"
+            >
+              <el-option label="LOT" value="10"></el-option>
+              <el-option label="容器" value="20"></el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="输入栏">
-              <dsn-input size='small' v-model="form.name"></dsn-input>
+            <dsn-input size="small" v-model="form.name"></dsn-input>
           </el-form-item>
           <el-form-item>
-              <dsn-button
-                icon="el-icon-search"
-                size="small"
-                type="primary"
-                @click="handleSearchByLotNo"
-                >检索</dsn-button
-              >
-              <el-button icon="el-icon-printer" size="small" type="primary" class="mr-10">打印</el-button>
-              <el-checkbox v-model="autoPrint">自动打印</el-checkbox>
+            <dsn-button
+              icon="el-icon-search"
+              size="small"
+              type="primary"
+              @click="handleSearchByLotNo"
+              >检索</dsn-button
+            >
+            <el-button
+              icon="el-icon-printer"
+              size="small"
+              type="primary"
+              class="mr-10"
+              @click="print"
+              >打印</el-button
+            >
+            <el-checkbox v-model="autoPrint">自动打印</el-checkbox>
           </el-form-item>
         </el-form>
       </dsnPanel>
@@ -41,8 +48,8 @@
                 <span class="val">{{ info.mat }}</span>
               </div>
               <div class="item">
-                <span class="name">物料组:</span>
-                <span class="val">{{ info.matGroup }}</span>
+                <span class="name">工单号:</span>
+                <span class="val">{{ info.shopOrder }}</span>
               </div>
               <div class="item">
                 <span class="name">容器层级:</span>
@@ -63,7 +70,6 @@
         tooltip-effect="dark"
         style="width: 100%"
         height="350px"
-       
       >
         <el-table-column type="selection" width="55"> </el-table-column>
         <el-table-column prop="resourceGroup" label="接收值" width="100">
@@ -96,9 +102,9 @@
         </el-table-column>
       </dsn-table>
     </dsnPanel>
-   
+
     <el-dialog title="标签配置" :visible.sync="showConfig" width="400">
-      <tag-print-config />
+      <tag-print-config :labelList="labelList" v-model="configArr" />
       <span slot="footer" class="dialog-footer">
         <el-button @click="showConfig = false">取 消</el-button>
         <el-button type="primary">
@@ -107,9 +113,9 @@
       </span>
     </el-dialog>
 
-    <DsnFooter >
-        <dsn-button @click="handlePrintConfig">打印配置</dsn-button>
-     <!-- <dsn-button @click="handlePrintConfig">打印配置</dsn-button> -->
+    <DsnFooter>
+      <dsn-button @click="handlePrintConfig">打印配置</dsn-button>
+      <!-- <dsn-button @click="handlePrintConfig">打印配置</dsn-button> -->
     </DsnFooter>
   </div>
 </template>
@@ -124,7 +130,6 @@ import TagPrintConfig from "./tag-print-config";
 import DsnFooter from "@/views/layout/dsn-footer";
 
 export default {
-
   data() {
     return {
       form: {
@@ -145,18 +150,33 @@ export default {
         mat: "",
         packingClass: ""
       },
-      labelList: []
+      cloneInfo: {
+        matGroup: "",
+        mat: "",
+        packingClass: ""
+      },
+      labelList: [],
+      configArr: [],
+      nextInfo: {
+        matGroup: "",
+        mat: "",
+        packingClass: ""
+      }
     };
   },
   components: {
     TagPrintConfig,
-     DsnFooter
+    DsnFooter
   },
   methods: {
     // 打印配置
-    handlePrintConfig(){
-        this.showConfig =true;
+    handlePrintConfig() {
+      this.showConfig = true;
     },
+    // 打印标签
+    print() {},
+    // 添加打野记录
+    addPrintLog() {},
     //  检索
     handleSearchByLotNo() {
       searchByLotNo({
@@ -164,15 +184,17 @@ export default {
         inputValue: this.form.name
       }).then(data => {
         const res = data.data;
-        console.log('res')
-        console.log(res)
+        console.log("res");
+        console.log(res);
         if (res.code == 200) {
-          if(res.data) {
-            this.info = res.data;
+          if (res.data) {
+            this.nextInfo = this.info; //吧这次的info 给next
+            this.info = res.data; // 获取最新的info
+            //  判断这次的info 和上次的info 是不是相同的
+            this.compareInfo();
             this.handleSearchLabelIdListByMat();
-            this.handleGetPrintDevicesAvailable()
+            // this.handleGetPrintDevicesAvailable();
           }
-          
         } else {
           this.$message({
             type: "error",
@@ -180,6 +202,29 @@ export default {
           });
         }
       });
+    },
+    compareInfo() {
+      const {
+        matGroup: nextMatGroup,
+        mat: nextMat,
+        packingClass: nextPackingClass
+      } = this.nextInfo;
+      //  这是第一次为空  不用比较
+      if (nextMatGroup === "" && nextMat === "" && nextPackingClass === "") {
+        return;
+      }
+
+      const { matGroup, mat, packingClass } = this.info;
+      if (
+        nextMatGroup === matGroup &&
+        mat === nextMat &&
+        nextPackingClass === packingClass
+      ) {
+        //
+        console.log("----");
+      } else {
+        this.configArr = [];
+      }
     },
     //  获取可用的打印设备
     handleGetPrintDevicesAvailable() {
@@ -198,7 +243,7 @@ export default {
     //  搜索可用的标签id
     handleSearchLabelIdListByMat() {
       searchLabelIdListByMat({
-        mat:this.info.mat
+        mat: this.info.mat
       }).then(data => {
         const res = data.data;
         if (res.code == 200) {
@@ -226,7 +271,7 @@ export default {
     .el-card {
       min-height: 300px;
       .el-form {
-        max-width: 400px;;
+        max-width: 400px;
       }
     }
     .topLeft {
@@ -240,7 +285,7 @@ export default {
             width: 100%;
           }
         }
-       }
+      }
     }
     .topRight {
       flex: 1;
@@ -249,12 +294,12 @@ export default {
         min-height: 300px;
         background: #fff;
         border-radius: 4px;
-        border: 1px solid #EBEEF5;
+        border: 1px solid #ebeef5;
         .el-tabs__nav-wrap {
           margin-bottom: 0;
         }
         .el-tabs__nav {
-          border:none;
+          border: none;
         }
         .el-tabs__header .el-tabs__item {
           padding: 15px;

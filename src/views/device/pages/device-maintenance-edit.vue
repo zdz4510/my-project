@@ -56,7 +56,7 @@
               </el-form-item>
               <el-form-item label="所在工作中心:" prop="workCenter">
                 <dsn-input
-                  style="width: 200px"
+                  style="width: 200px;vertical-align:baseline;"
                   v-model.trim="maintenanceForm.workCenter"
                   class="workCenter"
                 >
@@ -77,6 +77,7 @@
               <el-form-item label="保养条件名称" prop="conditionName" inline-message="true">
                 <dsn-input
                   v-model.trim="upkeepConfigForm.conditionName"
+                  :disabled="upkeepConfigOperateType === 'edit'"
                   placeholder="请输入保养条件名称"
                   size="small"
                 ></dsn-input>
@@ -114,7 +115,7 @@
                     :key="index"
                     :label="item.name"
                     :value="item.id"
-                  ></el-option>
+                  >{{item.name}}:{{item.commonName}}</el-option>
                 </el-select>
               </el-form-item>
               <el-form-item label="预警事件" prop="alarm">
@@ -130,24 +131,22 @@
               <el-form-item label="保养周期" prop="maintenancePeriod">
                 <dsn-input
                   v-model.number="upkeepConfigForm.maintenancePeriod"
+                  style="width:215px;vertical-align:baseline;"
                   placeholder="保养周期"
-                  class="upkeepCycle"
-                  size="small"
-                  style="width:215px"
                 >
-                  <dsn-select
-                    v-model="upkeepConfigForm.periodUnit"
-                    class="upkeepCycle"
-                    size="small"
-                    slot="append"
-                    @change="periodUnit"
-                  >
-                    <el-option label="天数" :value="1">天数</el-option>
-                    <el-option label="月份" :value="30">月份</el-option>
-                    <el-option label="季度" :value="90">季度</el-option>
-                    <el-option label="半年" :value="180">半年</el-option>
-                    <el-option label="年" :value="365">年</el-option>
-                  </dsn-select>
+                  <template slot="append">
+                    <dsn-select
+                      style="width:80px"
+                      placeholder="单位"
+                      v-model="upkeepConfigForm.periodUnit"
+                    >
+                      <el-option label="天数" :value="1">天数</el-option>
+                      <el-option label="月份" :value="30">月份</el-option>
+                      <el-option label="季度" :value="90">季度</el-option>
+                      <el-option label="半年" :value="180">半年</el-option>
+                      <el-option label="年" :value="365">年</el-option>
+                    </dsn-select>
+                  </template>
                 </dsn-input>
               </el-form-item>
               <el-form-item label="启用预警功能" prop="warningFunction">
@@ -156,7 +155,7 @@
                   <el-radio :label="false" :value="false">不启用</el-radio>
                 </el-radio-group>
               </el-form-item>
-              <el-form-item label="保养地址">
+              <el-form-item label="保养地址" prop="maintenanceLocation">
                 <el-radio-group v-model="upkeepConfigForm.maintenanceLocation">
                   <el-radio label="在线" value="在线">在线</el-radio>
                   <el-radio label="任意" value="任意">任意</el-radio>
@@ -187,7 +186,11 @@
               </el-table-column>
               <el-table-column prop="startTime" label="保养起始时间" width="180"></el-table-column>
               <el-table-column prop="maintenanceLocation" label="保养地址" width="120"></el-table-column>
-              <el-table-column prop="maintenanceUserId" label="保养人员" width="120"></el-table-column>
+              <el-table-column prop="maintenanceUserName" label="保养人员" width="120">
+                <template slot-scope="scope">
+                  <span>{{ scope.row.maintenanceUserName}}</span>
+                </template>
+              </el-table-column>
               <el-table-column prop="conditionDes" label="保养条件描述" show-overflow-tooltip></el-table-column>
             </dsn-table>
           </el-tab-pane>
@@ -224,8 +227,20 @@ export default {
   components: {
     workCenterModel
   },
-
   data() {
+    //设备编号
+    let validateResource = (rule, value, callback) => {
+      if (value === "") {
+        callback("请输入设备编号");
+      }
+      let reg = /^([A-Z]|[a-z]|[0-9]|_|-|\/)+$/;
+      if (!reg.test(value)) {
+        callback("设备编号只包含（[A-Z,0-9,_,-,/]）");
+      }
+      this.maintenanceForm.resource = value.toUpperCase();
+      callback();
+    };
+    //周期
     let validateMaintenancePeriod = (rule, value, callback) => {
       let reg = /^([0-9]+)$/g;
       if (!reg.test(value)) {
@@ -234,6 +249,54 @@ export default {
       if (parseInt(value) <= 0) {
         return callback(new Error("只能输入大于0的数"));
       }
+      callback();
+    };
+    //工作中心
+    let validateWorkCenter = (rule, value, callback) => {
+      if (value === "" && !this.isWorkCenter) {
+        callback();
+      }
+      let reg = /^([A-Z]|[a-z]|[0-9]|_|-|\/)+$/;
+      if (!reg.test(value)) {
+        callback("工作中心格式（[A-Z,0-9,_,-,/]）");
+      }
+      this.maintenanceForm.workCenter = value.toUpperCase();
+      callback();
+    };
+    //条件名称
+    let validateConditionName = (rule, value, callback) => {
+      if (value === "") {
+        callback("请输入条件名称");
+      }
+      let reg = /^([A-Z]|[a-z]|[0-9]|_|-|\/)+$/;
+      if (!reg.test(value)) {
+        callback("条件名称格式（[A-Z,0-9,_,-,/]）");
+      }
+      this.upkeepConfigForm.conditionName = value.toUpperCase();
+      callback();
+    };
+    //保养人员
+    let validateMaintenanceUserId = (rule, value, callback) => {
+      if (value === "") {
+        callback("请输入保养人员");
+      }
+      let reg = /^([A-Z]|[a-z]|[0-9]|_|-|\/)+$/;
+      if (!reg.test(value)) {
+        callback("保养人员格式（[A-Z,0-9,_,-,/]）");
+      }
+      this.upkeepConfigForm.maintenanceUserId = value.toUpperCase();
+      callback();
+    };
+    //预警事件
+    let validateAlarm = (rule, value, callback) => {
+      if (value === "") {
+        callback("请输入预警事件");
+      }
+      let reg = /^([A-Z]|[a-z]|[0-9]|_|-|\/)+$/;
+      if (!reg.test(value)) {
+        callback("预警事件格式（[A-Z,0-9,_,-,/]）");
+      }
+      this.upkeepConfigForm.alarm = value.toUpperCase();
       callback();
     };
     return {
@@ -249,6 +312,11 @@ export default {
         workCenter: ""
       },
       validateMaintenancePeriod,
+      validateResource,
+      validateWorkCenter,
+      validateConditionName,
+      validateMaintenanceUserId,
+      validateAlarm,
       // rules: this.rules,
       //验证基础信息表单ref
       refArrBaseInfo: ["maintenanceFormOne", "maintenanceFormTwo"],
@@ -268,7 +336,7 @@ export default {
         alarm: "",
         warningFunction: "",
         maintenancePeriod: "",
-        periodUnit: "",
+        periodUnit: 1,
         maintenanceLocation: ""
       },
       upkeepConfigRules: this.upkeepConfigRule,
@@ -289,7 +357,8 @@ export default {
       workCenterDialog: false,
       currentWorkCenter: {},
       workCenterData: [],
-      userList: []
+      userList: [],
+      upkeepConfigOperateType: "add"
     };
   },
   filters: {
@@ -314,16 +383,32 @@ export default {
     ...mapGetters(["maintenanceList"]),
     rules() {
       return {
-        resource: [{ required: true, message: "请输入设备编号" }],
-        resourceDes: [{ required: false, message: "请输入设备编号" }],
-        resourceStatus: [{ required: true, message: "请选择状态" }],
-        workCenter: [{ required: this.isWorkCenter, message: "请输入工作中心" }]
+        resource: [
+          { required: true, validator: this.validateResource, trigger: "blur" }
+        ],
+        resourceDes: [
+          { required: false, message: "请输入设备编号", trigger: "blur" }
+        ],
+        resourceStatus: [
+          { required: true, message: "请选择状态", trigger: "blur" }
+        ],
+        workCenter: [
+          {
+            required: this.isWorkCenter,
+            validator: this.validateWorkCenter,
+            trigger: "blur"
+          }
+        ]
       };
     },
     upkeepConfigRule() {
       return {
         conditionName: [
-          { required: true, message: "请输入保养条件名称", trigger: "change" }
+          {
+            required: true,
+            validator: this.validateConditionName,
+            trigger: "blur"
+          }
         ],
         startTime: [
           {
@@ -336,12 +421,16 @@ export default {
           { required: true, message: "请输入保养条件描述", trigger: "change" }
         ],
         maintenanceUserId: [
-          { required: true, message: "请输入保养人员", trigger: "change" }
+          {
+            required: true,
+            validator: this.validateMaintenanceUserId,
+            trigger: "change"
+          }
         ],
         alarm: [
           {
             required: this.isRequired,
-            message: "请输入预警事件",
+            validator: this.validateAlarm,
             trigger: "change"
           }
         ],
@@ -358,8 +447,27 @@ export default {
         ],
         periodUnit: [
           { required: true, message: "请输入周期单位", trigger: "change" }
+        ],
+        maintenanceLocation: [
+          { required: true, message: "请输入保养地址", trigger: "blur" }
         ]
       };
+    },
+    selectionListNew() {
+      return JSON.parse(JSON.stringify(this.selectionList));
+    }
+  },
+  watch: {
+    selectionListNew: {
+      handler: function(val) {
+        if (val.length === 0) {
+          this.upkeepConfigOperateType = "add";
+        }
+        if (val.length > 0) {
+          this.upkeepConfigOperateType = "edit";
+        }
+      },
+      deep: true
     }
   },
   created() {
@@ -485,12 +593,6 @@ export default {
       if (this.operateType === "edit") {
         this.maintenanceForm = JSON.parse(JSON.stringify(this.cloneList[0]));
         this.tableData = JSON.parse(JSON.stringify(this.cloneTableData));
-
-        // formName.forEach(element => {
-        //   if (element !== "maintenanceFormOne") {
-        //     this.$refs[element].resetFields();
-        //   }
-        // });
       }
     },
     //验证form表单
@@ -510,9 +612,48 @@ export default {
         return;
       }
       if (count >= 2 && this.saveType === "upkeepConfig") {
+        let count = 0;
+        this.tableData.forEach(element => {
+          if (this.upkeepConfigForm.conditionName === element.conditionName) {
+            count++;
+          }
+        });
+        if (this.upkeepConfigOperateType === "add") {
+          if (count > 0) {
+            this.$message({
+              message: "该保养条件名称已存在，请重新输入",
+              type: "warning"
+            });
+            return;
+          }
+        }
         const copyObj = JSON.parse(JSON.stringify(this.upkeepConfigForm));
         copyObj.resource = this.maintenanceForm.resource;
-        this.tableData.push(copyObj);
+        copyObj.tenantSiteCode = "test";
+        this.userList.forEach(element => {
+          if (element.id === copyObj.maintenanceUserId) {
+            copyObj.maintenanceUserName =
+              element.name + ":" + element.commonName;
+          }
+        });
+        if (this.upkeepConfigOperateType === "edit") {
+          this.tableData = this.tableData.filter(
+            item => item.conditionName !== copyObj.conditionName
+          );
+          this.tableData.push(copyObj);
+          this.$message({
+            message: "修改成功",
+            type: "success"
+          });
+        }
+        if (this.upkeepConfigOperateType === "add") {
+          this.tableData.push(copyObj);
+          this.$message({
+            message: "添加成功",
+            type: "success"
+          });
+        }
+        this.handleLocalAdd(this.refArrUpkeepConfig);
         return;
       }
     },
@@ -600,25 +741,13 @@ export default {
       });
     },
     handleLocalAdd(formName) {
-      let count = 0;
-      this.tableData.forEach(element => {
-        if (this.upkeepConfigForm.conditionName === element.conditionName) {
-          count++;
-        }
-      });
-      if (count > 0) {
-        this.$message({
-          message: "该保养条件名称已存在，请重新输入",
-          type: "warning"
-        });
-        return;
-      }
       formName.forEach(element => {
         if (element === "upkeepConfigForm") {
           this.$refs[element].resetFields();
           this.$refs.multipleTable.clearSelection();
         }
       });
+      this.upkeepConfigForm.startTime = this.formate(new Date().getTime());
     },
     handleLocalSave() {
       this.checkFormInfo(this.refArrUpkeepConfig, this.handleSaveUpkeepConfig);

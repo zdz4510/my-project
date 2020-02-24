@@ -242,7 +242,7 @@ export default {
           {
             buttionDesc: "",
             buttonId: "",
-            groupFlag: "",
+            groupFlag: true,
             imageIcon: "",
             location: "",
             podActivities: [
@@ -275,9 +275,10 @@ export default {
     };
   },
   methods: {
-    ...mapMutations(["PROROW"]),
+    ...mapMutations(["PROROW","ALLMESSAGE"]),
     handleIconClick() {},
     handleSelectionChange(rows) {
+      console.log(rows,"数据333")
       this.selectedList = rows;
       this.PROROW(this.selectedList[0]);
       // console.log('勾选',this.selectedList[0].groupFlag);
@@ -298,6 +299,9 @@ export default {
         const res = data.data;
         if (res.code == 200) {
           this.ruleForm = res.data;
+          // console.log("显示数据",res.data)
+          // 当前获取的数据放到vuex中，以便更改
+          this.ALLMESSAGE(res.data);
         } else {
           this.$message({
             message: `${res.message}`,
@@ -335,7 +339,6 @@ export default {
     },
     //移除操作
     handleMove() {
-      alert(this.selectedList.length);
       if (this.selectedList.length == 0) {
         this.$message({
           message: "请选择移除项",
@@ -379,13 +382,7 @@ export default {
     },
     // 跳转新增界面
     handleAdd() {
-      if(this.selectedList.length>1){
-        this.$message({
-            message: "只能选择一个去添加",
-            type: "warning"
-          });
-      }
-      this.$router.push({ path: "/material/newAddGroup" });
+        this.$router.push({ path: "/material/newAddGroCon" });// 默认添加按钮
     },
     //保存操作
     handleSave() {
@@ -413,11 +410,34 @@ export default {
     //编辑
     handleEdit() {
       if (this.selectedList.length === 1) {
-        this.$router.push({ path: "/material/addGroupProCon" });
+        // this.$router.push({ path: "/material/addGroupProCon" });
+        console.log(this.selectedList[0],"数据是111")
+        const index=this.ruleForm.podButtons.indexOf(this.selectedList[0]);
+        // this.ALLMESSAGE(this.ruleForm)
+        this.$router.push({
+          name: "newAddGroCon",
+          params:{messageList:this.selectedList,num:index}
+        });
+      }else{
+        this.$message({
+            message: `只能选中一行进行编辑`,
+            type: "warning"
+          });
       }
     }
   },
   created() {
+    // 新增后
+    if(this.$route.params.message){
+      this.ruleForm=this.$route.params.message;
+      // console.log(this.$route.params.message,"数据阿是")
+    }
+    // 修改后
+    if(this.$route.params.change){
+      console.log("this.$route.params.change",this.$route.params.change)
+      this.ruleForm=this.$route.params.change;
+    }
+    // this.ruleForm=this.allMessage;
     this.getProConfigName();
   }
 };

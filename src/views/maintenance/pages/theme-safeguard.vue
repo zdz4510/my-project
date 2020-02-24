@@ -187,7 +187,7 @@ export default {
       this.$router.push({ path: "/maintenance/themeAdd" });
     },
     handleEdit() {
-      console.log(this.selectionList);
+      // console.log(this.selectionList);
       this.THEMELIST(this.selectionList);
       this.$router.push({ path: "/maintenance/themeEdit" });
     },

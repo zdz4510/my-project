@@ -10,7 +10,7 @@
         :inline="true"
         :model="addForm"
         ref="addForm"
-        :rules="rules"
+         :rules="addRules"
         class="form-style"
         label-position="right"
         :label-width="formLabelWidth"
@@ -23,7 +23,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="姓名:" prop="name">
-              <dsn-input v-model="addForm.name"></dsn-input>
+              <dsn-input v-model="addForm.name" :disabled="true"></dsn-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -97,7 +97,21 @@ import _ from "lodash";
 export default {
   name: "",
   data() {
+     ////验证用户
+    var validateuser = (rule, value, callback) => {
+    
+      if (!value) {
+        callback(new Error("用户不能为空"));
+      } else {
+        callback();
+      }
+    };
     return {
+        addRules: {
+        user: [
+          { validator: validateuser, trigger: "blur", required: true }
+        ],
+      },
       activeName: "first",
       formLabelWidth: "120px",
       rules: {},

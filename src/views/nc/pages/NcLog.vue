@@ -355,16 +355,16 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.search-bar {
-  background: #ffffff;
-  padding-bottom: 20px;
-  .form-style {
-    margin: 0 !important;
-    padding: 0 0 0 30px !important;
-    position: relative;
-    top: 20px;
-  }
-}
+// .search-bar {
+//   background: #ffffff;
+//   padding-bottom: 20px;
+//   .form-style {
+//     margin: 0 !important;
+//     padding: 0 0 0 30px !important;
+//     position: relative;
+//     top: 20px;
+//   }
+// }
 .content {
   background: #ffffff;
 }

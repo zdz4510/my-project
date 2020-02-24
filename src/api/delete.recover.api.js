@@ -7,8 +7,8 @@ import request from "@/service/";
  *  url /mes/scrapAndDelete/findPage
  */
 export const getDeleteList = data => {
-  return request.post(
-    `${window.VUE_APP_URL}/mes/scrapAndDelete/findPage?currentPage=${data.currentPage}&pageSize=${data.pageSize}&code=${data.code}&codeType=${data.codeType}`);
+    return request.post(
+        `${window.VUE_APP_URL}/mes/scrapAndDelete/findPage?currentPage=${data.currentPage}&pageSize=${data.pageSize}&code=${data.code}&codeType=${data.codeType}`);
 };
 
 
@@ -18,7 +18,7 @@ export const getDeleteList = data => {
  */
 
 export const deleteMark = data => {
-  return request.post(`${window.VUE_APP_URL}/mes/scrapAndDelete/delete?codeType=${data.codeType}`, data.list);
+    return request.post(`${window.VUE_APP_URL}/mes/scrapAndDelete/delete?codeType=${data.codeType}`, data.list);
 };
 
 /**
@@ -27,7 +27,7 @@ export const deleteMark = data => {
  */
 
 export const getRecoverList = data => {
-  return request.post(`${window.VUE_APP_URL}/mes/scrapAndDelete/findUnDeletePage?currentPage=${data.currentPage}&pageSize=${data.pageSize}&code=${data.code}&codeType=${data.codeType}`);
+    return request.post(`${window.VUE_APP_URL}/mes/scrapAndDelete/findUnDeletePage?currentPage=${data.currentPage}&pageSize=${data.pageSize}&code=${data.code}&codeType=${data.codeType}`);
 };
 
 /**
@@ -35,7 +35,7 @@ export const getRecoverList = data => {
  * url /mes/scrapAndDelete/unDelete
  */
 export const recoverMark = data => {
-  return request.post(`${window.VUE_APP_URL}/mes/scrapAndDelete/unDelete?codeType=${data.codeType}`, data.list);
+    return request.post(`${window.VUE_APP_URL}/mes/scrapAndDelete/unDelete?codeType=${data.codeType}`, data.list);
 };
 
 /**
@@ -43,6 +43,6 @@ export const recoverMark = data => {
  *  url /mes/scrapAndDelete/findDeleteLogPage
  */
 export const getLogList = data => {
-  return request.post(
-    `${window.VUE_APP_URL}/mes/scrapAndDelete/findDeleteLogPage?currentPage=${data.currentPage}&pageSize=${data.pageSize}&codeType=${data.codeType}`);
+    return request.post(
+        `${window.VUE_APP_URL}/mes/scrapAndDelete/findDeleteLogPage?currentPage=${data.currentPage}&pageSize=${data.pageSize}&code=${data.code}&codeType=${data.codeType}`);
 };

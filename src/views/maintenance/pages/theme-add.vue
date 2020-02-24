@@ -147,7 +147,7 @@
                           <input
                             v-model="w"
                             class="input"
-                            v-on:input="changeWork"
+                            v-on:input="changeWork2"
                             placeholder="请输入产线"
                           />
                         </div>
@@ -162,7 +162,7 @@
                           <input
                             v-model="w1"
                             class="input"
-                            v-on:input="changeStation"
+                            v-on:input="changeStation2"
                             placeholder="请输入站位"
                           />
                         </div>
@@ -178,7 +178,7 @@
                           <input
                             v-model="w2"
                             class="input"
-                            v-on:input="changeStationDes"
+                            v-on:input="changeStationDes2"
                             placeholder="请输入站位描述"
                           />
                         </div>
@@ -243,7 +243,9 @@ export default {
       labelLinkList: [],
       labelStorageList: [],
       labelCommand: "",
-      previewImage: ""
+      previewImage: "",
+      cloneList:[],//左侧数据
+      cloneList2:[],//右侧数据
     };
   },
   computed: {
@@ -264,6 +266,9 @@ export default {
         if (res.code === 200) {
           this.list2 = res.data.currentAllotStations;
           this.list = res.data.unAllotStations;
+          // 拷贝当前的
+          this.cloneList=_.cloneDeep(this.list);
+          this.cloneList2=_.cloneDeep(this.list2);
           let obj={
             currentAllotStations: this.list2,
             unAllotStations: this.list
@@ -284,6 +289,7 @@ export default {
           return  item.workCenterRelation;
         }
       });
+      // 拷贝当前的
       this.list=arr;
     },
     changeWork2() {
@@ -292,6 +298,7 @@ export default {
           return  item.workCenterRelation;
         }
       });
+      // 拷贝当前的
       this.list2=arr;
     },
     changeStation() {
@@ -340,7 +347,7 @@ export default {
     },
     saveHandle() {
       const data = { ...this.themeForm };
-      data.currentAllotStations	=this.list2;
+      data.currentAllotStations	=this.cloneList2;
       addTopicHttp(data).then(data => {
         const res = data.data;
         if (res.code == 200) {
@@ -368,32 +375,43 @@ export default {
     },
     // 选择的数据移动到左边
     toLeft() {
-      const arr = this.rightSelectList.filter(item => {
-        return this.findItemInArr(item, this.list).length == 0;
-      });
-      // 右边数据增加
-      this.list = [...this.list, ...arr];
-      // 同时深拷贝来的数据进行操作
-      let arr2=this.allList.currentAllotStations.filter((item)=>{
-        return this.fiterRight(item,arr).length==0;
-      })
-      this.allList.currentAllotStations=arr2
-      this.selectionList = [];
+      // const arr = this.rightSelectList.filter(item => {
+      //   return this.findItemInArr(item, this.list).length == 0;
+      // });
+      // // 右边数据增加
+      // this.list = [...this.list, ...arr];
+      // // 同时深拷贝来的数据进行操作
+      // let arr2=this.allList.currentAllotStations.filter((item)=>{
+      //   return this.fiterRight(item,arr).length==0;
+      // })
+      // this.allList.currentAllotStations=arr2
+      // this.selectionList = [];
+      this.list = _.concat(this.list, this.rightSelectList);
+      this.list = _.uniq(this.list);
+      this.list2 = _.difference(
+        this.list2,
+        this.rightSelectList
+      );
+      this.cloneList2= _.cloneDeep(this.list2);
     },
     //选择到数据移动到右边
     toRight() {
-      console.log(this.allList,"1")
-      const arr = this.leftSelectList.filter(item => {
-        return this.findItemInArr(item, this.list2).length == 0;
-      });
-      // console.log(arr,"数据");
-      this.list2 = [...this.list2, ...arr];
-      // 同时深拷贝来的数据进行操作
-      let arr2=this.allList.unAllotStations.filter((item)=>{
-        return this.fiterRight(item,arr).length==0;
-      })
-      this.allList.unAllotStations=arr2
-      this.selectionList = [];
+      // console.log(this.allList,"1")
+      // const arr = this.leftSelectList.filter(item => {
+      //   return this.findItemInArr(item, this.list2).length == 0;
+      // });
+      // // console.log(arr,"数据");
+      // this.list2 = [...this.list2, ...arr];
+      // // 同时深拷贝来的数据进行操作
+      // let arr2=this.allList.unAllotStations.filter((item)=>{
+      //   return this.fiterRight(item,arr).length==0;
+      // })
+      // this.allList.unAllotStations=arr2
+      this.list2 = _.concat(this.list2, this.leftSelectList);
+      this.list2 = _.uniq(this.list2);
+      this.list = _.difference(this.list, this.leftSelectList);
+      this.cloneList2= _.cloneDeep(this.list2);
+      // this.selectionList = [];
     },
     fiterRight(item, arr) {
       return arr.filter(subItem => {

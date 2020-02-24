@@ -52,6 +52,7 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55"></el-table-column>
+        <el-table-column type="index" label="序号" width="45"></el-table-column>
         <el-table-column prop="cert" label="上岗证" width="140"></el-table-column>
         <el-table-column prop="certDes" label="上岗证描述" width="140"></el-table-column>
         <el-table-column prop="status" label="状态" width="140">

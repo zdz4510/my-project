@@ -177,6 +177,16 @@ const filterVal = [
 const fileName="工单下达表"
 export default {
     data(){
+        const numIssuedRules = (rule, value, callback) => {
+        if (value === "") {
+            callback("下达数量不为空");
+        }
+        let reg = /^[1-9]\d*$/;
+        if (!reg.test(value)) {
+            callback("下达数量应只包含非零整数");
+        }
+        callback();
+        };
         return{
             tHeader,
             filterVal,
@@ -206,7 +216,7 @@ export default {
             total: 0,
             rules:{
                 shopOrder: [{ required: true, message: "请输入工单", trigger: "blur" }],
-                numIssued: [{ required: true, message: "请输入下达数量", trigger: "blur" }],
+                numIssued: [{ required: true, validator: numIssuedRules, trigger: "blur" }],
             }
         }
     },
@@ -225,21 +235,19 @@ export default {
             }
         },
         exportHttpUndeal(){
-            findShopOrderListHttp().then(data => {
-            const res = data.data;
-            if (res.code === 200) {
-            data = res.data.data;
-            data.forEach(element => {
-                element.shopOrderTotal = element.shopOrderList.length;
-            });
-            this.exportResult(data);
-            return;
-            }
-            this.$message({
-                message: res.message,
-                type: "warning"
-                });
-            });
+            // findShopOrderListHttp().then(data => {
+            // const res = data.data;
+            // if (res.code === 200) {
+            // data = res.data;
+            // console.log("data",data)
+            this.exportResult(this.tableData);
+            // return;
+            // }
+            // this.$message({
+            //     message: res.message,
+            //     type: "warning"
+            //     });
+            // });
         },
         //返回结果，提示信息
         exportResult(data) {
@@ -288,6 +296,16 @@ export default {
             }else{
                 this.workOrderIssued.shopOrder=this.orderChoice[0].shopOrder;
                 this.workOrderIssued.numIssued="";
+                this.shopOrderInfo={
+                    status:"",
+                    productQty:"",
+                    plannedMaterialRev:"",
+                    plannedMaterial:"",
+                    plannedRouterRev:"",
+                    plannedRouter:"",
+                    availableQuantity:""
+                }
+                this.tableData=[];
                 this.orderDialog=false;
             }
         },
@@ -324,7 +342,7 @@ export default {
                     const res = data.data
                     if(res.code == 200){
                         this.shopOrderInfo = res.data
-                        console.log('获取工单信息'+JSON.stringify(this.shopOrderInfo))
+                        // console.log('获取工单信息'+JSON.stringify(this.shopOrderInfo))
                     }else{
                         this.$message({
                             message:`${res.message}`,
@@ -384,7 +402,7 @@ export default {
             width:50%;
         }
         .topRigt{
-            height:200px;
+            height:170px;
             width:50%;
             background:#fff;
             box-sizing: border-box;
@@ -392,7 +410,7 @@ export default {
             .showData{
                 display: flex;
                 justify-content:space-between;
-                margin:10px;
+                margin:30px;
                 >div{
                     display: flex;
                     justify-content: center;

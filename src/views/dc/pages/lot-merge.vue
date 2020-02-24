@@ -7,14 +7,16 @@
       <!-- 查询条件start -->
       <el-form :model="lotForm" :inline="true" ref="lotForm" class="lotForm" :rules="lotFormRules">
         <el-form-item label="LOT" prop="lot">
-          <el-row>
-            <el-col :span="22">
-              <dsn-input class="lot" v-model.trim="lotForm.lot" placeholder="请输入LOT"></dsn-input>
-            </el-col>
-            <el-col :span="2">
+          <dsn-input
+            class="lot"
+            v-model.trim="lotForm.lot"
+            style="width:225px;vertical-align:baseline;"
+            placeholder="请输入LOT"
+          >
+            <template slot="append">
               <i class="el-icon-document" @click="goQuery('queryLot')"></i>
-            </el-col>
-          </el-row>
+            </template>
+          </dsn-input>
         </el-form-item>
         <el-form-item>
           <dsn-button
@@ -74,21 +76,23 @@
           :rules="lotMergeFormRule"
         >
           <el-form-item label="合并的LOT" prop="lot">
-            <el-row>
-              <el-col :span="22">
-                <dsn-input class="mergeLot" v-model.trim="lotMergeForm.lot" placeholder="请输入LOT"></dsn-input>
-              </el-col>
-              <el-col :span="2">
+            <dsn-input
+              class="mergeLot"
+              v-model.trim="lotMergeForm.lot"
+              style="width:225px;vertical-align:baseline;"
+              placeholder="请输入LOT"
+            >
+              <template slot="append">
                 <i class="el-icon-document" @click="goQuery('addMergeLot')"></i>
-              </el-col>
-            </el-row>
+              </template>
+            </dsn-input>
           </el-form-item>
           <el-form-item>
             <dsn-button
               size="small"
               type="success"
               icon="el-icon-folder-add"
-              :disabled="lotForm.lot===''"
+              :disabled="lotForm.lot===''|| showFlag"
               @click="checkForm('lotMergeForm', handleAddLot)"
             >添加</dsn-button>
             <dsn-button
@@ -103,6 +107,7 @@
               type="primary"
               icon="el-icon-document-copy"
               :disabled="tableData.length === 0"
+              @click="handleMerge"
             >合并</dsn-button>
           </el-form-item>
         </el-form>
@@ -153,11 +158,6 @@
     <el-dialog title="lot" :visible.sync="lotDialog" :width="defaltDialogWidth">
       <span>
         <allLotModel :lot="lotDatas" @selectLot="selectLot"></allLotModel>
-        <!-- <mergeLotModel
-          v-if="selectType === 'addMergeLot'"
-          :lot="lotDatas"
-          @selectLot="selectLots"
-        ></mergeLotModel>-->
       </span>
       <span slot="footer" class="dialog-footer">
         <dsn-button @click="lotDialog = false">取 消</dsn-button>
@@ -168,11 +168,12 @@
 </template>
 
 <script>
+import { listLotHttp } from "@/api/dc/lot.divestiture.api.js";
 import {
-  findLotAtOperationHttp,
-  listLotHttp
-} from "@/api/dc/lot.divestiture.api.js";
-import { findLotAtOperationHttpMerge } from "@/api/dc/lot.merge.api.js";
+  addLotAtOperationHttp,
+  mergeLotHttp,
+  findLotAtOperationHttp
+} from "@/api/dc/lot.merge.api.js";
 import allLotModel from "../components/all-lots-model.vue";
 
 export default {
@@ -199,6 +200,7 @@ export default {
         materialRev: "",
         routerRev: ""
       },
+      showFlag: true,
       lotMergeForm: {
         lot: ""
       },
@@ -214,7 +216,8 @@ export default {
       currentLot: {},
       //弹出框选择类型
       selectType: "",
-      selectionList: []
+      selectionList: [],
+      splitLot: {}
     };
   },
   filters: {
@@ -226,7 +229,6 @@ export default {
     }
   },
   methods: {
-    //
     checkForm(formName, operation) {
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -242,11 +244,18 @@ export default {
       findLotAtOperationHttp(data).then(data => {
         const res = data.data;
         if (res.code === 200) {
+          this.showFlag = false;
           this.showInfo = res.data;
+          this.splitLot = res.data;
           const operations = res.data.operationList.join(",");
           this.showInfo.operationList = operations;
           const resources = res.data.resourceList.join(",");
           this.showInfo.resourceList = resources;
+          this.showInfo.materialRev = `${res.data.material}(${res.data.materialRev})`;
+          this.showInfo.routerRev = `${res.data.router}(${res.data.routerRev})`;
+          this.lotMergeForm.lot = "";
+          this.tableData = [];
+          this.selectionList = [];
           return;
         }
         this.$message({
@@ -261,6 +270,7 @@ export default {
       this.$refs["lotMergeForm"].resetFields();
       this.showInfo = {};
       this.tableData = [];
+      this.showFlag = true;
     },
     //查询LOT
     goQuery(type) {
@@ -290,14 +300,21 @@ export default {
         });
       });
     },
+
     //将制定lot添加到本地表格
     handleAddLot() {
-      const data = { lot: this.lotMergeForm.lot };
-      findLotAtOperationHttpMerge(data).then(data => {
+      const data = { lot: this.lotMergeForm.lot, parentLot: this.splitLot.lot };
+      addLotAtOperationHttp(data).then(data => {
         const res = data.data;
         if (res.code === 200) {
-          console.log(res.data);
-          this.tableData.push(res.data);
+          if (!this.tableData.find(item => item.lot === res.data.lot)) {
+            this.tableData.push(res.data);
+          } else {
+            this.$message({
+              message: "该条数据已存在",
+              type: "warning"
+            });
+          }
           return;
         }
         this.$message({
@@ -324,7 +341,6 @@ export default {
     //获取弹出框单个选择的数据
     selectLot(row) {
       this.currentLot = row;
-      console.log(this.currentLot);
     },
     //弹出框确认选择lot
     handleSelectLot() {
@@ -342,6 +358,39 @@ export default {
         return this.selectionList.indexOf(item) == -1;
       });
       this.selectionList = [];
+    },
+    //合并lot
+    handleMerge() {
+      console.log(111);
+      let mergeList = [];
+      this.tableData.forEach(element => {
+        mergeList.push(element.lot);
+      });
+      const data = {
+        lot: this.lotForm.lot,
+        mergeList
+      };
+      mergeLotHttp(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.$message({
+            message: res.message,
+            type: "success"
+          });
+          this.tableData = [];
+          this.lotMergeForm.lot = "";
+          this.$message({
+            message: `LOT成功合并，数量从${this.showInfo.quantity}调整到${res.data.quantity}`,
+            type: "warning"
+          });
+          this.handleQuery();
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
     }
   }
 };

@@ -46,8 +46,8 @@ export const insertLabelPrintingLogBatch = data => {
   打印标签(模板)
  * @param {*} data 
  */
-export const printLabel = data => {
-  return request.post(`${window.VUE_APP_URL}/mes/labelPrinting/printLabel`,data);
+export const   printLabel = async data => {
+  return await request.post(`${window.VUE_APP_URL}/mes/labelPrinting/printLabel`,data);
 };
 
 
