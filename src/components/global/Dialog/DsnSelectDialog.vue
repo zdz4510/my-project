@@ -14,7 +14,7 @@
         :data="tableData"
         @selection-change="handleSelectChanege"
         @row-click="RowClick"
-        @row-dblclick="RowDoubleClickRowClick"
+        @row-dblclick="RowDoubleClick"
         height="400px"
       >
         <el-table-column
@@ -30,7 +30,7 @@
         <DsnHelpItem
           :key="index"
           :item="item"
-          v-for="(item, index) in selectArr"
+          v-for="(item, index) in totalSelectArr"
           @close="close"
           >{{ helpText(item) }}</DsnHelpItem
         >
@@ -44,6 +44,7 @@
 </template>
 
 <script>
+// import _ from 'lodash'
 export default {
   name: "DsnSelectDialog",
   model: {
@@ -126,11 +127,12 @@ export default {
     },
     confirm() {
       if (this.isSingle) {
-        this.totalSelectArr = [...this.selectArr];
+        //  _.cloneDeep([])
+        this.totalSelectArr =([...this.selectArr]);
       } else {
-        this.totalSelectArr = [
+        this.totalSelectArr =( [
           ...new Set([...this.totalSelectArr, ...this.selectArr])
-        ];
+        ]);
       }
       this.$emit('change',  this.totalSelectArr)
       this.$emit("confirm");
@@ -154,14 +156,14 @@ export default {
      // this.$refs["table"].toggleRowSelection(deleteItem);
       this.$emit("change", this.totalSelectArr);
     },
-    RowClickRowClick(row) {
+    RowClick(row) {
       if (this.isSingle) {
         this.selectArr = [row];
         // this.totalSelectArr = this.selectArr;
       }
     },
     // 双击选中
-    RowDoubleClickRowClick(row) {
+    RowDoubleClick(row) {
       // 选中状态
       if(!this.isSingle){
         this.$refs["table"].toggleRowSelection(row);
