@@ -4,7 +4,7 @@
     class="help-dialog"
     :title="title"
     :visible.sync="visible"
-    :before-close="cancle"
+    :before-close="handleCancle"
   >
     <slot name="header"></slot>
     <div class="body">
@@ -38,7 +38,7 @@
       </DsnHelpFooter>
     </div>
     <span slot="footer" class="dialog-footer">
-      <dsn-button @click="cancle">取消</dsn-button>
+      <dsn-button @click="handleCancle">取消</dsn-button>
       <dsn-button type="primary" @click="confirm">确定</dsn-button>
     </span>
   </el-dialog>
@@ -121,9 +121,9 @@ export default {
       // 同步选中的结果
       // this.$emit("change", this.totalSelectArr);
     },
-    cancle() {
+    handleCancle() {
       this.clearSelect();
-      this.$emit("cancle");
+      // this.$emit("cancle");
       this.$emit("update:visible", false);
     },
     confirm() {
