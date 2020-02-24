@@ -110,7 +110,7 @@ export default {
           {
             min: 0,
             max: parseInt(item.fieldSize),
-            message: "长度在 0 到 200 个字符",
+            message: `长度在 0 到 ${parseInt(item.fieldSize)} 个字符`,  //200
             trigger: "blur"
           }
         ];

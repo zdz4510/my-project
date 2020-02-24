@@ -104,7 +104,7 @@
     </dsnPanel>
 
     <el-dialog title="标签配置" :visible.sync="showConfig" width="400">
-      <tag-print-config v-model="configArr" />
+      <tag-print-config :labelList="labelList" v-model="configArr" />
       <span slot="footer" class="dialog-footer">
         <el-button @click="showConfig = false">取 消</el-button>
         <el-button type="primary">
@@ -193,7 +193,7 @@ export default {
             //  判断这次的info 和上次的info 是不是相同的
             this.compareInfo();
             this.handleSearchLabelIdListByMat();
-            this.handleGetPrintDevicesAvailable();
+            // this.handleGetPrintDevicesAvailable();
           }
         } else {
           this.$message({
