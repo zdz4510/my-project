@@ -14,7 +14,7 @@
                   <dsn-input size="small" placeholder="请输入工单" v-model="searchForm.shopOrder"></dsn-input>
                 </el-col>
                 <el-col :span="2">
-                  <i class="el-icon-document" @click="orderDialog=true"></i>
+                  <i class="el-icon-document" @click="orderHandler"></i>
                 </el-col>
               </el-row>
               <!-- <el-input size="small" placeholder="请输入工单" v-model="shopOrder">
@@ -171,7 +171,8 @@
       title="删除"
       :visible.sync="dialogVisible"
       :width="defaltDialogWidth">
-      <el-form :rules="rules">
+      <span>是否删除此工单？</span>
+      <!-- <el-form :rules="rules">
             <el-form-item :label="item.fieldName" v-for="(item,index) in customizedFieldDefInfoList" :key="index" v-show="item.fieldType =='C'" prop="custom">
               <el-col :span="14">
                 <dsn-input v-model="item.fieldValue"></dsn-input>
@@ -190,7 +191,7 @@
                 <i class="el-icon-document-copy"></i>
               </div>
             </el-form-item>
-          </el-form>
+          </el-form> -->
       <span slot="footer" class="dialog-footer">
         <dsn-button @click="dialogVisible = false">取 消</dsn-button>
         <dsn-button type="primary" @click="sureDelete">确 定</dsn-button>
@@ -198,16 +199,18 @@
     </el-dialog>
     <!--工单选择-->
     <DsnSelectDialog
-      title="工单"
+      title="工单选择"
       :isSingle="true"
+      ref="orderChoice"
        :tableData="orderTable"
+       v-model="selectOrderArr"
        :helpText="helpTextOrdere"
       :visible.sync="orderDialog"
       width="500px">
-      <template slot="header">
+      <!-- <template slot="header">
         <el-input v-model="v" placeholder=""></el-input>
         <el-button @click="orderHandler">search</el-button>
-      </template>
+      </template> -->
       <!-- <dsn-table
           ref="multipleTable"
           :data="orderTable"
@@ -233,11 +236,16 @@
       </span> -->
     </DsnSelectDialog>
     <!--物料选择-->
-    <el-dialog
+    <DsnSelectDialog
       title="物料选择"
+      :isSingle="true"
+      ref="materialChoice"
+       :tableData="materialTable"
+       v-model="selectMaterialArr"
+       :helpText="helpTextMaterial"
       :visible.sync="materialDialog"
       width="800px">
-      <dsn-table
+      <!-- <dsn-table
           ref="multipleTable"
           :data="materialTable"
           tooltip-effect="dark"
@@ -248,26 +256,32 @@
           border
           @selection-change="handleSelectionMaterial"
         >
-          <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column type="index" label="序号" width="50"></el-table-column>
-          <el-table-column prop="material" label="物料" width="120"></el-table-column>
-          <el-table-column label="版本" prop="materialRev" width="120"></el-table-column>
-          <el-table-column prop="currentRev" label="当前版本">
-            <template slot-scope="scope">{{ scope.row.currentRev ? '已启用' : '未启用' }}</template>
-          </el-table-column>
-          <el-table-column label="描述" prop="materialDes" width="120"></el-table-column>
-        </dsn-table>
-      <span slot="footer" class="dialog-footer">
+          <el-table-column type="selection" width="55"></el-table-column> -->
+          <template slot="body">
+            <el-table-column prop="material" label="物料"></el-table-column>
+            <el-table-column label="版本" prop="materialRev"></el-table-column>
+            <el-table-column prop="currentRev" label="当前版本">
+              <template slot-scope="scope">{{ scope.row.currentRev ? '已启用' : '未启用' }}</template>
+            </el-table-column>
+            <el-table-column label="描述" prop="materialDes"></el-table-column>
+          </template>
+        <!-- </dsn-table> -->
+      <!-- <span slot="footer" class="dialog-footer">
         <dsn-button @click="materialDialog = false">取 消</dsn-button>
         <dsn-button type="primary" @click="sureMaterial">确 定</dsn-button>
-      </span>
-    </el-dialog>
+      </span> -->
+    </DsnSelectDialog>
     <!--工艺路线选择-->
-    <el-dialog
+    <DsnSelectDialog
       title="工艺路线选择"
       :visible.sync="routerDialog"
+      :isSingle="true"
+      ref="routerChoice"
+       :tableData="routerTable"
+       v-model="selectRouterArr"
+       :helpText="helpTextRouter"
       width="800px">
-      <dsn-table
+      <!-- <dsn-table
           ref="multipleTable"
           :data="routerTable"
           tooltip-effect="dark"
@@ -277,9 +291,9 @@
           highlight-current-row
           border
           @selection-change="handlerSelectionRouter"
-        >
-          <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column type="index" label="序号" width="50"></el-table-column>
+        > -->
+        <template slot="body">
+          <!-- <el-table-column type="selection" width="55"></el-table-column> -->
           <el-table-column prop="router" label="工艺路线" width="120"></el-table-column>
           <el-table-column label="版本" prop="revision" width="120"></el-table-column>
           <el-table-column prop="currentRevision" label="当前版本">
@@ -287,12 +301,13 @@
           </el-table-column>
           <el-table-column label="类型" prop="routerType" width="120"></el-table-column>
           <el-table-column label="描述" prop="description" width="180"></el-table-column>
-        </dsn-table>
-      <span slot="footer" class="dialog-footer">
+        </template>
+        <!-- </dsn-table> -->
+      <!-- <span slot="footer" class="dialog-footer">
         <dsn-button @click="routerDialog = false">取 消</dsn-button>
         <dsn-button type="primary" @click="sureRouter">确 定</dsn-button>
-      </span>
-    </el-dialog>
+      </span> -->
+    </DsnSelectDialog>
   </div>
 </template>
 
@@ -325,10 +340,10 @@ export default {
       callback();
     };
     const numIssuedRules = (rule, value, callback) => {
+      let reg = /^[1-9]\d*$/;
         if (value === "") {
             callback("生产数量不为空");
         }
-        let reg = /^[1-9]\d*$/;
         if (!reg.test(value)) {
             callback("生产数量应只包含非零整数");
         }
@@ -353,7 +368,9 @@ export default {
             router:"",
             kays_3:""
         },
-        v:"",
+        selectOrderArr:[],
+        selectMaterialArr:[],
+        selectRouterArr:[],
         formLabelWidth:"150px",
         searchRules:{
           shopOrder: [{ validator: shopOrderRule, trigger: "blur" }]
@@ -382,16 +399,26 @@ export default {
         // 物料、版本、当前版本、描述
         materialTable:[],
         materialDialog:false,
-        materialChoice:[],
+        // materialChoice:[],
         routerDialog:false,
         routerTable:[],
-        routerChoice:[]
+        // routerChoice:[]
     };
   },
   methods:{
     helpTextOrdere(item){
       this.searchForm.shopOrder=item.shopOrder;
       return item.shopOrder;
+    },
+    helpTextMaterial(item){
+      this.ruleForm.plannedMaterial=item.material;
+      this.ruleForm.plannedMaterialRev=item.materialRev
+      return item.material;
+    },
+    helpTextRouter(item){
+      this.ruleForm.plannedRouterRev=item.revision;
+      this.ruleForm.plannedRouter=item.router;
+      return item.router;
     },
     routerHandler(){
       listRouterPageHttp().then(data =>{
@@ -407,28 +434,28 @@ export default {
         })
       this.routerDialog=true;
     },
-    sureRouter(){
-      if(this.routerChoice.length>1){
-        this.$message({
-            message:"只能选择一行数据",
-            type:'warning'
-          })
-          return ;
-      }if(this.routerChoice.length===0){
-        this.$message({
-          message:"还没选择一行数据",
-          type:'warning'
-        })
-        return ;
-      }
-      else{
-        this.ruleForm.plannedRouter=this.routerChoice[0].router;
-        this.ruleForm.plannedRouterRev=this.routerChoice[0].revision;
-        this.routerDialog=false;
-      }
-    },
+    // sureRouter(){
+    //   if(this.routerChoice.length>1){
+    //     this.$message({
+    //         message:"只能选择一行数据",
+    //         type:'warning'
+    //       })
+    //       return ;
+    //   }if(this.routerChoice.length===0){
+    //     this.$message({
+    //       message:"还没选择一行数据",
+    //       type:'warning'
+    //     })
+    //     return ;
+    //   }
+    //   else{
+    //     this.ruleForm.plannedRouter=this.routerChoice[0].router;
+    //     this.ruleForm.plannedRouterRev=this.routerChoice[0].revision;
+    //     this.routerDialog=false;
+    //   }
+    // },
     materialHandler(){
-      // alert("111")
+      this.materialDialog=true;
       listAllRequest().then(data =>{
           const res = data.data
           if(res.code == 200){
@@ -440,13 +467,13 @@ export default {
             })
           }
         })
-      this.materialDialog=true;
     },
     orderHandler(){
+      this.orderDialog=true;
       findShopOrderListHttp().then(data =>{
             const res = data.data
             if(res.code == 200){
-              // console.log(res,"shuju ")
+              // console.log(res.data,"shuju ")
               this.orderTable=res.data
               // this.$message({
               //   message:'更新成功',
@@ -459,37 +486,36 @@ export default {
               })
             }
           })
-      this.orderDialog=true;
-    },
-    sureOrder(){
-      alert("111")
-    },
-    sureMaterial(){
-      if(this.materialChoice.length>1){
-        this.$message({
-            message:"只能选择一行数据",
-            type:'warning'
-          })
-          return ;
-      }if(this.materialChoice.length===0){
-        this.$message({
-          message:"还没选择一行数据",
-          type:'warning'
-        })
-        return ;
-      }
-      else{
-        this.ruleForm.plannedMaterial=this.materialChoice[0].material;
-        this.ruleForm.plannedMaterialRev=this.materialChoice[0].materialRev;
-        this.materialDialog=false;
-      }
-    },
-    handleSelectionMaterial(row){
-      this.materialChoice=row;
-    },
-    handlerSelectionRouter(row){
-      this.routerChoice=row;
-    },
+      },
+    // sureOrder(){
+    //   alert("111")
+    // },
+    // sureMaterial(){
+    //   if(this.materialChoice.length>1){
+    //     this.$message({
+    //         message:"只能选择一行数据",
+    //         type:'warning'
+    //       })
+    //       return ;
+    //   }if(this.materialChoice.length===0){
+    //     this.$message({
+    //       message:"还没选择一行数据",
+    //       type:'warning'
+    //     })
+    //     return ;
+    //   }
+    //   else{
+    //     this.ruleForm.plannedMaterial=this.materialChoice[0].material;
+    //     this.ruleForm.plannedMaterialRev=this.materialChoice[0].materialRev;
+    //     this.materialDialog=false;
+    //   }
+    // },
+    // handleSelectionMaterial(row){
+    //   this.materialChoice=row;
+    // },
+    // handlerSelectionRouter(row){
+    //   this.routerChoice=row;
+    // },
     //初始化获取自定义字段
     // getCustom(){
     //     const params ={
@@ -505,6 +531,11 @@ export default {
       for(let key in this.ruleForm){
          this.ruleForm[key]  = ''
       }
+      this.ruleForm.shopOrderType="生产"; //类型
+      this.ruleForm.status="可下达"; //状态
+      this.$refs.orderChoice.clearSelect();
+      this.$refs.materialChoice.clearSelect();
+      this.$refs.routerChoice.clearSelect();
       //shopOrder
       this.searchForm.shopOrder = ''
       //重置oldShopOrder
