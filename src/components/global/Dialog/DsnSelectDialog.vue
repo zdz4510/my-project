@@ -51,7 +51,7 @@ export default {
   watch: {
     tableData: {
       handler: function() {
-        this.initStatus();
+        this.clearSelect();
       },
       deep: true
     }
@@ -104,14 +104,14 @@ export default {
       this.selectArr = arr;
       this.$emit("change", this.selectArr);
     },
-    initStatus() {
+    clearSelect() {
       this.$refs["table"].clearSelection();
       this.$refs["table"].setCurrentRow();
       this.selectArr = [];
       this.$emit("change", this.selectArr);
     },
     cancle() {
-      this.initStatus();
+      this.clearSelect();
       this.$emit("cancle");
       this.$emit("update:visible", false);
     },
@@ -122,7 +122,7 @@ export default {
     close(deleteItem){
         console.log('close==')
         if(this.isSingle){
-            this.initStatus();
+            this.clearSelect();
             return
         }
 

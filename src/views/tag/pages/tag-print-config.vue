@@ -4,6 +4,7 @@
     <div>
       <dsn-button @click.native="addRow">添加</dsn-button>
       <dsn-button @click.native="deleteRow">删除</dsn-button>
+       <dsn-button @click.native="clear">清空</dsn-button>
        <dsn-button @click="testPrint">测试打印</dsn-button>
     </div>
     <dsn-table
@@ -108,9 +109,20 @@ export default {
       if(!this.current){
         this.$message({
           type:"warning",
-          message:'清先选中在打印'
+          message:'请先选中在打印'
         })
       }
+      // const {} = this.current;
+      // if(a===''||b==='',c===''){
+      //     this.$message({
+      //     type:"warning",
+      //     message:'请补全当前选中的行'
+      //   })
+      // }
+    },
+    // 清空表格里面的数据
+    clear(){
+
     },
     // 获取打印设置
     handleGetPrintDevicesAvailable() {

@@ -104,7 +104,7 @@
     </dsnPanel>
 
     <el-dialog title="标签配置" :visible.sync="showConfig" width="400">
-      <tag-print-config v-model="configArr"  />
+      <tag-print-config v-model="configArr" />
       <span slot="footer" class="dialog-footer">
         <el-button @click="showConfig = false">取 消</el-button>
         <el-button type="primary">
@@ -156,7 +156,12 @@ export default {
         packingClass: ""
       },
       labelList: [],
-      configArr:[],
+      configArr: [],
+      nextInfo: {
+        matGroup: "",
+        mat: "",
+        packingClass: ""
+      }
     };
   },
   components: {
@@ -169,9 +174,9 @@ export default {
       this.showConfig = true;
     },
     // 打印标签
-    print(){
-
-    },
+    print() {},
+    // 添加打野记录
+    addPrintLog() {},
     //  检索
     handleSearchByLotNo() {
       searchByLotNo({
@@ -183,7 +188,10 @@ export default {
         console.log(res);
         if (res.code == 200) {
           if (res.data) {
-            this.info = res.data;
+            this.nextInfo = this.info; //吧这次的info 给next
+            this.info = res.data; // 获取最新的info
+            //  判断这次的info 和上次的info 是不是相同的
+            this.compareInfo();
             this.handleSearchLabelIdListByMat();
             this.handleGetPrintDevicesAvailable();
           }
@@ -194,6 +202,29 @@ export default {
           });
         }
       });
+    },
+    compareInfo() {
+      const {
+        matGroup: nextMatGroup,
+        mat: nextMat,
+        packingClass: nextPackingClass
+      } = this.nextInfo;
+      //  这是第一次为空  不用比较
+      if (nextMatGroup === "" && nextMat === "" && nextPackingClass === "") {
+        return;
+      }
+
+      const { matGroup, mat, packingClass } = this.info;
+      if (
+        nextMatGroup === matGroup &&
+        mat === nextMat &&
+        nextPackingClass === packingClass
+      ) {
+        //
+        console.log("----");
+      } else {
+        this.configArr = [];
+      }
     },
     //  获取可用的打印设备
     handleGetPrintDevicesAvailable() {
