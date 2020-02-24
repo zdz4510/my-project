@@ -123,8 +123,8 @@ export default {
     },
     handleCancle() {
       this.clearSelect();
-      // this.$emit("cancle");
-     // this.$emit("update:visible", false);
+      this.$emit("cancle");
+      this.$emit("update:visible", false);
     },
     confirm() {
       if (this.isSingle) {
