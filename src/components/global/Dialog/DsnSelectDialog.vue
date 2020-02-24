@@ -132,6 +132,7 @@ export default {
           ...new Set([...this.totalSelectArr, ...this.selectArr])
         ];
       }
+      this.$emit('change',  this.totalSelectArr)
       this.$emit("confirm");
       //this.$emit("update:visible", false);
     },
