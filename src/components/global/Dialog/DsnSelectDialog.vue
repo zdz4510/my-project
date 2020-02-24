@@ -104,6 +104,8 @@ export default {
       this.selectArr = arr;
       this.$emit("change", this.selectArr);
     },
+
+    // 清空选中状态的方法
     clearSelect() {
       this.$refs["table"].clearSelection();
       this.$refs["table"].setCurrentRow();
