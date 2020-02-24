@@ -162,7 +162,7 @@ background-color: #ffffff;
 }
 .tabs-wrap {
   height: 100%;
-  overflow-y: scroll;
+  // overflow-y: scroll;
 
   .header {
     font-size: 14px;
@@ -188,6 +188,27 @@ background-color: #ffffff;
           &:active,&:focus {
             outline: none
           }
+        }
+        &:first-child{
+          input{
+            max-width: 100px;
+          }
+        }
+      }
+      &.tr-title {
+        td {
+          padding: 0;
+        }
+        /deep/ .el-button {
+          padding: 0;
+          height: 100%;
+          width: 100%;
+          font-weight: normal;
+          text-align: left;
+          padding: 5px;
+          background: #ccc;
+          color: #fff;
+          border-radius: 0;
         }
       }
     }

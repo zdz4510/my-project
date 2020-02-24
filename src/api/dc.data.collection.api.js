@@ -1,11 +1,11 @@
-import request from  "@/service/"
+import request from "@/service/";
 
 /**
  * 按条件查找数据收集组
  *  url /mes/dcData/findDcGroup
  */
 export const getCollectionData = data => {
-	return request.post(`${window.VUE_APP_URL}/mes/dcData/findDcGroup`,data);
+  return request.post(`${window.VUE_APP_URL}/mes/dcData/findDcGroup`, data);
 };
 
 /**
@@ -13,7 +13,7 @@ export const getCollectionData = data => {
  *  url /mes/dcData/findDcGroupData
  */
 export const findDcGroupDataHttp = data => {
-	return request.post(`${window.VUE_APP_URL}/mes/dcData/findDcGroupData`,data);
+  return request.post(`${window.VUE_APP_URL}/mes/dcData/findDcGroupData`, data);
 };
 
 /**
@@ -21,24 +21,30 @@ export const findDcGroupDataHttp = data => {
  * url /mes/dcData/checkParam
  */
 export const checkParamData = data => {
-	return request.post(`${window.VUE_APP_URL}/mes/dcData/checkParam`,data);
+  return request.post(`${window.VUE_APP_URL}/mes/dcData/checkParam`, data);
 };
 
 /**
  * 保存数据收集结果
  * url /mes/dcData/saveDataCollectResult
  */
-export const saveCollectionData = data => {
-	return request.post(`${window.VUE_APP_URL}/mes/dcData/saveDataCollectResult`,data);
+export const saveDataCollectResult = data => {
+  return request.post(
+    `${window.VUE_APP_URL}/mes/dcData/saveDataCollectResult`,
+    data
+  );
 };
 
 /**
  * 查询启用的参数列表
  */
 export const getParamsList = data => {
-	return request.get(`${window.VUE_APP_URL}/mes/dcParameterMeasure/findActiveDcParameterMeasureList`,{
-		params:data
-	});
+  return request.get(
+    `${window.VUE_APP_URL}/mes/dcParameterMeasure/findActiveDcParameterMeasureList`,
+    {
+      params: data
+    }
+  );
 };
 
 /**
@@ -46,5 +52,7 @@ export const getParamsList = data => {
  *  url /mes/material/findMaterial
  */
 export const getMaterialList = data => {
-	return request.post(`${window.VUE_APP_URL}/mes/material/findMaterial?currentPage=${data.currentPage}&deleteFlag=${data.deleteFlag}&pageSize=${data.pageSize}&tenantSiteCode=${data.tenantSiteCode}&mat=${data.mat}&matRev=${data.matRev}`);
+  return request.post(
+    `${window.VUE_APP_URL}/mes/material/findMaterial?currentPage=${data.currentPage}&deleteFlag=${data.deleteFlag}&pageSize=${data.pageSize}&tenantSiteCode=${data.tenantSiteCode}&mat=${data.mat}&matRev=${data.matRev}`
+  );
 };
