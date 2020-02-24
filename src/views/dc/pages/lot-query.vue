@@ -156,7 +156,7 @@
           <span>搜索结果</span>
         </div>
         <!-- 查询结果start -->
-        <dsn-table
+        <!-- <dsn-table
           ref="multipleTable"
           :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)"
           tooltip-effect="dark"
@@ -184,16 +184,42 @@
               <span>{{ scope.row.router }}/{{ scope.row.routerRev }}</span>
             </template>
           </el-table-column>
-        </dsn-table>
-        <dsn-pagination
-          background
-          layout="->,total,prev,pager,next,sizes"
-          :total="total"
-          :page-size="pagesize"
-          :current-page="currentPage"
-          @current-change="handleCurrentChange"
-          @size-change="handlePagesize"
-        ></dsn-pagination>
+        </dsn-table>-->
+        <DsnSelectDialog
+          width="800px"
+          :isSingle="false"
+          :helpText="helpText"
+          :tableData="tableData"
+          v-model="selectionList"
+          :visible.sync="visible"
+        >
+          <template slot="header">
+            <el-input v-model="search" placeholder></el-input>
+            <el-button @click="query">search</el-button>
+          </template>
+          <template slot="body">
+            <el-table-column type="selection" width="55"></el-table-column>
+            <el-table-column type="index" width="55"></el-table-column>
+            <el-table-column prop="lot" label="LOT" width="200"></el-table-column>
+            <el-table-column prop="shopOrder" label="工单"></el-table-column>
+            <el-table-column prop="lotStatus" label="状态"></el-table-column>
+            <el-table-column prop="operation" label="工序">
+              <template slot-scope="scope">
+                <span>{{ scope.row.operationList?scope.row.operationList.join(","):scope.row.operationList }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="物料/版本">
+              <template slot-scope="scope">
+                <span>{{ scope.row.material }}/{{ scope.row.materialRev }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="modifyTime" label="工艺路线/版本">
+              <template slot-scope="scope">
+                <span>{{ scope.row.router }}/{{ scope.row.routerRev }}</span>
+              </template>
+            </el-table-column>
+          </template>
+        </DsnSelectDialog>
         <div class="confirm">
           <dsn-button size="small" type="primary" @click="handleConfirm">确认</dsn-button>
           <dsn-button size="small" type="primary">取消</dsn-button>
@@ -273,9 +299,6 @@ export default {
   data() {
     return {
       tableData: [],
-      currentPage: 1,
-      pagesize: 10,
-      total: 0,
       lotConditionForm: {
         lot: "",
         lotStatus: "",
@@ -304,7 +327,9 @@ export default {
       //资源
       resourceDialog: false,
       resourceList: [],
-      selectedData: []
+      selectedData: [],
+      search: "",
+      visible: true
     };
   },
   created() {
@@ -347,29 +372,6 @@ export default {
     handleSelectionChange(val) {
       console.log(2222);
       this.selectionList = val;
-    },
-    //改变页码
-    handleCurrentChange(val) {
-      this.currentPage = val;
-      console.log(this.tableData);
-      console.log(this.selectedData);
-      this.tableData.forEach(element1 => {
-        this.selectedData.forEach(element2 => {
-          console.log(
-            element1.lot === element2.lot,
-            element1.lot,
-            element2.lot
-          );
-          if (element1.lot === element2.lot) {
-            this.$refs.multipleTable.toggleRowSelection(element1);
-          }
-        });
-      });
-    },
-    // 修改页码大小
-    handlePagesize(pagesize) {
-      this.pagesize = pagesize;
-      this.currentPage = 1;
     },
     //查询前验证查询条件
     handleQueryCheck() {
@@ -576,8 +578,46 @@ export default {
     handleResourceComfire() {
       this.lotConditionForm.resource = this.currentRow.resource;
       this.resourceDialog = false;
-    }
+    },
     //资源查询end
+    //表格start
+    helpText(item) {
+      return item.colorCode;
+    },
+    query() {
+      // getColorPage().then(res => {
+      //   if (res.data.code == 200) {
+      //     this.tableData = res.data.data.data;
+      //   }
+      // });
+    },
+    handleChange(v) {
+      console.log(v);
+    },
+    toggle(V) {
+      console.log("revecied", V);
+    },
+    tableSelectAll() {
+      console.log("用户监听到到事件");
+    },
+    rowClick(row) {
+      console.log("click" + row);
+    },
+    selectionChange(selection) {
+      console.log(selection);
+    },
+    cellClick() {
+      console.log("cell click");
+    },
+    clearSelection() {
+      console.log(this.$refs["table"]);
+      this.$refs["table"].clearSelection();
+      this.paramData = {
+        a: 10
+      };
+      //  this.$refs['table'].search()
+    }
+    //表格end
   }
 };
 </script>

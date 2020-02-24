@@ -2,10 +2,10 @@
   <!-- 标签配置打印 -->
   <div class="tag-print-config">
     <div>
-      <dsn-button @click.native="addRow">添加</dsn-button>
-      <dsn-button @click.native="deleteRow">删除</dsn-button>
-       <dsn-button @click.native="clear">清空</dsn-button>
-       <dsn-button @click="testPrint">测试打印</dsn-button>
+      <dsn-button @click="addRow">添加</dsn-button>
+      <dsn-button @click="deleteRow">删除</dsn-button>
+      <dsn-button @click="clear">清空</dsn-button>
+      <dsn-button @click="testPrint">测试打印</dsn-button>
     </div>
     <dsn-table
       :data="tableData"
@@ -18,7 +18,10 @@
       <el-table-column type="index" label="序号" width="50"></el-table-column>
       <el-table-column prop="date" label="打印设备">
         <template slot-scope="scope">
-          <dsn-select v-model="scope.row.print" @focus="handleGetPrintDevicesAvailable">
+          <dsn-select
+            v-model="scope.row.printDevice"
+            @focus="handleGetPrintDevicesAvailable"
+          >
             <el-option
               :label="item"
               :value="item"
@@ -30,11 +33,11 @@
       </el-table-column>
       <el-table-column prop="name" label="标签id">
         <template slot-scope="scope">
-          <dsn-select v-model="scope.row.label" @focus="handleSelectTag">
+          <dsn-select v-model="scope.row.label">
             <el-option
-              :label="item.label"
-              :value="item.label"
-              v-for="(item, index) in tagSelectList"
+              :label="item"
+              :value="item"
+              v-for="(item, index) in labelList"
               :key="index"
             ></el-option>
           </dsn-select>
@@ -42,7 +45,7 @@
       </el-table-column>
       <el-table-column prop="address" label="打印数量">
         <template slot-scope="scope">
-          <dsn-input type="number" v-model="scope.row.num" />
+          <dsn-input type="number" v-model="scope.row.printCopies" />
         </template>
       </el-table-column>
     </dsn-table>
@@ -50,25 +53,29 @@
 </template>
 <script>
 import { getTagConfigList } from "@/api/tag/tag.config.api";
-import { getPrintDevicesAvailable } from "@/api/tag/tag.print.api";
+import { getPrintDevicesAvailable, printLabel } from "@/api/tag/tag.print.api";
 export default {
   name: "tagPrintConfig",
-  model:{
-     prop: "tableData",
+  model: {
+    prop: "tableData",
     event: "change"
   },
-  props:{
-    tableData:{
-      type:Array,
-      required:true
+  props: {
+    tableData: {
+      type: Array,
+      required: true
+    },
+    labelList: {
+      type: Array,
+      required: true
     }
   },
-  watch:{
-    tableData:{
-      handler:function(){
-        this.$emit('change',this.tableData);
+  watch: {
+    tableData: {
+      handler: function() {
+        this.$emit("change", this.tableData);
       },
-      deep:true
+      deep: true
     }
   },
   data() {
@@ -88,11 +95,34 @@ export default {
     };
   },
   created() {
-    this.handleSelectTag();
+    // this.handleSelectTag();
     this.handleGetPrintDevicesAvailable();
   },
 
   methods: {
+    // 同步 打印标签
+    async printLabelAysnc(configArr) {
+      try {
+        for (let index = 0; index < configArr.length; index++) {
+          const element = configArr[index];
+          const data = await printLabel(element);
+          const res = data.data;
+          if (res.code == 200) {
+            this.$message({
+              type: "success",
+              message: "打印成功"
+            });
+          } else {
+            this.$message({
+              type: "error",
+              message: res.message
+            });
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
     // 获取标签模板的下拉框内容
     handleSelectTag(label = "") {
       getTagConfigList({
@@ -104,26 +134,29 @@ export default {
         }
       });
     },
-    // 测试打印  
-    testPrint(){
-      if(!this.current){
+    // 测试打印
+    testPrint() {
+      if (!this.current) {
         this.$message({
-          type:"warning",
-          message:'请先选中在打印'
-        })
+          type: "warning",
+          message: "请先选中在打印"
+        });
+
+        return;
       }
-      // const {} = this.current;
-      // if(a===''||b==='',c===''){
-      //     this.$message({
-      //     type:"warning",
-      //     message:'请补全当前选中的行'
-      //   })
-      // }
+      const { label, printCopies, printDevice } = this.current;
+      if (label === "" || printCopies === "" || printDevice === "") {
+        this.$message({
+          type: "warning",
+          message: "请补全当前选中的行"
+        });
+
+        return;
+      }
+      this.printLabelAysnc([this.current]);
     },
     // 清空表格里面的数据
-    clear(){
-
-    },
+    clear() {},
     // 获取打印设置
     handleGetPrintDevicesAvailable() {
       getPrintDevicesAvailable().then(data => {
@@ -139,15 +172,19 @@ export default {
     //添加行
     addRow() {
       this.tableData.push({
-        print: "",
+        printDevice: "",
         label: "",
-        num: ""
+        printCopies: ""
       });
     },
     //删除行
     deleteRow() {
       //删除index
       if (!this.current) {
+        this.$message({
+          type: "warning",
+          message: "请先选择删除的行"
+        });
         return;
       }
       let index = this.tableData.findIndex(item => {
@@ -157,8 +194,8 @@ export default {
       this.tableData.splice(index, 1);
       this.current = null;
     },
-    rowClick(row){
-      this.current = row
+    rowClick(row) {
+      this.current = row;
     },
     handleCurrentChange(current) {
       this.current = current;

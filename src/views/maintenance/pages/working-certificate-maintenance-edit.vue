@@ -288,42 +288,5 @@ export default {
       }
     }
   }
-  // padding: 10px 30px;
-  // .operate {
-  //   padding: 10px 0;
-  // }
-  // .showInfo {
-  //   display: flex;
-  //   .left {
-  //     width: 200px;
-  //   }
-  //   .right {
-  //     flex: 1;
-  //     .el-form {
-  //       .el-form-item {
-  //         .el-form-item__content {
-  //           width: 250px;
-  //         }
-  //       }
-  //     }
-  //     .el-tabs {
-  //       .el-form {
-  //         .el-form-item {
-  //           .el-form-item__content {
-  //             width: 250px;
-  //             .el-radio-group {
-  //               .el-radio {
-  //                 margin-right: 12px;
-  //               }
-  //             }
-  //             .resource {
-  //               width: 90%;
-  //             }
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
 }
 </style>
