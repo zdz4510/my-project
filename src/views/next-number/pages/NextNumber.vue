@@ -13,75 +13,82 @@
           label-width="100px"
           class="form-style"
         >
-          <el-form-item label="编号类型:" prop="nextNumberType" required>
-            <dsn-select v-model="searchForm.nextNumberType" placeholder="请选择物料">
-              <el-option
-                v-for="item in type"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              ></el-option>
-            </dsn-select>
-          </el-form-item>
-          <el-form-item label="定义目标:" prop="definedBy" required>
-            <dsn-select v-model="searchForm.definedBy" placeholder="请选择" @change="definedChange">
-              <el-option
-                v-for="item in target"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              ></el-option>
-            </dsn-select>
-          </el-form-item>
-          <el-form-item label prop="value" v-if="searchForm.definedBy !== 'MATERIAL_GROUP'">
-            <dsn-select
-              v-model="searchForm.value"
-              placeholder="请选择"
-              @change="onChange"
-              filterable
-              v-loadMore="loadMore"
-              :remote-method="searchMaterialList"
-            >
-              <el-option
-                v-for="item in options"
-                :key="item.material+'&'+item.materialRev"
-                :label="item.material"
-                :value="item.material+'&'+item.materialRev"
+        <dsn-row>
+          <dsn-col :span="24">
+            <el-form-item label="编号类型:" prop="nextNumberType">
+              <dsn-select v-model="searchForm.nextNumberType" placeholder="请选择物料">
+                <el-option
+                  v-for="item in type"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </dsn-select>
+            </el-form-item>
+          </dsn-col>
+        </dsn-row>
+        <dsn-row>
+          <dsn-col :span="24">
+            <el-form-item label="定义目标:" prop="definedBy">
+              <dsn-select v-model="searchForm.definedBy" placeholder="请选择" @change="definedChange">
+                <el-option
+                  v-for="item in target"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </dsn-select>
+            </el-form-item>
+            <el-form-item label prop="value" v-if="searchForm.definedBy !== 'MATERIAL_GROUP'">
+              <dsn-select
+                v-model="searchForm.value"
+                placeholder="请选择"
+                @change="onChange"
+                filterable
+                v-loadMore="loadMore"
+                :remote-method="searchMaterialList"
               >
-                <span style="float: left">{{ item.material }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.materialRev }}</span>
-              </el-option>
-            </dsn-select>
-          </el-form-item>
-          <el-form-item label prop="value" v-if="searchForm.definedBy == 'MATERIAL_GROUP'">
-            <dsn-select
-              v-model="searchForm.value"
-              placeholder="请选择"
-              @change="onChange"
-              filterable
-              v-loadMore="loadMore"
-              :remote-method="searchMaterialList"
-            >
-              <el-option
-                v-for="item in options"
-                :key="item.materialGroup"
-                :label="item.materialGroup"
-                :value="item.materialGroup"
+                <el-option
+                  v-for="item in options"
+                  :key="item.material+'&'+item.materialRev"
+                  :label="item.material"
+                  :value="item.material+'&'+item.materialRev"
+                >
+                  <span style="float: left">{{ item.material }}</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.materialRev }}</span>
+                </el-option>
+              </dsn-select>
+            </el-form-item>
+            <el-form-item label prop="value" v-if="searchForm.definedBy == 'MATERIAL_GROUP'">
+              <dsn-select
+                v-model="searchForm.value"
+                placeholder="请选择"
+                @change="onChange"
+                filterable
+                v-loadMore="loadMore"
+                :remote-method="searchMaterialList"
               >
-                <!-- <span style="float: left">{{ item.materialGroup }}</span> -->
-                <!-- <span style="float: right; color: #8492a6; font-size: 13px">{{ item.materialRev }}</span> -->
-              </el-option>
-            </dsn-select>
-          </el-form-item>
-          <el-form-item
-            label="版本:"
-            prop="materialRev"
-            v-if="searchForm.definedBy !== 'MATERIAL_GROUP'"
-            required
-          >
-            <dsn-input v-model="searchForm.materialRev" disabled></dsn-input>
-          </el-form-item>
-          <el-form-item label="提交规则:" prop="commitType" required>
+                <el-option
+                  v-for="item in options"
+                  :key="item.materialGroup"
+                  :label="item.materialGroup"
+                  :value="item.materialGroup"
+                >
+                  <!-- <span style="float: left">{{ item.materialGroup }}</span> -->
+                  <!-- <span style="float: right; color: #8492a6; font-size: 13px">{{ item.materialRev }}</span> -->
+                </el-option>
+              </dsn-select>
+            </el-form-item>
+            <el-form-item
+              label="版本:"
+              prop="materialRev"
+              v-if="searchForm.definedBy !== 'MATERIAL_GROUP'"
+            >
+              <dsn-input v-model="searchForm.materialRev" disabled></dsn-input>
+            </el-form-item>
+          </dsn-col>
+        </dsn-row>
+          <el-form-item label="提交规则:" prop="commitType">
             <dsn-select v-model="searchForm.commitType" placeholder="请选择">
               <el-option
                 v-for="item in commitRule"
@@ -96,7 +103,7 @@
           <dsn-button size="small" type="primary" @click.native="search('searchForm')">查询</dsn-button>
           <dsn-button size="small" type="primary" @click.native="resetForm('searchForm')">重置</dsn-button>
           <dsn-button size="small" type="success" icon="el-icon-folder-add" @click.native="handleSaveData">保存</dsn-button>
-          <dsn-button icon="el-icon-delete" size="small" type="danger" @click.native="del">删除</dsn-button>
+          <dsn-button icon="el-icon-delete" size="small" type="danger" :disabled="!deleteFlag" @click.native="del">删除</dsn-button>
         </div>
       </div>
     </DsnPanel>
@@ -158,6 +165,7 @@
        @handleClose="handleClose"
        @handleSave="handleSave"
        v-if="dialogType === 'add'"
+       :params="dialogFlag"
       ></add-next-number>
       <edit-next-number
        @handleClose="handleClose"
@@ -180,6 +188,11 @@ import {
 import { mapMutations } from "vuex";
 import addNextNumber from './AddNextNumber.vue';
 import editNextNumber from './EditNextNumber.vue';
+const commitTypeRule = [{
+  required: true,
+  message: '请选择提交规则',
+  trigger: 'change'
+}]
 export default {
   name: "next-number",
   inject: ['defaltDialogWidth'],
@@ -196,6 +209,7 @@ export default {
       },
       dialogFlag: false,
       dialogType: '',
+      deleteFlag: false,
       addForm: {
         type: "",
         str: ""
@@ -213,9 +227,6 @@ export default {
         ],
         materialRev: [
           { required: true, message: "请填写版本号", trigger: "blur" }
-        ],
-        commitType: [
-          { required: true, message: "请选择提交规则", trigger: "change" }
         ],
         value: [
           {
@@ -339,9 +350,11 @@ export default {
       }
     },
     search(formName) {
+      delete this.rules.commitType;
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.handleQuery();
+          this.deleteFlag = true;
         } else {
           console.log("error submit!!");
           return false;
@@ -360,6 +373,9 @@ export default {
         params.material = this.searchForm.value.split("&")[0];
       }
       if (params.sequences) delete params.sequences;
+
+      this.$refs.multipleTable.clearSelection();
+      
       getNextNumberList(params).then(data => {
         if (data.data.code == 200) {
           if (!data.data.data) {
@@ -368,7 +384,6 @@ export default {
               message: "暂无数据"
             });
           }
-          console.log('weqweqweqw', this.tableData)
           this.tableData.data = data.data.data && data.data.data.sequences || [];
           
         } else {
@@ -380,6 +395,8 @@ export default {
     resetForm(formName) {
       sessionStorage.removeItem('searchForm');
       this.$refs[formName].resetFields();
+       this.$refs.multipleTable.clearSelection();
+      this.deleteFlag = false;
       Object.keys(this.searchForm).map(item => this.searchForm[item] = '');
       this.checkedList = [];
       this.tableData.data = [];
@@ -505,14 +522,14 @@ export default {
             sequences: arr
           }
         ];
-        saveNextNumber(params).then(data => {
+       /*  saveNextNumber(params).then(data => {
           if (data.data.code == 200) {
             this.$message.success("操作成功");
             this.search("searchForm");
           } else {
             this.$message.error(data.data.message);
           }
-        });
+        }); */
       }
     },
     handleClickDown(row) {
@@ -542,14 +559,14 @@ export default {
             sequences: arr
           }
         ];
-        saveNextNumber(params).then(data => {
+      /*   saveNextNumber(params).then(data => {
           if (data.data.code == 200) {
             this.$message.success("操作成功");
             this.search("searchForm");
           } else {
             this.$message.error(data.data.message);
           }
-        });
+        }); */
       }
     },
     handleClickDelete(row) {
@@ -612,14 +629,15 @@ export default {
           const modifyData = item.find(child => child.sequence === obj.sequence);
           return modifyData || obj;
         })
-        console.log(newData)
         this.tableData.data = newData;
       }
     },
     handleSaveData() {
+      console.log('handleSaveData')
+      if (!this.$refs['searchForm'].rules.commitType) this.$refs['searchForm'].rules.commitType = commitTypeRule;
+      console.log(this.$refs['searchForm'].rules)
       this.$refs['searchForm'].validate(valid => {
         if (valid) {
-          console.log('tabledata', this.searchForm, this.tableData);
           const { searchForm, tableData: { data } } = this;
           const params = Object.assign(searchForm, { sequences: data } );
           saveNextNumber({updateList: [{...params}]}).then(data => {
@@ -636,14 +654,13 @@ export default {
     loadMore() {
       
       const { listTotal, options, searchText } = this;
-      console.log('loadmore', options.length, listTotal)
+
       if (options.length === listTotal) return;
       this.loading = true
       const params = {
         currentPage: this.listCurrentPage + 1,
         pageSize: this.listPageSize
       }
-      console.log('this', this.searchText)
       if (this.searchForm.definedBy == "MATERIAL") {
         params.material = searchText;
         searchMat(params).then(res => {
