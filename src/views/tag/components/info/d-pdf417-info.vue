@@ -147,6 +147,9 @@
         </tr>
       </table>
     </el-tab-pane>
+    <el-tab-pane label="资料源" name="infoSource">
+      <DInfo></DInfo>
+    </el-tab-pane>
   </el-tabs>
 </template>
 
@@ -160,6 +163,9 @@
         value2:false,
         value3:false
       }
+    },
+    components: {
+      DInfo: ()=> import('./d-component-info'),
     },
   }
 </script>
