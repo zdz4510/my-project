@@ -51,7 +51,7 @@
               </el-col>
             </el-row>
           </el-tab-pane>
-          <el-tab-pane label="工作中心关系维护" name="second">
+          <el-tab-pane label="工作中心关系维护" :disabled="addForm.workCenterType === 'LEVEL2'" name="second">
             <el-row>
               <el-col :span="11">
                 <dsn-table
@@ -160,6 +160,7 @@ import {
   getUserList
 } from "../../../api/work.center.api";
 import _ from "lodash";
+import { mapMutations } from "vuex";
 export default {
   name: "add-work-center",
   data() {
@@ -241,11 +242,11 @@ export default {
     });
   },
   methods: {
+    ...mapMutations(["POP"]),
     save(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
           let arr = [];
-          console.log('saa', this.allocateData)
           this.allocateData.map(item => {
             arr.push(item.workCenter);
           });
@@ -270,6 +271,18 @@ export default {
             ]
           };
           saveWorkCenter(params).then(data => {
+            const { name, path } = this.$route;
+            const parmas = {
+              deleteItem: {
+                name,
+                current: path
+              },
+              current: {
+                name,
+                current: path
+              }
+            }
+            this.POP(parmas)
             if (data.data.code == 200) {
               this.$message.success("保存成功");
               this.$router.push({ path: "/workCenter/workCenter" });

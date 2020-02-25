@@ -3,6 +3,7 @@
     <div class="operate">
       <dsn-button size="small" type="primary" @click.native="goBack">返回</dsn-button>
       <dsn-button size="small" type="primary" @click.native="handleSave('editForm')">保存</dsn-button>
+      <dsn-button size="small" type="primary" @click.native="handleReset('editForm')">重置</dsn-button>
     </div>
     <el-row :gutter="24">
       <!-- <el-col :span="6">
@@ -84,7 +85,7 @@
                   </el-col>
                 </el-row>
               </el-tab-pane>
-              <el-tab-pane label="工作中心关系维护" name="second">
+              <el-tab-pane label="工作中心关系维护" :disabled="editForm.workCenterType === 'LEVEL2'" name="second">
                 <el-row>
                   <el-col :span="11">
                     <dsn-table
@@ -278,7 +279,7 @@ export default {
     });
   },
   methods: {
-    ...mapMutations(["SETWORKCENTEREDITLIST"]),
+    ...mapMutations(["SETWORKCENTEREDITLIST", "POP"]),
     //初始化的操作
     init() {
       if (this.workCenterEditList.length > 0) {
@@ -462,7 +463,18 @@ export default {
             const res = data.data;
             this.saveDialog = false; // 保存的提示框消失
             this.selectIsDisabled = false;
-
+            const { name, path } = this.$route;
+            const parmas = {
+              deleteItem: {
+                name,
+                current: path
+              },
+              current: {
+                name,
+                current: path
+              }
+            }
+            this.POP(parmas)
             // 直接成功
             if (res.code === 200) {
               this.saveDialog = false;
@@ -496,6 +508,7 @@ export default {
                   this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
                 }
               }
+              this.$router.push({ path: "/workCenter/workCenter" });
             } else {
               this.$message({
                 message: res.message,
@@ -507,6 +520,9 @@ export default {
           });
         }
       });
+    },
+    handleReset() {
+      this.init();
     },
     check1(val) {
       this.selectedList = val;
