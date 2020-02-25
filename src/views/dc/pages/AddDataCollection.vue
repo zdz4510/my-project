@@ -639,7 +639,8 @@ export default {
     };
   },
   filters: {
-    filterValueType(value) {
+    filterValueType(val) {
+      const value = parseInt(val)
       if (value === 10) {
         return "数值";
       }
