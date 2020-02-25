@@ -88,7 +88,7 @@ export default {
   props: {
     keyValue: {
       type: String,
-      default: "lot"
+      required:true
     },
     title: {
       type: [String],
