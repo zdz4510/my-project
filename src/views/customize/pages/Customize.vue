@@ -133,14 +133,14 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="格式:" prop="fieldType">
-              <el-select v-model="addSetForm.fieldType">
+              <dsn-select v-model="addSetForm.fieldType">
                 <el-option
                   v-for="item in fieldType"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"
                 ></el-option>
-              </el-select>
+              </dsn-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -154,26 +154,26 @@
         <el-row v-if="addSetForm.fieldType == 'C'">
           <el-col :span="12">
             <el-form-item label="代码名:" prop="limitGeneralCode">
-              <el-select @change="handleChangeGeneralCode" v-model="addSetForm.limitGeneralCode">
+              <dsn-select @change="handleChangeGeneralCode" v-model="addSetForm.limitGeneralCode">
                 <el-option
                   v-for="item in code"
                   :key="item.generalCode"
                   :label="item.generalCode"
                   :value="item.generalCode"
                 ></el-option>
-              </el-select>
+              </dsn-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="字段:" prop="limitGeneralField">
-              <el-select :disabled="!addSetForm.limitGeneralCode" v-model="addSetForm.limitGeneralField">
+              <dsn-select :disabled="!addSetForm.limitGeneralCode" v-model="addSetForm.limitGeneralField">
                 <el-option
                   v-for="item in field"
                   :key="item.fieldName"
                   :label="item.fieldName"
                   :value="item.fieldName"
                 ></el-option>
-              </el-select>
+              </dsn-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -228,6 +228,14 @@ export default {
     defineProgramModel
   },
   data() {
+    const vaildFieldName = (rule, value, callback) => {
+      const { SetupInfoList, currentOperation } = this;
+      const setupIndex = SetupInfoList.findIndex(item => item.fieldName === value);
+      if (setupIndex !== -1 && currentOperation === 'add') {
+        return callback(new Error('字段名已存在'))
+      }
+      callback()
+    }
     return {
       formLabelWidth: "130px",
       activeName: "first",
@@ -241,7 +249,8 @@ export default {
       },
       srules: {
         fieldName: [
-          { required: true, message: "请填写字段名", trigger: ["blur", "change"] }
+          { required: true, message: "请填写字段名", trigger: ["blur", "change"] },
+          { validator: vaildFieldName, trigger: ['blur', 'change']}
         ],
         sequence: [{ required: true, message: "请填写序号", trigger: ["blur", "change"]}],
         fieldLabel: [
@@ -369,40 +378,24 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           // this.addSetForm.dcGroup = this.addForm.dcGroup
-          let form = JSON.parse(JSON.stringify(this.addSetForm));
+          const form = _.cloneDeep(this.addSetForm);
+          
           if (this.currentOperation == "add") {
-            if (
-              this.SetupInfoList.findIndex(
-                item =>
-                  JSON.parse(JSON.stringify(item.fieldName)) ==
-                  JSON.parse(JSON.stringify(form.fieldName))
-              ) == -1
-            ) {
-              this.SetupInfoList.push(form);
-              this.$message.success("操作成功");
-            } else {
-              this.$message.error("该条数据已存在，添加失败");
-            }
+            this.SetupInfoList.push(form);
+            this.$message.success("操作成功");
+            this.SetupInfoList.map((item, index) => {
+              item.sequence = index + 1;
+            });
           } else if (this.currentOperation == "edit") {
-            this.SetupInfoList.splice(
-              this.SetupInfoList.findIndex(
-                item =>
-                  JSON.parse(JSON.stringify(item)) ==
-                  JSON.parse(JSON.stringify(form))
-              ),
-              1,
-              form
-            );
+            this.SetupInfoList[this.editIndex] = form;
             this.$message.success("操作成功");
           }
-          this.SetupInfoList.map((item, index) => {
-            item.sequence = index + 1;
-          });
-          console.log(this.SetupInfoList);
+         
           this.$refs.sTable.clearSelection();
           this.$refs[formName].resetFields();
           this.dialogVisible = false;
           this.addSetForm.required = false;
+          this.editIndex = '';
         } else {
           console.log("error submit!!");
           return false;
@@ -464,12 +457,14 @@ export default {
     addSet() {
       this.dialogVisible = true;
       this.currentOperation = "add";
+      this.$refs.addSetForm.resetFields();
     },
     editSet() {
       this.dialogVisible = true;
       this.currentOperation = "edit";
       console.log(this.sCheckedList, "pc");
-      this.addSetForm = JSON.parse(JSON.stringify(this.sCheckedList[0]));
+      this.addSetForm = _.cloneDeep(this.sCheckedList[0]);
+      this.editIndex = this.SetupInfoList.findIndex(item => item.fieldName === this.addSetForm.fieldName);
     },
     delSet() {
       this.$confirm("是否删除所选数据?", "提示", {
