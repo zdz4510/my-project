@@ -143,9 +143,7 @@ export default {
   },
   created() {
     let params = "";
-    console.log('route', this.$route)
     getDataByAlarm(params).then(data => {
-      console.log(data);
       this.unallocateData = data.data.data;
       this.cloneUnallocateData = data.data.data;
     });
