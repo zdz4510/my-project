@@ -99,6 +99,7 @@
     </el-dialog>-->
     <DsnSelectDialog
       width="800px"
+      title="LOT多选"
       :isSingle="false"
       :helpText="helpText"
       :tableData="lotTableData"
@@ -107,6 +108,7 @@
       @confirm="handleConfirmSelectLot"
       @cancle="handleCancleSelectLot"
       keyValue="lot"
+      ref="lotMultiDialog"
     >
       <template slot="header">
         <!-- <el-input v-model="search" placeholder></el-input>
@@ -582,6 +584,7 @@ export default {
       this.stepStatusList = [];
       this.cloneLotQueryList = [];
       this.stepIdList = [];
+      this.handleResetCondition();
     },
     handleSetFinish() {
       if (this.tableData.length === 0) {
@@ -798,6 +801,7 @@ export default {
       this.lotConditionForm.lot = "";
       this.lotTableData = [];
       this.selectedLotList = [];
+      this.$refs["lotMultiDialog"].handleClear();
     },
     //确认选择lot
     handleConfirmSelectLot(val) {

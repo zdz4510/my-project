@@ -85,14 +85,14 @@
           type="danger"
           icon="el-icon-delete"
           :disabled="!editable"
-          @click.native="deleteCodeDialog = true"
+          @click.native="deleteCode"
         >删除通用代码</dsn-button>
         <dsn-button
           size="small"
           type="danger"
           icon="el-icon-delete"
           :disabled="selectionList.length <= 0 || !editable"
-          @click.native="deleteFieldDialog = true"
+          @click.native="deleteField"
         >删除字段名</dsn-button>
       </div>
       <!-- 表格操作end -->
@@ -232,24 +232,6 @@
       </span>
     </el-dialog>
     <!-- 字段名end -->
-    <!-- 通用代码删除start -->
-    <el-dialog title="通用代码删除" :visible.sync="deleteCodeDialog" :width="dialogWidth">
-      <span>是否确认{{ genericCodeDefineForm.genericCode }}代码名？</span>
-      <span slot="footer" class="dialog-footer">
-        <dsn-button @click.native="deleteCodeDialog = false">取 消</dsn-button>
-        <dsn-button type="primary" @click.native="handleCodeDelete">确 定</dsn-button>
-      </span>
-    </el-dialog>
-    <!-- 通用代码删除end -->
-    <!-- 字段名删除start -->
-    <el-dialog title="字段名删除" :visible.sync="deleteFieldDialog" :width="dialogWidth">
-      <span>是否确认删除{{ selectionList.length }}条数据？</span>
-      <span slot="footer" class="dialog-footer">
-        <dsn-button @click.native="deleteFieldDialog = false">取 消</dsn-button>
-        <dsn-button type="primary" @click.native="handleFieldDelete">确 定</dsn-button>
-      </span>
-    </el-dialog>
-    <!-- 字段名删除end -->
   </div>
 </template>
 
@@ -299,16 +281,16 @@ export default {
       }
       callback();
     };
-    // //代码描述验证规则
-    // const valiGeneralCodeDes = (rule, value, callback) => {
-    //   // let reg = /^[\u4e00-\u9fa5\w]{1,50}$/;
-    //   // let reg = /^\w{,50}$/;
-    //   let reg = /^.{1,50}$/g;
-    //   if (!reg.test(value)) {
-    //     callback("描述字数超出50字");
-    //   }
-    //   callback();
-    // };
+    //代码描述验证规则
+    const valiGeneralCodeDes = (rule, value, callback) => {
+      if (value === "") {
+        callback();
+      }
+      if (value.length > 50) {
+        callback("描述字数不能超出50字");
+      }
+      callback();
+    };
     const valiFieldSize = (rule, value, callback) => {
       if (value === "") {
         callback("长度不能为空");
@@ -345,10 +327,7 @@ export default {
           { required: true, message: "请输入代码名", trigger: "blur" },
           { validator: valiGeneralCode, trigger: "change" }
         ],
-        generalCodeDes: [
-          // { validator: valiGeneralCodeDes, max: 50, trigger: "blur" },
-          { min: 3, max: 5, message: "长度 50 以内", trigger: "blur" }
-        ]
+        generalCodeDes: [{ validator: valiGeneralCodeDes, trigger: "blur" }]
       },
       addForm: {
         fieldName: "",
@@ -376,8 +355,6 @@ export default {
       tableData: [],
       //表格复选框数据
       selectionList: [],
-      //字段名删除
-      deleteFieldDialog: false,
       //代码名弹出框
       generalCodeDialog: false,
       //弹出框代码名数据
@@ -394,8 +371,6 @@ export default {
       currentField: {},
       //弹出框字段名
       fieldData: [],
-      //通用代码删除
-      deleteCodeDialog: false,
       //操作类型
       operateType: "",
       //弹框宽度
@@ -455,7 +430,6 @@ export default {
             return this.usedFieldNames.indexOf(item) === -1;
           });
           this.editable = res.data.editable;
-          console.log(this.excessFieldNames);
           return;
         }
         this.$message({
@@ -537,9 +511,9 @@ export default {
     },
     //代码名弹出框确认选择
     handleSelectionGeneralCode() {
-      // console.log(this.currentGeneralCode.generalCode);
       if (this.flag) {
         this.genericCodeDefineForm.generalCode = this.currentGeneralCode.generalCode;
+        this.genericCodeDefineForm.generalCodeDes = "";
       } else {
         this.addForm.limitGeneralCode = this.currentGeneralCode.generalCode;
       }
@@ -714,6 +688,22 @@ export default {
         });
       });
     },
+    deleteCode() {
+      this.$confirm("是否删除所选代码名?", "删除", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.handleCodeDelete();
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
+    },
     //删除通用代码
     handleCodeDelete() {
       const data = {
@@ -727,7 +717,6 @@ export default {
             message: "通用代码删除成功",
             type: "success"
           });
-          this.deleteCodeDialog = false;
           this.handleReset();
           return;
         }
@@ -735,8 +724,23 @@ export default {
           message: res.message,
           type: "warning"
         });
-        this.deleteCodeDialog = false;
       });
+    },
+    deleteField() {
+      this.$confirm("是否删除所选字段?", "删除", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.handleFieldDelete();
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
     },
     //删除字段名
     handleFieldDelete() {
@@ -762,7 +766,6 @@ export default {
       // usedFieldNames: fieldNames,
       // //已使用的字段名
       // usedFieldNames: [],
-      this.deleteFieldDialog = false;
       this.$message({
         message: "字段名删除成功",
         type: "success"

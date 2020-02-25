@@ -5,74 +5,31 @@
       <dsn-button size="small" type="primary" @click="handleSave('editForm')">保存</dsn-button>
       <dsn-button size="small" type="primary" @click="resetForm">重置</dsn-button>
     </div>
-    <!-- <div>
-          <dsn-select
-            v-model="value"
-            clearable
-            placeholder="请选择"
-            :disabled="selectIsDisabled"
-            @clear="handleClearSelect"
-            @change="handleChangeOption"
-            @focus="handleSelectFocus"
-            ref="select"
-          >
+    <div class="operate">
+      <el-form :model="editForm" ref="editForm" :rules="rules" :inline="true">
+        <el-form-item label="数据收集组名称" prop="dcGroup" required>
+          <dsn-input v-model="editForm.dcGroup" disabled></dsn-input>
+        </el-form-item>
+        <el-form-item label="数据收集组类型:" prop="collectionType" required>
+          <dsn-select v-model="editForm.collectionType" disabled style="width:100%">
             <el-option
-              v-for="item in cloneList"
-              :key="item.dcGroup"
-              :label="item.dcGroup"
-              :value="item.dcGroup"
+              v-for="item in collectionType"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
             ></el-option>
           </dsn-select>
-          <el-table
-            ref="editTable"
-            :data="cloneList"
-            border
-            highlight-current-row
-            style="width: 100%"
-            height="513"
-            @row-click="handleCurrentChange"
-          >
-            <el-table-column label="数据收集组名称" prop="dcGroup"></el-table-column>
-            <el-table-column label="数据收集组类型">
-              <template slot-scope="scope">{{ getFormat(scope.row.collectionType) }}</template>
-            </el-table-column>
-          </el-table>
-    </div>-->
-    <div class="operate">
-      <el-row>
-        <el-col :span="12">
-          <el-form
-            :model="editForm"
-            ref="editForm"
-            :rules="rules"
-            class="dataCollectionFormTop"
-            :label-width="formLabelWidth"
-          >
-            <el-form-item label="数据收集组名称" prop="dcGroup" required>
-              <dsn-input v-model="editForm.dcGroup" disabled></dsn-input>
-            </el-form-item>
-            <el-form-item label="数据收集组类型:" prop="collectionType" required>
-              <dsn-select v-model="editForm.collectionType" disabled style="width:100%">
-                <el-option
-                  v-for="item in collectionType"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
-              </dsn-select>
-            </el-form-item>
-            <el-form-item label="数据收集组描述:" prop="dcGroupDes">
-              <dsn-input
-                class="dec"
-                type="textarea"
-                :autosize="{ minRows: 2, maxRows: 6}"
-                v-model="editForm.dcGroupDes"
-                style="width:100%"
-              ></dsn-input>
-            </el-form-item>
-          </el-form>
-        </el-col>
-      </el-row>
+        </el-form-item>
+        <el-form-item label="数据收集组描述:" prop="dcGroupDes">
+          <dsn-input
+            class="dec"
+            type="textarea"
+            :autosize="{ minRows: 2, maxRows: 6}"
+            v-model="editForm.dcGroupDes"
+            style="width:100%"
+          ></dsn-input>
+        </el-form-item>
+      </el-form>
     </div>
     <div class="operate">
       <el-tabs v-model="activeName" type="card">
@@ -340,7 +297,7 @@
         </el-row>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <dsn-button @click="paramsDialogVisible = false">取 消</dsn-button>
+        <dsn-button @click="resetParams">重 置</dsn-button>
         <dsn-button type="primary" @click="saveParams('addParamForm')">确 定</dsn-button>
       </span>
     </el-dialog>
@@ -490,6 +447,7 @@ import { findShopOrderListRequest } from "@/api/work-order/work-order.api.js";
 import { getOperationList } from "@/api/operation.maintain.api.js";
 import { findPageHttp } from "@/api/work.center.api.js";
 import { listAllResourceGroupHttp } from "@/api/device/type.api.js";
+import _ from "lodash";
 export default {
   name: "edit-data-collection",
   computed: {
@@ -776,7 +734,8 @@ export default {
       shopOrderList: [],
       operationList: [],
       workCenterList: [],
-      resourceGroupList: []
+      resourceGroupList: [],
+      cloneAddParamForm: {}
     };
   },
   filters: {
@@ -1071,6 +1030,34 @@ export default {
         return "--";
       }
     },
+    resetParams() {
+      if (this.currentOperation == "add") {
+        this.$refs["addParamForm"].resetFields();
+        this.$refs["addParamForm"].clearValidate();
+        this.addParamForm.parameter = "";
+        //   : {
+        //   parameter: "",
+        //   targetValue: "",
+        //   parameterDes: "",
+        //   upperSpecLimit: "",
+        //   parameterStatus: "",
+        //   lowerSpecLimit: "",
+        //   valueType: "",
+        //   falseValue: "false",
+        //   trueValue: "true",
+        //   upperWarnLimit: "",
+        //   required: "",
+        //   lowerWarnLimit: "",
+        //   softCheck: "",
+        //   alarm: "",
+        //   dcGroup: "",
+        //   tenantSiteCode: "test"
+        // },
+      }
+      if (this.currentOperation === "edit") {
+        this.addParamForm = _.cloneDeep(this.cloneAddParamForm);
+      }
+    },
     saveParams(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -1097,12 +1084,10 @@ export default {
             );
             this.$message.success("操作成功");
           }
-          console.log(this.MeasureInfoList);
           this.$refs.pTable.clearSelection();
+          this.resetParams();
           this.paramsDialogVisible = false;
-          this.$refs[formName].resetFields();
         } else {
-          console.log("error submit!!");
           return false;
         }
       });
@@ -1158,6 +1143,7 @@ export default {
     add() {
       this.paramsDialogVisible = true;
       this.currentOperation = "add";
+      this.$refs["addParamForm"].resetFields();
     },
     addSet() {
       this.setUpDialogVisible = true;
@@ -1167,8 +1153,8 @@ export default {
     edit() {
       this.paramsDialogVisible = true;
       this.currentOperation = "edit";
-      console.log(this.pCheckedList, "pc");
-      this.addParamForm = JSON.parse(JSON.stringify(this.pCheckedList[0]));
+      this.addParamForm = _.cloneDeep(this.pCheckedList[0]);
+      this.cloneAddParamForm = _.cloneDeep(this.pCheckedList[0]);
     },
     queryData() {
       this.queryMaterialGroup();

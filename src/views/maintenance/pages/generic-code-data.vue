@@ -224,7 +224,7 @@ export default {
       callback();
     };
     return {
-      totalData: {},
+      // totalData: {},
       //已使用的字段名
       usedFieldNames: [],
       //查询表单
@@ -309,10 +309,10 @@ export default {
       findGeneralCodeHttp(data).then(data => {
         const res = data.data;
         if (res.code === 200) {
-          if (JSON.stringify(this.totalData) === JSON.stringify(res.data)) {
-            return;
-          }
-          this.totalData = res.data;
+          // if (JSON.stringify(this.totalData) === JSON.stringify(res.data)) {
+          //   return;
+          // }
+          // this.totalData = res.data;
           this.tableData = res.data.definedData;
           this.genericCodeDataForm.generalCodeDes = res.data.generalCodeDes;
           this.fields = res.data.fields;
@@ -573,7 +573,7 @@ export default {
       this.addFormRules = {};
       this.editable = false;
       this.fields = [];
-      this.totalData = [];
+      // this.totalData = [];
     },
     checkAddForm(formName) {
       this.$refs[formName].validate(valid => {
@@ -690,7 +690,7 @@ export default {
       this.tableData = [];
       this.fields = [];
       this.editable = false;
-      this.totalData = [];
+      // this.totalData = [];
     }
   }
 };

@@ -112,6 +112,7 @@
     </el-dialog>-->
     <DsnSelectDialog
       width="800px"
+      title="LOT单选"
       :isSingle="true"
       :helpText="helpText"
       :tableData="tableData"
@@ -120,6 +121,7 @@
       @confirm="handleConfirmSelectLot"
       @cancle="handleCancleSelectLot"
       keyValue="lot"
+      ref="lotSingleDialog"
     >
       <template slot="header">
         <!-- <el-input v-model="search" placeholder></el-input>
@@ -491,6 +493,7 @@ export default {
       this.$refs["lotForm"].resetFields();
       this.$refs["lotDivestitureForm"].resetFields();
       this.showInfo = {};
+      this.handleResetCondition();
     },
     //查询LOT
     goQuery() {
@@ -609,23 +612,21 @@ export default {
       this.lotConditionForm.lot = "";
       this.tableData = [];
       this.selectedLotList = [];
+      this.$refs["lotSingleDialog"].handleClear();
     },
     //确认选择lot
     handleConfirmSelectLot(val) {
       this.selectedLotList = val;
       if (this.selectedLotList.length === 0) {
-        this.lotStepForm.lot = "";
+        this.lotForm.lot = "";
       }
       if (this.selectedLotList.length === 1) {
-        this.lotStepForm.lot = this.selectedLotList[0].lot;
+        this.lotForm.lot = this.selectedLotList[0].lot;
       }
-      if (this.selectedLotList.length > 1) {
-        this.lotStepForm.lot = "已选择" + this.selectedLotList.length + "个";
-      }
-      this.lotQueryDialog = false;
+      this.lotDialog = false;
     },
     handleCancleSelectLot() {
-      this.lotQueryDialog = false;
+      this.lotDialog = false;
     },
     //物料查询start
     queryMaterial() {
@@ -750,39 +751,6 @@ export default {
     //表格start
     helpText(item) {
       return item["lot"];
-    },
-    query() {
-      // getColorPage().then(res => {
-      //   if (res.data.code == 200) {
-      //     this.tableData = res.data.data.data;
-      //   }
-      // });
-    },
-    handleChange(v) {
-      console.log(v);
-    },
-    toggle(V) {
-      console.log("revecied", V);
-    },
-    tableSelectAll() {
-      console.log("用户监听到到事件");
-    },
-    rowClick(row) {
-      console.log("click" + row);
-    },
-    selectionChange(selection) {
-      console.log(selection);
-    },
-    cellClick() {
-      console.log("cell click");
-    },
-    clearSelection() {
-      console.log(this.$refs["table"]);
-      this.$refs["table"].clearSelection();
-      // this.paramData = {
-      //   a: 10
-      // };
-      //  this.$refs['table'].search()
     }
     //表格end
   }
