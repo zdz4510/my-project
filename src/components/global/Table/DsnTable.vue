@@ -1,5 +1,6 @@
 <template>
   <el-table
+    class="dsn-table"
     :height="height"
     :data="data"
     :stripe="stripe"
@@ -17,17 +18,17 @@
     :highlight-current-row="highlightCurrentRow"
     :row-class-name="rowClassName"
     ref="table"
-   
   >
-  <slot></slot>
+    <el-table-column v-if="highlightCurrentRow" label="" width="40"> </el-table-column>
+    <slot></slot>
   </el-table>
 </template>
 
 <script>
-import tableMixin from './table.mixin'
+import tableMixin from "./table.mixin";
 export default {
   name: "dsnTable",
-  mixins:[tableMixin],
+  mixins: [tableMixin],
   props: {
     // 数据源
     data: {
@@ -36,14 +37,14 @@ export default {
         return [];
       }
     },
-    "highlight-current-row":{
-          type:Boolean,
-          default:false
+    "highlight-current-row": {
+      type: Boolean,
+      default: false
     },
     //  key
-    "rowKey":{
-        type:String,
-        required:false
+    rowKey: {
+      type: String,
+      required: false
     },
     //高度
     height: {
@@ -85,16 +86,53 @@ export default {
       type: String,
       default: "没有数据啊"
     },
-    'rowClassName':{
-      type:Function,
-        required:false
+    rowClassName: {
+      type: Function,
+      required: false
     },
-   
+    highlightCurrentRow: {
+      type: Boolean,
+      default: false
+    },
+    showCurrent: {
+      type: Boolean,
+      default: true
+    }
   },
   methods: {
-  
     // 用于多选表格，清空用户的选择
-   
   }
 };
 </script>
+
+<style lang="scss">
+.dsn-table {
+  .el-table__row.current-row {
+    & > td:nth-child(1) {
+      background: #eee;
+      &::after {
+        content: "";
+
+        top: 50%;
+        transform: translateY(-50%);
+        position: absolute;
+        border: 6px solid red;
+        left: 6px;
+        /* height: 10px; */
+        background: transparent;
+        border-color: transparent #409eff transparent transparent;
+      }
+      &::before {
+        content: "";
+        width: 10px;
+        height: 6px;
+        top: 50%;
+        transform: translateY(-50%);
+        position: absolute;
+        left: 16px;
+        background: #409eff;
+      }
+    }
+  }
+}
+</style>
