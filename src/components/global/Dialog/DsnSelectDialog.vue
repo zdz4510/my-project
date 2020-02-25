@@ -183,15 +183,15 @@ export default {
     },
     // 设置选中状态
     setSelected() {
-      const arr = this.totalSelectArr.map(item => {
-        return item[this.keyValue];
-      });
-
       this.$nextTick(() => {
+        //如果是单选框
+        if(this.isSingle){
+          return
+        }
         this.tableData.forEach(item => {
-          const isContain = arr.includes(item[this.keyValue]);
+          const isContain = this.selectedKeyArr.includes(item[this.keyValue]);
           //  this.$refs["table"].toggleRowSelection(item,true);
-          if (isContain) {
+          if (isContain) { // 存在就设置选中
             this.$refs["table"].toggleRowSelection(item, true);
           }
         });
