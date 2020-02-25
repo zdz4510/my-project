@@ -6,44 +6,29 @@
       <dsn-button size="small" type="primary" @click="resetForm('addForm')">重置</dsn-button>
     </div>
     <div class="operate">
-      <el-form
-        :model="addForm"
-        ref="addForm"
-        :rules="rules"
-        class="form-style"
-        label-position="right"
-        label-width="130px"
-      >
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="数据收集组名称:" prop="dcGroup" required>
-              <dsn-input v-model="addForm.dcGroup" placeholder="请输入数据收集组名称"></dsn-input>
-            </el-form-item>
-            <el-form-item label="数据收集组类型:" prop="collectionType" required>
-              <dsn-select
-                v-model="addForm.collectionType"
-                placeholder="请选择数据收集组类型"
-                style="width:100%"
-              >
-                <el-option
-                  v-for="(item,index) in collectionType"
-                  :key="index"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
-              </dsn-select>
-            </el-form-item>
-            <el-form-item label="数据收集组描述:" prop="dcGroupDes">
-              <dsn-input
-                class="dec"
-                type="textarea"
-                :autosize="{ minRows: 2, maxRows: 6}"
-                v-model="addForm.dcGroupDes"
-                placeholder="请输入数据收集组描述"
-              ></dsn-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
+      <el-form :model="addForm" ref="addForm" :rules="rules" :inline="true">
+        <el-form-item label="数据收集组名称:" prop="dcGroup" required>
+          <dsn-input v-model="addForm.dcGroup" placeholder="请输入数据收集组名称"></dsn-input>
+        </el-form-item>
+        <el-form-item label="数据收集组类型:" prop="collectionType" required>
+          <dsn-select v-model="addForm.collectionType" placeholder="请选择数据收集组类型" style="width:100%">
+            <el-option
+              v-for="(item,index) in collectionType"
+              :key="index"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </dsn-select>
+        </el-form-item>
+        <el-form-item label="数据收集组描述:" prop="dcGroupDes">
+          <dsn-input
+            class="dec"
+            type="textarea"
+            :autosize="{ minRows: 2, maxRows: 6}"
+            v-model="addForm.dcGroupDes"
+            placeholder="请输入数据收集组描述"
+          ></dsn-input>
+        </el-form-item>
       </el-form>
     </div>
     <div class="operate">
@@ -640,7 +625,7 @@ export default {
   },
   filters: {
     filterValueType(val) {
-      const value = parseInt(val)
+      const value = parseInt(val);
       if (value === 10) {
         return "数值";
       }

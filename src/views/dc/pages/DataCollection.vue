@@ -51,7 +51,7 @@
           type="primary"
           icon="el-icon-edit"
           @click="edit"
-          :disabled="this.checkedList.length === 0"
+          :disabled="this.checkedList.length !==1"
         >编辑</dsn-button>
         <dsn-button
           size="small"

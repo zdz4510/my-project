@@ -123,7 +123,11 @@
                   @click="checkParamsValue(saveParamsValue)"
                 >提交</dsn-button>
                 <dsn-button size="small" type="primary" icon="el-icon-refresh" @click="reset">重置</dsn-button>
-                <dsn-button size="small" type="primary" @click="checkParamsValue(null)">校验</dsn-button>
+                <dsn-button
+                  size="small"
+                  type="primary"
+                  @click="checkParamsValue(checkParamsValueHttp)"
+                >校验</dsn-button>
               </div>
               <el-table :data="paramsInputList" height="350px">
                 <el-table-column label="参数名">
@@ -347,6 +351,34 @@ export default {
       this.paramsInputList = [];
       this.relationDetail = [];
     },
+    checkParamsValueHttp() {
+      let params = _.cloneDeep(this.paramsInputList);
+      checkParamData(params).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          if (res.data.success) {
+            this.$message({
+              message: "参数值校验成功",
+              type: "success"
+            });
+            // if (operate !== null) {
+            //   operate();
+            // }
+          } else {
+            this.$message({
+              message: "参数值校验失败",
+              type: "warning"
+            });
+          }
+          this.logList.push(res.data.msg);
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "error"
+        });
+      });
+    },
     checkParamsValue(operate) {
       const isFind = this.paramsInputList.find(element => {
         let reg = /^((\d{1,5}\.(\d){1,3})||(\d{1,5}))$/g;
@@ -370,32 +402,7 @@ export default {
         return false;
       });
       if (!isFind) {
-        let params = _.cloneDeep(this.paramsInputList);
-        checkParamData(params).then(data => {
-          const res = data.data;
-          if (res.code === 200) {
-            if (res.data.success) {
-              this.$message({
-                message: "参数值校验成功",
-                type: "success"
-              });
-              if (operate !== null) {
-                operate();
-              }
-            } else {
-              this.$message({
-                message: "参数值校验失败",
-                type: "warning"
-              });
-            }
-            this.logList.push(res.data.msg);
-            return;
-          }
-          this.$message({
-            message: res.message,
-            type: "error"
-          });
-        });
+        operate();
       }
     },
     reset() {

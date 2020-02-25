@@ -28,14 +28,14 @@
             size="small"
             type="primary"
             icon="el-icon-search"
-            @click="searchLeft"
+            @click="searchLeft(false)"
           >查询</dsn-button>
           <dsn-button
             v-else-if="searchForm.dcGroup!==''"
             size="small"
             type="primary"
             icon="el-icon-search"
-            @click="searchRight"
+            @click="searchRight(false)"
           >查询</dsn-button>
           <dsn-button
             size="small"
@@ -107,6 +107,7 @@
             :page-size="this.leftPage.pageSize"
             layout="->, total, prev, pager, next, sizes, jumper"
             :total="this.leftPage.total"
+            v-if="pageShowLeft"
           ></dsn-pagination>
           <!-- 已收集数据收集组清单表格数据end -->
         </el-tab-pane>
@@ -153,6 +154,7 @@
             :page-size="this.rightPage.pageSize"
             layout="->, total, prev, pager, next, sizes, jumper"
             :total="this.rightPage.total"
+            v-if="pageShowRight"
           ></dsn-pagination>
           <!-- 分页end -->
         </el-tab-pane>
@@ -166,6 +168,7 @@ import {
   findDcDataPageHttp,
   findDcParamPageHttp
 } from "../../../api/dc.search.api";
+import _ from "lodash";
 import { exportExcel } from "@/until/excel.js";
 let tableHead = [
   // {
@@ -223,6 +226,8 @@ export default {
       tHeaderRight,
       filterValRight,
       fileNameRight,
+      clonetHeaderRight: [],
+      clonefilterValRight: [],
       tableHead,
       checkedListLeft: [],
       checkedListRight: [],
@@ -240,11 +245,11 @@ export default {
       },
       collectionType: [
         {
-          value: "10",
+          value: 10,
           label: "LOT"
         },
         {
-          value: "20",
+          value: 20,
           label: "资源"
         }
       ],
@@ -265,56 +270,61 @@ export default {
         pageSize: 10,
         total: 0
       },
-      activeName: "清单"
+      activeName: "清单",
+      pageShowLeft: false,
+      pageShowRight: false
     };
   },
   created() {
-    this.searchLeft();
+    this.searchLeft(false);
   },
   methods: {
-    searchLeft() {
+    searchLeft(pageShowLeft = true) {
+      if (!pageShowLeft) {
+        this.leftPage.currentPage = 1;
+      }
       const params = {
-        tenantSiteCode: this.searchForm.tenantSiteCode,
-        resource: this.searchForm.resource,
-        dcGroup: this.searchForm.dcGroup,
-        collectionType: this.searchForm.collectionType,
+        ...this.searchForm,
         pageSize: this.leftPage.pageSize,
         currentPage: this.leftPage.currentPage
       };
-      this.search(params);
+      this.search(params, pageShowLeft);
     },
-    searchRight() {
-      const params = {
-        tenantSiteCode: this.searchForm.tenantSiteCode,
-        resource: this.searchForm.resource,
-        dcGroup: this.searchForm.dcGroup,
-        collectionType: this.searchForm.collectionType
-      };
+    searchRight(pageShowRight = true) {
+      if (!pageShowRight) {
+        this.leftPage.currentPage = 1;
+        this.rightPage.currentPage = 1;
+      }
       this.search({
-        ...params,
+        ...this.searchForm,
         pageSize: this.leftPage.pageSize,
         currentPage: this.leftPage.currentPage
       });
       this.searchParams({
-        ...params,
+        ...this.searchForm,
         pageSize: this.rightPage.pageSize,
         currentPage: this.rightPage.currentPage
       });
     },
-    search(params) {
+    search(params, pageShowLeft = true) {
+      this.pageShowLeft = pageShowLeft;
       findDcDataPageHttp(params).then(data => {
+        this.pageShowLeft = true;
         const res = data.data;
         if (res.code == 200) {
           this.tableData.data = res.data.dcDataPage.data;
           this.leftPage.total = res.data.dcDataPage.total;
           this.leftPage.currentPage = res.data.dcDataPage.currentPage;
+          this.pageShowLeft = true;
           return;
         }
         this.$message({ message: res.message, type: "error" });
       });
     },
-    searchParams(params) {
+    searchParams(params, pageShowRight = true) {
+      this.pageShowRight = pageShowRight;
       findDcParamPageHttp(params).then(data => {
+        this.pageShowRight = true;
         const res = data.data;
         if (res.code == 200) {
           this.tableParamsData.tableHead = JSON.parse(
@@ -328,8 +338,10 @@ export default {
           });
           this.tableParamsData.tableData = res.data.dcParamPage.data;
           this.rightPage.total = res.data.dcParamPage.total;
+          this.pageShowLeft = true;
           return;
         }
+
         this.$message({ message: res.message, type: "error" });
       });
     },
@@ -366,7 +378,9 @@ export default {
       this.leftPage.currentPage = 1;
       this.rightPage.currentPage = 1;
       this.tableParamsData.tableData = [];
-      this.searchLeft();
+      this.searchLeft(false);
+      this.rightPage.total = 0;
+      this.pageShowRight = false;
     },
     //左边导出开始
     handleExportLeft() {
@@ -377,16 +391,12 @@ export default {
         this.checkedListLeft.map(item => {
           item.collectionType = item.collectionType === 10 ? "LOT" : "资源";
         });
-
         this.exportResultLeft(this.checkedListLeft);
       }
     },
     exportHttpLeft() {
       let params = {
-        tenantSiteCode: this.searchForm.tenantSiteCode,
-        resource: this.searchForm.resource,
-        dcGroup: this.searchForm.dcGroup,
-        collectionType: this.searchForm.collectionType,
+        ...this.searchForm,
         pageSize: 0,
         currentPage: this.leftPage.currentPage
       };
@@ -419,38 +429,48 @@ export default {
     //左边导出结束
     // 右边导出开始
     handleExportRight() {
+      this.clonetHeaderRight = _.cloneDeep(this.tHeaderRight);
+      this.clonefilterValRight = _.cloneDeep(this.filterValRight);
       if (this.checkedListRight.length === 0) {
         this.exportHttpRight();
       }
       if (this.checkedListRight.length > 0) {
         if (parseInt(this.tableParamsData.tableData[0].collectionType) === 10) {
-          this.tHeaderRight.push("LOT");
+          this.clonetHeaderRight.push("LOT");
+          this.clonefilterValRight.push("lot");
         }
         if (parseInt(this.tableParamsData.tableData[0].collectionType) === 20) {
-          this.tHeaderRight.push("资源");
+          this.clonetHeaderRight.push("资源");
+          this.clonefilterValRight.push("resource");
         }
         this.tableParamsData.tableHead.forEach(element => {
-          this.tHeaderRight.push(element.column_name);
+          this.clonetHeaderRight.push(element.column_name);
+          this.clonefilterValRight.push(element.column_name);
         });
         this.exportResultRight(this.checkedListRight);
       }
     },
     exportHttpRight() {
       let params = {
-        tenantSiteCode: this.searchForm.tenantSiteCode,
-        resource: this.searchForm.resource,
-        dcGroup: this.searchForm.dcGroup,
-        collectionType: this.searchForm.collectionType,
+        ...this.searchForm,
         pageSize: 0,
         currentPage: this.rightPage.currentPage
       };
       findDcParamPageHttp(params).then(data => {
         const res = data.data;
         if (res.code == 200) {
+          if (parseInt(res.data.dcParamPage.data[0].collectionType) === 10) {
+            this.clonetHeaderRight.push("LOT");
+            this.clonefilterValRight.push("lot");
+          }
+          if (parseInt(res.data.dcParamPage.data[0].collectionType) === 20) {
+            this.clonetHeaderRight.push("资源");
+            this.clonefilterValRight.push("resource");
+          }
           res.data.dcParamColumnHead.forEach(element => {
-            this.tHeaderRight.push(element);
+            this.clonetHeaderRight.push(element);
+            this.clonefilterValRight.push(element);
           });
-          console.log(res.data.dcParamPage.data);
           this.exportResultRight(res.data.dcParamPage.data);
           return;
         }
@@ -459,8 +479,8 @@ export default {
     },
     exportResultRight(data) {
       const tipString = exportExcel(
-        this.tHeaderRight,
-        this.filterValRight,
+        this.clonetHeaderRight,
+        this.clonefilterValRight,
         data,
         this.fileNameRight
       );

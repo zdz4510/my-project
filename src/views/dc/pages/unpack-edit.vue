@@ -15,14 +15,28 @@
       >
         <div class="contentWl">
           <el-form-item label="物料号:" prop="mat">
-            <el-autocomplete
+            <!-- <el-autocomplete
               class="inline-input"
               size="small"
               v-model="ruleForm.mat"
               :fetch-suggestions="this.querySearch"
               placeholder="请输入物料号"
               :disabled="this.operateType==='edit'"
-            ></el-autocomplete>
+            ></el-autocomplete>-->
+            <el-select
+              v-model="ruleForm.mat"
+              filterable
+              placeholder="请选择物料号"
+              size="small"
+              :disabled="this.operateType==='edit'"
+            >
+              <el-option
+                v-for="(item,index) in queryMaterialList"
+                :key="index"
+                :label="item.material"
+                :value="item.material"
+              >{{item.material}}-{{item.materialDes}}-{{item.materialRev}}</el-option>
+            </el-select>
           </el-form-item>
         </div>
         <div class="formcon">
@@ -53,7 +67,7 @@
                 </dsn-select>
               </el-form-item>
               <el-form-item label="容器容纳数：" prop="accommodateNumber">
-                <dsn-input v-model="ruleForm.accommodateNumber" placeholder="请选择容器容纳数"></dsn-input>
+                <dsn-input v-model.trim="ruleForm.accommodateNumber" placeholder="请选择容器容纳数"></dsn-input>
               </el-form-item>
               <el-form-item label="容器标签打印：" prop="labelPrinting">
                 <dsn-select v-model="ruleForm.labelPrinting" placeholder="请选择容器标签打印">
@@ -114,8 +128,22 @@ import {
 import { mapGetters } from "vuex";
 export default {
   data() {
+    //容器容纳数验证规则
+    const valiAccommodateNumber = (rule, value, callback) => {
+      if (value === "") {
+        callback("容器容纳数不允许为空");
+      }
+      let reg = /^(([1-9])||([1-9][0-9]+))$/g;
+      if (!reg.test(value)) {
+        return callback(new Error("容器容纳数只能是正整数"));
+      }
+      // if (parseInt(value) <= 0) {
+      //   return callback(new Error("容器容纳数只能是正整数"));
+      // }
+      callback();
+    };
     return {
-      queryList: [],
+      queryMaterialList: [],
       oldPackClass: "",
       params: {
         mat: "",
@@ -148,7 +176,11 @@ export default {
           { required: true, message: "容器编号规则不允许为空", trigger: "blur" }
         ],
         accommodateNumber: [
-          { required: true, message: "容器容纳数不允许为空", trigger: "blur" }
+          {
+            required: true,
+            validator: valiAccommodateNumber,
+            trigger: "blur"
+          }
         ],
         labelPrinting: [
           { required: true, message: "容器标签打印不允许为空", trigger: "blur" }
@@ -176,7 +208,7 @@ export default {
   },
   methods: {
     init() {
-      this.fetchInfo();
+      this.queryMaterial();
       if (this.operateType === "edit") {
         this.tempString = JSON.stringify(this.unpackEditList).replace(
           /null/g,
@@ -243,32 +275,17 @@ export default {
     goback() {
       this.$router.push({ name: "unpack" });
     },
-    fetchInfo(par) {
-      const payload = par || this.params;
-      getMaterialList(payload).then(res => {
-        const {
-          data: { data }
-        } = res;
-        this.queryList = data.data.map(item => {
-          return {
-            ...item,
-            value: item.material
-          };
-        });
+    queryMaterial() {
+      const data = { pageSize: 0 };
+      getMaterialList(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.queryMaterialList = res.data.data;
+          console.log(this.queryMaterialList);
+          return;
+        }
+        this.$message({ type: "error", message: res.message });
       });
-    },
-    querySearch(queryString, cb) {
-      const payload = {
-        ...this.params,
-        mat: queryString
-      };
-      this.fetchInfo(payload);
-      var results = queryString
-        ? this.queryList.filter(this.createFilter(queryString))
-        : this.queryList;
-      //   // 调用 callback 返回建议列表的数据
-      console.log(results, "resultsss");
-      cb(results);
     },
     changemainNumberType(val) {
       if (val) {
@@ -277,14 +294,6 @@ export default {
       } else {
         this.mainNumberRev = false;
       }
-    },
-    createFilter(queryString) {
-      return item => {
-        console.log(item.material, queryString, "itemmm");
-        return (
-          item.material.toLowerCase().indexOf(queryString.toLowerCase()) === 0
-        );
-      };
     },
     isEditVal(val) {
       if (val === "30") {
