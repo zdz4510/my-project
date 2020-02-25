@@ -526,7 +526,7 @@ export default {
     searchMaterialFormChange(){
       const data=this.searchMaterialForm;
       data.pageSize=0;
-      data.currentPage=1;
+      data.currentPage=0;
       findMaterialRequest(data).then(data =>{
         const res = data.data
         if(res.code == 200){
