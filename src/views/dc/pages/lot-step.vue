@@ -802,15 +802,7 @@ export default {
     //确认选择lot
     handleConfirmSelectLot(val) {
       this.selectedLotList = val;
-      if (this.selectedLotList.length === 0) {
-        this.lotStepForm.lot = "";
-      }
-      if (this.selectedLotList.length === 1) {
-        this.lotStepForm.lot = this.selectedLotList[0].lot;
-      }
-      if (this.selectedLotList.length > 1) {
-        this.lotStepForm.lot = "已选择" + this.selectedLotList.length + "个";
-      }
+      console.log(this.selectedLotList);
       this.lotQueryDialog = false;
     },
     handleCancleSelectLot() {
@@ -939,39 +931,6 @@ export default {
     //表格start
     helpText(item) {
       return item["lot"];
-    },
-    query() {
-      // getColorPage().then(res => {
-      //   if (res.data.code == 200) {
-      //     this.tableData = res.data.data.data;
-      //   }
-      // });
-    },
-    handleChange(v) {
-      console.log(v);
-    },
-    toggle(V) {
-      console.log("revecied", V);
-    },
-    tableSelectAll() {
-      console.log("用户监听到到事件");
-    },
-    rowClick(row) {
-      console.log("click" + row);
-    },
-    selectionChange(selection) {
-      console.log(selection);
-    },
-    cellClick() {
-      console.log("cell click");
-    },
-    clearSelection() {
-      console.log(this.$refs["table"]);
-      this.$refs["table"].clearSelection();
-      this.paramData = {
-        a: 10
-      };
-      //  this.$refs['table'].search()
     }
     //表格end
   }
