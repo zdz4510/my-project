@@ -110,30 +110,36 @@
           ></dsn-pagination>
           <!-- 已收集数据收集组清单表格数据end -->
         </el-tab-pane>
-        <el-tab-pane label="已收集数据收集组参数清单" :disabled="searchForm.dcGroup===''" name="参数清单">
+        <el-tab-pane
+          label="已收集数据收集组参数清单"
+          :disabled="searchForm.dcGroup==='' || tableParamsData.tableData.length === 0"
+          name="参数清单"
+        >
           <!-- 已收集数据收集组参数清单表格数据start -->
           <dsn-table
+            v-if="tableParamsData.tableData.length !== 0"
             :data="tableParamsData.tableData"
             @selection-change="handleSelectionChangeRight"
             row-key="mat"
           >
             <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
             <el-table-column type="index" label="序号"></el-table-column>
+            <el-table-column prop="dcGroup" label="数据收集组"></el-table-column>
+            <el-table-column prop="collectionType" label="收集类型">
+              <template slot-scope="scope">{{ parseInt(scope.row.collectionType)===10?"LOT":"资源"}}</template>
+            </el-table-column>
+            <el-table-column
+              prop="lot"
+              label="LOT"
+              v-if="parseInt(tableParamsData.tableData[0].collectionType) === 10"
+            ></el-table-column>
+            <el-table-column
+              prop="resource"
+              label="资源"
+              v-if="parseInt(tableParamsData.tableData[0].collectionType) === 20"
+            ></el-table-column>
             <template v-for="(item,index) in tableParamsData.tableHead">
-              <el-table-column
-                :prop="item.column_name"
-                :label="item.column_comment"
-                :key="index"
-                v-if=" item.column_name==='collectionType'"
-              >
-                <template slot-scope="scope">{{ parseInt(scope.row.collectionType)===10?"LOT":"资源"}}</template>
-              </el-table-column>
-              <el-table-column
-                :prop="item.column_name"
-                :label="item.column_comment"
-                :key="index"
-                v-if=" item.column_name!=='collectionType'"
-              ></el-table-column>
+              <el-table-column :prop="item.column_name" :label="item.column_comment" :key="index"></el-table-column>
             </template>
           </dsn-table>
           <!-- 已收集数据收集组参数清单表格数据end -->
@@ -162,18 +168,18 @@ import {
 } from "../../../api/dc.search.api";
 import { exportExcel } from "@/until/excel.js";
 let tableHead = [
-  {
-    column_name: "resource",
-    column_comment: "接收值"
-  },
-  {
-    column_name: "collectionType",
-    column_comment: "收集类型"
-  },
-  {
-    column_name: "dcGroup",
-    column_comment: "数据收集组"
-  }
+  // {
+  //   column_name: "resource",
+  //   column_comment: "接收值"
+  // },
+  // {
+  //   column_name: "collectionType",
+  //   column_comment: "收集类型"
+  // },
+  // {
+  //   column_name: "dcGroup",
+  //   column_comment: "数据收集组"
+  // }
 ];
 const tHeaderLeft = [
   "数据收集组",
@@ -246,7 +252,7 @@ export default {
         data: []
       },
       tableParamsData: {
-        data: [],
+        tableData: [],
         tableHead: []
       },
       leftPage: {
@@ -417,7 +423,15 @@ export default {
         this.exportHttpRight();
       }
       if (this.checkedListRight.length > 0) {
-        this.tHeaderRight = this.tableParamsData.tableHead;
+        if (parseInt(this.tableParamsData.tableData[0].collectionType) === 10) {
+          this.tHeaderRight.push("LOT");
+        }
+        if (parseInt(this.tableParamsData.tableData[0].collectionType) === 20) {
+          this.tHeaderRight.push("资源");
+        }
+        this.tableParamsData.tableHead.forEach(element => {
+          this.tHeaderRight.push(element.column_name);
+        });
         this.exportResultRight(this.checkedListRight);
       }
     },
