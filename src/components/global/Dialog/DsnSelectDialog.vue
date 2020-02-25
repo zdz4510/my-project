@@ -185,13 +185,12 @@ export default {
     setSelected() {
       this.$nextTick(() => {
         //如果是单选框
-        if(this.isSingle){
-          return
-        }
+       
         this.tableData.forEach(item => {
           const isContain = this.selectedKeyArr.includes(item[this.keyValue]);
           //  this.$refs["table"].toggleRowSelection(item,true);
           if (isContain) { // 存在就设置选中
+            this.$refs["table"].setCurrentRow(item);
             this.$refs["table"].toggleRowSelection(item, true);
           }
         });
