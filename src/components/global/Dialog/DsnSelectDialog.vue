@@ -65,7 +65,18 @@ export default {
          this.setSelected();
       },
       deep:true
-    }
+    },
+    visible:{
+         handler:function(newv){
+           if(newv){
+             this.$nextTick(()=>{
+                this.clearSelect();
+             this.setSelected()
+             })
+           }
+      },
+      deep:true
+    } 
   },
   computed: {
     selectedKeyArr() {
