@@ -227,6 +227,10 @@ export default {
       this.clearSelect(); //
       // this.$emit("change", this.totalSelectArr);
       this.$emit("clearAll");
+    },
+    resert(){
+      this.totalSelectArr = [];
+      this.clearSelect(); //
     }
   }
 };
