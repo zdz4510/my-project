@@ -56,19 +56,32 @@
       <dsn-button type="primary" size="small">结束</dsn-button>
       <dsn-button type="primary" size="small">1号组</dsn-button>
       <dsn-button type="primary" size="small">2号组</dsn-button> -->
-      <dsn-button type="primary" size="small" :key="item.sequence"
+      <dsn-button type="primary" size="small" :key="item.buttonId"
           :item="item"
           v-for="(item) in podButtons">
           {{ item.buttonId }}
       </dsn-button>
-      <dsn-select :key="item.sequence" v-for="(item) in zuPodButtons" v-model="item.buttonId">
+      <el-dropdown style="margin:20px" :key="item.buttonId" v-for="(item) in zuPodButtons">
+        <el-button type="primary">
+          {{item.buttonId}}<i class="el-icon-arrow-down el-icon--right"></i>
+        </el-button>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item 
+          v-for="data in item.podButtons"
+          :key="data.buttonId"
+          >
+          {{data.buttonId}}
+          </el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
+      <!-- <dsn-select :key="item.sequence" v-for="(item) in zuPodButtons" v-model="item.buttonId">
         <el-option
           v-for="data in item.podButtons"
           :key="data.sequence"
           :label="data.buttonId"
           :value="data.buttonId"
-        ></el-option>
-      </dsn-select>
+        > </el-option>
+      </dsn-select> -->
     </div>
     <!--表单-->
     <DsnPanel>

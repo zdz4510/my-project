@@ -5,9 +5,6 @@
         <span>搜索信息</span>
       </div>
       <el-form label-width="100px" :model="searchForm" :rules="searchRules" :inline="true">
-          <!-- <el-form-item label="工单:">
-           
-          </el-form-item> -->
             <el-form-item label="工单:" prop="shopOrder">
               <el-row>
                 <el-col :span="22">
@@ -201,8 +198,10 @@
       v-model="selectOrderArr"
       :helpText="helpTextOrdere"
       @confirm="handlerOrderChange"
+      @cancle="handlerCancleOrder"
       :visible.sync="orderDialog"
-      width="500px">
+      width="800px"
+      keyValue="shopOrder">
       <!-- <template slot="header">
         <el-input v-model="v" placeholder=""></el-input>
         <el-button @click="orderHandler">search</el-button>
@@ -219,11 +218,30 @@
           @selection-change="handleSelectionChange"
         > -->
           <!-- <el-table-column type="selection" width="55"></el-table-column> -->
+          <template slot="header">
+            <el-form label-width="100px" ref="searchOrderForm" :model="searchOrderForm" :inline="true">
+              <el-form-item label="工单:">
+                <dsn-input size="small" placeholder="请输入工单" v-model="searchOrderForm.shopOrder"></dsn-input>
+              </el-form-item>
+              <el-form-item label="工单类型:">
+                <!-- <dsn-input size="small" placeholder="请输入工单类型" v-model="searchOrderForm.shopOrderType"></dsn-input> -->
+                <dsn-select v-model="searchOrderForm.shopOrderType" placeholder="生产">
+                  <el-option label="生产" value="PRODUCTION"></el-option>
+                  <el-option label="返工" value="REWORK"></el-option>
+                </dsn-select>
+              </el-form-item>
+              <el-form-item>
+                  <dsn-button size="small"  type="primary" icon="el-icon-search" @click.native="searchOrder">查询</dsn-button>
+                  <dsn-button size="small" type="primary" icon="el-icon-refresh" @click.native='resetSearchForm'>重置</dsn-button>
+              </el-form-item>
+            </el-form>
+          </template>
           <template slot="body">
             <el-table-column type="index" label="序号" width="50"></el-table-column>
             <el-table-column prop="shopOrder" label="工单" width="120"></el-table-column>
             <el-table-column label="状态" prop="status" width="120"></el-table-column>
-            <el-table-column prop="shopOrderType" label="类型"></el-table-column>
+            <el-table-column prop="shopOrderType" label="类型">
+            </el-table-column>
           </template>
         <!-- </dsn-table> -->
       <!-- <span slot="footer" class="dialog-footer">
@@ -240,8 +258,10 @@
        v-model="selectMaterialArr"
        :helpText="helpTextMaterial"
        @confirm="handlerMaterialChange"
+       @cancle="handlerCancleMaterial"
       :visible.sync="materialDialog"
-      width="800px">
+      width="800px"
+      keyValue="material">
       <!-- <dsn-table
           ref="multipleTable"
           :data="materialTable"
@@ -254,6 +274,20 @@
           @selection-change="handleSelectionMaterial"
         >
           <el-table-column type="selection" width="55"></el-table-column> -->
+          <template slot="header">
+            <el-form label-width="100px" ref="searchMaterialForm" :model="searchMaterialForm" :inline="true">
+              <el-form-item label="物料:">
+                <dsn-input size="small" placeholder="请输入物料" v-model="searchMaterialForm.material"></dsn-input>
+              </el-form-item>
+              <el-form-item label="物料版本:">
+                <dsn-input size="small" placeholder="请输入物料版本" v-model="searchMaterialForm.materialRev"></dsn-input>
+              </el-form-item>
+              <el-form-item>
+                  <dsn-button size="small"  type="primary" icon="el-icon-search" @click.native="searchMaterialFormChange">查询</dsn-button>
+                  <dsn-button size="small" type="primary" icon="el-icon-refresh" @click.native='resetSearchMaterialForm'>重置</dsn-button>
+              </el-form-item>
+            </el-form>
+          </template>
           <template slot="body">
             <el-table-column prop="material" label="物料"></el-table-column>
             <el-table-column label="版本" prop="materialRev"></el-table-column>
@@ -278,7 +312,9 @@
        v-model="selectRouterArr"
        :helpText="helpTextRouter"
        @confirm="handlerRouterChange"
-      width="800px">
+       @cancle="handlerCancleRouter"
+      width="800px"
+      keyValue="router">
       <!-- <dsn-table
           ref="multipleTable"
           :data="routerTable"
@@ -290,6 +326,20 @@
           border
           @selection-change="handlerSelectionRouter"
         > -->
+        <template slot="header">
+            <el-form label-width="100px" ref="searchMaterialForm" :model="searchRouterForm" :inline="true">
+              <el-form-item label="工艺路线:">
+                <dsn-input size="small" placeholder="请输入工艺路线" v-model="searchRouterForm.router"></dsn-input>
+              </el-form-item>
+              <el-form-item label="工艺路线版本:">
+                <dsn-input size="small" placeholder="请输入工艺路线版本" v-model="searchRouterForm.revision"></dsn-input>
+              </el-form-item>
+              <el-form-item>
+                  <dsn-button size="small"  type="primary" icon="el-icon-search" @click.native="searchRouterFormChange">查询</dsn-button>
+                  <dsn-button size="small" type="primary" icon="el-icon-refresh" @click.native='resetSearchRouterFormForm'>重置</dsn-button>
+              </el-form-item>
+            </el-form>
+          </template>
         <template slot="body">
           <!-- <el-table-column type="selection" width="55"></el-table-column> -->
           <el-table-column prop="router" label="工艺路线" width="120"></el-table-column>
@@ -317,8 +367,9 @@ import{
     findFieldRequest,
     deleteRequest,
     findShopOrderListHttp,
-    listAllRequest,
-    listRouterPageHttp
+    findMaterialRequest,
+    listRouterPageHttp,
+    getRouterRequest
 } from '@/api/work-order/work-order.api.js' 
 export default {
   inject:['defaltDialogWidth'],
@@ -350,8 +401,8 @@ export default {
     return {
       //工单表信息
         ruleForm: {
-            shopOrderType: "生产", //类型
-            status: "可下达", //状态
+            shopOrderType: "PRODUCTION", //类型
+            status: "RELEASABLE", //状态
             plannedMaterial: "", //计划物料
             plannedMaterialRev: "", //计划物料版本
             plannedRouter: "", //计划工艺路线
@@ -362,6 +413,18 @@ export default {
             materialRev:"",
             router:"",
             customizedFieldDefInfoList:[],//自定义字段信息
+        },
+        searchOrderForm:{
+          shopOrder:"",
+          shopOrderType:"PRODUCTION"
+        },
+        searchRouterForm:{
+          router:"",
+          revision:""
+        },
+        searchMaterialForm:{
+          material:"",
+          materialRev:""
         },
         selectOrderArr:[],
         selectMaterialArr:[],
@@ -401,27 +464,129 @@ export default {
     };
   },
   methods:{
+    // 工单相关
     helpTextOrdere(item){
-      return item.shopOrder;
+      return item["shopOrder"];
     },
-    handlerOrderChange(){
-      this.searchForm.shopOrder=this.selectOrderArr[0].shopOrder;
-      // this.orderDialog=false;
+    // 确认事件，工单
+    handlerOrderChange(val){
+      this.selectOrderArr=val
+      if(this.selectOrderArr.length===0){
+        this.searchForm.shopOrder=""
+      }else{
+        this.searchForm.shopOrder=this.selectOrderArr[0].shopOrder;
+      }
+      this.orderDialog=false;
     },
+    // 取消事件,工单
+    handlerCancleOrder(){
+      this.orderDialog=false;
+    },
+    searchOrder(){
+      const data=this.searchOrderForm
+      findShopOrderListHttp(data).then(data =>{
+        const res = data.data
+        if(res.code == 200){
+          console.log(res.data,"shuju ")
+          this.orderTable=res.data
+        }else{
+          this.$message({
+            message:res.message,
+            type:'warning'
+          })
+        }
+      })
+    },
+    resetSearchForm(){
+      console.log(this.selectOrderArr,"1111")
+      this.searchOrderForm.shopOrder="",
+      this.searchOrderForm.shopOrderType="";
+      // this.$refs["orderChoice"].clearSelect();
+      this.orderTable=[];
+      this.selectOrderArr=[];
+    },
+    // 物料相关
     helpTextMaterial(item){
       return item.material;
     },
-    handlerMaterialChange(){
-      this.ruleForm.plannedMaterial=this.selectMaterialArr[0].material;
-      this.ruleForm.plannedMaterialRev=this.selectMaterialArr[0].materialRev
+    handlerMaterialChange(val){
+      this.selectMaterialArr=val;
+      if(this.selectMaterialArr.length===0){
+        this.ruleForm.plannedMaterial="";
+        this.ruleForm.plannedMaterialRev="";
+      }else{
+        this.ruleForm.plannedMaterial=this.selectMaterialArr[0].material;
+        this.ruleForm.plannedMaterialRev=this.selectMaterialArr[0].materialRev;
+      }
+      this.materialDialog=false;
     },
+    handlerCancleMaterial(){
+      this.materialDialog=false;
+    },
+    searchMaterialFormChange(){
+      const data=this.searchMaterialForm;
+      data.pageSize=0;
+      data.currentPage=1;
+      findMaterialRequest(data).then(data =>{
+        const res = data.data
+        if(res.code == 200){
+          this.materialTable=res.data.data
+        }else{
+          this.$message({
+            message:res.message,
+            type:'warning'
+          })
+        }
+      })
+    },
+    resetSearchMaterialForm(){
+      this.searchMaterialForm.material="",
+      this.searchMaterialForm.materialRev="";
+      // this.$refs["materialChoice"].clearSelect();
+      this.materialTable=[];
+      this.selectMaterialArr=[]
+    },
+    // 路线相关
     helpTextRouter(item){
-      
-      return item.router;
+      return item["router"];
     },
-    handlerRouterChange(){
-      this.ruleForm.plannedRouterRev=this.selectRouterArr[0].revision;
-      this.ruleForm.plannedRouter=this.selectRouterArr[0].router;
+    handlerRouterChange(val){
+      this.selectRouterArr=val;
+      if(this.selectRouterArr.length===0){
+        this.ruleForm.plannedRouterRev="";
+        this.ruleForm.plannedRouter="";
+      }else{
+        this.ruleForm.plannedRouterRev=this.selectRouterArr[0].revision;
+        this.ruleForm.plannedRouter=this.selectRouterArr[0].router;
+      }
+      this.routerDialog=false;
+    },
+    searchRouterFormChange(){
+      let  data=this.searchRouterForm;
+      getRouterRequest(data).then(data =>{
+        const res = data.data
+        if(res.code == 200){
+          // console.log(res.data,"数据是")
+          let arr=[];
+          arr.push(res.data);
+          this.routerTable=arr;
+        }else{
+          this.$message({
+            message:res.message,
+            type:'warning'
+          })
+        }
+      })
+    },
+    resetSearchRouterFormForm(){
+      this.searchRouterForm.router="",
+      this.searchRouterForm.revesion="";
+      // this.$refs["routerChoice"].clearSelect();
+      this.routerTable=[];
+      this.selectRouterArr=[]
+    },
+    handlerCancleRouter(){
+      this.routerDialog=false;
     },
     routerHandler(){
       listRouterPageHttp().then(data =>{
@@ -459,37 +624,10 @@ export default {
     // },
     materialHandler(){
       this.materialDialog=true;
-      listAllRequest().then(data =>{
-          const res = data.data
-          if(res.code == 200){
-            this.materialTable=res.data
-          }else{
-            this.$message({
-              message:res.message,
-              type:'warning'
-            })
-          }
-        })
     },
     orderHandler(){
       this.orderDialog=true;
-      findShopOrderListHttp().then(data =>{
-            const res = data.data
-            if(res.code == 200){
-              // console.log(res.data,"shuju ")
-              this.orderTable=res.data
-              // this.$message({
-              //   message:'更新成功',
-              //   type:'success'
-              // })
-            }else{
-              this.$message({
-                message:res.message,
-                type:'warning'
-              })
-            }
-          })
-      },
+    },
     // sureOrder(){
     //   alert("111")
     // },
@@ -538,11 +676,8 @@ export default {
       for(let key in this.ruleForm){
          this.ruleForm[key]  = ''
       }
-      this.ruleForm.shopOrderType="生产"; //类型
-      this.ruleForm.status="可下达"; //状态
-      this.$refs["orderChoice"].clearSelect();
-      // this.$refs["materialChoice"].clearSelect();
-      // this.$refs["routerChoice"].clearSelect();
+      this.ruleForm.shopOrderType="PRODUCTION"; //类型
+      this.ruleForm.status="RELEASABLE"; //状态
       //shopOrder
       this.searchForm.shopOrder = ''
       //重置oldShopOrder
@@ -724,22 +859,20 @@ export default {
         // console.log('删除的返回信息'+JSON.stringify(data))
         const res = data.data
         if(res.code == 200){
-          this.dialogVisible = false
           this.$message({
-            message:'删除成功！',
+            message:'删除成功',
             type:'success'
           })
           this.reset();
-        }else{
-          this.dialogVisible = false
-          this.$message({
-            message:res.message,
-            type:'warning'
-          })
-        }
+          }else{
+            this.$message({
+              message:res.message,
+              type:'warning'
+            })
+          }
+         this.dialogVisible = false
       })
     }
-
   },
   created(){
     this.getCustom()

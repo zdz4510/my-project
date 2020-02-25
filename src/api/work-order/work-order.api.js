@@ -65,7 +65,22 @@ export const deleteRequest = data => {
 // 查询所有工单
 export const findShopOrderListHttp = data => {
     return request.get(
-        `${window.VUE_APP_URL}/mes/shopOrder/findShopOrderList`, data);
+        `${window.VUE_APP_URL}/mes/shopOrder/findShopOrderList?shopOrder=${data.shopOrder}&?shopOrderType=${data.shopOrderType}`, data);
+};
+
+
+// material/findMaterial
+// 查询
+export const findMaterialRequest = data => {
+    return request.post(
+        `${window.VUE_APP_URL}/mes/material/findMaterial`, data);
+};
+
+// router/getRouter
+// 查询单条工艺路线
+export const getRouterRequest = data => {
+    return request.get(
+        `${window.VUE_APP_URL}/mes/router/getRouter`, {params:data});
 };
 
 // /material/listAll
