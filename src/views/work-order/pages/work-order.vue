@@ -203,13 +203,12 @@
     <!--工单选择-->
     <DsnSelectDialog
       title="工单选择"
-      :isSingle="false"
+      :isSingle="true"
       ref="orderChoice"
       :tableData="orderTable"
       v-model="selectOrderArr"
       :helpText="helpTextOrdere"
       @confirm="handlerOrderChange"
-      @cancle="orderCancle"
       :visible.sync="orderDialog"
       width="500px"
     >
@@ -246,9 +245,10 @@
       title="物料选择"
       :isSingle="true"
       ref="materialChoice"
-      :tableData="materialTable"
-      v-model="selectMaterialArr"
-      :helpText="helpTextMaterial"
+       :tableData="materialTable"
+       v-model="selectMaterialArr"
+       :helpText="helpTextMaterial"
+       @confirm="handlerMaterialChange"
       :visible.sync="materialDialog"
       width="800px"
     >
@@ -284,11 +284,11 @@
       :visible.sync="routerDialog"
       :isSingle="true"
       ref="routerChoice"
-      :tableData="routerTable"
-      v-model="selectRouterArr"
-      :helpText="helpTextRouter"
-      width="800px"
-    >
+       :tableData="routerTable"
+       v-model="selectRouterArr"
+       :helpText="helpTextRouter"
+       @confirm="handlerRouterChange"
+      width="800px">
       <!-- <dsn-table
           ref="multipleTable"
           :data="routerTable"
@@ -413,38 +413,42 @@ export default {
       // routerChoice:[]
     };
   },
-  methods: {
-    helpTextOrdere(item) {
-      console.log(item, "数据是");
+  methods:{
+    helpTextOrdere(item){
       return item.shopOrder;
     },
-    handlerOrderChange() {
-      this.searchForm.shopOrder = this.selectOrderArr[0].shopOrder;
-      this.orderDialog = false;
+    handlerOrderChange(){
+      this.searchForm.shopOrder=this.selectOrderArr[0].shopOrder;
+      // this.orderDialog=false;
     },
-    helpTextMaterial(item) {
-      this.ruleForm.plannedMaterial = item.material;
-      this.ruleForm.plannedMaterialRev = item.materialRev;
+    helpTextMaterial(item){
       return item.material;
     },
-    helpTextRouter(item) {
-      this.ruleForm.plannedRouterRev = item.revision;
-      this.ruleForm.plannedRouter = item.router;
+    handlerMaterialChange(){
+      this.ruleForm.plannedMaterial=this.selectMaterialArr[0].material;
+      this.ruleForm.plannedMaterialRev=this.selectMaterialArr[0].materialRev
+    },
+    helpTextRouter(item){
+      
       return item.router;
     },
-    routerHandler() {
-      listRouterPageHttp().then(data => {
-        const res = data.data;
-        if (res.code == 200) {
-          this.routerTable = res.data.data;
-        } else {
-          this.$message({
-            message: res.message,
-            type: "warning"
-          });
-        }
-      });
-      this.routerDialog = true;
+    handlerRouterChange(){
+      this.ruleForm.plannedRouterRev=this.selectRouterArr[0].revision;
+      this.ruleForm.plannedRouter=this.selectRouterArr[0].router;
+    },
+    routerHandler(){
+      listRouterPageHttp().then(data =>{
+          const res = data.data
+          if(res.code == 200){
+            this.routerTable=res.data.data
+          }else{
+            this.$message({
+              message:res.message,
+              type:'warning'
+            })
+          }
+        })
+      this.routerDialog=true;
     },
     // sureRouter(){
     //   if(this.routerChoice.length>1){
@@ -543,9 +547,9 @@ export default {
       for (let key in this.ruleForm) {
         this.ruleForm[key] = "";
       }
-      this.ruleForm.shopOrderType = "生产"; //类型
-      this.ruleForm.status = "可下达"; //状态
-      // this.$refs["orderChoice"].clearSelect();
+      this.ruleForm.shopOrderType="生产"; //类型
+      this.ruleForm.status="可下达"; //状态
+      this.$refs["orderChoice"].clearSelect();
       // this.$refs["materialChoice"].clearSelect();
       // this.$refs["routerChoice"].clearSelect();
       //shopOrder
