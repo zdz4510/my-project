@@ -215,8 +215,7 @@ import {
   insertResourceHttp,
   updateResourceHttp,
   listAlarmHttp,
-  findResourceMaintenanceListHttp,
-  saveResourceMaintenanceHttp
+  findResourceMaintenanceListHttp
 } from "@/api/device/maintenance.api.js";
 import { getAllLevel1Http, findAllUserHttp } from "@/api/work.center.api.js";
 import workCenterModel from "../components/work-center-model.vue";
@@ -289,9 +288,6 @@ export default {
     };
     //预警事件
     let validateAlarm = (rule, value, callback) => {
-      if (value === "") {
-        callback("请输入预警事件");
-      }
       let reg = /^([A-Z]|[a-z]|[0-9]|_|-|\/)+$/;
       if (!reg.test(value)) {
         callback("预警事件格式（[A-Z,0-9,_,-,/]）");
@@ -596,7 +592,7 @@ export default {
       }
     },
     //验证form表单
-    checkFormInfo(formArr, handleType) {
+    checkFormInfo(formArr) {
       let count = 0;
       formArr.forEach(element => {
         this.$refs[element].validate(valid => {
@@ -607,10 +603,6 @@ export default {
           }
         });
       });
-      if (count >= 2 && this.saveType === "baseInfo") {
-        handleType();
-        return;
-      }
       if (count >= 2 && this.saveType === "upkeepConfig") {
         let count = 0;
         this.tableData.forEach(element => {
@@ -669,10 +661,8 @@ export default {
     },
     addResourceHttp() {
       const data = {
-        resource: this.maintenanceForm.resource,
-        resourceDes: this.maintenanceForm.resourceDes,
-        resourceStatus: this.maintenanceForm.resourceStatus,
-        workCenter: this.maintenanceForm.workCenter
+        ...this.maintenanceForm,
+        resourceMaintenanceList: this.tableData
       };
       insertResourceHttp(data).then(data => {
         const res = data.data;
@@ -681,7 +671,7 @@ export default {
             message: "新增成功",
             type: "success"
           });
-          this.handleReset(this.refArrBaseInfo);
+          this.handleReset(this.resetFormInfo);
           this.MAINTENANCEPELIST([]);
           this.$router.push({ path: "/device/deviceMaintenance" });
           return;
@@ -694,10 +684,8 @@ export default {
     },
     updateResourceHttp() {
       const data = {
-        resource: this.maintenanceForm.resource,
-        resourceDes: this.maintenanceForm.resourceDes,
-        resourceStatus: this.maintenanceForm.resourceStatus,
-        workCenter: this.maintenanceForm.workCenter
+        ...this.maintenanceForm,
+        resourceMaintenanceList: this.tableData
       };
       updateResourceHttp(data).then(data => {
         const res = data.data;
@@ -717,19 +705,18 @@ export default {
       });
     },
     checkTabCurrentStatus() {
-      if (this.saveType === "baseInfo") {
-        this.checkFormInfo(this.refArrBaseInfo, this.handleSaveBaseInfo);
-        return;
-      }
-      if (this.saveType === "upkeepConfig") {
-        if (this.tableData.length === 0) {
-          this.$message({
-            message: "还没有提交数据哦",
-            type: "warning"
-          });
-          return;
-        }
-        this.handleSaveUpkeepConfig();
+      let count = 0;
+      this.refArrBaseInfo.forEach(element => {
+        this.$refs[element].validate(valid => {
+          if (valid) {
+            count++;
+          } else {
+            return false;
+          }
+        });
+      });
+      if (count >= 2) {
+        this.handleSaveBaseInfo();
         return;
       }
     },
@@ -750,7 +737,7 @@ export default {
       this.upkeepConfigForm.startTime = this.formate(new Date().getTime());
     },
     handleLocalSave() {
-      this.checkFormInfo(this.refArrUpkeepConfig, this.handleSaveUpkeepConfig);
+      this.checkFormInfo(this.refArrUpkeepConfig);
     },
     handleLocalDelete() {
       if (this.selectionList.length === 0) {
@@ -763,25 +750,6 @@ export default {
 
       this.tableData = this.tableData.filter(item => {
         return this.selectionList.includes(item) == false;
-      });
-    },
-    handleSaveUpkeepConfig() {
-      const data = JSON.parse(JSON.stringify(this.tableData));
-      saveResourceMaintenanceHttp(data).then(data => {
-        const res = data.data;
-        if (res.code === 200) {
-          this.$message({
-            message: res.message,
-            type: "success"
-          });
-          this.$router.push({ path: "/device/deviceMaintenance" });
-          return;
-        }
-        this.$message({
-          message: res.message,
-          type: "warning"
-        });
-        return;
       });
     },
     //查询工作中心

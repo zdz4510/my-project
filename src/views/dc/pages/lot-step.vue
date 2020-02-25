@@ -931,7 +931,7 @@ export default {
     //资源查询end
     //表格start
     helpText(item) {
-      return item.lot;
+      return item["lot"];
     },
     query() {
       // getColorPage().then(res => {
