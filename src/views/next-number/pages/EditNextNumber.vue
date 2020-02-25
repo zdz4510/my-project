@@ -116,8 +116,8 @@
 						</el-row>
 						<el-row v-if="editForm.sequenceType == 'S'">
 							<el-col :span="12">
-								<el-form-item label="顺序:" prop="order" >
-									<el-radio-group v-model="editForm.order">
+								<el-form-item label="顺序:" prop="orders" >
+									<el-radio-group v-model="editForm.orders">
 										<el-radio  label="ASC">顺序</el-radio>
 										<el-radio  label="DESC">反序</el-radio>
 									</el-radio-group>

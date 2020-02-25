@@ -94,8 +94,8 @@
         </el-row>
         <el-row v-if="addForm.sequenceType == 'S'">
           <el-col :span="12">
-            <el-form-item label="顺序:" prop="order">
-              <el-radio-group v-model="addForm.order">
+            <el-form-item label="顺序:" prop="orders">
+              <el-radio-group v-model="addForm.orders">
                 <el-radio  label="ASC">顺序</el-radio>
                 <el-radio  label="DESC">反序</el-radio>
               </el-radio-group>
@@ -319,7 +319,7 @@ export default {
         numIncrease: "1",
         numBase: 10,
         reset: "NEVER",
-        order: "ASC"
+        orders: "ASC"
       },
       status: [
         {
