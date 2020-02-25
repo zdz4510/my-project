@@ -46,7 +46,7 @@
       </div>
       <div class="operate">
         <dsn-button size="small" type="primary" @click.native="handleSave">保存</dsn-button>
-        <dsn-button size="small" type="danger" icon="el-icon-delete" @click.native="handleDelete">删除</dsn-button>
+        <dsn-button size="small" type="danger" icon="el-icon-delete" @click.native="handleDelete" :disabled="disabelDel">删除</dsn-button>
       </div>
     <div class="showInfo">
       <el-tabs type="border-card" style="height:600px">
@@ -74,7 +74,7 @@
                 <el-option label="关闭" value="CLOSE"></el-option>
               </dsn-select>
             </el-form-item>
-            <el-form-item label="计划物料:" :label-width="formLabelWidth" prop="material">
+            <el-form-item label="计划物料:" :label-width="formLabelWidth" prop="plannedMaterial">
               <!-- <el-col :span="9" style="margin-right:7px;">
                 <el-input size="small" placeholder="请输入计划物料" v-model="ruleForm.plannedMaterial"><el-button size="small" slot="append" icon="el-icon-document-copy" @click="materialHandler"></el-button></el-input>
               </el-col> -->
@@ -195,13 +195,12 @@
     <!--工单选择-->
     <DsnSelectDialog
       title="工单选择"
-      :isSingle="false"
+      :isSingle="true"
       ref="orderChoice"
-       :tableData="orderTable"
-       v-model="selectOrderArr"
-       :helpText="helpTextOrdere"
-       @confirm="handlerOrderChange"
-       @cancle="orderCancle"
+      :tableData="orderTable"
+      v-model="selectOrderArr"
+      :helpText="helpTextOrdere"
+      @confirm="handlerOrderChange"
       :visible.sync="orderDialog"
       width="500px">
       <!-- <template slot="header">
@@ -240,6 +239,7 @@
        :tableData="materialTable"
        v-model="selectMaterialArr"
        :helpText="helpTextMaterial"
+       @confirm="handlerMaterialChange"
       :visible.sync="materialDialog"
       width="800px">
       <!-- <dsn-table
@@ -277,6 +277,7 @@
        :tableData="routerTable"
        v-model="selectRouterArr"
        :helpText="helpTextRouter"
+       @confirm="handlerRouterChange"
       width="800px">
       <!-- <dsn-table
           ref="multipleTable"
@@ -372,12 +373,11 @@ export default {
         rules: {
             style: [{ required: true, message: "请选择类型", trigger: "blur" }],
             state: [{ required: true, message: "请选择状态", trigger: "blur" }],
-            material: [
+            plannedMaterial: [
                 { required: true, message: "请输入计划物料", trigger: "blur" }
             ],
             productQty: [{ required: true, validator: numIssuedRules, trigger: "blur" }],
-            custom: [{ required: true, message: "请输入自定义字段", trigger: "blur" }],
-            
+            // custom: [{ required: true, message: "请输入自定义字段", trigger: "blur" }],
         },
         searchForm:{
           shopOrder:''//最新工单
@@ -397,26 +397,31 @@ export default {
         routerDialog:false,
         routerTable:[],
         // routerChoice:[]
+        disabelDel:true
     };
   },
   methods:{
     helpTextOrdere(item){
-      console.log(item,"数据是")
       return item.shopOrder;
     },
     handlerOrderChange(){
       this.searchForm.shopOrder=this.selectOrderArr[0].shopOrder;
-      this.orderDialog=false;
+      // this.orderDialog=false;
     },
     helpTextMaterial(item){
-      this.ruleForm.plannedMaterial=item.material;
-      this.ruleForm.plannedMaterialRev=item.materialRev
       return item.material;
     },
+    handlerMaterialChange(){
+      this.ruleForm.plannedMaterial=this.selectMaterialArr[0].material;
+      this.ruleForm.plannedMaterialRev=this.selectMaterialArr[0].materialRev
+    },
     helpTextRouter(item){
-      this.ruleForm.plannedRouterRev=item.revision;
-      this.ruleForm.plannedRouter=item.router;
+      
       return item.router;
+    },
+    handlerRouterChange(){
+      this.ruleForm.plannedRouterRev=this.selectRouterArr[0].revision;
+      this.ruleForm.plannedRouter=this.selectRouterArr[0].router;
     },
     routerHandler(){
       listRouterPageHttp().then(data =>{
@@ -517,10 +522,14 @@ export default {
     // 初始化获取自定义字段
     getCustom(){
         const params ={
-          customizedItem:'永恒之歌'
+          customizedItem:'CMF_SHOP_ORDER'
         }
         findFieldRequest(params).then(data=>{
-          console.log("初始化自定义字段"+JSON.stringify(data))
+          const res=data.data;
+          if(res.code===200){
+            this.ruleForm.customizedFieldDefInfoList=res.data.customizedFieldDefInfoList;
+            // console.log("初始化自定义字段"+JSON.stringify(res.data))
+          }
         })
       },
     //重置
@@ -531,7 +540,7 @@ export default {
       }
       this.ruleForm.shopOrderType="生产"; //类型
       this.ruleForm.status="可下达"; //状态
-      // this.$refs["orderChoice"].clearSelect();
+      this.$refs["orderChoice"].clearSelect();
       // this.$refs["materialChoice"].clearSelect();
       // this.$refs["routerChoice"].clearSelect();
       //shopOrder
@@ -565,7 +574,8 @@ export default {
                 this.ruleForm.customizedFieldDefInfoList = res.data.customizedFieldDefInfoList//工单的自定义字段信息
                 this.ruleForm.material = res.data.shopOrder.material
                 this.ruleForm.materialRev = res.data.shopOrder.materialRev
-                this.ruleForm.router = res.data.shopOrder.router
+                this.ruleForm.router = res.data.shopOrder.router;
+                this.disabelDel=false;
             }else{
               this.$message({
                 message:res.message,

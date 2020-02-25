@@ -167,9 +167,21 @@
         <el-table-column type="selection" width="35"></el-table-column>
         <el-table-column prop="parameter" label="参数名称"></el-table-column>
         <el-table-column prop="parameterDes" label="参数描述"></el-table-column>
-        <el-table-column prop="softCheck" label="软检查"></el-table-column>
-        <el-table-column prop="parameterStatus" label="参数状态"></el-table-column>
-        <el-table-column prop="valueType" label="值类型"></el-table-column>
+        <el-table-column prop="softCheck" label="软检查">
+          <template slot-scope="scope">
+            <span>{{ scope.row.softCheck?"启用":"不启用" }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="parameterStatus" label="参数状态">
+          <template slot-scope="scope">
+            <span>{{ scope.row.parameterStatus?"启用":"不启用" }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="valueType" label="值类型">
+          <template slot-scope="scope">
+            <span>{{ scope.row.valueType|filterValueType }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="required" label="必须值"></el-table-column>
         <el-table-column prop="targetValue" label="标准值"></el-table-column>
         <el-table-column prop="trueValue" label="布尔值TRUE绑定" width="120"></el-table-column>
@@ -281,10 +293,26 @@ export default {
       ],
       activeNameLeft: "baseRelation",
       activeNameRight: "paramsInput",
-      relationDetail: []
+      relationDetail: [],
+      currentRow: {}
     };
   },
   created() {},
+  filters: {
+    filterValueType(val) {
+      const value = parseInt(val);
+      if (value === 10) {
+        return "数值";
+      }
+      if (value === 20) {
+        return "文本";
+      }
+      if (value === 30) {
+        return "布尔";
+      }
+      return value;
+    }
+  },
   methods: {
     search(formName) {
       this.$refs[formName].validate(valid => {
@@ -385,6 +413,7 @@ export default {
       ) {
         return;
       }
+      this.currentRow = row;
       const data = { dcGroup: row.dcGroup };
       findActiveDcParameterMeasureListHttp(data).then(data => {
         const res = data.data;
@@ -408,6 +437,7 @@ export default {
     },
     saveParamsValue() {
       let params = _.cloneDeep(this.baseInfoForm);
+      params.dcGroup = this.currentRow.dcGroup;
       params.dcParameterMeasureInfoList = _.cloneDeep(this.paramsInputList);
       saveDataCollectResult(params).then(data => {
         const res = data.data;

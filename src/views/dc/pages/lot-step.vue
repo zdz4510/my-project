@@ -105,6 +105,8 @@
       v-model="selectedLotList"
       :visible.sync="lotQueryDialog"
       @confirm="handleConfirmSelectLot"
+      @cancle="handleCancleSelectLot"
+      keyValue="lot"
     >
       <template slot="header">
         <!-- <el-input v-model="search" placeholder></el-input>
@@ -342,6 +344,7 @@ import operationModel from "../components/operation-model.vue";
 import { findPageHttp } from "@/api/operation.maintain.api.js";
 import resourceModel from "../components/resource-model.vue";
 import { listAllResourceHttp } from "@/api/device/maintenance.api.js";
+// import _ from "lodash";
 
 export default {
   components: {
@@ -773,14 +776,14 @@ export default {
         if (res.code === 200) {
           this.lotTableData = res.data;
           this.total = this.lotTableData.length;
-          this.selectedLotList.forEach(item => {
-            if (!this.lotTableData.find(item2 => item2.lot === item.lot)) {
-              this.lotTableData.push(item);
-            }
-          });
-          this.selectedLotList.forEach(element => {
-            this.$refs.multipleTable.toggleRowSelection(element);
-          });
+          // this.selectedLotList.forEach(item => {
+          //   if (!this.lotTableData.find(item2 => item2.lot === item.lot)) {
+          //     this.lotTableData.push(item);
+          //   }
+          // });
+          // this.selectedLotList.forEach(element => {
+          //   this.$refs.multipleTable.toggleRowSelection(element);
+          // });
           return;
         }
         this.$message({
@@ -797,14 +800,13 @@ export default {
       this.selectedLotList = [];
     },
     //确认选择lot
-    handleConfirmSelectLot() {
+    handleConfirmSelectLot(val) {
+      this.selectedLotList = val;
       console.log(this.selectedLotList);
-      if (this.selectedLotList.length === 1) {
-        this.lotStepForm.lot = this.selectedLotList[0].lot;
-      }
-      if (this.selectedLotList.length > 1) {
-        this.lotStepForm.lot = "已选择" + this.selectedLotList.length + "个";
-      }
+      this.lotQueryDialog = false;
+    },
+    handleCancleSelectLot() {
+      this.lotQueryDialog = false;
     },
     //物料查询start
     queryMaterial() {
@@ -928,40 +930,7 @@ export default {
     //资源查询end
     //表格start
     helpText(item) {
-      return item.lot;
-    },
-    query() {
-      // getColorPage().then(res => {
-      //   if (res.data.code == 200) {
-      //     this.tableData = res.data.data.data;
-      //   }
-      // });
-    },
-    handleChange(v) {
-      console.log(v);
-    },
-    toggle(V) {
-      console.log("revecied", V);
-    },
-    tableSelectAll() {
-      console.log("用户监听到到事件");
-    },
-    rowClick(row) {
-      console.log("click" + row);
-    },
-    selectionChange(selection) {
-      console.log(selection);
-    },
-    cellClick() {
-      console.log("cell click");
-    },
-    clearSelection() {
-      console.log(this.$refs["table"]);
-      this.$refs["table"].clearSelection();
-      this.paramData = {
-        a: 10
-      };
-      //  this.$refs['table'].search()
+      return item["lot"];
     }
     //表格end
   }

@@ -62,6 +62,7 @@
           <el-tab-pane label="主题与站位关系维护" class="relationManage">
             <div class="container">
               <div class="left">
+                <div class="title">未分配</div>
                 <el-table
                   @selection-change="handleLeftSelect"
                   :data="list"
@@ -131,6 +132,7 @@
                 ></dsn-button>
               </div>
               <div class="right">
+                <div class="title">已分配</div>
                 <el-table
                   @selection-change="handleRightSelect"
                   :data="list2"
@@ -171,7 +173,6 @@
                   </el-table-column>
                   <el-table-column prop="stationDes" label="站位描述">
                     <template slot="header">
-                      <template slot="header">
                       <div class="inputChoice">
                         <div class="input-left">站位描述</div>
                         <div class="input-right">
@@ -183,7 +184,6 @@
                           />
                         </div>
                       </div>
-                    </template>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -482,6 +482,13 @@ export default {
     .left,
     .right {
       flex: 1;
+      .title{
+        width:100%;
+        height:40px;
+        font-size:16px;
+        text-align:center;
+        // margin:0 auto;
+      }
     }
     .inputChoice{
       .input-left{

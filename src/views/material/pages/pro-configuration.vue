@@ -188,31 +188,31 @@ export default {
         modifyUserId: "",
         modifyUserName: "",
         podButtons: [
-          {
-            buttionDesc: "",
-            buttonId: "",
-            groupFlag: true,
-            imageIcon: "",
-            location: "",
-            podActivities: [
-              {
-                activity: "",
-                activityDes: "",
-                activityType: "",
-                clearsLot: true,
-                podButtonRef: "",
-                reference: "",
-                sequence: "",
-                tenantSiteCode: ""
-              }
-            ],
-            podButtonRef: "",
-            podButtons: [null],
-            podConfigRef: "",
-            reference: "",
-            sequence: "",
-            tenantSiteCode: ""
-          }
+          // {
+          //   buttionDesc: "",
+          //   buttonId: "",
+          //   groupFlag: true,
+          //   imageIcon: "",
+          //   location: "",
+          //   podActivities: [
+          //     {
+          //       activity: "",
+          //       activityDes: "",
+          //       activityType: "",
+          //       clearsLot: true,
+          //       podButtonRef: "",
+          //       reference: "",
+          //       sequence: "",
+          //       tenantSiteCode: ""
+          //     }
+          //   ],
+          //   podButtonRef: "",
+          //   podButtons: [null],
+          //   podConfigRef: "",
+          //   reference: "",
+          //   sequence: "",
+          //   tenantSiteCode: ""
+          // }
         ],
         podConfigDesc: "",
         podConfigName: "",
@@ -298,7 +298,6 @@ export default {
         const res = data.data;
         if (res.code == 200) {
           this.ruleForm = res.data;
-          // console.log("显示数据",res.data)
           // 当前获取的数据放到vuex中，以便更改
           this.ALLMESSAGE(res.data);
         } else {
@@ -389,8 +388,11 @@ export default {
         this.ruleForm.podButtons = null;
       }
       const params = this.ruleForm;
+      this.changeParams(params)
+      this.save(params);
+    },
+    save(params){
       addOrModiaRequest(params).then(data => {
-        console.log("保存操作" + JSON.stringify(data));
         const res = data.data;
         if (res.code == 200) {
           this.$message({
@@ -404,6 +406,11 @@ export default {
           });
         }
       });
+    },
+    changeParams(params){
+      params.podButtons.forEach((item,index)=>{
+        item.sequence=index
+      })
     },
     //编辑
     handleEdit() {

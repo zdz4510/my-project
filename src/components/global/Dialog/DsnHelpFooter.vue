@@ -36,7 +36,7 @@ export default {
     padding: 10px;
     border: 1px solid #eee;
     position: relative;
-    height: 150px;
+    height: 100px;
     overflow-y: scroll;
     padding-right: 30px;
     .help-item{

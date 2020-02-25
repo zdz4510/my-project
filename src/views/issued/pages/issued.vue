@@ -42,7 +42,7 @@
                             <dsn-input  autocomplete="off" v-model='workOrderIssued.numIssued'></dsn-input>
                         </el-form-item>
                         <el-form-item>
-                            <dsn-button size="small" type="primary" style="margin-left:26px;" @click.native="handleIssued">下达</dsn-button>
+                            <dsn-button size="small" type="primary" style="margin-left:26px;" :disabled="disabledVisable"  @click.native="handleIssued">下达</dsn-button>
                         </el-form-item>
                     </el-form>
                     <!-- <div class="operate">                       
@@ -179,13 +179,18 @@ export default {
     data(){
         const numIssuedRules = (rule, value, callback) => {
         if (value === "") {
+            this.disabledVisable=true;
             callback("下达数量不为空");
         }
         let reg = /^[1-9]\d*$/;
         if (!reg.test(value)) {
+            this.disabledVisable=true;
             callback("下达数量应只包含非零整数");
+        }else{
+            this.disabledVisable=false;
+            callback();
         }
-        callback();
+        
         };
         return{
             tHeader,
@@ -201,6 +206,7 @@ export default {
                 plannedRouter:"",
                 availableQuantity:""
             },//工单信息
+            disabledVisable:true,
             workOrderIssued: {
                 shopOrder: '',
                 numIssued:'',

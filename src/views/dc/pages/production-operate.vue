@@ -51,11 +51,24 @@
       </el-form>
       </DsnPanel>
     <div class="operation">
-      <dsn-button type="primary" size="small" @click="goEdit">开始</dsn-button>
+      <!-- <dsn-button type="primary" size="small" @click="goEdit">开始</dsn-button>
       <dsn-button type="primary" size="small" @click="reset">注销</dsn-button>
       <dsn-button type="primary" size="small">结束</dsn-button>
       <dsn-button type="primary" size="small">1号组</dsn-button>
-      <dsn-button type="primary" size="small">2号组</dsn-button>
+      <dsn-button type="primary" size="small">2号组</dsn-button> -->
+      <dsn-button type="primary" size="small" :key="item.sequence"
+          :item="item"
+          v-for="(item) in podButtons">
+          {{ item.buttonId }}
+      </dsn-button>
+      <dsn-select :key="item.sequence" v-for="(item) in zuPodButtons" v-model="item.buttonId">
+        <el-option
+          v-for="data in item.podButtons"
+          :key="data.sequence"
+          :label="data.buttonId"
+          :value="data.buttonId"
+        ></el-option>
+      </dsn-select>
     </div>
     <!--表单-->
     <DsnPanel>
@@ -196,6 +209,9 @@ import {
   findPageHttp,
   findResourceListHttp
 } from "@/api/dc/production.operate.api.js";
+import {
+  podConfigRequest,
+} from "@/api/pro-configuration/pro-configuration.api.js";
 import _ from "lodash";
 
 export default {
@@ -213,6 +229,8 @@ export default {
         lot: "",
         resource: ""
       },
+      podButtons:[],
+      zuPodButtons:[],
       searchFormRules: {
         operation: [
           { required: true, message: "请输入工序", trigger: "change" }
@@ -247,8 +265,31 @@ export default {
   created() {
     this.deBounceSearchOperation();
     this.deBounceSearchResource();
+    this.handlePodConfig();
   },
   methods: {
+    handlePodConfig() {
+      const params = "AA";
+      podConfigRequest(params).then(data => {
+        const res = data.data;
+        if (res.code == 200) {
+          res.data.podButtons.forEach(item=>{
+            if(item.groupFlag){
+              this.zuPodButtons.push(item)
+            }else{
+              this.podButtons.push(item);
+            }
+          })
+          console.log(this.zuPodButtons,"组数据")
+          // 当前获取的数据放到vuex中，以便更改
+        } else {
+          this.$message({
+            message: `${res.message}`,
+            type: "warning"
+          });
+        }
+      });
+    },
     changeWork() {
       let arr = this.list.filter(item => {
         if(item.lot.indexOf(this.v)>=0){

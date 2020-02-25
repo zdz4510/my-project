@@ -1,130 +1,136 @@
 <template>
   <div class="container">
-    <div class="formlabel">
-      <el-form label-width="100px" class="typeForm">
-        <el-form-item label="物料号:" prop="mat">
-          <el-col style="margin-right:20px">
-            <el-input
-              placeholder="请输入物料号"
-              @click.native="$event.target.select()"
-              @keyup.native.enter="KeyUpEnterMat"
-              v-model="formlabel.mat"
-              ref="matInput"
-            ></el-input>
-          </el-col>
-        </el-form-item>
-
-        <el-form-item label="包装层级:" prop="packingClass">
-          <el-select v-model="formlabel.packingClass" @change="changePack">
-            <el-option
-              v-for="item in this.packingClassOption"
-              :label="item.name"
-              :value="item.value"
-              :key="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="作业方式:" prop="subordinateStatus">
-          <el-select v-model="formlabel.subordinateStatus">
-            <el-option label="包装" value="true"></el-option>
-            <el-option label="解包" value="false"></el-option>
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="输入容器:" prop="mainNumber">
-          <el-col style="margin-right:20px">
-            <el-input
-              placeholder="输入容器"
-              v-model="formlabel.mainNumber"
-              @keyup.native.enter="KeyUpInfo"
-              @change="changeMainNumber"
-            ></el-input>
-          </el-col>
-        </el-form-item>
-
-        <el-form-item label="被容器" prop="subordinationNumber">
-          <el-col style="margin-right:20px">
-            <el-input
-              placeholder="请输入被容器"
-              v-model="formlabel.subordinationNumber"
-              @keyup.native.enter="KeyUpSubordinationNumber"
-            ></el-input>
-          </el-col>
-        </el-form-item>
-      </el-form>
-      <div>
-        <div class="operation">
-          <el-button type="primary" size="small" @click="handleSave">完成装入</el-button>
-          <el-button type="primary" size="small">包装打印</el-button>
-          <el-button type="danger" size="small" @click="reset">装入重置</el-button>
-          <el-checkbox v-model="dycheck" style="margin-left:10px">自动打印</el-checkbox>
-        </div>
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>收集值</span>
       </div>
-    </div>
-
-    <div class="baseForm">
-      <el-form label-width="100px" class="typeForm">
-        <el-form-item label="容器类型:">
-          <el-col style="margin-right:20px">
-            <el-input readonly v-model="baseForm.containerType"></el-input>
-          </el-col>
-        </el-form-item>
-
-        <el-form-item label="工单:" prop="shopOrder">
-          <el-input readonly v-model="baseForm.shopOrder"></el-input>
-        </el-form-item>
-
-        <el-form-item label="物料号:" prop="mat">
-          <el-input readonly v-model="baseForm.mat"></el-input>
-        </el-form-item>
-
-        <el-form-item label="编号规则:" prop="mainNumberType">
-          <el-input readonly v-model="baseForm.mainNumberType"></el-input>
-        </el-form-item>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="容器容纳数" prop="accommodateNumber">
-              <el-input v-model="baseForm.accommodateNumber" readonly></el-input>
+      <el-row :gutter="30">
+        <el-col :span="10">
+          <el-form label-width="100px">
+            <el-form-item label="物料号:" prop="mat">
+              <dsn-input
+                placeholder="请输入物料号"
+                @click.native="$event.target.select()"
+                @keyup.native.enter="KeyUpEnterMat"
+                v-model="formlabel.mat"
+                ref="matInput"
+              ></dsn-input>
             </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="当前数量" prop="currentNum">
-              <el-input readonly v-model="baseForm.currentNum"></el-input>
+            <el-form-item label="包装层级:" prop="packingClass">
+              <dsn-select v-model="formlabel.packingClass" @change="changePack" style="width:100%">
+                <el-option
+                  v-for="item in this.packingClassOption"
+                  :label="item.name"
+                  :value="item.value"
+                  :key="item.value"
+                ></el-option>
+              </dsn-select>
             </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="是否打印标签">
-              <el-input v-model="baseForm.labelPrinting"></el-input>
+            <el-form-item label="作业方式:" prop="subordinateStatus">
+              <dsn-select v-model="formlabel.subordinateStatus" style="width:100%">
+                <el-option label="包装" value="true"></el-option>
+                <el-option label="解包" value="false"></el-option>
+              </dsn-select>
             </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-    </div>
+            <el-form-item label="输入容器:" prop="mainNumber">
+              <dsn-input
+                placeholder="输入容器"
+                v-model="formlabel.mainNumber"
+                @keyup.native.enter="KeyUpInfo"
+                @change="changeMainNumber"
+              ></dsn-input>
+            </el-form-item>
+            <el-form-item label="被容器:" prop="subordinationNumber">
+              <dsn-input
+                placeholder="请输入被容器"
+                v-model="formlabel.subordinationNumber"
+                @keyup.native.enter="KeyUpSubordinationNumber"
+              ></dsn-input>
+            </el-form-item>
+            <el-form-item style="margin-left:-100px">
+              <el-row :gutter="10">
+                <el-col :span="6">
+                  <dsn-button type="primary" size="small" @click="handleSave">完成装入</dsn-button>
+                </el-col>
+                <el-col :span="6">
+                  <dsn-button type="primary" size="small">包装打印</dsn-button>
+                </el-col>
+                <el-col :span="6">
+                  <dsn-button type="danger" size="small" @click="reset">装入重置</dsn-button>
+                </el-col>
+                <el-col :span="6">
+                  <el-checkbox v-model="dycheck" style="margin-left:10px">自动打印</el-checkbox>
+                </el-col>
+              </el-row>
+            </el-form-item>
+          </el-form>
+        </el-col>
+        <el-col :span="10">
+          <el-form label-width="100px" class="typeForm" :model="baseForm">
+            <el-form-item label="容器类型:">
+              <dsn-input readonly v-model="baseForm.containerType" :disabled="true"></dsn-input>
+            </el-form-item>
 
-    <div class="list">
-      <div>包装清单</div>
-      <el-table
-        ref="multipleTable"
-        :data="tableData"
-        tooltip-effect="dark"
-        style="width: 100%"
-        height="200"
-      >
-        <el-table-column prop="dataIndex" label="序号"></el-table-column>
-        <el-table-column prop="subordinationNumber" label="被容器/LOT"></el-table-column>
-        <el-table-column prop="createTime" label="包装时间" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="createUserName" label="包装员" show-overflow-tooltip></el-table-column>
-      </el-table>
-    </div>
+            <el-form-item label="工单:" prop="shopOrder">
+              <dsn-input readonly v-model="baseForm.shopOrder" :disabled="true"></dsn-input>
+            </el-form-item>
 
-    <div class="log">
-      <div>日志记录</div>
-      <div style="background:#fff;width:100%;height:200px" v-html="logMsg">{{logMsg}}}</div>
-    </div>
+            <el-form-item label="物料号:" prop="mat">
+              <dsn-input readonly v-model="baseForm.mat" :disabled="true"></dsn-input>
+            </el-form-item>
+
+            <el-form-item label="编号规则:" prop="mainNumberType">
+              <dsn-input readonly v-model="baseForm.mainNumberType" :disabled="true"></dsn-input>
+            </el-form-item>
+            <el-row>
+              <el-col :span="12">
+                <el-form-item label="容器容纳数:" prop="accommodateNumber">
+                  <dsn-input v-model="baseForm.accommodateNumber" readonly :disabled="true"></dsn-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="当前数量:" prop="currentNum">
+                  <dsn-input readonly v-model="baseForm.currentNum" :disabled="true"></dsn-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="12">
+                <el-form-item label="是否打印标签">
+                  <dsn-input v-model="baseForm.labelPrinting" :disabled="true"></dsn-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
+        </el-col>
+      </el-row>
+    </DsnPanel>
+    <DsnPanel>
+      <div slot="header" class="title clearfix">
+        <span>搜索结果</span>
+      </div>
+      <el-row :gutter="30">
+        <el-col :span="10">
+          <h3>包装清单</h3>
+          <dsn-table
+            ref="multipleTable"
+            :data="tableData"
+            tooltip-effect="dark"
+            style="width: 100%"
+            height="200"
+          >
+            <el-table-column prop="dataIndex" label="序号"></el-table-column>
+            <el-table-column prop="subordinationNumber" label="被容器/LOT"></el-table-column>
+            <el-table-column prop="createTime" label="包装时间" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="createUserName" label="包装员" show-overflow-tooltip></el-table-column>
+          </dsn-table>
+        </el-col>
+        <el-col :span="10">
+          <h3>日志记录</h3>
+          <div style="background:#fff;width:100%;height:200px" v-html="logMsg">{{logMsg}}}</div>
+        </el-col>
+      </el-row>
+    </DsnPanel>
   </div>
 </template>
 <script>
@@ -146,12 +152,23 @@ export default {
         mat: "",
         mainNumber: "",
         subordinationNumber: "",
-        subordinateStatus: "true"
+        subordinateStatus: "true",
+        shopOrder: "",
+        packingClass: ""
       },
-      baseForm: {}
+      baseForm: {
+        containerType: "",
+        labelPrinting: "",
+        currentNum: "",
+        accommodateNumber: "",
+        mainNumberType: "",
+        mat: "",
+        shopOrder: ""
+      }
     };
   },
   methods: {
+    //完成装入按钮方法
     handleSave() {
       const payload = {
         container: this.baseForm,
@@ -165,7 +182,8 @@ export default {
         });
       });
     },
-    getMat() {
+    //监听回车事件
+    KeyUpEnterMat() {
       const payload = {
         currentPage: 1,
         pageSize: 0,
@@ -249,9 +267,7 @@ export default {
         callback && callback(res);
       });
     },
-    KeyUpEnterMat() {
-      this.getMat();
-    },
+
     changePack() {
       this.getInfo();
     },
@@ -281,27 +297,30 @@ export default {
   }
 };
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 .container {
-  padding: 10px;
-  display: flex;
-  flex-wrap: wrap;
-  .formlabel {
-    width: 50%;
-    .operation {
-      width: 100%;
-      text-align: center;
-    }
+  h3 {
+    text-align: center;
   }
-  .baseForm {
-    width: 50%;
-  }
-  .list {
-    width: 50%;
-  }
-  .log {
-    width: calc(50% - 20px);
-    padding: 0 10px;
-  }
+  // padding: 10px;
+  // display: flex;
+  // flex-wrap: wrap;
+  // .formlabel {
+  //   width: 50%;
+  //   .operation {
+  //     width: 100%;
+  //     text-align: center;
+  //   }
+  // }
+  // .baseForm {
+  //   width: 50%;
+  // }
+  // .list {
+  //   width: 50%;
+  // }
+  // .log {
+  //   width: calc(50% - 20px);
+  //   padding: 0 10px;
+  // }
 }
 </style>
