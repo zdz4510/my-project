@@ -18,11 +18,7 @@
         @row-dblclick="RowDoubleClick"
         height="400px"
       >
-        <el-table-column
-          type="selection"
-          v-if="!isSingle"
-          width="55px"
-        ></el-table-column>
+        <el-table-column type="selection" v-if="!isSingle" width="55px"></el-table-column>
         <!-- 这里插入的是table 的行 -->
         <slot name="body"></slot>
       </dsn-table>
@@ -33,8 +29,7 @@
           :item="item"
           v-for="(item, index) in totalSelectArr"
           @close="close"
-          >{{ helpText(item) }}</DsnHelpItem
-        >
+        >{{ helpText(item) }}</DsnHelpItem>
       </DsnHelpFooter>
     </div>
     <span slot="footer" class="dialog-footer">
@@ -129,13 +124,13 @@ export default {
     confirm() {
       if (this.isSingle) {
         //  _.cloneDeep([])
-        this.totalSelectArr =([...this.selectArr]);
+        this.totalSelectArr = [...this.selectArr];
       } else {
-        this.totalSelectArr =( [
+        this.totalSelectArr = [
           ...new Set([...this.totalSelectArr, ...this.selectArr])
-        ]);
+        ];
       }
-      this.$emit('change',  this.totalSelectArr)
+      this.$emit("change", this.totalSelectArr);
       this.$emit("confirm");
       //this.$emit("update:visible", false);
     },
@@ -155,7 +150,7 @@ export default {
       this.totalSelectArr = this.totalSelectArr.filter(item => {
         return item != deleteItem;
       });
-     // this.$refs["table"].toggleRowSelection(deleteItem);
+      // this.$refs["table"].toggleRowSelection(deleteItem);
       this.$emit("change", this.totalSelectArr);
     },
     RowClick(row) {
@@ -167,10 +162,9 @@ export default {
     // 双击选中
     RowDoubleClick(row) {
       // 选中状态
-      if(!this.isSingle){
+      if (!this.isSingle) {
         this.$refs["table"].toggleRowSelection(row);
       }
-      
     },
     handleClear() {
       this.totalSelectArr = [];
