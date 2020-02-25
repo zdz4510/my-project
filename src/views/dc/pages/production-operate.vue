@@ -51,11 +51,16 @@
       </el-form>
       </DsnPanel>
     <div class="operation">
-      <dsn-button type="primary" size="small" @click="goEdit">开始</dsn-button>
+      <!-- <dsn-button type="primary" size="small" @click="goEdit">开始</dsn-button>
       <dsn-button type="primary" size="small" @click="reset">注销</dsn-button>
       <dsn-button type="primary" size="small">结束</dsn-button>
       <dsn-button type="primary" size="small">1号组</dsn-button>
-      <dsn-button type="primary" size="small">2号组</dsn-button>
+      <dsn-button type="primary" size="small">2号组</dsn-button> -->
+      <dsn-button type="primary" size="small" :key="item.sequence"
+          :item="item"
+          v-for="(item) in podButtons">
+          {{ item.buttonId }}
+      </dsn-button>
     </div>
     <!--表单-->
     <DsnPanel>
@@ -216,6 +221,7 @@ export default {
         lot: "",
         resource: ""
       },
+      podButtons:[],
       searchFormRules: {
         operation: [
           { required: true, message: "请输入工序", trigger: "change" }
@@ -258,7 +264,8 @@ export default {
       podConfigRequest(params).then(data => {
         const res = data.data;
         if (res.code == 200) {
-          console.log("显示数据",res.data.podButtons)
+          console.log("显示数据",res.data.podButtons);
+          this.podButtons=res.data.podButtons;
           // 当前获取的数据放到vuex中，以便更改
         } else {
           this.$message({

@@ -388,7 +388,10 @@ export default {
         this.ruleForm.podButtons = null;
       }
       const params = this.ruleForm;
-      console.log("保存操作" + JSON.stringify(params));
+      this.changeParams(params)
+      this.save(params);
+    },
+    save(params){
       addOrModiaRequest(params).then(data => {
         const res = data.data;
         if (res.code == 200) {
@@ -403,6 +406,11 @@ export default {
           });
         }
       });
+    },
+    changeParams(params){
+      params.podButtons.forEach((item,index)=>{
+        item.sequence=index
+      })
     },
     //编辑
     handleEdit() {
