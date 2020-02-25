@@ -52,7 +52,7 @@
             <el-table-column prop="operation" label="工序"></el-table-column>
             <el-table-column prop="status" label="状态"></el-table-column>
             <el-table-column prop="finalOperationTime" label="最后作业时间"></el-table-column>
-            <el-table-column prop="finalOperationUserName" label="最后作业人员"></el-table-column>
+            <el-table-column prop="finalOperationName" label="最后作业人员"></el-table-column>
             <el-table-column prop="packingClass" label="容器层级"></el-table-column>
             <!-- <el-table-column prop="numbersInvolved" label="删除时间"></el-table-column>
             <el-table-column prop="resource" label="删除人员"></el-table-column>
@@ -98,7 +98,7 @@
             <el-table-column prop="operation" label="工序"></el-table-column>
             <el-table-column prop="status" label="状态"></el-table-column>
             <el-table-column prop="finalOperationTime" label="最后作业时间"></el-table-column>
-            <el-table-column prop="finalOperationUserName" label="最后作业人员"></el-table-column>
+            <el-table-column prop="finalOperationName" label="最后作业人员"></el-table-column>
             <el-table-column prop="packingClass" label="容器层级"></el-table-column>
             <el-table-column prop="deleteTime" label="删除时间"></el-table-column>
             <el-table-column prop="deleteUserName" label="删除人员"></el-table-column>
@@ -137,7 +137,7 @@
              <el-table-column prop="operation" label="工序"></el-table-column>
             <el-table-column prop="status" label="状态"></el-table-column>
             <el-table-column prop="finalOperationTime" label="最后作业时间"></el-table-column>
-            <el-table-column prop="finalOperationUserName" label="最后作业人员"></el-table-column>
+            <el-table-column prop="finalOperationName" label="最后作业人员"></el-table-column>
             <el-table-column prop="packingClass" label="容器层级"></el-table-column>
             <el-table-column prop="deleteTime" label="删除时间"></el-table-column>
             <el-table-column prop="deleteUserName" label="删除人员"></el-table-column>
