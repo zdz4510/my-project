@@ -288,6 +288,15 @@ export default {
     };
     //预警事件
     let validateAlarm = (rule, value, callback) => {
+      if (this.isRequired) {
+        if (value === "") {
+          callback("请选择预警事件");
+        }
+      } else {
+        if (value === "") {
+          callback();
+        }
+      }
       let reg = /^([A-Z]|[a-z]|[0-9]|_|-|\/)+$/;
       if (!reg.test(value)) {
         callback("预警事件格式（[A-Z,0-9,_,-,/]）");
