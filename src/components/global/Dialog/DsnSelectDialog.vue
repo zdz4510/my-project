@@ -49,6 +49,7 @@ export default {
     event: "change"
   },
   watch: {
+    // 监听表格的数据变化
     tableData: {
       handler: function(newArr) {
         this.tableData = newArr;
@@ -57,6 +58,13 @@ export default {
         // this.$refs['table'].toggleAllSelection()
       },
       deep: true
+    },
+    totalSelectArr:{
+      // 选中的数据发生变化后，要同步选中的值
+      handler:function(){
+         this.setSelected();
+      },
+      deep:true
     }
   },
   computed: {
