@@ -5,27 +5,27 @@
         <span>搜索信息</span>
       </div>
       <el-form label-width="100px" :model="searchForm" :rules="searchRules" :inline="true">
-          <!-- <el-form-item label="工单:">
+        <!-- <el-form-item label="工单:">
            
-          </el-form-item> -->
-            <el-form-item label="工单:" prop="shopOrder">
-              <el-row>
-                <el-col :span="22">
-                  <dsn-input size="small" placeholder="请输入工单" v-model="searchForm.shopOrder"></dsn-input>
-                </el-col>
-                <el-col :span="2">
-                  <i class="el-icon-document" @click="orderHandler"></i>
-                </el-col>
-              </el-row>
-              <!-- <el-input size="small" placeholder="请输入工单" v-model="shopOrder">
+        </el-form-item>-->
+        <el-form-item label="工单:" prop="shopOrder">
+          <el-row>
+            <el-col :span="22">
+              <dsn-input size="small" placeholder="请输入工单" v-model="searchForm.shopOrder"></dsn-input>
+            </el-col>
+            <el-col :span="2">
+              <i class="el-icon-document" @click="orderHandler"></i>
+            </el-col>
+          </el-row>
+          <!-- <el-input size="small" placeholder="请输入工单" v-model="shopOrder">
                 <el-button slot="append" icon="el-icon-document-copy" @click="orderHandler"></el-button>
-              </el-input> -->
-            </el-form-item>
-            <el-form-item>
-                <dsn-button size="small"  type="primary" icon="el-icon-search" @click.native="getOrder">查询</dsn-button>
-              <dsn-button size="small" type="primary" icon="el-icon-refresh" @click.native='reset'>重置</dsn-button>
-            </el-form-item>
-        </el-form>
+          </el-input>-->
+        </el-form-item>
+        <el-form-item>
+          <dsn-button size="small" type="primary" icon="el-icon-search" @click.native="getOrder">查询</dsn-button>
+          <dsn-button size="small" type="primary" icon="el-icon-refresh" @click.native="reset">重置</dsn-button>
+        </el-form-item>
+      </el-form>
     </DsnPanel>
     <!-- <div class="query">
       <div class="left">
@@ -38,8 +38,8 @@
         <dsn-button size="small" type="primary" @click="getOrder">查询</dsn-button>
         <dsn-button size="small" type="primary" @click='reset'>重置</dsn-button>
       </div>
-    </div> -->
-    
+    </div>-->
+
     <DsnPanel>
       <div slot="header" class="title clearfix">
         <span>搜索结果</span>
@@ -48,94 +48,105 @@
         <dsn-button size="small" type="primary" @click.native="handleSave">保存</dsn-button>
         <dsn-button size="small" type="danger" icon="el-icon-delete" @click.native="handleDelete">删除</dsn-button>
       </div>
-    <div class="showInfo">
-      <el-tabs type="border-card" style="height:600px">
-        <el-tab-pane>
-          <span slot="label">
-            <i class="el-icon-date"></i> 一般
-          </span>
-          <el-form
-            :model="ruleForm"
-            :rules="rules"
-            ref="ruleForm"
-            label-width="100px"
-            class="demo-ruleForm"
-          >
-            <el-form-item label="类型：" :label-width="formLabelWidth" prop="style">
-              <dsn-select v-model="ruleForm.shopOrderType" placeholder="生产">
-                <el-option label="生产" value="PRODUCTION"></el-option>
-                <el-option label="返工" value="REWORK"></el-option>
-              </dsn-select>
-            </el-form-item>
-            <el-form-item label="状态：" :label-width="formLabelWidth" prop="state">
-              <dsn-select v-model="ruleForm.status" placeholder="可下达/完成/关闭">
-                <el-option label="可下达" value="RELEASABLE"></el-option>
-                <el-option label="完成" value="DONE"></el-option>
-                <el-option label="关闭" value="CLOSE"></el-option>
-              </dsn-select>
-            </el-form-item>
-            <el-form-item label="计划物料:" :label-width="formLabelWidth" prop="material">
-              <!-- <el-col :span="9" style="margin-right:7px;">
+      <div class="showInfo">
+        <el-tabs type="border-card" style="height:600px">
+          <el-tab-pane>
+            <span slot="label">
+              <i class="el-icon-date"></i> 一般
+            </span>
+            <el-form
+              :model="ruleForm"
+              :rules="rules"
+              ref="ruleForm"
+              label-width="100px"
+              class="demo-ruleForm"
+            >
+              <el-form-item label="类型：" :label-width="formLabelWidth" prop="style">
+                <dsn-select v-model="ruleForm.shopOrderType" placeholder="生产">
+                  <el-option label="生产" value="PRODUCTION"></el-option>
+                  <el-option label="返工" value="REWORK"></el-option>
+                </dsn-select>
+              </el-form-item>
+              <el-form-item label="状态：" :label-width="formLabelWidth" prop="state">
+                <dsn-select v-model="ruleForm.status" placeholder="可下达/完成/关闭">
+                  <el-option label="可下达" value="RELEASABLE"></el-option>
+                  <el-option label="完成" value="DONE"></el-option>
+                  <el-option label="关闭" value="CLOSE"></el-option>
+                </dsn-select>
+              </el-form-item>
+              <el-form-item label="计划物料:" :label-width="formLabelWidth" prop="material">
+                <!-- <el-col :span="9" style="margin-right:7px;">
                 <el-input size="small" placeholder="请输入计划物料" v-model="ruleForm.plannedMaterial"><el-button size="small" slot="append" icon="el-icon-document-copy" @click="materialHandler"></el-button></el-input>
-              </el-col> -->
-              <el-row>
-                <el-col :span="22">
-                  <dsn-input size="small" placeholder="请输入计划物料" v-model="ruleForm.plannedMaterial"></dsn-input>
-                </el-col>
-                <el-col :span="2">
-                  <i class="el-icon-document" @click="materialHandler"></i>
-                </el-col>
-              </el-row>
-              <!-- <div class="choiceBox">
+                </el-col>-->
+                <el-row>
+                  <el-col :span="22">
+                    <dsn-input
+                      size="small"
+                      placeholder="请输入计划物料"
+                      v-model="ruleForm.plannedMaterial"
+                    ></dsn-input>
+                  </el-col>
+                  <el-col :span="2">
+                    <i class="el-icon-document" @click="materialHandler"></i>
+                  </el-col>
+                </el-row>
+                <!-- <div class="choiceBox">
                 <i class="el-icon-document-copy"></i>
-              </div> -->
-              <!--物料版本-->
-              
+                </div>-->
+                <!--物料版本-->
+
                 <el-form>
                   <el-form-item label="版本：" :label-width="formLabelWidth">
                     <dsn-input v-model="ruleForm.plannedMaterialRev" placeholder="请输入物料版本"></dsn-input>
                   </el-form-item>
                 </el-form>
-              
-            </el-form-item>
-            <el-form-item label="计划工艺路线:" :label-width="formLabelWidth">
-              <el-row>
-                <el-col :span="22">
-                  <dsn-input size="small" placeholder="请输入计划工艺路线" v-model="ruleForm.plannedRouter"></dsn-input>
-                </el-col>
-                <el-col :span="2">
-                  <i class="el-icon-document" @click="routerHandler"></i>
-                </el-col>
-              </el-row>
-              <!-- <el-col :span="9" style="margin-right:7px;">
+              </el-form-item>
+              <el-form-item label="计划工艺路线:" :label-width="formLabelWidth">
+                <el-row>
+                  <el-col :span="22">
+                    <dsn-input
+                      size="small"
+                      placeholder="请输入计划工艺路线"
+                      v-model="ruleForm.plannedRouter"
+                    ></dsn-input>
+                  </el-col>
+                  <el-col :span="2">
+                    <i class="el-icon-document" @click="routerHandler"></i>
+                  </el-col>
+                </el-row>
+                <!-- <el-col :span="9" style="margin-right:7px;">
                 <el-input size="small" placeholder="计划工艺路线" v-model="ruleForm.plannedRouter"><el-button slot="append"  size="small" icon="el-icon-document-copy" @click.native="routerHandler"></el-button></el-input>
-              </el-col> -->
-              <!-- <div class="choiceBox">
+                </el-col>-->
+                <!-- <div class="choiceBox">
                 <i class="el-icon-document-copy"></i>
-              </div> -->
-              <!--计划工艺路线版本-->
+                </div>-->
+                <!--计划工艺路线版本-->
                 <el-form>
                   <el-form-item label="版本：" :label-width="formLabelWidth">
                     <dsn-input v-model="ruleForm.plannedRouterRev" placeholder="请输入计划工艺路线版本"></dsn-input>
                   </el-form-item>
                 </el-form>
-            </el-form-item>
-            <el-form-item label="生产数量:" prop="productQty" :label-width="formLabelWidth">
-              <el-col :span="4">
-                <dsn-input placeholder="请输入生产数量" v-model="ruleForm.productQty"></dsn-input>
-              </el-col>
-              <!--已下达数量-->
-              <el-form>
-                <el-form-item label="已下达数量：" :label-width="formLabelWidth">
-                  <dsn-input v-model="ruleForm.releasedQuantity" :disabled="true"></dsn-input>
-                </el-form-item>
-              </el-form>
-            </el-form-item>
-          </el-form>
-        </el-tab-pane>
-        <el-tab-pane label="自定义字段">
-          <DsnData style="width:450px" ref="dsntable" v-model="ruleForm.customizedFieldDefInfoList"></DsnData>
-          <!-- <el-form :rules="rules" :label-width="formLabelWidth">
+              </el-form-item>
+              <el-form-item label="生产数量:" prop="productQty" :label-width="formLabelWidth">
+                <el-col :span="4">
+                  <dsn-input placeholder="请输入生产数量" v-model="ruleForm.productQty"></dsn-input>
+                </el-col>
+                <!--已下达数量-->
+                <el-form>
+                  <el-form-item label="已下达数量：" :label-width="formLabelWidth">
+                    <dsn-input v-model="ruleForm.releasedQuantity" :disabled="true"></dsn-input>
+                  </el-form-item>
+                </el-form>
+              </el-form-item>
+            </el-form>
+          </el-tab-pane>
+          <el-tab-pane label="自定义字段">
+            <DsnData
+              style="width:450px"
+              ref="dsntable"
+              v-model="ruleForm.customizedFieldDefInfoList"
+            ></DsnData>
+            <!-- <el-form :rules="rules" :label-width="formLabelWidth">
             <el-form-item  :label="item.fieldName" v-for="(item,index) in customizedFieldDefInfoList" :key="index" v-show="item.fieldType =='C'" prop="custom">
               <el-col :span="4">
                 <dsn-input v-model="item.fieldValue"></dsn-input>
@@ -156,16 +167,13 @@
                 </el-col>
               </el-row>
             </el-form-item>
-          </el-form> -->
-        </el-tab-pane>
-      </el-tabs>
-    </div>
-    </DsnPanel> 
+            </el-form>-->
+          </el-tab-pane>
+        </el-tabs>
+      </div>
+    </DsnPanel>
     <!--删除提醒-->
-    <el-dialog
-      title="删除"
-      :visible.sync="dialogVisible"
-      :width="defaltDialogWidth">
+    <el-dialog title="删除" :visible.sync="dialogVisible" :width="defaltDialogWidth">
       <span>是否删除此工单？</span>
       <!-- <el-form :rules="rules">
             <el-form-item :label="item.fieldName" v-for="(item,index) in customizedFieldDefInfoList" :key="index" v-show="item.fieldType =='C'" prop="custom">
@@ -186,7 +194,7 @@
                 <i class="el-icon-document-copy"></i>
               </div>
             </el-form-item>
-          </el-form> -->
+      </el-form>-->
       <span slot="footer" class="dialog-footer">
         <dsn-button @click="dialogVisible = false">取 消</dsn-button>
         <dsn-button type="primary" @click="sureDelete">确 定</dsn-button>
@@ -197,17 +205,18 @@
       title="工单选择"
       :isSingle="false"
       ref="orderChoice"
-       :tableData="orderTable"
-       v-model="selectOrderArr"
-       :helpText="helpTextOrdere"
-       @confirm="handlerOrderChange"
-       @cancle="orderCancle"
+      :tableData="orderTable"
+      v-model="selectOrderArr"
+      :helpText="helpTextOrdere"
+      @confirm="handlerOrderChange"
+      @cancle="orderCancle"
       :visible.sync="orderDialog"
-      width="500px">
+      width="500px"
+    >
       <!-- <template slot="header">
         <el-input v-model="v" placeholder=""></el-input>
         <el-button @click="orderHandler">search</el-button>
-      </template> -->
+      </template>-->
       <!-- <dsn-table
           ref="multipleTable"
           :data="orderTable"
@@ -218,30 +227,31 @@
           highlight-current-row
           border
           @selection-change="handleSelectionChange"
-        > -->
-          <!-- <el-table-column type="selection" width="55"></el-table-column> -->
-          <template slot="body">
-            <el-table-column type="index" label="序号" width="50"></el-table-column>
-            <el-table-column prop="shopOrder" label="工单" width="120"></el-table-column>
-            <el-table-column label="状态" prop="status" width="120"></el-table-column>
-            <el-table-column prop="shopOrderType" label="类型"></el-table-column>
-          </template>
-        <!-- </dsn-table> -->
+      >-->
+      <!-- <el-table-column type="selection" width="55"></el-table-column> -->
+      <template slot="body">
+        <el-table-column type="index" label="序号" width="50"></el-table-column>
+        <el-table-column prop="shopOrder" label="工单" width="120"></el-table-column>
+        <el-table-column label="状态" prop="status" width="120"></el-table-column>
+        <el-table-column prop="shopOrderType" label="类型"></el-table-column>
+      </template>
+      <!-- </dsn-table> -->
       <!-- <span slot="footer" class="dialog-footer">
         <dsn-button @click="orderDialog = false">取 消</dsn-button>
         <dsn-button type="primary" @click="sureOrder">确 定</dsn-button>
-      </span> -->
+      </span>-->
     </DsnSelectDialog>
     <!--物料选择-->
     <DsnSelectDialog
       title="物料选择"
       :isSingle="true"
       ref="materialChoice"
-       :tableData="materialTable"
-       v-model="selectMaterialArr"
-       :helpText="helpTextMaterial"
+      :tableData="materialTable"
+      v-model="selectMaterialArr"
+      :helpText="helpTextMaterial"
       :visible.sync="materialDialog"
-      width="800px">
+      width="800px"
+    >
       <!-- <dsn-table
           ref="multipleTable"
           :data="materialTable"
@@ -253,20 +263,20 @@
           border
           @selection-change="handleSelectionMaterial"
         >
-          <el-table-column type="selection" width="55"></el-table-column> -->
-          <template slot="body">
-            <el-table-column prop="material" label="物料"></el-table-column>
-            <el-table-column label="版本" prop="materialRev"></el-table-column>
-            <el-table-column prop="currentRev" label="当前版本">
-              <template slot-scope="scope">{{ scope.row.currentRev ? '已启用' : '未启用' }}</template>
-            </el-table-column>
-            <el-table-column label="描述" prop="materialDes"></el-table-column>
-          </template>
-        <!-- </dsn-table> -->
+      <el-table-column type="selection" width="55"></el-table-column>-->
+      <template slot="body">
+        <el-table-column prop="material" label="物料"></el-table-column>
+        <el-table-column label="版本" prop="materialRev"></el-table-column>
+        <el-table-column prop="currentRev" label="当前版本">
+          <template slot-scope="scope">{{ scope.row.currentRev ? '已启用' : '未启用' }}</template>
+        </el-table-column>
+        <el-table-column label="描述" prop="materialDes"></el-table-column>
+      </template>
+      <!-- </dsn-table> -->
       <!-- <span slot="footer" class="dialog-footer">
         <dsn-button @click="materialDialog = false">取 消</dsn-button>
         <dsn-button type="primary" @click="sureMaterial">确 定</dsn-button>
-      </span> -->
+      </span>-->
     </DsnSelectDialog>
     <!--工艺路线选择-->
     <DsnSelectDialog
@@ -274,10 +284,11 @@
       :visible.sync="routerDialog"
       :isSingle="true"
       ref="routerChoice"
-       :tableData="routerTable"
-       v-model="selectRouterArr"
-       :helpText="helpTextRouter"
-      width="800px">
+      :tableData="routerTable"
+      v-model="selectRouterArr"
+      :helpText="helpTextRouter"
+      width="800px"
+    >
       <!-- <dsn-table
           ref="multipleTable"
           :data="routerTable"
@@ -288,39 +299,39 @@
           highlight-current-row
           border
           @selection-change="handlerSelectionRouter"
-        > -->
-        <template slot="body">
-          <!-- <el-table-column type="selection" width="55"></el-table-column> -->
-          <el-table-column prop="router" label="工艺路线" width="120"></el-table-column>
-          <el-table-column label="版本" prop="revision" width="120"></el-table-column>
-          <el-table-column prop="currentRevision" label="当前版本">
-            <template slot-scope="scope">{{ scope.row.currentRevision ? '已启用' : '未启用' }}</template>
-          </el-table-column>
-          <el-table-column label="类型" prop="routerType" width="120"></el-table-column>
-          <el-table-column label="描述" prop="description" width="180"></el-table-column>
-        </template>
-        <!-- </dsn-table> -->
+      >-->
+      <template slot="body">
+        <!-- <el-table-column type="selection" width="55"></el-table-column> -->
+        <el-table-column prop="router" label="工艺路线" width="120"></el-table-column>
+        <el-table-column label="版本" prop="revision" width="120"></el-table-column>
+        <el-table-column prop="currentRevision" label="当前版本">
+          <template slot-scope="scope">{{ scope.row.currentRevision ? '已启用' : '未启用' }}</template>
+        </el-table-column>
+        <el-table-column label="类型" prop="routerType" width="120"></el-table-column>
+        <el-table-column label="描述" prop="description" width="180"></el-table-column>
+      </template>
+      <!-- </dsn-table> -->
       <!-- <span slot="footer" class="dialog-footer">
         <dsn-button @click="routerDialog = false">取 消</dsn-button>
         <dsn-button type="primary" @click="sureRouter">确 定</dsn-button>
-      </span> -->
+      </span>-->
     </DsnSelectDialog>
   </div>
 </template>
 
 <script>
-import{
-    findShopOrderRequest,
-    updateShopOrderRequest,
-    saveShopOrderRequest,
-    findFieldRequest,
-    deleteRequest,
-    findShopOrderListHttp,
-    listAllRequest,
-    listRouterPageHttp
-} from '@/api/work-order/work-order.api.js' 
+import {
+  findShopOrderRequest,
+  updateShopOrderRequest,
+  saveShopOrderRequest,
+  findFieldRequest,
+  deleteRequest,
+  findShopOrderListHttp,
+  listAllRequest,
+  listRouterPageHttp
+} from "@/api/work-order/work-order.api.js";
 export default {
-  inject:['defaltDialogWidth'],
+  inject: ["defaltDialogWidth"],
   data() {
     var shopOrderRule = (rule, value, callback) => {
       let reg = /^([A-Z]|[a-z]|[0-9]|_|-|\/)+$/;
@@ -338,99 +349,102 @@ export default {
     };
     const numIssuedRules = (rule, value, callback) => {
       let reg = /^[1-9]\d*$/;
-        if (value === "") {
-            callback("生产数量不为空");
-        }
-        if (!reg.test(value)) {
-            callback("生产数量应只包含非零整数");
-        }
-        callback();
-        };
+      if (value === "") {
+        callback("生产数量不为空");
+      }
+      if (!reg.test(value)) {
+        callback("生产数量应只包含非零整数");
+      }
+      callback();
+    };
     return {
       //工单表信息
-        ruleForm: {
-            shopOrderType: "生产", //类型
-            status: "可下达", //状态
-            plannedMaterial: "", //计划物料
-            plannedMaterialRev: "", //计划物料版本
-            plannedRouter: "", //计划工艺路线
-            plannedRouterRev: "", //计划工艺路线版本
-            productQty: "", //生产数量
-            releasedQuantity: "" ,//已下达数量
-            material:"",
-            materialRev:"",
-            router:"",
-            customizedFieldDefInfoList:[],//自定义字段信息
-        },
-        selectOrderArr:[],
-        selectMaterialArr:[],
-        selectRouterArr:[],
-        formLabelWidth:"150px",
-        searchRules:{
-          shopOrder: [{ validator: shopOrderRule, trigger: "blur" }]
-        },
-        rules: {
-            style: [{ required: true, message: "请选择类型", trigger: "blur" }],
-            state: [{ required: true, message: "请选择状态", trigger: "blur" }],
-            material: [
-                { required: true, message: "请输入计划物料", trigger: "blur" }
-            ],
-            productQty: [{ required: true, validator: numIssuedRules, trigger: "blur" }],
-            custom: [{ required: true, message: "请输入自定义字段", trigger: "blur" }],
-            
-        },
-        searchForm:{
-          shopOrder:''//最新工单
-        },
-        oldShopOrder:'',//旧工单(也就是搜索的工单)
-        tenantSiteCode:'',
-        allOrders:[],//获取到的所有工单
-        getSearchData:'',//查询获取的工单数据
-        
-        dialogVisible:false,//删除工单提示框,
-        orderDialog:false,//工单选择模态框
-        orderTable:[],
-        // 物料、版本、当前版本、描述
-        materialTable:[],
-        materialDialog:false,
-        // materialChoice:[],
-        routerDialog:false,
-        routerTable:[],
-        // routerChoice:[]
+      ruleForm: {
+        shopOrderType: "生产", //类型
+        status: "可下达", //状态
+        plannedMaterial: "", //计划物料
+        plannedMaterialRev: "", //计划物料版本
+        plannedRouter: "", //计划工艺路线
+        plannedRouterRev: "", //计划工艺路线版本
+        productQty: "", //生产数量
+        releasedQuantity: "", //已下达数量
+        material: "",
+        materialRev: "",
+        router: "",
+        customizedFieldDefInfoList: [] //自定义字段信息
+      },
+      selectOrderArr: [],
+      selectMaterialArr: [],
+      selectRouterArr: [],
+      formLabelWidth: "150px",
+      searchRules: {
+        shopOrder: [{ validator: shopOrderRule, trigger: "blur" }]
+      },
+      rules: {
+        style: [{ required: true, message: "请选择类型", trigger: "blur" }],
+        state: [{ required: true, message: "请选择状态", trigger: "blur" }],
+        material: [
+          { required: true, message: "请输入计划物料", trigger: "blur" }
+        ],
+        productQty: [
+          { required: true, validator: numIssuedRules, trigger: "blur" }
+        ],
+        custom: [
+          { required: true, message: "请输入自定义字段", trigger: "blur" }
+        ]
+      },
+      searchForm: {
+        shopOrder: "" //最新工单
+      },
+      oldShopOrder: "", //旧工单(也就是搜索的工单)
+      tenantSiteCode: "",
+      allOrders: [], //获取到的所有工单
+      getSearchData: "", //查询获取的工单数据
+
+      dialogVisible: false, //删除工单提示框,
+      orderDialog: false, //工单选择模态框
+      orderTable: [],
+      // 物料、版本、当前版本、描述
+      materialTable: [],
+      materialDialog: false,
+      // materialChoice:[],
+      routerDialog: false,
+      routerTable: []
+      // routerChoice:[]
     };
   },
-  methods:{
-    helpTextOrdere(item){
-      console.log(item,"数据是")
+  methods: {
+    helpTextOrdere(item) {
+      console.log(item, "数据是");
       return item.shopOrder;
     },
-    handlerOrderChange(){
-      this.searchForm.shopOrder=this.selectOrderArr[0].shopOrder;
-      this.orderDialog=false;
+    handlerOrderChange() {
+      this.searchForm.shopOrder = this.selectOrderArr[0].shopOrder;
+      this.orderDialog = false;
     },
-    helpTextMaterial(item){
-      this.ruleForm.plannedMaterial=item.material;
-      this.ruleForm.plannedMaterialRev=item.materialRev
+    helpTextMaterial(item) {
+      this.ruleForm.plannedMaterial = item.material;
+      this.ruleForm.plannedMaterialRev = item.materialRev;
       return item.material;
     },
-    helpTextRouter(item){
-      this.ruleForm.plannedRouterRev=item.revision;
-      this.ruleForm.plannedRouter=item.router;
+    helpTextRouter(item) {
+      this.ruleForm.plannedRouterRev = item.revision;
+      this.ruleForm.plannedRouter = item.router;
       return item.router;
     },
-    routerHandler(){
-      listRouterPageHttp().then(data =>{
-          const res = data.data
-          if(res.code == 200){
-            this.routerTable=res.data.data
-          }else{
-            this.$message({
-              message:res.message,
-              type:'warning'
-            })
-          }
-        })
-      this.routerDialog=true;
+    routerHandler() {
+      listRouterPageHttp().then(data => {
+        const res = data.data;
+        if (res.code == 200) {
+          this.routerTable = res.data.data;
+        } else {
+          this.$message({
+            message: res.message,
+            type: "warning"
+          });
+        }
+      });
+      this.routerDialog = true;
     },
     // sureRouter(){
     //   if(this.routerChoice.length>1){
@@ -452,39 +466,39 @@ export default {
     //     this.routerDialog=false;
     //   }
     // },
-    materialHandler(){
-      this.materialDialog=true;
-      listAllRequest().then(data =>{
-          const res = data.data
-          if(res.code == 200){
-            this.materialTable=res.data
-          }else{
-            this.$message({
-              message:res.message,
-              type:'warning'
-            })
-          }
-        })
+    materialHandler() {
+      this.materialDialog = true;
+      listAllRequest().then(data => {
+        const res = data.data;
+        if (res.code == 200) {
+          this.materialTable = res.data;
+        } else {
+          this.$message({
+            message: res.message,
+            type: "warning"
+          });
+        }
+      });
     },
-    orderHandler(){
-      this.orderDialog=true;
-      findShopOrderListHttp().then(data =>{
-            const res = data.data
-            if(res.code == 200){
-              // console.log(res.data,"shuju ")
-              this.orderTable=res.data
-              // this.$message({
-              //   message:'更新成功',
-              //   type:'success'
-              // })
-            }else{
-              this.$message({
-                message:res.message,
-                type:'warning'
-              })
-            }
-          })
-      },
+    orderHandler() {
+      this.orderDialog = true;
+      findShopOrderListHttp().then(data => {
+        const res = data.data;
+        if (res.code == 200) {
+          // console.log(res.data,"shuju ")
+          this.orderTable = res.data;
+          // this.$message({
+          //   message:'更新成功',
+          //   type:'success'
+          // })
+        } else {
+          this.$message({
+            message: res.message,
+            type: "warning"
+          });
+        }
+      });
+    },
     // sureOrder(){
     //   alert("111")
     // },
@@ -515,91 +529,92 @@ export default {
     //   this.routerChoice=row;
     // },
     // 初始化获取自定义字段
-    getCustom(){
-        const params ={
-          customizedItem:'永恒之歌'
-        }
-        findFieldRequest(params).then(data=>{
-          console.log("初始化自定义字段"+JSON.stringify(data))
-        })
-      },
+    getCustom() {
+      const params = {
+        customizedItem: "永恒之歌"
+      };
+      findFieldRequest(params).then(data => {
+        console.log("初始化自定义字段" + JSON.stringify(data));
+      });
+    },
     //重置
-    reset(){
+    reset() {
       //把绑定ruleForm的数据清空
-      for(let key in this.ruleForm){
-         this.ruleForm[key]  = ''
+      for (let key in this.ruleForm) {
+        this.ruleForm[key] = "";
       }
-      this.ruleForm.shopOrderType="生产"; //类型
-      this.ruleForm.status="可下达"; //状态
+      this.ruleForm.shopOrderType = "生产"; //类型
+      this.ruleForm.status = "可下达"; //状态
       // this.$refs["orderChoice"].clearSelect();
       // this.$refs["materialChoice"].clearSelect();
       // this.$refs["routerChoice"].clearSelect();
       //shopOrder
-      this.searchForm.shopOrder = ''
+      this.searchForm.shopOrder = "";
       //重置oldShopOrder
-      this.oldShopOrder = ''
-      this.ruleForm.customizedFieldDefInfoList=[]
+      this.oldShopOrder = "";
+      this.ruleForm.customizedFieldDefInfoList = [];
       // this.getOrder();
     },
-      //查询指定工单
-    getOrder(){
-        const params ={
-            shopOrder:this.searchForm.shopOrder,
-            tenantSiteCode:this.tenantSiteCode
+    //查询指定工单
+    getOrder() {
+      const params = {
+        shopOrder: this.searchForm.shopOrder,
+        tenantSiteCode: this.tenantSiteCode
+      };
+      findShopOrderRequest(params).then(data => {
+        // console.log('获取工单所有信息'+JSON.stringify(data))
+        const res = data.data;
+        if (res.code == 200) {
+          this.getSearchData = res.data.shopOrder; //工单信息
+          this.oldShopOrder = this.getSearchData.shopOrder;
+          console.log(this.getSearchData.shopOrderType, "数据是");
+          this.ruleForm.shopOrderType = this.getSearchData.shopOrderType;
+          this.ruleForm.plannedMaterial = this.getSearchData.plannedMaterial;
+          this.ruleForm.status = this.getSearchData.status;
+          this.ruleForm.plannedMaterialRev = this.getSearchData.plannedMaterialRev;
+          this.ruleForm.plannedRouter = this.getSearchData.plannedRouter;
+          this.ruleForm.plannedRouterRev = this.getSearchData.plannedRouterRev;
+          this.ruleForm.productQty = this.getSearchData.productQty;
+          this.ruleForm.releasedQuantity = this.getSearchData.releasedQuantity;
+          this.ruleForm.customizedFieldDefInfoList =
+            res.data.customizedFieldDefInfoList; //工单的自定义字段信息
+          this.ruleForm.material = res.data.shopOrder.material;
+          this.ruleForm.materialRev = res.data.shopOrder.materialRev;
+          this.ruleForm.router = res.data.shopOrder.router;
+        } else {
+          this.$message({
+            message: res.message,
+            type: "warning"
+          });
         }
-        findShopOrderRequest(params).then(data =>{
-          // console.log('获取工单所有信息'+JSON.stringify(data))
-            const res = data.data
-            if(res.code == 200){
-                this.getSearchData = res.data.shopOrder//工单信息
-                this.oldShopOrder = this.getSearchData.shopOrder
-                console.log(this.getSearchData.shopOrderType,"数据是")
-                this.ruleForm.shopOrderType = this.getSearchData.shopOrderType
-                this.ruleForm.plannedMaterial = this.getSearchData.plannedMaterial
-                this.ruleForm.status = this.getSearchData.status
-                this.ruleForm.plannedMaterialRev = this.getSearchData.plannedMaterialRev
-                this.ruleForm.plannedRouter = this.getSearchData.plannedRouter
-                this.ruleForm.plannedRouterRev = this.getSearchData.plannedRouterRev
-                this.ruleForm.productQty = this.getSearchData.productQty
-                this.ruleForm.releasedQuantity = this.getSearchData.releasedQuantity
-                this.ruleForm.customizedFieldDefInfoList = res.data.customizedFieldDefInfoList//工单的自定义字段信息
-                this.ruleForm.material = res.data.shopOrder.material
-                this.ruleForm.materialRev = res.data.shopOrder.materialRev
-                this.ruleForm.router = res.data.shopOrder.router
-            }else{
-              this.$message({
-                message:res.message,
-                type:'warning'
-              })
-            }
-        })
+      });
     },
     //保存
-    handleSave(){
-      if(this.ruleForm.style ==''){
+    handleSave() {
+      if (this.ruleForm.style == "") {
         this.$message({
-          message:'类型未填写,提交失败',
-          type:'warning'
-        })
-      }else if(this.ruleForm.state ==''){
+          message: "类型未填写,提交失败",
+          type: "warning"
+        });
+      } else if (this.ruleForm.state == "") {
         this.$message({
-          message:'状态未填写,提交失败',
-          type:'warning'
-        }) 
-      }else if(this.ruleForm.plannedMaterial ==''){
+          message: "状态未填写,提交失败",
+          type: "warning"
+        });
+      } else if (this.ruleForm.plannedMaterial == "") {
         this.$message({
-          message:'计划物料未填写,提交失败',
-          type:'warning'
-        })
-      }else if(this.ruleForm.number == ''){
+          message: "计划物料未填写,提交失败",
+          type: "warning"
+        });
+      } else if (this.ruleForm.number == "") {
         this.$message({
-          message:'生产数量未填写,提交失败',
-          type:'warning'
-        })
-      }else{
+          message: "生产数量未填写,提交失败",
+          type: "warning"
+        });
+      } else {
         const params = {
           customizedFieldDefInfoList: [
-          {
+            {
               createTime: "2019-12-20 09:00:00",
               createUserId: "string",
               createUserName: "string",
@@ -618,121 +633,124 @@ export default {
               sequence: 0,
               tenantSiteCode: "test"
             },
-          {
-                createTime: "2019-12-20 09:00:00",
-                createUserId: "string",
-                createUserName: "string",
-                deleteFlag: false,
-                fieldLabel: "string",
-                fieldName: "field02",
-                fieldSize: 0,
-                fieldType: "string",
-                fieldValue: "001",
-                limitGeneralCode: "string",
-                limitGeneralField: "string",
-                modifyTime: "2019-12-20 09:00:00",
-                modifyUserId: "string",
-                modifyUserName: "string",
-                required: true,
-                sequence: 0,
-                tenantSiteCode: "test"
-              }
-            ],
-            shopOrder: {
-              shopOrder:this.searchForm.shopOrder,
-              shopOrderType: this.ruleForm.shopOrderType, //类型
-              status: this.ruleForm.status,  //状态
-              plannedMaterial: this.ruleForm.plannedMaterial,  //计划物料
-              plannedMaterialRev: this.ruleForm.plannedMaterialRev,  //计划物料版本
-              plannedRouter: this.ruleForm.plannedRouter,  //计划工艺路线
-              plannedRouterRev: this.ruleForm.plannedRouterRev,  //计划工艺路线版本
-              productQty: this.ruleForm.productQty, //生产数量
-              releasedQuantity: this.ruleForm.releasedQuantity, //已下达数量
-              tenantSiteCode: "test",
-              material:this.ruleForm.material,
-              materialRev:this.ruleForm.materialRev,
-              router:this.ruleForm.router,
+            {
+              createTime: "2019-12-20 09:00:00",
+              createUserId: "string",
+              createUserName: "string",
+              deleteFlag: false,
+              fieldLabel: "string",
+              fieldName: "field02",
+              fieldSize: 0,
+              fieldType: "string",
+              fieldValue: "001",
+              limitGeneralCode: "string",
+              limitGeneralField: "string",
+              modifyTime: "2019-12-20 09:00:00",
+              modifyUserId: "string",
+              modifyUserName: "string",
+              required: true,
+              sequence: 0,
+              tenantSiteCode: "test"
             }
-        }
-        if(this.oldShopOrder == this.searchForm.shopOrder){
+          ],
+          shopOrder: {
+            shopOrder: this.searchForm.shopOrder,
+            shopOrderType: this.ruleForm.shopOrderType, //类型
+            status: this.ruleForm.status, //状态
+            plannedMaterial: this.ruleForm.plannedMaterial, //计划物料
+            plannedMaterialRev: this.ruleForm.plannedMaterialRev, //计划物料版本
+            plannedRouter: this.ruleForm.plannedRouter, //计划工艺路线
+            plannedRouterRev: this.ruleForm.plannedRouterRev, //计划工艺路线版本
+            productQty: this.ruleForm.productQty, //生产数量
+            releasedQuantity: this.ruleForm.releasedQuantity, //已下达数量
+            tenantSiteCode: "test",
+            material: this.ruleForm.material,
+            materialRev: this.ruleForm.materialRev,
+            router: this.ruleForm.router
+          }
+        };
+        if (this.oldShopOrder == this.searchForm.shopOrder) {
           //oldShopOrder和shopOrder相同则调用更新接口
-          updateShopOrderRequest(params).then(data =>{
-            const res = data.data
-            if(res.code == 200){
+          updateShopOrderRequest(params).then(data => {
+            const res = data.data;
+            if (res.code == 200) {
               this.$message({
-                message:'更新成功',
-                type:'success'
-              })
-            }else{
+                message: "更新成功",
+                type: "success"
+              });
+            } else {
               this.$message({
-                message:res.message,
-                type:'warning'
-              })
+                message: res.message,
+                type: "warning"
+              });
             }
             // console.log('oldShopOrder和shopOrder相同则调用更新接口'+JSON.stringify(data))
-          })
-        }else{
+          });
+        } else {
           //oldShopOrder和shopOrder不相同则调用新增接口
-          saveShopOrderRequest(params).then(data =>{
-            const res = data.data
-            if(res.code == 200){
+          saveShopOrderRequest(params).then(data => {
+            const res = data.data;
+            if (res.code == 200) {
               this.$message({
-                message:'新增成功',
-                type:'success'
-              })
+                message: "新增成功",
+                type: "success"
+              });
               this.$router.go(0);
-            }else{
+            } else {
               this.$message({
-                message:res.message,
-                type:'warning'
-              })
+                message: res.message,
+                type: "warning"
+              });
             }
             // console.log('oldShopOrder和shopOrder不同则调用更新接口'+JSON.stringify(data))
-          })
+          });
         }
       }
     },
     //检测是否点击过查询工单的按钮，点击过查询按钮则可删除此工单，如果输入框中的工单号与查询的工单不相同或者输入框中的工单号为空，则不允许删除
-    handleDelete(){
-      if(this.oldShopOrder == '' || this.oldShopOrder !== this.searchForm.shopOrder){
+    handleDelete() {
+      if (
+        this.oldShopOrder == "" ||
+        this.oldShopOrder !== this.searchForm.shopOrder
+      ) {
         this.$message({
-          message:'删除失败，请先查询工单!',
-          type:'warning'
-        })
-        return 
-      }else{
-        this.dialogVisible = true
+          message: "删除失败，请先查询工单!",
+          type: "warning"
+        });
+        return;
+      } else {
+        this.dialogVisible = true;
       }
     },
     //确认删除工单
-    sureDelete(){
+    sureDelete() {
       const params = {
-        shopOrder:this.oldShopOrder
-      }
+        shopOrder: this.oldShopOrder
+      };
       // console.log(this.oldShopOrder)
-      deleteRequest(params).then(data =>{
+      deleteRequest(params).then(data => {
         // console.log('删除的返回信息'+JSON.stringify(data))
-        const res = data.data
-        if(res.code == 200){
-          this.dialogVisible = false
+        const res = data.data;
+        if (res.code == 200) {
+          this.dialogVisible = false;
           this.$message({
-            message:'删除成功！',
-            type:'success'
-          })
+            message: "删除成功！",
+            type: "success"
+          });
           this.reset();
-        }else{
-          this.dialogVisible = false
+        } else {
+          this.dialogVisible = false;
           this.$message({
-            message:res.message,
-            type:'warning'
-          })
+            message: res.message,
+            type: "warning"
+          });
         }
-      })
-    }
-
+      });
+    },
+    orderCancle() {}
   },
-  created(){
-    this.getCustom()
+  created() {
+    this.getCustom();
   }
 };
 </script>
@@ -772,8 +790,8 @@ export default {
   width: 300px;
   display: inline-block;
 }
-.workOrder .showInfo{
-  height:800px;
+.workOrder .showInfo {
+  height: 800px;
 }
 .workOrder .showInfo .el-form-item__content {
   display: flex;

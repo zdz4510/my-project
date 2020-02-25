@@ -798,13 +798,16 @@ export default {
     },
     //确认选择lot
     handleConfirmSelectLot() {
-      console.log(this.selectedLotList);
+      if (this.selectedLotList.length === 0) {
+        this.lotStepForm.lot = "";
+      }
       if (this.selectedLotList.length === 1) {
         this.lotStepForm.lot = this.selectedLotList[0].lot;
       }
       if (this.selectedLotList.length > 1) {
         this.lotStepForm.lot = "已选择" + this.selectedLotList.length + "个";
       }
+      this.lotQueryDialog = false;
     },
     //物料查询start
     queryMaterial() {
