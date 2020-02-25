@@ -90,7 +90,12 @@
           </template>
         </el-table-column>
         <el-table-column prop="clearsLot" label="清除LOT" show-overflow-tooltip>
-          <template slot-scope="scope">{{ scope.row.clearsLot ? '是' : '否' }}</template>
+          <template slot-scope="scoped">
+            <dsn-select v-model="scoped.row.clearsLot" placeholder="已启用">
+              <el-option label="是" :value="true"></el-option>
+              <el-option label="否" :value="false"></el-option>
+            </dsn-select>
+          </template>
         </el-table-column>
         <el-table-column prop="operate" label="操作" show-overflow-tooltip>
           <template slot-scope="scope">
@@ -123,10 +128,15 @@
             </template>
           </el-table-column>
           <el-table-column prop="groupFlag" label="按钮类型" show-overflow-tooltip>
+
             <template slot-scope="scoped">
-              <dsn-input v-model="scoped.row.groupFlag">
+              <dsn-select v-model="scoped.row.groupFlag" placeholder="已启用">
+                <el-option label="组" :value="true"></el-option>
+                <el-option label="普通" :value="false"></el-option>
+              </dsn-select>
+              <!-- <dsn-input v-model="scoped.row.groupFlag">
                  <template slot-scope="scope">{{ scope.row.groupFlag ? '组' : '普通' }}</template>
-              </dsn-input>
+              </dsn-input> -->
             </template>
           </el-table-column>
           <el-table-column prop="operate" label="操作" show-overflow-tooltip>

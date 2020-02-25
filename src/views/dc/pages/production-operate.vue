@@ -196,6 +196,9 @@ import {
   findPageHttp,
   findResourceListHttp
 } from "@/api/dc/production.operate.api.js";
+import {
+  podConfigRequest,
+} from "@/api/pro-configuration/pro-configuration.api.js";
 import _ from "lodash";
 
 export default {
@@ -247,8 +250,24 @@ export default {
   created() {
     this.deBounceSearchOperation();
     this.deBounceSearchResource();
+    this.handlePodConfig();
   },
   methods: {
+    handlePodConfig() {
+      const params = "AA";
+      podConfigRequest(params).then(data => {
+        const res = data.data;
+        if (res.code == 200) {
+          console.log("显示数据",res.data.podButtons)
+          // 当前获取的数据放到vuex中，以便更改
+        } else {
+          this.$message({
+            message: `${res.message}`,
+            type: "warning"
+          });
+        }
+      });
+    },
     changeWork() {
       let arr = this.list.filter(item => {
         if(item.lot.indexOf(this.v)>=0){
