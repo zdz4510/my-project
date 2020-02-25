@@ -51,9 +51,11 @@ export default {
     // 监听表格的数据变化
     tableData: {
       handler: function(newArr) {
-        this.tableData = newArr;
+         this.$nextTick(()=>{
+             this.tableData = newArr;
         this.clearSelect();
         this.setSelected();
+         })
       },
       deep: true
     },
