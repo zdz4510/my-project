@@ -13,91 +13,81 @@
           label-width="100px"
           class="form-style"
         >
-        <dsn-row>
-          <dsn-col :span="24">
-            <el-form-item label="编号类型:" prop="nextNumberType">
-              <dsn-select v-model="searchForm.nextNumberType" placeholder="请选择物料">
-                <el-option
-                  v-for="item in type"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
-              </dsn-select>
-            </el-form-item>
-          </dsn-col>
-        </dsn-row>
-        <dsn-row>
-          <dsn-col :span="24">
-            <el-form-item label="定义目标:" prop="definedBy">
-              <dsn-select v-model="searchForm.definedBy" placeholder="请选择" @change="definedChange">
-                <el-option
-                  v-for="item in target"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
-              </dsn-select>
-            </el-form-item>
-            <el-form-item label prop="value" v-if="searchForm.definedBy !== 'MATERIAL_GROUP'">
-              <dsn-select
-                v-model="searchForm.value"
-                placeholder="请选择"
-                @change="onChange"
-                filterable
-                v-loadMore="loadMore"
-                :remote-method="searchMaterialList"
-              >
-                <el-option
-                  v-for="item in options"
-                  :key="item.material+'&'+item.materialRev"
-                  :label="item.material"
-                  :value="item.material+'&'+item.materialRev"
+          <dsn-row>
+            <dsn-col :span="24">
+              <el-form-item label="编号类型:" prop="nextNumberType">
+                <dsn-select v-model="searchForm.nextNumberType" placeholder="请选择物料">
+                  <el-option
+                    v-for="item in type"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  ></el-option>
+                </dsn-select>
+              </el-form-item>
+            </dsn-col>
+          </dsn-row>
+          <dsn-row>
+            <dsn-col :span="24">
+              <el-form-item label="定义目标:" prop="definedBy">
+                <dsn-select v-model="searchForm.definedBy" placeholder="请选择" @change="definedChange">
+                  <el-option
+                    v-for="item in target"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  ></el-option>
+                </dsn-select>
+              </el-form-item>
+              <el-form-item label prop="value" v-if="searchForm.definedBy !== 'MATERIAL_GROUP'">
+                <dsn-select
+                  v-model="searchForm.value"
+                  placeholder="请选择"
+                  @change="onChange"
+                  filterable
+                  v-loadMore="loadMore"
+                  :remote-method="searchMaterialList"
                 >
-                  <span style="float: left">{{ item.material }}</span>
-                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.materialRev }}</span>
-                </el-option>
-              </dsn-select>
-            </el-form-item>
-            <el-form-item label prop="value" v-if="searchForm.definedBy == 'MATERIAL_GROUP'">
-              <dsn-select
-                v-model="searchForm.value"
-                placeholder="请选择"
-                @change="onChange"
-                filterable
-                v-loadMore="loadMore"
-                :remote-method="searchMaterialList"
-              >
-                <el-option
-                  v-for="item in options"
-                  :key="item.materialGroup"
-                  :label="item.materialGroup"
-                  :value="item.materialGroup"
+                  <el-option
+                    v-for="item in options"
+                    :key="item.material+'&'+item.materialRev"
+                    :label="item.material"
+                    :value="item.material+'&'+item.materialRev"
+                  >
+                    <span style="float: left">{{ item.material }}</span>
+                    <span style="float: right; color: #8492a6; font-size: 13px">{{ item.materialRev }}</span>
+                  </el-option>
+                </dsn-select>
+              </el-form-item>
+              <el-form-item label prop="value" v-if="searchForm.definedBy == 'MATERIAL_GROUP'">
+                <dsn-select
+                  v-model="searchForm.value"
+                  placeholder="请选择"
+                  @change="onChange"
+                  filterable
+                  v-loadMore="loadMore"
+                  :remote-method="searchMaterialList"
                 >
-                  <!-- <span style="float: left">{{ item.materialGroup }}</span> -->
-                  <!-- <span style="float: right; color: #8492a6; font-size: 13px">{{ item.materialRev }}</span> -->
-                </el-option>
-              </dsn-select>
-            </el-form-item>
-            <el-form-item
-              label="版本:"
-              prop="materialRev"
-              v-if="searchForm.definedBy !== 'MATERIAL_GROUP'"
-            >
-              <dsn-input v-model="searchForm.materialRev" disabled></dsn-input>
-            </el-form-item>
-          </dsn-col>
-        </dsn-row>
-          <el-form-item label="提交规则:" prop="commitType">
-            <dsn-select v-model="searchForm.commitType" placeholder="请选择">
-              <el-option
-                v-for="item in commitRule"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              ></el-option>
-            </dsn-select>
-          </el-form-item>
+                  <el-option
+                    v-for="item in options"
+                    :key="item.materialGroup"
+                    :label="item.materialGroup"
+                    :value="item.materialGroup"
+                  >
+                    <!-- <span style="float: left">{{ item.materialGroup }}</span> -->
+                    <!-- <span style="float: right; color: #8492a6; font-size: 13px">{{ item.materialRev }}</span> -->
+                  </el-option>
+                </dsn-select>
+              </el-form-item>
+              <el-form-item
+                label="版本:"
+                prop="materialRev"
+                v-if="searchForm.definedBy !== 'MATERIAL_GROUP'"
+              >
+                <dsn-input v-model="searchForm.materialRev" disabled></dsn-input>
+              </el-form-item>
+            </dsn-col>
+          </dsn-row>
         </el-form>
         <div style="margin-top: 20px">
           <dsn-button size="small" type="primary" @click.native="search('searchForm')">查询</dsn-button>
@@ -112,6 +102,17 @@
         <span>搜索结果</span>
       </div>
       <div class="operate">
+        <div style="margin-bottom: 20px">
+          提交规则：
+          <dsn-select v-model="searchForm.commitType" placeholder="请选择">
+            <el-option
+              v-for="item in commitRule"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </dsn-select>
+        </div>
         <dsn-button
           size="small"
           type="success"
@@ -188,11 +189,6 @@ import {
 import { mapMutations } from "vuex";
 import addNextNumber from './AddNextNumber.vue';
 import editNextNumber from './EditNextNumber.vue';
-const commitTypeRule = [{
-  required: true,
-  message: '请选择提交规则',
-  trigger: 'change'
-}]
 export default {
   name: "next-number",
   inject: ['defaltDialogWidth'],
@@ -350,7 +346,6 @@ export default {
       }
     },
     search(formName) {
-      delete this.rules.commitType;
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.handleQuery();
@@ -385,7 +380,7 @@ export default {
             });
           }
           this.tableData.data = data.data.data && data.data.data.sequences || [];
-          
+          this.searchForm.commitType = data.data.data.commitType;
         } else {
           this.$message.error(data.data.message);
          
@@ -633,12 +628,13 @@ export default {
       }
     },
     handleSaveData() {
-      console.log('handleSaveData')
-      if (!this.$refs['searchForm'].rules.commitType) this.$refs['searchForm'].rules.commitType = commitTypeRule;
-      console.log(this.$refs['searchForm'].rules)
       this.$refs['searchForm'].validate(valid => {
         if (valid) {
           const { searchForm, tableData: { data } } = this;
+          if (!searchForm.commitType) {
+            this.$message.error('请选择提交规则');
+            return;
+          }
           const params = Object.assign(searchForm, { sequences: data } );
           saveNextNumber({updateList: [{...params}]}).then(data => {
             if (data.data.code == 200) {
