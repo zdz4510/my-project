@@ -198,13 +198,14 @@ export default {
     },
     RowClick(row) {
       // 设置选中的状态
-      this.$refs["table"].toggleRowSelection(row);
+     
       if (this.isSingle) {
         this.selectArr = [row];
         this.totalSelectArr = this.selectArr;
 
         return;
       }
+       this.$refs["table"].toggleRowSelection(row);
       const arr = this.totalSelectArr.map(item => item[this.keyValue]);
       const isContain = arr.includes(row[this.keyValue]);
       if (isContain) {
