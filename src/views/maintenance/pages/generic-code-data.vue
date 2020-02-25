@@ -566,9 +566,7 @@ export default {
     },
     //重置查询
     handleReset() {
-      this.genericCodeDataForm.generalCode = "";
-      this.genericCodeDataForm.generalCodeGroup = "S";
-      this.genericCodeDataForm.generalCodeDes = "";
+      this.$refs["genericCodeDataForm"].resetFields();
       this.usedFieldNames = [];
       this.tableData = [];
       this.addForm = {};
@@ -630,7 +628,6 @@ export default {
             message: "保存成功",
             type: "success"
           });
-          this.handleReset();
           return;
         }
         this.$message({

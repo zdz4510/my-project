@@ -10,11 +10,9 @@
         <div class="editList">
           <dsn-select
             v-model="value"
-            clearable
+            :clearable="false"
             placeholder="请选择"
-            :disabled="selectIsDisabled"
-            @clear="handleClearSelect"
-            @change="handleChangeOption"
+            @change="(value) => {handleCurrentChange(value, 'select')}"
             style="margin-bottom: 30px"
             ref="select"
           >
@@ -32,7 +30,7 @@
             highlight-current-row
             style="width: 100%"
             height="513"
-            @row-click="handleCurrentChange"
+            @row-click="(row) => {handleCurrentChange(row, 'table')}"
           >
             <el-table-column label="事件编号" prop="alarm"></el-table-column>
           </dsn-table>
@@ -214,14 +212,6 @@
             </el-tab-pane>
           </el-tabs>
           </el-form>
-          <!-- 确认模态框 -->
-          <el-dialog title="保存" :visible.sync="saveDialog" width="30%">
-            <span>是否保存数据？</span>
-            <span slot="footer" class="dialog-footer">
-              <dsn-button @click.native="handleCancle">取 消</dsn-button>
-              <dsn-button type="primary" @click.native="handleSave('editForm')">确 定</dsn-button>
-            </span>
-          </el-dialog>
         </div>
       </el-col>
     </el-row>
@@ -279,12 +269,10 @@ export default {
         systemInformDetails: "",
         alarmDefInformList: []
       },
-      saveDialog: false, //保存弹框的显示和隐藏
       currentRow: {},
       oldRow: {}, // 当前选中的行
       cloneList: [], // 复制所以可以编辑的数据副本
       value: "",
-      selectIsDisabled: false,
       alarm1: '',
       alarm2: '',
       select1: "",
@@ -328,9 +316,9 @@ export default {
     };
     getWorkerInfo(p).then(data => {
       this.unallocateData = [];
-      this.cloneUnallocateData = data.data.data;
+      this.cloneUnallocateData = _.cloneDeep(data.data.data);
       this.allocateData = data.data.data;
-      this.cloneAllocateData = data.data.data;
+      this.cloneAllocateData = _.cloneDeep(data.data.data);
     });
   },
   methods: {
@@ -338,11 +326,13 @@ export default {
     //初始化的操作
     init() {
       if (this.alarmMaintainEditList.length > 0) {
-        this.cloneList = JSON.parse(JSON.stringify(this.alarmMaintainEditList)); //复制一份副本,保证副本和初始列表数据一致性
+        this.cloneList = _.cloneDeep(this.alarmMaintainEditList); //复制一份副本,保证副本和初始列表数据一致性
         this.editForm = this.cloneList[0]; // 默认选中第一行
-        this.cloneModify = JSON.parse(JSON.stringify(this.editForm)); // modify 的副本
+        this.value = this.editForm.alarm;
+        this.cloneModify = _.cloneDeep(this.editForm); // modify 的副本
         this.setCurrent(this.editForm); // 设置选中第一行
-        this.currentRow = this.editForm; // 设置初始currentRow 为第一行
+        this.currentRow = _.cloneDeep(this.editForm); // 设置初始currentRow 为第一行
+        this.oldRow = _.cloneDeep(this.editForm)
       }
     },
     //清除下拉列表时触发
@@ -350,15 +340,16 @@ export default {
       this.init();
     },
     //选中下拉列表时触发
-    handleChangeOption(row) {
-      if (row == "") {
+    handleChangeOption(value) {
+      console.log('row', value, this.currentRow.alarm);
+      if (value == "") {
         return;
       }
       //过滤数组
-      const tempList = this.cloneList.filter(item => item["alarm"] == row);
-      this.cloneList = tempList;
+      const tempList = this.cloneList.filter(item => item["alarm"] == value);
+      // this.cloneList = tempList;
       this.editForm = tempList[0];
-      this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
+      this.cloneModify = _.cloneDeep(this.editForm);
       this.setCurrent(tempList[0]);
       let params = this.editForm.alarm;
       getDataByAlarm(params).then(data => {
@@ -368,6 +359,7 @@ export default {
 
     //设置某一行被选中
     setCurrent(row) {
+      console.log('row', row);
       this.$refs.editTable.setCurrentRow(row);
     },
 
@@ -379,20 +371,45 @@ export default {
       return null;
     },
     // 点击某一行选中后操作的状态你
-    handleCurrentChange(currentRow) {
+    handleCurrentChange(currentRow, type) {
+      const { cloneAllocateData, allocateData, alarmMaintainEditList, editForm } = this;
+      const defaultForm = alarmMaintainEditList.find(item => item.alarm === this.currentRow.alarm);
+      if (allocateData.length !== cloneAllocateData.length || _.differenceBy(allocateData, cloneAllocateData,  'informUserId').length > 0 || JSON.stringify(editForm) !== JSON.stringify(defaultForm)) {
+        this.$confirm('所选数据还未保存，是否保存?', '提示', {
+          confirmButtonText: '保存',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.handleSave('editForm', () => {
+            this.changeCallBack(currentRow, type);
+          });
+        }).catch(() => {
+          this.changeCallBack(currentRow, type);
+        })
+      } else {
+        this.changeCallBack(currentRow, type);
+      }
+      
+    },
+
+    changeCallBack(currentRow, type) {
+      console.log(currentRow, type)
       const { alarmMaintainEditList } = this;
-      this.editForm = _.cloneDeep(alarmMaintainEditList.find(item => item.alarm === currentRow.alarm));
+      this.editForm = type === 'table' ? _.cloneDeep(alarmMaintainEditList.find(item => item.alarm === currentRow.alarm)) : _.cloneDeep(alarmMaintainEditList.find(item => item.alarm === currentRow));
       const { alarm } = this.editForm;
+      this.currentRow = type === 'table' ? _.cloneDeep(currentRow) : _.cloneDeep(alarmMaintainEditList.find(item => item.alarm === currentRow));
       this.alarm = alarm;
       this.input2 = '';
       this.select2 = '';
+      if (type === 'select') this.setCurrent(this.currentRow)
       getWorkerInfo({alarm}).then(data => {
         this.unallocateData = [];
-        this.cloneUnallocateData = data.data.data;
+        this.cloneUnallocateData = _.cloneDeep(data.data.data);
         this.allocateData = data.data.data;
-        this.cloneAllocateData = data.data.data;
+        this.cloneAllocateData = _.cloneDeep(data.data.data);
       });
     },
+
     //选中某一行
     //返回操作
     goBack() {
@@ -407,18 +424,16 @@ export default {
     },
     // 取消操作  一般是在弹框出现的时候才有取消操作
     handleCancle() {
-      this.saveDialog = false;
-      this.selectIsDisabled = false;
       //数据还原
       if (
         this.cloneList.length < this.alarmMaintainEditList.length &&
         this.value != ""
       ) {
-        this.cloneList = JSON.parse(JSON.stringify([this.cloneModify]));
+        this.cloneList = _.cloneDeep([this.cloneModify]);
         this.editForm = this.cloneList[0];
         return;
       }
-      this.cloneList = JSON.parse(JSON.stringify(this.alarmMaintainEditList)); //取消直接复制一份副本
+      this.cloneList = _.cloneDeep(this.alarmMaintainEditList); //取消直接复制一份副本
       if (this.currentRow) {
         let code = this.currentRow.alarm;
         let item = this.findItemByKey(this.cloneList, code, "alarm");
@@ -429,7 +444,7 @@ export default {
       }
     },
     //保存操作
-    handleSave(formName) {
+    handleSave(formName, callback) {
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.allocateData = this.allocateData.map(item => ({
@@ -440,48 +455,22 @@ export default {
           let params = this.editForm;
           updateData(params).then(data => {
             const res = data.data;
-            this.saveDialog = false; // 保存的提示框消失
-            this.selectIsDisabled = false;
 
             // 直接成功
             if (res.code === 200) {
-              this.saveDialog = false;
-              this.selectIsDisabled = false;
               this.$message({
                 message: "修改成功",
                 type: "success"
               });
-              // 直接覆盖
-              if (this.cloneList.length == this.alarmMaintainEditList.length) {
-                //直接覆盖
-                //重新更改初始的副本
-                //设置左边的选中状态
-                this.SETALARMMAINTAINEDITLIST(
-                  JSON.parse(JSON.stringify(this.cloneList))
-                );
-                this.editForm = this.currentRow;
-                this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
-              }
-
-              if (this.cloneList.length == 1) {
-                let index = this.findIndexByItem(
-                  this.alarmMaintainEditList,
-                  this.editForm.alarm
-                );
-                if (index > -1) {
-                  this.alarmMaintainEditList.splice(index, 1, this.editForm); // 替换
-                  this.SETALARMMAINTAINEDITLIST(
-                    JSON.parse(JSON.stringify(this.alarmMaintainEditList))
-                  );
-                  this.cloneModify = JSON.parse(JSON.stringify(this.editForm));
-                }
-              }
+              const { editForm, alarmMaintainEditList } = this;
+              const savedIndex = alarmMaintainEditList.findIndex(item => item.alarm === editForm.alarm);
+              this.SETALARMMAINTAINEDITLIST(_.fill(alarmMaintainEditList, editForm, savedIndex, 1));
+              callback && callback();
             } else {
               this.$message({
                 message: res.data,
                 type: "error"
               });
-              this.saveDialog = false;
               this.setCurrent(this.oldRow);
             }
           });
@@ -498,9 +487,9 @@ export default {
       this.alarm = alarm;
       getWorkerInfo({alarm}).then(data => {
         this.unallocateData = [];
-        this.cloneUnallocateData = data.data.data;
+        this.cloneUnallocateData = _.cloneDeep(data.data.data);
         this.allocateData = data.data.data;
-        this.cloneAllocateData = data.data.data;
+        this.cloneAllocateData = _.cloneDeep(data.data.data);
       });
     },
 
@@ -537,7 +526,7 @@ export default {
       this.unallocateData = _.concat(this.unallocateData, this.selectedList);
       this.unallocateData = _.uniq(this.unallocateData);
       this.allocateData = _.difference(this.allocateData, this.selectedList);
-      this.cloneAllocateData = _.cloneDeep(this.allocateData);
+      // this.cloneAllocateData = _.cloneDeep(this.allocateData);
     },
     left() {
       this.allocateData = _.concat(this.allocateData, this.selectedList2);
@@ -546,7 +535,7 @@ export default {
         this.unallocateData,
         this.selectedList2
       );
-      this.cloneAllocateData = _.cloneDeep(this.allocateData);
+      // this.cloneAllocateData = _.cloneDeep(this.allocateData);
     },
     getUnallocate() {
       this.alarm = '';
@@ -576,7 +565,7 @@ export default {
     },
     getAllocate() {
       if (this.select1) {
-        this.allocateData = this.cloneAllocateData;
+        this.allocateData = _.cloneDeep(this.cloneAllocateData);
         this.allocateData = this.allocateData.filter(item => {
           if (this.input1) {
             return (
@@ -588,7 +577,7 @@ export default {
           }
         });
       } else {
-        this.allocateData = this.cloneAllocateData;
+        this.allocateData = _.cloneDeep(this.cloneAllocateData);
         this.allocateData = this.allocateData.filter(item => {
           if (this.input1.length > 0) {
             return item.informUserId.indexOf(this.input1) > -1;

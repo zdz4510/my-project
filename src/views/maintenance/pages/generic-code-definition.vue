@@ -35,7 +35,7 @@
             </template>
           </dsn-input>
         </el-form-item>
-        <el-form-item label="描述">
+        <el-form-item label="描述" prop="generalCodeDes">
           <dsn-input
             v-model.trim="genericCodeDefineForm.generalCodeDes"
             :maxlength="50"
@@ -578,6 +578,7 @@ export default {
       }
       if (this.operateType === "edit") {
         this.addForm = JSON.parse(JSON.stringify(this.cloneEditForm));
+        this.$refs["addForm"].clearValidate();
         return;
       }
     },
@@ -635,9 +636,7 @@ export default {
     },
     //重置查询
     handleReset() {
-      this.genericCodeDefineForm.generalCode = "";
-      this.genericCodeDefineForm.generalCodeGroup = "S";
-      this.genericCodeDefineForm.generalCodeDes = "";
+      this.$refs["genericCodeDefineForm"].resetFields();
       this.tableData = [];
       this.usedFieldNames = [];
       this.editable = false;
