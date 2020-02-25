@@ -13,7 +13,7 @@
         ref="table"
         :highlight-current-row="isSingle"
         :data="tableData"
-        @selection-change="handleSelectChanege"
+      
         @row-click="RowClick"
         @select="handleSelect"
         height="400px"
@@ -55,7 +55,6 @@ export default {
         this.tableData = newArr;
         this.clearSelect();
         this.setSelected();
-        // this.$refs['table'].toggleAllSelection()
       },
       deep: true
     },
@@ -68,10 +67,11 @@ export default {
     },
     visible:{
          handler:function(newv){
+           this.totalSelectArr =_.cloneDeep(this.data);
            if(newv){
              this.$nextTick(()=>{
                 this.clearSelect();
-             this.setSelected()
+                this.setSelected()
              })
            }
       },
@@ -134,11 +134,7 @@ export default {
   },
   created() {},
   methods: {
-    // diffArr(arr1, arr2) {
-    //   return arr1.filter(item => {
-    //     return item;
-    //   });
-    // },
+   
     handleSelectChanege(arr) {
       this.selectArr = arr;
     },
@@ -160,26 +156,16 @@ export default {
       this.$refs["table"].clearSelection();
       this.$refs["table"].setCurrentRow();
       this.selectArr = []; //table 选中的清空
-      // 同步选中的结果
-      // this.$emit("change", this.totalSelectArr);
     },
     handleCancle() {
+      this.totalSelectArr =_.cloneDeep(this.data);
       this.clearSelect();
       this.$emit("cancle");
       // this.$emit("update:visible", false);
     },
     confirm() {
-      // if (this.isSingle) {
-      //   //  _.cloneDeep([])
-      //  // this.totalSelectArr =([...this.selectArr]);
-      // } else {
-      //   this.totalSelectArr =( [
-      //     ...new Set([...this.totalSelectArr, ...this.selectArr])
-      //   ]);
-      // }
-      this.$emit("change", this.totalSelectArr);
-
-      this.$emit("confirm");
+      //  this.$emit("change", this.totalSelectArr);
+       this.$emit("confirm",this.totalSelectArr);
 
       //this.$emit("update:visible", false);
     },
@@ -213,7 +199,6 @@ export default {
       if (this.isSingle) {
         this.selectArr = [row];
         this.totalSelectArr = this.selectArr;
-
         return;
       }
        this.$refs["table"].toggleRowSelection(row);
@@ -239,7 +224,7 @@ export default {
     handleClear() {
       this.totalSelectArr = [];
       this.clearSelect(); //
-      this.$emit("change", this.totalSelectArr);
+      // this.$emit("change", this.totalSelectArr);
       this.$emit("clearAll");
     }
   }
