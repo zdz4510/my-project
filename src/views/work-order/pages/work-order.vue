@@ -46,7 +46,7 @@
       </div>
       <div class="operate">
         <dsn-button size="small" type="primary" @click.native="handleSave">保存</dsn-button>
-        <dsn-button size="small" type="danger" icon="el-icon-delete" @click.native="handleDelete">删除</dsn-button>
+        <dsn-button size="small" type="danger" icon="el-icon-delete" @click.native="handleDelete" :disabled="disabelDel">删除</dsn-button>
       </div>
     <div class="showInfo">
       <el-tabs type="border-card" style="height:600px">
@@ -74,7 +74,7 @@
                 <el-option label="关闭" value="CLOSE"></el-option>
               </dsn-select>
             </el-form-item>
-            <el-form-item label="计划物料:" :label-width="formLabelWidth" prop="material">
+            <el-form-item label="计划物料:" :label-width="formLabelWidth" prop="plannedMaterial">
               <!-- <el-col :span="9" style="margin-right:7px;">
                 <el-input size="small" placeholder="请输入计划物料" v-model="ruleForm.plannedMaterial"><el-button size="small" slot="append" icon="el-icon-document-copy" @click="materialHandler"></el-button></el-input>
               </el-col> -->
@@ -373,12 +373,11 @@ export default {
         rules: {
             style: [{ required: true, message: "请选择类型", trigger: "blur" }],
             state: [{ required: true, message: "请选择状态", trigger: "blur" }],
-            material: [
+            plannedMaterial: [
                 { required: true, message: "请输入计划物料", trigger: "blur" }
             ],
             productQty: [{ required: true, validator: numIssuedRules, trigger: "blur" }],
-            custom: [{ required: true, message: "请输入自定义字段", trigger: "blur" }],
-            
+            // custom: [{ required: true, message: "请输入自定义字段", trigger: "blur" }],
         },
         searchForm:{
           shopOrder:''//最新工单
@@ -398,6 +397,7 @@ export default {
         routerDialog:false,
         routerTable:[],
         // routerChoice:[]
+        disabelDel:true
     };
   },
   methods:{
@@ -522,10 +522,14 @@ export default {
     // 初始化获取自定义字段
     getCustom(){
         const params ={
-          customizedItem:'永恒之歌'
+          customizedItem:'CMF_SHOP_ORDER'
         }
         findFieldRequest(params).then(data=>{
-          console.log("初始化自定义字段"+JSON.stringify(data))
+          const res=data.data;
+          if(res.code===200){
+            this.ruleForm.customizedFieldDefInfoList=res.data.customizedFieldDefInfoList;
+            // console.log("初始化自定义字段"+JSON.stringify(res.data))
+          }
         })
       },
     //重置
@@ -570,7 +574,8 @@ export default {
                 this.ruleForm.customizedFieldDefInfoList = res.data.customizedFieldDefInfoList//工单的自定义字段信息
                 this.ruleForm.material = res.data.shopOrder.material
                 this.ruleForm.materialRev = res.data.shopOrder.materialRev
-                this.ruleForm.router = res.data.shopOrder.router
+                this.ruleForm.router = res.data.shopOrder.router;
+                this.disabelDel=false;
             }else{
               this.$message({
                 message:res.message,
