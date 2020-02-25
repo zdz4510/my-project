@@ -61,6 +61,14 @@
           v-for="(item) in podButtons">
           {{ item.buttonId }}
       </dsn-button>
+      <dsn-select :key="item.sequence" v-for="(item) in zuPodButtons" v-model="item.buttonId">
+        <el-option
+          v-for="data in item.podButtons"
+          :key="data.sequence"
+          :label="data.buttonId"
+          :value="data.buttonId"
+        ></el-option>
+      </dsn-select>
     </div>
     <!--表单-->
     <DsnPanel>
@@ -222,6 +230,7 @@ export default {
         resource: ""
       },
       podButtons:[],
+      zuPodButtons:[],
       searchFormRules: {
         operation: [
           { required: true, message: "请输入工序", trigger: "change" }
@@ -264,8 +273,14 @@ export default {
       podConfigRequest(params).then(data => {
         const res = data.data;
         if (res.code == 200) {
-          console.log("显示数据",res.data.podButtons);
-          this.podButtons=res.data.podButtons;
+          res.data.podButtons.forEach(item=>{
+            if(item.groupFlag){
+              this.zuPodButtons.push(item)
+            }else{
+              this.podButtons.push(item);
+            }
+          })
+          console.log(this.zuPodButtons,"组数据")
           // 当前获取的数据放到vuex中，以便更改
         } else {
           this.$message({
