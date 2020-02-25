@@ -195,13 +195,12 @@
     <!--工单选择-->
     <DsnSelectDialog
       title="工单选择"
-      :isSingle="false"
+      :isSingle="true"
       ref="orderChoice"
-       :tableData="orderTable"
-       v-model="selectOrderArr"
-       :helpText="helpTextOrdere"
-       @confirm="handlerOrderChange"
-       @cancle="orderCancle"
+      :tableData="orderTable"
+      v-model="selectOrderArr"
+      :helpText="helpTextOrdere"
+      @confirm="handlerOrderChange"
       :visible.sync="orderDialog"
       width="500px">
       <!-- <template slot="header">
@@ -240,6 +239,7 @@
        :tableData="materialTable"
        v-model="selectMaterialArr"
        :helpText="helpTextMaterial"
+       @confirm="handlerMaterialChange"
       :visible.sync="materialDialog"
       width="800px">
       <!-- <dsn-table
@@ -277,6 +277,7 @@
        :tableData="routerTable"
        v-model="selectRouterArr"
        :helpText="helpTextRouter"
+       @confirm="handlerRouterChange"
       width="800px">
       <!-- <dsn-table
           ref="multipleTable"
@@ -401,22 +402,26 @@ export default {
   },
   methods:{
     helpTextOrdere(item){
-      console.log(item,"数据是")
       return item.shopOrder;
     },
     handlerOrderChange(){
       this.searchForm.shopOrder=this.selectOrderArr[0].shopOrder;
-      this.orderDialog=false;
+      // this.orderDialog=false;
     },
     helpTextMaterial(item){
-      this.ruleForm.plannedMaterial=item.material;
-      this.ruleForm.plannedMaterialRev=item.materialRev
       return item.material;
     },
+    handlerMaterialChange(){
+      this.ruleForm.plannedMaterial=this.selectMaterialArr[0].material;
+      this.ruleForm.plannedMaterialRev=this.selectMaterialArr[0].materialRev
+    },
     helpTextRouter(item){
-      this.ruleForm.plannedRouterRev=item.revision;
-      this.ruleForm.plannedRouter=item.router;
+      
       return item.router;
+    },
+    handlerRouterChange(){
+      this.ruleForm.plannedRouterRev=this.selectRouterArr[0].revision;
+      this.ruleForm.plannedRouter=this.selectRouterArr[0].router;
     },
     routerHandler(){
       listRouterPageHttp().then(data =>{
@@ -531,7 +536,7 @@ export default {
       }
       this.ruleForm.shopOrderType="生产"; //类型
       this.ruleForm.status="可下达"; //状态
-      // this.$refs["orderChoice"].clearSelect();
+      this.$refs["orderChoice"].clearSelect();
       // this.$refs["materialChoice"].clearSelect();
       // this.$refs["routerChoice"].clearSelect();
       //shopOrder
