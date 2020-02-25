@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-    
     <div class="formlabel">
       <el-form label-width="100px" class="typeForm">
         <el-form-item label="物料号:" prop="mat">
@@ -11,7 +10,6 @@
               @keyup.native.enter="KeyUpEnterMat"
               v-model="formlabel.mat"
               ref="matInput"
-               
             ></dsn-input>
           </el-col>
         </el-form-item>
@@ -64,7 +62,8 @@
         </div>
       </div>
     </div>
-
+      <el-tabs type="border-card">
+          <el-tab-pane label="数据收集组" style="height:200px; width:500px">
     <div class="baseForm">
       <el-form label-width="100px" class="typeForm" :model="baseForm">
         <el-form-item label="容器类型:">
@@ -106,9 +105,10 @@
         </el-row>
       </el-form>
     </div>
-
+          </el-tab-pane>
+   </el-tabs>
     <div class="list">
-      <h3>包装清单</h3>
+    <h3>包装清单</h3>
       <dsn-table
         ref="multipleTable"
         :data="tableData"
@@ -149,17 +149,17 @@ export default {
         mainNumber: "",
         subordinationNumber: "",
         subordinateStatus: "true",
-        shopOrder: "",
-        packingClass: ""
+        shopOrder:"",
+        packingClass:""
       },
       baseForm: {
-        containerType: "",
-        labelPrinting: "",
-        currentNum: "",
-        accommodateNumber: "",
-        mainNumberType: "",
-        mat: "",
-        shopOrder: ""
+        containerType:"",
+        labelPrinting:"",
+        currentNum:"",
+        accommodateNumber:"",
+        mainNumberType:"",
+        mat:"",
+        shopOrder:"",
       }
     };
   },
@@ -178,8 +178,9 @@ export default {
         });
       });
     },
-    //监听回车事件
+ //监听回车事件
     KeyUpEnterMat() {
+     
       const payload = {
         currentPage: 1,
         pageSize: 0,
@@ -263,7 +264,7 @@ export default {
         callback && callback(res);
       });
     },
-
+   
     changePack() {
       this.getInfo();
     },
