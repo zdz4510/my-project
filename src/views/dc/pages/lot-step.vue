@@ -106,6 +106,7 @@
       :visible.sync="lotQueryDialog"
       @confirm="handleConfirmSelectLot"
       @cancle="handleCancleSelectLot"
+      keyValue="lot"
     >
       <template slot="header">
         <!-- <el-input v-model="search" placeholder></el-input>
@@ -343,7 +344,7 @@ import operationModel from "../components/operation-model.vue";
 import { findPageHttp } from "@/api/operation.maintain.api.js";
 import resourceModel from "../components/resource-model.vue";
 import { listAllResourceHttp } from "@/api/device/maintenance.api.js";
-import _ from "lodash";
+// import _ from "lodash";
 
 export default {
   components: {
@@ -406,7 +407,6 @@ export default {
       resourceDialog: false,
       resourceList: [],
       selectedLotList: [],
-      cloneSelectLotList: [],
       lotTableData: []
     };
   },
@@ -554,8 +554,8 @@ export default {
     },
     handleQuery() {
       this.queryLots = [];
-      if (this.cloneSelectLotList.length > 0) {
-        this.cloneSelectLotList.forEach(element => {
+      if (this.selectedLotList.length > 0) {
+        this.selectedLotList.forEach(element => {
           this.queryLots.push(element.lot);
         });
       } else {
@@ -798,10 +798,10 @@ export default {
       this.lotConditionForm.lot = "";
       this.lotTableData = [];
       this.selectedLotList = [];
-      this.cloneSelectLotList = [];
     },
     //确认选择lot
-    handleConfirmSelectLot() {
+    handleConfirmSelectLot(val) {
+      this.selectedLotList = val;
       if (this.selectedLotList.length === 0) {
         this.lotStepForm.lot = "";
       }
@@ -811,7 +811,6 @@ export default {
       if (this.selectedLotList.length > 1) {
         this.lotStepForm.lot = "已选择" + this.selectedLotList.length + "个";
       }
-      this.cloneSelectLotList = _.cloneDeep(this.selectedLotList);
       this.lotQueryDialog = false;
     },
     handleCancleSelectLot() {
