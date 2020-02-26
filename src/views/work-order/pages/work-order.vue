@@ -327,7 +327,7 @@
           @selection-change="handlerSelectionRouter"
         > -->
         <template slot="header">
-            <el-form label-width="100px" ref="searchMaterialForm" :model="searchRouterForm" :inline="true">
+            <el-form label-width="100px" ref="searchRouterForm" :model="searchRouterForm" :inline="true">
               <el-form-item label="工艺路线:">
                 <dsn-input size="small" placeholder="请输入工艺路线" v-model="searchRouterForm.router"></dsn-input>
               </el-form-item>
@@ -507,7 +507,6 @@ export default {
       })
     },
     resetSearchForm(){
-      console.log(this.selectOrderArr,"1111")
       this.searchOrderForm.shopOrder="",
       this.searchOrderForm.shopOrderType="";
       this.$refs["orderChoice"].resert();
