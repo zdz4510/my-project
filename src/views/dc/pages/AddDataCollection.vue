@@ -35,12 +35,12 @@
       <el-tabs v-model="activeName" type="card">
         <el-tab-pane label="参数配置" name="first">
           <div>
-            <dsn-button size="small" type="success" icon="el-icon-folder-add" @click="add">新增</dsn-button>
+            <dsn-button size="small" type="success" icon="el-icon-folder-add" @click="addParams">新增</dsn-button>
             <dsn-button
               size="small"
               type="primary"
               icon="el-icon-edit"
-              @click="edit"
+              @click="editParams"
               :disabled="this.pCheckedList.length != 1"
             >编辑</dsn-button>
             <dsn-button
@@ -95,12 +95,12 @@
           </dsn-table>
         </el-tab-pane>
         <el-tab-pane label="数据收集配置" name="second">
-          <dsn-button size="small" type="success" icon="el-icon-folder-add" @click="addSet">新增</dsn-button>
+          <dsn-button size="small" type="success" icon="el-icon-folder-add" @click="addSetUp">新增</dsn-button>
           <dsn-button
             size="small"
             type="primary"
             icon="el-icon-edit"
-            @click="editSet"
+            @click="editSetUp"
             :disabled="this.sCheckedList.length != 1"
           >编辑</dsn-button>
           <dsn-button
@@ -285,7 +285,7 @@
         </el-row>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <dsn-button @click="paramsDialogVisible = false">取 消</dsn-button>
+        <dsn-button @click="resetParams">重 置</dsn-button>
         <dsn-button type="primary" @click="saveParams('addParamForm')">确 定</dsn-button>
       </span>
     </el-dialog>
@@ -414,7 +414,7 @@
         </el-row>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <dsn-button @click="setUpDialogVisible = false">取 消</dsn-button>
+        <dsn-button @click="resetSetUp">重 置</dsn-button>
         <dsn-button type="primary" @click="saveSetUp('addSetUpForm')">确 定</dsn-button>
       </span>
     </el-dialog>
@@ -432,7 +432,7 @@ import { findShopOrderListRequest } from "@/api/work-order/work-order.api.js";
 import { getOperationList } from "@/api/operation.maintain.api.js";
 import { findPageHttp } from "@/api/work.center.api.js";
 import { listAllResourceGroupHttp } from "@/api/device/type.api.js";
-// import _ from "lodash";
+import _ from "lodash";
 export default {
   name: "add-data-collection",
   data() {
@@ -620,7 +620,9 @@ export default {
       shopOrderList: [],
       operationList: [],
       workCenterList: [],
-      resourceGroupList: []
+      resourceGroupList: [],
+      cloneAddParamForm: {},
+      cloneAddSetUpForm: {}
     };
   },
   filters: {
@@ -821,6 +823,49 @@ export default {
         }
       });
     },
+    resetParamsForm() {
+      this.addParamForm.parameter = "";
+      this.addParamForm.targetValue = "";
+      this.addParamForm.parameterDes = "";
+      this.addParamForm.upperSpecLimit = "";
+      this.addParamForm.parameterStatus = "";
+      this.addParamForm.lowerSpecLimit = "";
+      this.addParamForm.falseValue = "";
+      this.addParamForm.trueValue = "";
+      this.addParamForm.upperWarnLimit = "";
+      this.addParamForm.required = "";
+      this.addParamForm.lowerWarnLimit = "";
+      this.addParamForm.softCheck = "";
+      this.addParamForm.alarm = "";
+      this.addParamForm.valueType = "";
+      // this.$refs["addParamForm"].resetFields();
+      // this.$refs["addParamForm"].clearValidate();
+    },
+    resetParams() {
+      if (this.currentOperation == "add") {
+        this.resetParamsForm();
+      }
+      if (this.currentOperation === "edit") {
+        this.addParamForm = _.cloneDeep(this.cloneAddParamForm);
+      }
+    },
+    resetSetUpForm() {
+      this.addSetUpForm.materialGroup = "";
+      this.addSetUpForm.operation = "";
+      this.addSetUpForm.material = "";
+      this.addSetUpForm.workCenter = "";
+      this.addSetUpForm.shopOrder = "";
+      this.addSetUpForm.resourceGroup = "";
+      // this.$refs["addSetUpForm"].clearValidate();
+    },
+    resetSetUp() {
+      if (this.currentOperation == "add") {
+        this.resetSetUpForm();
+      }
+      if (this.currentOperation === "edit") {
+        this.addSetUpForm = _.cloneDeep(this.cloneAddSetUpForm);
+      }
+    },
     saveSetUp(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -895,20 +940,22 @@ export default {
     onChange() {
       this.addParamForm.targetValue = "";
     },
-    add() {
+    addParams() {
       this.paramsDialogVisible = true;
       this.currentOperation = "add";
+      this.resetParamsForm();
     },
-    addSet() {
+    addSetUp() {
       this.setUpDialogVisible = true;
       this.currentOperation = "add";
+      this.resetSetUpForm();
       this.queryData();
     },
-    edit() {
+    editParams() {
       this.paramsDialogVisible = true;
       this.currentOperation = "edit";
-      console.log(this.pCheckedList, "pc");
-      this.addParamForm = JSON.parse(JSON.stringify(this.pCheckedList[0]));
+      this.addParamForm = _.cloneDeep(this.pCheckedList[0]);
+      this.cloneAddParamForm = _.cloneDeep(this.pCheckedList[0]);
     },
     queryData() {
       this.queryMaterialGroup();
@@ -918,11 +965,11 @@ export default {
       this.queryWorkCenter();
       this.queryResourceGroup();
     },
-    editSet() {
+    editSetUp() {
       this.setUpDialogVisible = true;
       this.currentOperation = "edit";
-      console.log(this.sCheckedList, "pc");
-      this.addSetUpForm = JSON.parse(JSON.stringify(this.sCheckedList[0]));
+      this.addSetUpForm = _.cloneDeep(this.sCheckedList[0]);
+      this.cloneAddSetUpForm = _.cloneDeep(this.sCheckedList[0]);
       this.queryData();
     },
     del() {

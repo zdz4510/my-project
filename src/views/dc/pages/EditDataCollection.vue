@@ -35,12 +35,12 @@
       <el-tabs v-model="activeName" type="card">
         <el-tab-pane label="参数配置" name="first">
           <div>
-            <dsn-button size="small" type="success" icon="el-icon-folder-add" @click="add">新增</dsn-button>
+            <dsn-button size="small" type="success" icon="el-icon-folder-add" @click="addParams">新增</dsn-button>
             <dsn-button
               size="small"
               type="primary"
               icon="el-icon-edit"
-              @click="edit"
+              @click="editParams"
               :disabled="this.pCheckedList.length != 1"
             >编辑</dsn-button>
             <dsn-button
@@ -94,12 +94,12 @@
         </el-tab-pane>
         <el-tab-pane label="数据收集配置" name="second">
           <div>
-            <dsn-button size="small" type="success" icon="el-icon-folder-add" @click="addSet">新增</dsn-button>
+            <dsn-button size="small" type="success" icon="el-icon-folder-add" @click="addSetUp">新增</dsn-button>
             <dsn-button
               size="small"
               type="primary"
               icon="el-icon-edit"
-              @click="editSet"
+              @click="editSetUp"
               :disabled="this.sCheckedList.length != 1"
             >编辑</dsn-button>
             <dsn-button
@@ -426,7 +426,7 @@
         </el-row>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <dsn-button @click="setUpDialogVisible = false">取 消</dsn-button>
+        <dsn-button @click="resetSetUp">重 置</dsn-button>
         <dsn-button type="primary" @click="saveSetUp('addSetUpForm')">确 定</dsn-button>
       </span>
     </el-dialog>
@@ -735,7 +735,8 @@ export default {
       operationList: [],
       workCenterList: [],
       resourceGroupList: [],
-      cloneAddParamForm: {}
+      cloneAddParamForm: {},
+      cloneAddSetUpForm: {}
     };
   },
   filters: {
@@ -1030,29 +1031,26 @@ export default {
         return "--";
       }
     },
+    resetParamsForm() {
+      this.addParamForm.parameter = "";
+      this.addParamForm.targetValue = "";
+      this.addParamForm.parameterDes = "";
+      this.addParamForm.upperSpecLimit = "";
+      this.addParamForm.parameterStatus = "";
+      this.addParamForm.lowerSpecLimit = "";
+      this.addParamForm.falseValue = "";
+      this.addParamForm.trueValue = "";
+      this.addParamForm.upperWarnLimit = "";
+      this.addParamForm.required = "";
+      this.addParamForm.lowerWarnLimit = "";
+      this.addParamForm.softCheck = "";
+      this.addParamForm.alarm = "";
+      this.addParamForm.valueType = "";
+      this.$refs["addParamForm"].clearValidate();
+    },
     resetParams() {
       if (this.currentOperation == "add") {
-        this.$refs["addParamForm"].resetFields();
-        this.$refs["addParamForm"].clearValidate();
-        this.addParamForm.parameter = "";
-        //   : {
-        //   parameter: "",
-        //   targetValue: "",
-        //   parameterDes: "",
-        //   upperSpecLimit: "",
-        //   parameterStatus: "",
-        //   lowerSpecLimit: "",
-        //   valueType: "",
-        //   falseValue: "false",
-        //   trueValue: "true",
-        //   upperWarnLimit: "",
-        //   required: "",
-        //   lowerWarnLimit: "",
-        //   softCheck: "",
-        //   alarm: "",
-        //   dcGroup: "",
-        //   tenantSiteCode: "test"
-        // },
+        this.resetParamsForm();
       }
       if (this.currentOperation === "edit") {
         this.addParamForm = _.cloneDeep(this.cloneAddParamForm);
@@ -1091,6 +1089,23 @@ export default {
           return false;
         }
       });
+    },
+    resetSetUpForm() {
+      this.addSetUpForm.materialGroup = "";
+      this.addSetUpForm.operation = "";
+      this.addSetUpForm.material = "";
+      this.addSetUpForm.workCenter = "";
+      this.addSetUpForm.shopOrder = "";
+      this.addSetUpForm.resourceGroup = "";
+      this.$refs["addSetUpForm"].clearValidate();
+    },
+    resetSetUp() {
+      if (this.currentOperation == "add") {
+        this.resetSetUpForm();
+      }
+      if (this.currentOperation === "edit") {
+        this.addSetUpForm = _.cloneDeep(this.cloneAddSetUpForm);
+      }
     },
     saveSetUp(formName) {
       this.$refs[formName].validate(valid => {
@@ -1140,17 +1155,18 @@ export default {
     onChange() {
       this.addParamForm.targetValue = "";
     },
-    add() {
+    addParams() {
       this.paramsDialogVisible = true;
       this.currentOperation = "add";
-      this.$refs["addParamForm"].resetFields();
+      this.resetParamsForm();
     },
-    addSet() {
+    addSetUp() {
       this.setUpDialogVisible = true;
       this.currentOperation = "add";
       this.queryData();
+      this.resetSetUpForm();
     },
-    edit() {
+    editParams() {
       this.paramsDialogVisible = true;
       this.currentOperation = "edit";
       this.addParamForm = _.cloneDeep(this.pCheckedList[0]);
@@ -1164,11 +1180,11 @@ export default {
       this.queryWorkCenter();
       this.queryResourceGroup();
     },
-    editSet() {
+    editSetUp() {
       this.setUpDialogVisible = true;
       this.currentOperation = "edit";
-      console.log(this.sCheckedList, "pc");
-      this.addSetUpForm = JSON.parse(JSON.stringify(this.sCheckedList[0]));
+      this.addSetUpForm = _.cloneDeep(this.sCheckedList[0]);
+      this.cloneAddSetUpForm = _.cloneDeep(this.sCheckedList[0]);
       this.queryData();
     },
     del() {
