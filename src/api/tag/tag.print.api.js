@@ -47,7 +47,8 @@ export const insertLabelPrintingLogBatch = data => {
  * @param {*} data 
  */
 export const   printLabel =  data => {
-     return  request.post(`${window.VUE_APP_URL}/mes/labelPrinting/printLabel`,data);
+  let params =qs.stringify(data)
+     return  request.post(`${window.VUE_APP_URL}/mes/labelPrinting/printLabel?${params}`);
   // return  result;
 };
 

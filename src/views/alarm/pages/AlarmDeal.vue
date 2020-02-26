@@ -19,6 +19,8 @@
               </el-form-item>
               <el-form-item label="触发时间:" prop="triggeringTime">
                 <el-date-picker
+                  size="small"
+                  style="width:215px"
                   v-model="undealSearchForm.triggeringTime"
                   type="datetime"
                   placeholder="选择日期"
@@ -38,8 +40,18 @@
                 <dsn-input v-model="undealSearchForm.triggerType"></dsn-input>
               </el-form-item>
               <el-form-item label prop>
-                <dsn-button size="small" type="primary" @click.native="searchUndeal">查询</dsn-button>
-                <dsn-button size="small" type="primary" @click.native="undealResetForm('undealSearchForm')">重置</dsn-button>
+                <dsn-button
+                  size="small"
+                  type="primary"
+                  icon="el-icon-search"
+                  @click.native="searchUndeal"
+                >查询</dsn-button>
+                <dsn-button
+                  size="small"
+                  type="primary"
+                  icon="el-icon-refresh"
+                  @click.native="undealResetForm('undealSearchForm')"
+                >重置</dsn-button>
               </el-form-item>
             </el-form>
           </div>
@@ -51,7 +63,12 @@
           <div class="operate">
             <el-form :inline="true" class="demo-form-inline">
               <el-form-item>
-                <dsn-button size="small" type="primary" icon="el-icon-upload2" @click.native="exportExcelUndeal">导出</dsn-button>
+                <dsn-button
+                  size="small"
+                  type="primary"
+                  icon="el-icon-upload2"
+                  @click.native="exportExcelUndeal"
+                >导出</dsn-button>
               </el-form-item>
               <el-form-item>
                 <dsn-button
@@ -79,17 +96,22 @@
               <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
               <el-table-column type="index" label="序号"></el-table-column>
               <el-table-column prop="sequence" label="触发序号"></el-table-column>
-              <el-table-column prop="triggeringTime" label="触发时间"></el-table-column>
-              <el-table-column prop="alarmGroup" label="预警分组"></el-table-column>
-              <el-table-column prop="alarm" label="事件编号"></el-table-column>
-              <el-table-column prop="alarmLevel" label="事件等级"></el-table-column>
-              <el-table-column prop="triggerType" label="触发类型"></el-table-column>
-              <el-table-column prop="workCenter" label="工作中心"></el-table-column>
-              <el-table-column prop="workCenterRelation" label="产线"></el-table-column>
-              <el-table-column prop="station" label="工序站位"></el-table-column>
-              <el-table-column prop="shopOrder" label="工单"></el-table-column>
-              <el-table-column prop="numbersInvolved" label="涉及数量"></el-table-column>
-              <el-table-column prop="resource" label="设备编号"></el-table-column>
+              <el-table-column prop="triggeringTime" label="触发时间" width="140"></el-table-column>
+              <el-table-column prop="alarmGroup" label="预警分组" width="100" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="alarm" label="事件编号" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="alarmLevel" label="事件等级" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="triggerType" label="触发类型" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="workCenter" label="工作中心" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column
+                prop="workCenterRelation"
+                label="产线"
+                width="80"
+                show-overflow-tooltip
+              ></el-table-column>
+              <el-table-column prop="station" label="工序站位" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="shopOrder" label="工单" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="numbersInvolved" label="涉及数量" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="resource" label="设备编号" width="80" show-overflow-tooltip></el-table-column>
               <!-- <el-table-column prop="clearFlag" label="初始化与否">
                 <template slot-scope="scope">
                   {{ !scope.row.clearFlag ? '否' : '是' }}
@@ -97,7 +119,7 @@
               </el-table-column>
               <el-table-column prop="clearTime" label="初始化时间"></el-table-column>
               <el-table-column prop="clearUserId" label="初始化用户"></el-table-column>
-              <el-table-column prop="clearComment" label="初始化注释"></el-table-column> -->
+              <el-table-column prop="clearComment" label="初始化注释"></el-table-column>-->
             </dsn-table>
             <dsn-pagination
               background
@@ -129,6 +151,8 @@
               </el-form-item>
               <el-form-item label="触发时间:" prop="triggeringTime">
                 <el-date-picker
+                  size="small"
+                  style="width:215px"
                   v-model="dealSearchForm.triggeringTime"
                   type="datetime"
                   placeholder="选择日期"
@@ -148,8 +172,18 @@
                 <dsn-input v-model="dealSearchForm.triggerType"></dsn-input>
               </el-form-item>
               <el-form-item label prop>
-                <dsn-button size="small" type="primary" @click.native="searchDeal">查询</dsn-button>
-                <dsn-button size="small" type="primary" @click.native="dealResetForm('dealSearchForm')">重置</dsn-button>
+                <dsn-button
+                  size="small"
+                  type="primary"
+                  icon="el-icon-search"
+                  @click.native="searchDeal"
+                >查询</dsn-button>
+                <dsn-button
+                  size="small"
+                  type="primary"
+                  icon="el-icon-refresh"
+                  @click.native="dealResetForm('dealSearchForm')"
+                >重置</dsn-button>
               </el-form-item>
             </el-form>
           </div>
@@ -161,7 +195,12 @@
           <div class="operate">
             <el-form :inline="true">
               <el-form-item>
-                <dsn-button size="small" type="primary" icon="el-icon-upload2" @click.native="exportExcelDeal">导出</dsn-button>
+                <dsn-button
+                  size="small"
+                  type="primary"
+                  icon="el-icon-upload2"
+                  @click.native="exportExcelDeal"
+                >导出</dsn-button>
               </el-form-item>
               <el-form-item>
                 <dsn-button
@@ -181,7 +220,11 @@
                 >初始化</dsn-button>
               </el-form-item>
               <el-form-item>
-                <dsn-input placeholder="请输入内容" v-model="clearComment" style="vertical-align: middle">
+                <dsn-input
+                  placeholder="请输入内容"
+                  v-model="clearComment"
+                  style="vertical-align: middle"
+                >
                   <template slot="prepend">初始化描述:</template>
                 </dsn-input>
               </el-form-item>
@@ -197,36 +240,37 @@
             >
               <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
               <el-table-column type="index" label="序号"></el-table-column>
-              <el-table-column prop="sequence" label="触发序号"></el-table-column>
-              <el-table-column prop="triggeringTime" label="触发时间"></el-table-column>
-              <el-table-column prop="alarmGroup" label="预警分组"></el-table-column>
-              <el-table-column prop="alarm" label="事件编号"></el-table-column>
-              <el-table-column prop="alarmLevel" label="事件等级"></el-table-column>
-              <el-table-column prop="triggerType" label="触发类型"></el-table-column>
-              <el-table-column prop="workCenter" label="工作中心"></el-table-column>
-              <el-table-column prop="workCenterRelation" label="产线"></el-table-column>
-              <el-table-column prop="station" label="工序站位"></el-table-column>
-              <el-table-column prop="shopOrder" label="工单"></el-table-column>
-              <el-table-column prop="numbersInvolved" label="涉及数量"></el-table-column>
-              <el-table-column prop="resource" label="设备编号"></el-table-column>
-              <el-table-column prop="ackFlag" label="确认标记">
-                <template slot-scope="scope">
-                  {{ !scope.row.ackFlag ? '未确认' : '已确认' }}
-                </template>
+              <el-table-column prop="sequence" label="触发序号" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="triggeringTime" label="触发时间" width="140"></el-table-column>
+              <el-table-column prop="alarmGroup" label="预警分组" width="100" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="alarm" label="事件编号" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="alarmLevel" label="事件等级" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="triggerType" label="触发类型" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="workCenter" label="工作中心" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column
+                prop="workCenterRelation"
+                label="产线"
+                width="80"
+                show-overflow-tooltip
+              ></el-table-column>
+              <el-table-column prop="station" label="工序站位" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="shopOrder" label="工单" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="numbersInvolved" label="涉及数量" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="resource" label="设备编号" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="ackFlag" label="确认标记" width="80" show-overflow-tooltip>
+                <template slot-scope="scope">{{ !scope.row.ackFlag ? '未确认' : '已确认' }}</template>
               </el-table-column>
-              <el-table-column prop="ackUserId" label="确认人"></el-table-column>
-              <el-table-column prop="ackComment" label="确认注释"></el-table-column>
-              <el-table-column prop="ackTime" label="确认时间"></el-table-column>
-              <el-table-column prop="clearFlag" label="初始化与否">
-                <template slot-scope="scope">
-                  {{ !scope.row.clearFlag ? '否' : '是' }}
-                </template>
+              <el-table-column prop="ackUserId" label="确认人" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="ackComment" label="确认注释" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="ackTime" label="确认时间" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="clearFlag" label="初始化与否" width="80" show-overflow-tooltip>
+                <template slot-scope="scope">{{ !scope.row.clearFlag ? '否' : '是' }}</template>
               </el-table-column>
-              <el-table-column prop="clearTime" label="初始化时间"></el-table-column>
-              <el-table-column prop="clearUserId" label="初始化用户"></el-table-column>
-              <el-table-column prop="clearComment" label="初始化注释"></el-table-column>
-              <el-table-column prop="modifyUserName" label="修改人"></el-table-column>
-              <el-table-column prop="modifyTime" label="修改时间"></el-table-column>
+              <el-table-column prop="clearTime" label="初始化时间" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="clearUserId" label="初始化用户" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="clearComment" label="初始化注释" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="modifyUserName" label="修改人" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="modifyTime" label="修改时间" width="140" show-overflow-tooltip></el-table-column>
             </dsn-table>
             <dsn-pagination
               background
@@ -257,8 +301,18 @@
                 <dsn-input v-model="searchForm.sequence"></dsn-input>
               </el-form-item>
               <el-form-item label prop>
-                <dsn-button size="small" type="primary" @click.native="search">查询</dsn-button>
-                <dsn-button size="small" type="primary" @click.native="resetForm('searchForm')">重置</dsn-button>
+                <dsn-button
+                  size="small"
+                  type="primary"
+                  icon="el-icon-search"
+                  @click.native="search"
+                >查询</dsn-button>
+                <dsn-button
+                  size="small"
+                  type="primary"
+                  icon="el-icon-refresh"
+                  @click.native="resetForm('searchForm')"
+                >重置</dsn-button>
               </el-form-item>
             </el-form>
           </div>
@@ -268,7 +322,12 @@
             <span>搜索结果</span>
           </div>
           <div class="operate">
-            <dsn-button size="small" type="primary" icon="el-icon-upload2" @click.native="exportExcel">导出</dsn-button>
+            <dsn-button
+              size="small"
+              type="primary"
+              icon="el-icon-upload2"
+              @click.native="exportExcel"
+            >导出</dsn-button>
           </div>
           <div class>
             <dsn-table
@@ -280,23 +339,26 @@
             >
               <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
               <el-table-column type="index" label="序号"></el-table-column>
-              <el-table-column prop="sequence" label="触发序号"></el-table-column>
-              <el-table-column prop="mainNumber" label="容器"></el-table-column>
-              <el-table-column prop="lot" label="LOT"></el-table-column>
-              <el-table-column prop="resource" label="设备编号"></el-table-column>
-              <el-table-column prop="shopOrder" label="工单"></el-table-column>
-              <el-table-column prop="alarm" label="事件编号"></el-table-column>
-              <el-table-column prop="alarmLevel" label="事件等级"></el-table-column>
-              <el-table-column prop="ackFlag" label="确认标记">
-                <template slot-scope="scope">
-                  {{ !scope.row.ackFlag ? '未确认' : '已确认' }}
-                </template>
+              <el-table-column prop="sequence" label="触发序号" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="mainNumber" label="容器" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="lot" label="LOT" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="resource" label="设备编号" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="shopOrder" label="工单" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="alarm" label="事件编号" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="alarmLevel" label="事件等级" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="ackFlag" label="确认标记" width="80" show-overflow-tooltip>
+                <template slot-scope="scope">{{ !scope.row.ackFlag ? '未确认' : '已确认' }}</template>
               </el-table-column>
-              <el-table-column prop="workCenter" label="工作中心"></el-table-column>
-              <el-table-column prop="workCenterRelation" label="产线"></el-table-column>
-              <el-table-column prop="station" label="工序站位"></el-table-column>
-              <el-table-column prop="operation" label="当前工序"></el-table-column>
-              <el-table-column prop="involeNumber" label="多次触发次数"></el-table-column>
+              <el-table-column prop="workCenter" label="工作中心" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column
+                prop="workCenterRelation"
+                label="产线"
+                width="80"
+                show-overflow-tooltip
+              ></el-table-column>
+              <el-table-column prop="station" label="工序站位" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="operation" label="当前工序" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="involeNumber" label="多次触发次数" width="100" show-overflow-tooltip></el-table-column>
             </dsn-table>
             <dsn-pagination
               background

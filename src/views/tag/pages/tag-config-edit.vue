@@ -1,16 +1,10 @@
 <template>
-  <div class="maintenanceEdit">
+  <div class="tag-edit">
     <dsnPanel>
       <div class="operate mt-15">
-        <dsn-button size="small" type="primary" @click="handleBack">
-          返回
-        </dsn-button>
-        <dsn-button size="small" type="primary" @click="validFrom">
-          保存
-        </dsn-button>
-        <dsn-button size="small" type="primary" @click="handleReset">
-          重置
-        </dsn-button>
+        <dsn-button size="small" type="primary" @click="handleBack">返回</dsn-button>
+        <dsn-button size="small" type="primary" @click="validFrom">保存</dsn-button>
+        <dsn-button size="small" type="primary" @click="handleReset">重置</dsn-button>
       </div>
       <el-form
         :model="tagConfigForm"
@@ -44,32 +38,22 @@
               class="demo-tagConfigForm"
             >
               <el-form-item label="标签描述:" prop="labelDes">
-                <dsn-input
-                  v-model.trim="tagConfigForm.labelDes"
-                  placeholder="请输入标签描述"
-                ></dsn-input>
+                <dsn-input v-model.trim="tagConfigForm.labelDes" placeholder="请输入标签描述"></dsn-input>
               </el-form-item>
               <el-form-item label="标签应用类型" prop="labelUseType">
-                <dsn-select
-                  v-model="tagConfigForm.labelUseType"
-                  placeholder="请选择标签应用类型"
-                >
+                <dsn-select v-model="tagConfigForm.labelUseType" placeholder="请选择标签应用类型">
                   <el-option label="LOT" value="10"></el-option>
                   <el-option label="容器" value="20"></el-option>
                 </dsn-select>
               </el-form-item>
               <el-form-item>
-                <el-checkbox v-model="tagConfigForm.useTemplateType"
-                  >使用命令行打印</el-checkbox
-                >
+                <el-checkbox v-model="tagConfigForm.useTemplateType">使用命令行打印</el-checkbox>
               </el-form-item>
             </el-form>
             <div class="designContent">
               <div class="left">
                 <div>
-                  <dsn-button size="small" type="primary">
-                    标签图像预览
-                  </dsn-button>
+                  <dsn-button size="small" type="primary">标签图像预览</dsn-button>
                 </div>
                 <div class="image">
                   <div class="block">
@@ -86,33 +70,29 @@
                   <dsn-button size="small" type="primary">打印命令</dsn-button>
                 </div>
                 <div class="image">
-                  <!-- <dsn-input
+                  <dsn-input
                     type="textarea"
                     placeholder="请输入内容"
                     v-model="tagConfigForm.labelCommand"
                     :rows="8"
                     show-word-limit
-                  >
-                  </dsn-input> -->
+                  ></dsn-input>
                 </div>
               </div>
             </div>
             <div class="designBottom">
-              <dsn-button size="small" type="primary" @click="toTagOpe">
-                编辑
-              </dsn-button>
-              获取其他标签模板：
+              <dsn-button size="small" type="primary" @click="toTagOpe">编辑</dsn-button>获取其他标签模板：
               <!-- <dsn-input
-                class="getTemplate"
-                v-model.trim="getTemplate"
+                class="labelTemplate"
+                v-model.trim="labelTemplate"
                
                 @keyup.enter.native='enter'
                 placeholder="请输入标签模板"
-              ></dsn-input> -->
+              ></dsn-input>-->
               <dsn-select
                 @change="handleTagIdChange"
                 placeholder="请输入标签模板"
-                v-model.trim="getTemplate"
+                v-model.trim="tagConfigForm.labelTemplate"
               >
                 <el-option
                   v-for="item in tagSelectList"
@@ -121,12 +101,8 @@
                   :value="item.label"
                 >
                   <div class="suggest">
-                    <div class="suggest-left">
-                      {{ item.label }}
-                    </div>
-                    <div class="suggest-right">
-                      {{ item.labelDes }}
-                    </div>
+                    <div class="suggest-left">{{ item.label }}</div>
+                    <div class="suggest-right">{{ item.labelDes }}</div>
                   </div>
                 </el-option>
               </dsn-select>
@@ -140,43 +116,32 @@
                   placeholder="请输入关系名称"
                   :style="'width: 200px'"
                   @input="handleLeftQueryChange"
-                  v-model="v"
+                  v-model="tagConfigForm.v1"
                 >
                   <template slot-scope="{ item }">
                     <div class="name">{{ item.linkValue }}</div>
                   </template>
                 </dsn-input>
-                <dsn-select v-model="s1" @change="handleLeftQueryChange">
+                <dsn-select v-model="tagConfigForm.s1" @change="handleLeftQueryChange">
                   <el-option label="物料" value="20"></el-option>
                   <el-option label="物料组" value="10"></el-option>
                 </dsn-select>
                 <dsn-table
                   @selection-change="handleLeftSelect"
-                  :data="list"
+                  :data="tagConfigForm.leftList"
                   style="width: 100%"
                   border
                   height="540px"
                 >
                   <el-table-column type="selection" width="55" />
-                  <el-table-column prop="linkValue" label="关系名称">
-                  </el-table-column>
-                  <el-table-column prop="linkType" label="关系类型">
-                  </el-table-column>
-                  <el-table-column prop="address" label="描述">
-                  </el-table-column>
+                  <el-table-column prop="linkValue" label="关系名称"></el-table-column>
+                  <el-table-column prop="linkType" label="关系类型"></el-table-column>
+                  <el-table-column prop="address" label="描述"></el-table-column>
                 </dsn-table>
               </div>
               <div class="ope">
-                <dsn-button
-                  type="primary"
-                  icon="el-icon-arrow-left"
-                  @click="toLeft"
-                ></dsn-button>
-                <dsn-button
-                  type="primary"
-                  icon="el-icon-arrow-right"
-                  @click="toRight"
-                ></dsn-button>
+                <dsn-button type="primary" icon="el-icon-arrow-left" @click="toLeft"></dsn-button>
+                <dsn-button type="primary" icon="el-icon-arrow-right" @click="toRight"></dsn-button>
               </div>
               <div class="right">
                 <dsn-input
@@ -184,31 +149,28 @@
                   @change="querySearchAsync2"
                   placeholder="请输入关系名称"
                   :style="'width: 200px'"
-                  v-model="v2"
+                  v-model="tagConfigForm.v2"
                 >
                   <template slot-scope="{ item }">
                     <div class="name">{{ item.linkValue }}</div>
                     <!-- <span class="addr">{{ item.address }}</span> -->
                   </template>
                 </dsn-input>
-                <dsn-select v-model="s2" @change="handleRightQeuryChange">
+                <dsn-select v-model="tagConfigForm.s2" @change="handleRightQeuryChange">
                   <el-option label="物料" value="20"></el-option>
                   <el-option label="物料组" value="10"></el-option>
                 </dsn-select>
                 <dsn-table
                   @selection-change="handleRightSelect"
-                  :data="list2"
+                  :data="tagConfigForm.rightList"
                   style="width: 100%"
                   border
                   height="540px"
                 >
                   <el-table-column type="selection" width="55" />
-                  <el-table-column prop="linkValue" label="关系名称">
-                  </el-table-column>
-                  <el-table-column prop="linkType" label="关系类型">
-                  </el-table-column>
-                  <el-table-column prop="address" label="描述">
-                  </el-table-column>
+                  <el-table-column prop="linkValue" label="关系名称"></el-table-column>
+                  <el-table-column prop="linkType" label="关系类型"></el-table-column>
+                  <el-table-column prop="address" label="描述"></el-table-column>
                 </dsn-table>
               </div>
             </div>
@@ -220,7 +182,7 @@
     <!-- 底部的菜单栏 -->
     <DsnFooter>
       <dsn-button @click="testPrint">测试打印</dsn-button>
-      <dsn-select v-model="selectDeiveName"  @focus="handleGetPrintDevicesAvailable"> 
+      <dsn-select v-model="tagConfigForm.selectDeiveName" @focus="handleGetPrintDevicesAvailable">
         <el-option :label="item" :value="item" v-for="(item, index) in getDeviceList" :key="index"></el-option>
       </dsn-select>
     </DsnFooter>
@@ -239,22 +201,13 @@ import {
   getTagConfigList,
   getLabelStorageByLabel
 } from "@/api/tag/tag.config.api";
-import {getPrintDevicesAvailable} from  "@/api/tag/tag.print.api"
+import { getPrintDevicesAvailable } from "@/api/tag/tag.print.api";
 export default {
   components: {
     DsnFooter
   },
   data() {
     return {
-      s1: "",
-      s2: "10",
-      list: [], //左边的table
-      text: "",
-      v: "", //穿梭框
-      v2: "",
-      data: [],
-      list2: [], // ，右边的table
-      value: [],
       filterMethod(query, item) {
         return item.pinyin.indexOf(query) > -1;
       },
@@ -262,64 +215,57 @@ export default {
         //标签描述
         tagDes: "",
         //标签ID
-        label: "",
+        label: "", //标签id
         checked: true,
         labelUseType: "",
         previewImage: "",
         labelCommand: "",
+        useTemplateType: true,
         labelLinkList: [],
-       
+        labelTemplate: "",
+        leftList: [],
+        rightList: [],
+        cloneLeftList: [], // 克隆左边的
+        v1: "", //左边输入key
+        v2: "", // 右边输入key
+        s1: "",
+        s2: "",
+        selectDeiveName: ""
       },
       rules: {
         labelDes: [
           {
             required: true,
             message: "标签描述不能为空",
-            trigger: ["change", "blur"]
+            trigger: ["blur"]
           }
         ],
         label: [
           {
             required: true,
             message: "标签ID不能为空",
-            trigger: ["change", "blur"]
+            trigger: ["blur"]
           }
         ],
         labelUseType: [
           {
             required: true,
             message: "标签应用类型不能为空",
-            trigger: ["change", "blur"]
+            trigger: ["blur"]
           }
         ]
       },
-      //验证基础信息表单ref
-      refArrBaseInfo: ["tagConfigFormOne", "tagConfigFormTwo"],
-      //验证保养配置表单ref
-      refArrUpkeepConfig: ["tagConfigFormOne", "upkeepConfigForm"],
       tableData: [],
       selectionList: [],
       operateType: "",
-      saveType: "design",
       isEditResource: false,
-      //预警
-      alarmList: [],
       fn: null,
-      isRequired: false,
-      currentRow: {},
-      getTemplate: "",
       debounceFn: null,
       debounceFn2: null,
       leftSelectList: [],
       rightSelectList: [],
-      labelLinkList: [],
-      labelStorageList: [],
-      labelCommand: "",
-      previewImage: "",
-      cloneList: "",
       tagSelectList: [],
-      getDeviceList:[] , // 获取可用的打印设备
-       selectDeiveName:''
+      getDeviceList: [] // 获取可用的打印设备
     };
   },
   computed: {
@@ -330,9 +276,10 @@ export default {
     this.operateType = this.$route.query.operateType; // 获取报错的类型 add or edit
 
     this.init();
+      this.tagConfigForm = _.cloneDeep(this.tagConfigList); // 拷贝
     if (this.operateType === "edit") {
       this.isEditResource = true;
-      this.getLabelStorageByLabelId(this.tagConfigForm.label);
+      this.getLabelStorageByLabelId(this.tagConfigForm.label);  //  查看标签的内容
       this.handleGetListPageLink(
         {
           linkType: "",
@@ -342,18 +289,16 @@ export default {
         1
       );
     }
-    this.tagConfigForm = this.tagConfigList; // 从vuex 里面获取tagform
-    this.list = this.tagConfigForm.labelLinkList || [];
-    this.cloneList = _.cloneDeep(this.list);
+  
+    //this.list = this.tagConfigForm.labelLinkList || [];
+    //this.tagConfigForm.cloneLeftList = _.cloneDeep(this.list);
   },
   mounted() {},
   methods: {
     ...mapMutations(["TAGCONFIGLIST"]),
     //testPrint  测试打印
     //
-    testPrint(){
-
-    },
+    testPrint() {},
     // 获取标签模板的下拉框内容
     handleSelectTag(label) {
       getTagConfigList({
@@ -387,20 +332,20 @@ export default {
     },
 
     // 获取可用的打印设置
-    handleGetPrintDevicesAvailable(){
-      getPrintDevicesAvailable().then(data=>{
+    handleGetPrintDevicesAvailable() {
+      getPrintDevicesAvailable().then(data => {
         const res = data.data;
-        if(res.code==200){
-          console.log(res.data)
-          this.getDeviceList =res.data;
+        if (res.code == 200) {
+          console.log(res.data);
+          this.getDeviceList = res.data;
         }
-      })
+      });
     },
     init() {
       this.debounceFn = _.debounce(() => {
         getListPageLink({
-          linkValue: this.v,
-          linkType: this.s1
+          linkValue: this.tagConfigForm.v1,
+          linkType: this.tagConfigForm.s1
         }).then(data => {
           const res = data.data;
           if (res.code == 200) {
@@ -410,13 +355,12 @@ export default {
       });
       this.debounceFn2 = _.debounce(() => {
         listPageUnallocatedLink({
-          linkValue: this.v2,
-          linkType: this.s2
+          linkValue: this.tagConfigForm.v2,
+          linkType: this.tagConfigForm.s2
         }).then(data => {
           const res = data.data;
           if (res.code == 200) {
-            // console.log(res.data);
-            this.list2 = res.data;
+            this.tagConfigForm.rightList = res.data;
           }
         });
       });
@@ -425,15 +369,16 @@ export default {
     },
     // 左边的数据搜索过滤
     handleLeftQueryChange() {
-      let key1 = this.v;
-      let key2 = this.s1;
-      this.list = this.cloneList.filter(item => {
-        console.log(item.linkType, item.linkValue);
-        return (
-          item.linkValue.indexOf(key1) != -1 &&
-          item.linkType.toString().indexOf(key2) != -1
-        );
-      });
+      let key1 = this.tagConfigForm.v1;
+      let key2 = this.tagConfigForm.s1;
+      this.tagConfigForm.leftList = this.tagConfigForm.labelLinkList.filter(
+        item => {
+          return (
+            item.linkValue.indexOf(key1) != -1 &&
+            item.linkType.toString().indexOf(key2) != -1
+          );
+        }
+      );
     },
     //右边的搜索条件改变
     handleRightQeuryChange() {
@@ -445,35 +390,51 @@ export default {
     },
     handleTabClick() {},
     handleReset() {
-      this.tagConfigForm={
-        // tagDes: "",
-        //标签ID
-        label: "",
-        // checked: true,
-        // labelUseType: "",
-        // previewImage: "",
-        // labelCommand: "",
-        // labelLinkList: [],
-      }
-    },
-    //选择设备
-    handleCurrentChange(currentRow) {
-      this.tagConfigForm = JSON.parse(JSON.stringify(currentRow));
-    },
-    //验证form表单
-    checkFormInfo() {},
-    handleSaveBaseInfo() {
-      if (this.operateType === "add") {
-        this.addResourceHttp();
+      // 新增的时候全部重置
+      if (!this.isEditResource) {
+        this.tagConfigForm = {
+          ...this.tagConfigForm,
+          tagDes: "",
+          //标签ID
+          label: "", //标签id
+          useTemplateType: true,
+          labelUseType: "",
+          labelTemplate: "",
+          labelDes: "",
+          previewImage: "",
+          labelCommand: "",
+          labelLinkList: [],
+          leftList: [],
+          // rightList:[],
+          v1: "", //左边输入key
+          v2: "", // 右边输入key
+          selectDeiveName: "",
+          s1: "",
+          s2: "10"
+        };
+       // this.getLabelStorageByLabelId(this.tagConfigForm.label);
         return;
       }
-      if (this.operateType === "edit") {
-        this.updateResourceHttp();
-        return;
-      }
+
+      //  编辑的时候
+      this.tagConfigForm = {
+        ..._.cloneDeep(this.tagConfigList),
+        v1: "", //左边输入key
+        s1: ""
+      };
+
+      //
+      //  重新请求接口
+      this.handleGetListPageLink(
+        {
+          linkType: "",
+          linkValue: this.v,
+          label: this.tagConfigForm.label
+        },
+        1
+      );
+      //
     },
-    addResourceHttp() {},
-    updateResourceHttp() {},
     handleBack() {
       this.selectionList = [];
       this.TAGCONFIGLIST(this.selectionList);
@@ -481,16 +442,7 @@ export default {
         name: "tagConfig"
       });
     },
-    handleLocalAdd(formName) {
-      formName.forEach(element => {
-        if (element === "upkeepConfigForm") {
-          this.$refs[element].resetFields();
-        }
-      });
-    },
-    handleLocalSave() {
-      this.checkFormInfo();
-    },
+
     querySearchAsync(key, cb) {
       this.debounceFn(cb, 1);
       this.debounceFn();
@@ -522,7 +474,10 @@ export default {
       getListPageLink(data).then(data => {
         const res = data.data;
         if (res.code == 200) {
-          this.list = res.data.data;
+          this.tagConfigForm.leftList = res.data.data;
+          this.tagConfigForm.labelLinkList = _.cloneDeep(
+            this.tagConfigForm.leftList
+          );
         }
       });
     },
@@ -539,19 +494,43 @@ export default {
     toLeft() {
       const arr = this.rightSelectList.filter(item => {
         //  console.log(this.findItemInArr(item,this.list))
-        return this.findItemInArr(item, this.list).length == 0;
+        return (
+          this.findItemInArr(item, this.tagConfigForm.leftList).length == 0
+        );
         // return this.list.includes(item) == false;
       });
-      this.list = [...this.list, ...arr];
-      this.cloneList = _.cloneDeep(this.list); //  复制最新的一份便于拷贝
+      this.tagConfigForm.leftList = [...this.tagConfigForm.leftList, ...arr];
+      this.tagConfigForm.labelLinkList = _.cloneDeep([
+        ...this.tagConfigForm.labelLinkList,
+        ...arr
+      ]); //  更新labelLinkList
       this.selectionList = [];
     },
+    // // 判断数组里面的值存在嘛?
+    // itemIsInArr(item,arr){
+
+    // },
     //选择到数据移动到右边
     toRight() {
+      console.log(this.leftSelectList);
       const arr = this.leftSelectList.filter(item => {
-        return this.findItemInArr(item, this.list2).length == 0;
+        return (
+          this.findItemInArr(item, this.tagConfigForm.rightList).length == 0
+        );
       });
-      this.list2 = [...this.list2, ...arr];
+      console.log(arr);
+      this.tagConfigForm.rightList = [...this.tagConfigForm.rightList, ...arr];
+      // 左边的数据要删除
+      this.tagConfigForm.leftList = this.tagConfigForm.leftList.filter(item => {
+        console.log(this.findItemInArr(item, this.selectionList).length);
+        return this.findItemInArr(item, this.leftSelectList).length == 0;
+      });
+      this.tagConfigForm.labelLinkList = this.tagConfigForm.labelLinkList.filter(
+        item => {
+          return this.findItemInArr(item, this.leftSelectList).length == 0;
+        }
+      );
+
       this.selectionList = [];
     },
     handleLeftSelect(s) {
@@ -562,9 +541,7 @@ export default {
     },
     toTagOpe() {
       this.TAGCONFIGLIST({
-        ...this.tagConfigForm,
-        labelLinkList: this.cloneList,
-        clonelabelLinkList: this.list
+        ...this.tagConfigForm
       });
       this.$router.push({
         path: "/tag/tagEdit",
@@ -573,25 +550,25 @@ export default {
         }
       });
     },
-    validFrom(){
-      this.$refs['tagConfigFormOne'].validate((flag)=>{
-        if(!flag){
-           return
+    validFrom() {
+      this.$refs["tagConfigFormOne"].validate(flag => {
+        if (!flag) {
+          return;
         }
         //验证第二个form
-      })
+        this.validFrom2();
+      });
     },
-     //  验证tab 里的数据
-      validFrom2(){
-      this.$refs['tagConfigFormTwo'].validate((flag)=>{
-        if(!flag){
-
-           return
+    //  验证tab 里的数据
+    validFrom2() {
+      this.$refs["tagConfigFormTwo"].validate(flag => {
+        if (!flag) {
+          return;
         }
 
         this.handleSave();
         //验证第二个form
-      })
+      });
     },
     //  新增保存
     handleSave() {
@@ -604,8 +581,7 @@ export default {
     handleAdd() {
       const data = this.tagConfigForm;
       addTagConfig({
-        ...data,
-        labelLinkList: this.cloneList // 副本是最新的
+        ...data
       }).then(data => {
         const res = data.data;
         if (res.code == 200) {
@@ -665,7 +641,7 @@ export default {
 </script>
 
 <style lang="scss">
-.maintenanceEdit {
+.tag-edit {
   .operate {
     // padding: 10px 5px;
   }
@@ -696,7 +672,7 @@ export default {
         }
         .designBottom {
           padding: 10px 10px;
-          .getTemplate {
+          .labelTemplate {
             width: 150px;
           }
         }
