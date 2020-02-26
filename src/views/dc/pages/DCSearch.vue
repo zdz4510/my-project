@@ -130,19 +130,13 @@
           >
             <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
             <el-table-column type="index" label="序号" fixed></el-table-column>
-            <el-table-column prop="dcGroup" label="数据收集组" width="100" fixed show-overflow-tooltip></el-table-column>
-            <el-table-column label="接收值" width="100" fixed show-overflow-tooltip>
+            <el-table-column prop="dcGroup" label="数据收集组" width="100" fixed></el-table-column>
+            <el-table-column label="接收值" width="100" fixed>
               <template
                 slot-scope="scope"
               >{{ parseInt(scope.row.collectionType)===10?scope.row.lot:scope.row.resource}}</template>
             </el-table-column>
-            <el-table-column
-              prop="collectionType"
-              label="收集类型"
-              width="100"
-              fixed
-              show-overflow-tooltip
-            >
+            <el-table-column prop="collectionType" label="收集类型" width="100" fixed>
               <template slot-scope="scope">{{ parseInt(scope.row.collectionType)===10?"LOT":"资源"}}</template>
             </el-table-column>
             <template
