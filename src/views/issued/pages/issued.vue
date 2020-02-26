@@ -122,32 +122,69 @@
             </dsn-table>
         </div>
         <!--工单选择-->
-        <el-dialog
-        title="工单"
+        <DsnSelectDialog
+        title="工单选择"
+        :isSingle="true"
+        ref="orderChoice"
+        :tableData="orderTable"
+        v-model="selectOrderArr"
+        :helpText="helpTextOrdere"
+        @confirm="handlerOrderChange"
+        @cancle="handlerCancleOrder"
         :visible.sync="orderDialog"
-        width="500px">
-        <dsn-table
-            ref="multipleTable"
-            :data="orderTable"
-            tooltip-effect="dark"
-            style="width: 100%"
-            height="350px"
-            @selection-change="handleSelectionChange"
-            >
-            <el-table-column type="selection" width="55"></el-table-column>
+        width="800px"
+        keyValue="shopOrder">
+      <!-- <template slot="header">
+        <el-input v-model="v" placeholder=""></el-input>
+        <el-button @click="orderHandler">search</el-button>
+      </template> -->
+      <!-- <dsn-table
+          ref="multipleTable"
+          :data="orderTable"
+          tooltip-eforderTablefect="dark"
+          style="width: 100%"
+          height="350px"
+          stripe
+          highlight-current-row
+          border
+          @selection-change="handleSelectionChange"
+        > -->
+          <!-- <el-table-column type="selection" width="55"></el-table-column> -->
+          <template slot="header">
+            <el-form label-width="100px" ref="searchOrderForm" :model="searchOrderForm" :inline="true">
+              <el-form-item label="工单:">
+                <dsn-input size="small" placeholder="请输入工单" v-model="searchOrderForm.shopOrder"></dsn-input>
+              </el-form-item>
+              <el-form-item label="工单类型:">
+                <!-- <dsn-input size="small" placeholder="请输入工单类型" v-model="searchOrderForm.shopOrderType"></dsn-input> -->
+                <dsn-select v-model="searchOrderForm.shopOrderType" placeholder="生产">
+                  <el-option label="生产" value="PRODUCTION"></el-option>
+                  <el-option label="返工" value="REWORK"></el-option>
+                </dsn-select>
+              </el-form-item>
+              <el-form-item>
+                  <dsn-button size="small"  type="primary" icon="el-icon-search" @click.native="searchOrder">查询</dsn-button>
+                  <dsn-button size="small" type="primary" icon="el-icon-refresh" @click.native='resetSearchForm'>重置</dsn-button>
+              </el-form-item>
+            </el-form>
+          </template>
+          <template slot="body">
             <el-table-column type="index" label="序号" width="50"></el-table-column>
             <el-table-column prop="shopOrder" label="工单" width="120"></el-table-column>
             <el-table-column label="状态" prop="status" width="120"></el-table-column>
-            <el-table-column prop="shopOrderType" label="类型" show-overflow-tooltip></el-table-column>
-            </dsn-table>
-        <span slot="footer" class="dialog-footer">
-            <dsn-button @click="orderDialog = false">取 消</dsn-button>
-            <dsn-button type="primary" @click="sureOrder">确 定</dsn-button>
-        </span>
-        </el-dialog>
+            <el-table-column prop="shopOrderType" label="类型">
+            </el-table-column>
+          </template>
+        <!-- </dsn-table> -->
+      <!-- <span slot="footer" class="dialog-footer">
+        <dsn-button @click="orderDialog = false">取 消</dsn-button>
+        <dsn-button type="primary" @click="sureOrder">确 定</dsn-button>
+      </span> -->
+    </DsnSelectDialog>
     </div>
 </template>
 <script>
+import _ from "lodash";
 import {
     findShopOrderListRequest,
     releaseRequest
@@ -211,11 +248,17 @@ export default {
                 shopOrder: '',
                 numIssued:'',
             },
+            searchOrderForm:{
+                shopOrder:"",
+                shopOrderType:"PRODUCTION"
+            },
+            selectOrderArr:[],
+            orderAll:[],
             tableData:[],//工单下达列表
             multipleSelection: [],
             orderTable:[],
             orderDialog:false,
-            orderChoice:[],
+            // orderChoice:[],
             handleTableChangeList:[],
             currentPage: 1,
             pageSize: 10,
@@ -226,7 +269,65 @@ export default {
             }
         }
     },
+    created(){
+        this.shopOrderAll();
+    },
     methods:{
+        // 工单相关
+        helpTextOrdere(item){
+        return item["shopOrder"];
+        },
+        handlerOrderChange(val){
+        this.selectOrderArr=val
+        if(this.selectOrderArr.length===0){
+            this.workOrderIssued.shopOrder="";
+        }else{
+            this.workOrderIssued.shopOrder=this.selectOrderArr[0].shopOrder;
+        }
+        this.orderDialog=false;
+        },
+        // 取消事件,工单
+        handlerCancleOrder(){
+        this.orderDialog=false;
+        },
+        searchOrder(){
+            const data=this.searchOrderForm
+            findShopOrderListHttp(data).then(data =>{
+                const res = data.data
+                if(res.code == 200){
+                this.orderTable=res.data
+                }else{
+                this.$message({
+                    message:res.message,
+                    type:'warning'
+                })
+                }
+            })
+            },
+        resetSearchForm(){
+            this.searchOrderForm.shopOrder="",
+            this.searchOrderForm.shopOrderType="";
+            this.$refs["orderChoice"].resert();
+            this.orderTable=this.orderAll;
+        // this.selectOrderArr=[];
+        },
+        shopOrderAll(){
+        const data={
+            shopOrder:"",
+            shopOrderType:""
+        }
+        findShopOrderListHttp(data).then(data =>{
+            const res = data.data
+            if(res.code == 200){
+            this.orderAll=_.cloneDeep(res.data)
+            }else{
+            this.$message({
+                message:res.message,
+                type:'warning'
+            })
+            }
+        })
+        },
         // 工单表格
         handleTableChange(row){
             this.handleTableChangeList=row;
@@ -274,12 +375,17 @@ export default {
         },
         
         orderHandler(){
-            // alert("1111");
-            findShopOrderListHttp().then(data =>{
+            this.orderDialog=true;
+            const data={
+                shopOrder:"",
+                shopOrderType:""
+            }
+            findShopOrderListHttp(data).then(data =>{
             const res = data.data
             if(res.code == 200){
               // console.log(res,"shuju ")
               this.orderTable=res.data
+              this.orderAll=_.cloneDeep(res.data)
               // this.$message({
               //   message:'更新成功',
               //   type:'success'
@@ -293,32 +399,32 @@ export default {
           })
             this.orderDialog=true;
         },
-        sureOrder(){
-            if(this.orderChoice.length>1){
-                this.$message({
-                    message:"只能选择一行数据",
-                    type:'warning'
-                })
-            }else{
-                this.workOrderIssued.shopOrder=this.orderChoice[0].shopOrder;
-                this.workOrderIssued.numIssued="";
-                this.shopOrderInfo={
-                    status:"",
-                    productQty:"",
-                    plannedMaterialRev:"",
-                    plannedMaterial:"",
-                    plannedRouterRev:"",
-                    plannedRouter:"",
-                    availableQuantity:""
-                }
-                this.tableData=[];
-                this.orderDialog=false;
-            }
-        },
-        handleSelectionChange(row){
-            // console.log(row,"hahah")
-            this.orderChoice=row
-        },
+        // sureOrder(){
+        //     if(this.orderChoice.length>1){
+        //         this.$message({
+        //             message:"只能选择一行数据",
+        //             type:'warning'
+        //         })
+        //     }else{
+        //         this.workOrderIssued.shopOrder=this.orderChoice[0].shopOrder;
+        //         this.workOrderIssued.numIssued="";
+        //         this.shopOrderInfo={
+        //             status:"",
+        //             productQty:"",
+        //             plannedMaterialRev:"",
+        //             plannedMaterial:"",
+        //             plannedRouterRev:"",
+        //             plannedRouter:"",
+        //             availableQuantity:""
+        //         }
+        //         this.tableData=[];
+        //         this.orderDialog=false;
+        //     }
+        // },
+        // handleSelectionChange(row){
+        //     // console.log(row,"hahah")
+        //     this.orderChoice=row
+        // },
         //清除按钮
         reset(){
             this.workOrderIssued ={

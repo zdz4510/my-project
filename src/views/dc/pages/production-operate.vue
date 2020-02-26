@@ -198,7 +198,7 @@
     </DsnPanel>
 
     <!-- LOT模态框 -->
-    <el-dialog title="lot" :visible.sync="lotDialog" width="50%">
+    <!-- <el-dialog title="lot" :visible.sync="lotDialog" width="50%">
       <span>
         <dimQueryLotModel
           :lot="lotDatas"
@@ -211,12 +211,194 @@
           确 定
         </dsn-button>
       </span>
-    </el-dialog>
+    </el-dialog> -->
+    <DsnSelectDialog
+      width="800px"
+      title="LOT单选"
+      :isSingle="true"
+      :helpText="helpText"
+      :tableData="tableData"
+      v-model="selectedLotList"
+      :visible.sync="lotDialog"
+      @confirm="handleConfirmSelectLot"
+      @cancle="handleCancleSelectLot"
+      keyValue="lot"
+      ref="lotSingleDialog"
+    >
+      <template slot="header">
+        <!-- <el-input v-model="search" placeholder></el-input>
+        <el-button @click="query">search</el-button>-->
+        <el-form
+          :model="lotConditionForm"
+          label-width="90px"
+          class="lotConditionForm"
+          ref="lotConditionForm"
+        >
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="LOT" prop="lot">
+                <dsn-input v-model.trim="lotConditionForm.lot" size="small" placeholder="请输入Lot"></dsn-input>
+              </el-form-item>
+              <el-form-item label="LOT状态" prop="lotStatus">
+                <dsn-select
+                  v-model="lotConditionForm.lotStatus"
+                  placeholder="请选择LOT状态"
+                  style="width:100%"
+                >
+                  <el-option label="全部" value></el-option>
+                  <el-option label="新建" value="NEW"></el-option>
+                  <el-option label="排队中" value="IN_QUEUE"></el-option>
+                  <el-option label="工作中" value="IN_WORK"></el-option>
+                  <el-option label="报废" value="SCRAP"></el-option>
+                  <el-option label="已删除" value="DELETE"></el-option>
+                  <el-option label="无效" value="INVALID"></el-option>
+                  <el-option label="已完成" value="DONE"></el-option>
+                </dsn-select>
+              </el-form-item>
+              <el-form-item label="物料" prop="material">
+                <el-row>
+                  <el-col :span="16">
+                    <dsn-input
+                      v-model.trim="lotConditionForm.material"
+                      size="small"
+                      style="width:180px;vertical-align:baseline;"
+                      placeholder="请输入物料"
+                    >
+                      <template slot="append">
+                        <i class="el-icon-document" @click="queryMaterial"></i>
+                      </template>
+                    </dsn-input>
+                  </el-col>
+                  <el-col :span="8">
+                    <el-row>
+                      <el-col :span="12">
+                        <span>版本：</span>
+                      </el-col>
+                      <el-col :span="12">
+                        <span>{{ lotConditionForm.materialRev }}</span>
+                      </el-col>
+                    </el-row>
+                  </el-col>
+                </el-row>
+              </el-form-item>
+              <el-form-item label="工艺路线" prop="router">
+                <el-row>
+                  <el-col :span="16">
+                    <dsn-input
+                      v-model.trim="lotConditionForm.router"
+                      size="small"
+                      style="width:180px;vertical-align:baseline;"
+                      placeholder="请输入工艺路线"
+                    >
+                      <template slot="append">
+                        <i class="el-icon-document" @click="queryRouter"></i>
+                      </template>
+                    </dsn-input>
+                  </el-col>
+                  <el-col :span="8">
+                    <el-row>
+                      <el-col :span="12">
+                        <span>版本：</span>
+                      </el-col>
+                      <el-col :span="12">
+                        <span>{{ lotConditionForm.routerRev }}</span>
+                      </el-col>
+                    </el-row>
+                  </el-col>
+                </el-row>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="工单" prop="shopOrder">
+                <dsn-input
+                  v-model.trim="lotConditionForm.shopOrder"
+                  size="small"
+                  style="vertical-align:baseline;"
+                  placeholder="请输入工单"
+                >
+                  <template slot="append">
+                    <i class="el-icon-document" @click="queryShopOrder"></i>
+                  </template>
+                </dsn-input>
+              </el-form-item>
+              <el-form-item label="工序" prop="operation">
+                <dsn-input
+                  v-model.trim="lotConditionForm.operation"
+                  size="small"
+                  style="vertical-align:baseline;"
+                  placeholder="请输入工序"
+                >
+                  <template slot="append">
+                    <i class="el-icon-document" @click="queryOperation"></i>
+                  </template>
+                </dsn-input>
+              </el-form-item>
+              <el-form-item label="资源" prop="resource">
+                <dsn-input
+                  v-model.trim="lotConditionForm.resource"
+                  style="vertical-align:baseline;"
+                  size="small"
+                  placeholder="请输入资源"
+                >
+                  <template slot="append">
+                    <i class="el-icon-document" @click="queryResource"></i>
+                  </template>
+                </dsn-input>
+              </el-form-item>
+              <el-form-item style="margin-left:-50px">
+                <el-row>
+                  <el-col :span="6">
+                    <dsn-button
+                      size="small"
+                      type="primary"
+                      icon="el-icon-search"
+                      @click="handleQueryCheck"
+                    >查询</dsn-button>
+                  </el-col>
+                  <el-col :span="6">
+                    <dsn-button
+                      size="small"
+                      type="primary"
+                      icon="el-icon-refresh"
+                      @click="handleResetCondition"
+                    >重置</dsn-button>
+                  </el-col>
+                  <el-col :span="12">
+                    <span style="color:red">*请至少输入一个查询条件</span>
+                  </el-col>
+                </el-row>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+      </template>
+      <template slot="body">
+        <el-table-column type="index" width="55" label="序号"></el-table-column>
+        <el-table-column prop="lot" label="LOT" width="200"></el-table-column>
+        <el-table-column prop="shopOrder" label="工单"></el-table-column>
+        <el-table-column prop="lotStatus" label="状态"></el-table-column>
+        <el-table-column prop="operation" label="工序">
+          <template slot-scope="scope">
+            <span>{{ scope.row.operationList?scope.row.operationList.join(","):scope.row.operationList }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="物料/版本">
+          <template slot-scope="scope">
+            <span>{{ scope.row.material }}/{{ scope.row.materialRev }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="modifyTime" label="工艺路线/版本" width="110">
+          <template slot-scope="scope">
+            <span>{{ scope.row.router }}/{{ scope.row.routerRev }}</span>
+          </template>
+        </el-table-column>
+      </template>
+    </DsnSelectDialog>
   </div>
 </template>
 <script>
 import { listLotHttp } from "@/api/dc/lot.divestiture.api.js";
-import dimQueryLotModel from "../components/dim-query-lots-model.vue";
+// import dimQueryLotModel from "../components/dim-query-lots-model.vue";
 import {
   listPodLotHttp,
   findPageHttp,
@@ -226,12 +408,16 @@ import {
   podConfigRequest,
 } from "@/api/pro-configuration/pro-configuration.api.js";
 import _ from "lodash";
-
+import { listAllMaterialHttp } from "@/api/material.info.api.js";
+import { listRouterPage } from "@/api/material/route.maintenance.api.js";
+import { findShopOrderListRequest } from "@/api/work-order/work-order.api.js";
+import { listAllResourceHttp } from "@/api/device/maintenance.api.js";
+import { searchLotDetailHttp } from "@/api/dc/lot.step.api.js";
 export default {
   name: "productionOperate",
   components: {
     // mergeLotModel,
-    dimQueryLotModel
+    // dimQueryLotModel
   },
   data() {
     return {
@@ -253,12 +439,13 @@ export default {
       },
       popupData: [
         {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄"
+          date: "",
+          name: "",
+          address: ""
         }
       ],
       tableData: [],
+      selectedLotList: [],
       list: [],
       lotDatas: [],
       currentLot: {},
@@ -272,7 +459,18 @@ export default {
       v2:"",
       v3:"",
       v4:"",
-      v5:""
+      v5:"",
+      lotConditionForm: {
+        lot: "",
+        lotStatus: "",
+        material: "",
+        materialRev: "",
+        operation: "",
+        resource: "",
+        router: "",
+        routerRev: "",
+        shopOrder: ""
+      },
     };
   },
   created() {
@@ -281,6 +479,138 @@ export default {
     this.handlePodConfig();
   },
   methods: {
+    //重置查询条件
+    handleResetCondition() {
+      this.$refs["lotConditionForm"].resetFields();
+      this.lotConditionForm.lot = "";
+      this.tableData = [];
+      this.selectedLotList = [];
+      this.$refs["lotSingleDialog"].handleClear();
+    },
+    //查询前验证查询条件
+    handleQueryCheck() {
+      this.queryHttp();
+    },
+    queryHttp() {
+      const data = {
+        lot: this.lotConditionForm.lot,
+        lotStatus: this.lotConditionForm.lotStatus,
+        material: this.lotConditionForm.material,
+        materialRev: this.lotConditionForm.materialRev,
+        operation: this.lotConditionForm.operation,
+        resource: this.lotConditionForm.resource,
+        router: this.lotConditionForm.router,
+        routerRev: this.lotConditionForm.routerRev,
+        shopOrder: this.lotConditionForm.shopOrder
+      };
+      searchLotDetailHttp(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.tableData = res.data;
+          this.total = this.tableData.length;
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
+    },
+    //资源查询start resource
+    queryResource() {
+      listAllResourceHttp().then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.resourceList = res.data;
+          this.resourceDialog = true;
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
+    },
+    //工序查询start
+    queryOperation() {
+      const data = { pageSize: 0 };
+      findPageHttp(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.operationList = res.data.data;
+          this.operationDialog = true;
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
+    },
+    //工单查询start
+    queryShopOrder() {
+      const data = { shopOrder: "" };
+      findShopOrderListRequest(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.shopOrderList = res.data;
+          this.shopOrderDialog = true;
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
+    },
+    //工艺路线查询start
+    queryRouter() {
+      const data = { pageSize: 0 };
+      listRouterPage(data).then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.routerList = res.data.data;
+          this.routerDialog = true;
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
+    },
+    //物料查询start
+    queryMaterial() {
+      listAllMaterialHttp().then(data => {
+        const res = data.data;
+        if (res.code === 200) {
+          this.materialList = res.data;
+          this.materialDialog = true;
+          return;
+        }
+        this.$message({
+          message: res.message,
+          type: "warning"
+        });
+      });
+    },
+    helpText(item) {
+      return item["lot"];
+    },
+    //确认选择lot
+    handleConfirmSelectLot(val) {
+      this.selectedLotList = val;
+      if (this.selectedLotList.length === 0) {
+        this.searchForm.lot = "";
+      }
+      if (this.selectedLotList.length === 1) {
+        this.searchForm.lot = this.selectedLotList[0].lot;
+      }
+      this.lotDialog = false;
+    },
+    handleCancleSelectLot() {
+      this.lotDialog = false;
+    },
     handlePodConfig() {
       const params = "AA";
       podConfigRequest(params).then(data => {
@@ -405,6 +735,7 @@ export default {
     //重置
     resetForm() {
       this.$refs["searchForm"].resetFields();
+      this.handleResetCondition();
       this.tableData = [];
     },
     //查询lot列表

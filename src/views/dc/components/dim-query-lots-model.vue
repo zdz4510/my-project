@@ -77,8 +77,8 @@ export default {
     handleCurrentLotChange(row) {
       this.$emit("selectLot", row);
     },
-    searchLot() {
-      console.log(this.search.lot,"数九");
+    searchLot(val) {
+      console.log(this.search.lot,val,"数九");
     }
   }
 };
