@@ -360,6 +360,7 @@
 </template>
 
 <script>
+import _ from "lodash";
 import{
     findShopOrderRequest,
     updateShopOrderRequest,
@@ -460,7 +461,10 @@ export default {
         routerDialog:false,
         routerTable:[],
         // routerChoice:[]
-        disabelDel:true
+        disabelDel:true,
+        orderAll:[],
+        materialAll:[],
+        routerAll:[],
     };
   },
   methods:{
@@ -487,7 +491,6 @@ export default {
       findShopOrderListHttp(data).then(data =>{
         const res = data.data
         if(res.code == 200){
-          console.log(res.data,"shuju ")
           this.orderTable=res.data
         }else{
           this.$message({
@@ -501,13 +504,13 @@ export default {
       console.log(this.selectOrderArr,"1111")
       this.searchOrderForm.shopOrder="",
       this.searchOrderForm.shopOrderType="";
-      // this.$refs["orderChoice"].clearSelect();
-      this.orderTable=[];
-      this.selectOrderArr=[];
+      this.$refs["orderChoice"].resert();
+      this.orderTable=this.orderAll;
+      // this.selectOrderArr=[];
     },
     // 物料相关
     helpTextMaterial(item){
-      return item.material;
+      return item["material"];
     },
     handlerMaterialChange(val){
       this.selectMaterialArr=val;
@@ -526,7 +529,7 @@ export default {
     searchMaterialFormChange(){
       const data=this.searchMaterialForm;
       data.pageSize=0;
-      data.currentPage=0;
+      data.currentPage=1;
       findMaterialRequest(data).then(data =>{
         const res = data.data
         if(res.code == 200){
@@ -542,9 +545,9 @@ export default {
     resetSearchMaterialForm(){
       this.searchMaterialForm.material="",
       this.searchMaterialForm.materialRev="";
-      // this.$refs["materialChoice"].clearSelect();
-      this.materialTable=[];
-      this.selectMaterialArr=[]
+      this.$refs["materialChoice"].resert();
+      this.materialTable=this.materialAll;
+      // this.selectMaterialArr=[]
     },
     // 路线相关
     helpTextRouter(item){
@@ -580,10 +583,10 @@ export default {
     },
     resetSearchRouterFormForm(){
       this.searchRouterForm.router="",
-      this.searchRouterForm.revesion="";
-      // this.$refs["routerChoice"].clearSelect();
-      this.routerTable=[];
-      this.selectRouterArr=[]
+      this.searchRouterForm.revision="";
+      this.$refs["routerChoice"].resert();
+      this.routerTable=this.routerAll;
+      // this.selectRouterArr=[]
     },
     handlerCancleRouter(){
       this.routerDialog=false;
@@ -593,6 +596,7 @@ export default {
           const res = data.data
           if(res.code == 200){
             this.routerTable=res.data.data
+            this.routerAll=_.cloneDeep(res.data.data)
           }else{
             this.$message({
               message:res.message,
@@ -602,61 +606,48 @@ export default {
         })
       this.routerDialog=true;
     },
-    // sureRouter(){
-    //   if(this.routerChoice.length>1){
-    //     this.$message({
-    //         message:"只能选择一行数据",
-    //         type:'warning'
-    //       })
-    //       return ;
-    //   }if(this.routerChoice.length===0){
-    //     this.$message({
-    //       message:"还没选择一行数据",
-    //       type:'warning'
-    //     })
-    //     return ;
-    //   }
-    //   else{
-    //     this.ruleForm.plannedRouter=this.routerChoice[0].router;
-    //     this.ruleForm.plannedRouterRev=this.routerChoice[0].revision;
-    //     this.routerDialog=false;
-    //   }
-    // },
     materialHandler(){
       this.materialDialog=true;
+      const data={
+        material:"",
+        materialRev:"",
+        currentPage:1,
+        pageSize:100
+      }
+      findMaterialRequest(data).then(data =>{
+        const res = data.data
+        if(res.code == 200){
+          this.materialTable=res.data.data
+          this.materialAll=_.cloneDeep(res.data.data);
+        }else{
+          this.$message({
+            message:res.message,
+            type:'warning'
+          })
+        }
+      })
     },
     orderHandler(){
       this.orderDialog=true;
+      this.$nextTick(()=>{
+        const data={
+          shopOrder:"",
+          shopOrderType:""
+        }
+        findShopOrderListHttp(data).then(data =>{
+          const res = data.data
+          if(res.code == 200){
+            this.orderTable=res.data
+            this.orderAll=_.cloneDeep(res.data)
+          }else{
+            this.$message({
+              message:res.message,
+              type:'warning'
+            })
+          }
+        })
+      })
     },
-    // sureOrder(){
-    //   alert("111")
-    // },
-    // sureMaterial(){
-    //   if(this.materialChoice.length>1){
-    //     this.$message({
-    //         message:"只能选择一行数据",
-    //         type:'warning'
-    //       })
-    //       return ;
-    //   }if(this.materialChoice.length===0){
-    //     this.$message({
-    //       message:"还没选择一行数据",
-    //       type:'warning'
-    //     })
-    //     return ;
-    //   }
-    //   else{
-    //     this.ruleForm.plannedMaterial=this.materialChoice[0].material;
-    //     this.ruleForm.plannedMaterialRev=this.materialChoice[0].materialRev;
-    //     this.materialDialog=false;
-    //   }
-    // },
-    // handleSelectionMaterial(row){
-    //   this.materialChoice=row;
-    // },
-    // handlerSelectionRouter(row){
-    //   this.routerChoice=row;
-    // },
     // 初始化获取自定义字段
     getCustom(){
         const params ={
@@ -697,7 +688,6 @@ export default {
             if(res.code == 200){
                 this.getSearchData = res.data.shopOrder//工单信息
                 this.oldShopOrder = this.getSearchData.shopOrder
-                console.log(this.getSearchData.shopOrderType,"数据是")
                 this.ruleForm.shopOrderType = this.getSearchData.shopOrderType
                 this.ruleForm.plannedMaterial = this.getSearchData.plannedMaterial
                 this.ruleForm.status = this.getSearchData.status
@@ -736,53 +726,20 @@ export default {
           message:'计划物料未填写,提交失败',
           type:'warning'
         })
-      }else if(this.ruleForm.number == ''){
+      }else if(this.ruleForm.productQty == ''){
         this.$message({
           message:'生产数量未填写,提交失败',
           type:'warning'
         })
       }else{
+        // let obj={};
+        // console.log(this.searchForm.shopOrder,"数据是")
+        // obj=this.orderAll.find(item=>{
+        //   item.shopOrder===this.searchForm.shopOrder
+        // })
+        // console.log(obj,"数据")
         const params = {
-          customizedFieldDefInfoList: [
-          {
-              createTime: "2019-12-20 09:00:00",
-              createUserId: "string",
-              createUserName: "string",
-              deleteFlag: false,
-              fieldLabel: "string",
-              fieldName: "field01",
-              fieldSize: 0,
-              fieldType: "string",
-              fieldValue: "001",
-              limitGeneralCode: "string",
-              limitGeneralField: "string",
-              modifyTime: "2019-12-20 09:00:00",
-              modifyUserId: "string",
-              modifyUserName: "string",
-              required: true,
-              sequence: 0,
-              tenantSiteCode: "test"
-            },
-          {
-                createTime: "2019-12-20 09:00:00",
-                createUserId: "string",
-                createUserName: "string",
-                deleteFlag: false,
-                fieldLabel: "string",
-                fieldName: "field02",
-                fieldSize: 0,
-                fieldType: "string",
-                fieldValue: "001",
-                limitGeneralCode: "string",
-                limitGeneralField: "string",
-                modifyTime: "2019-12-20 09:00:00",
-                modifyUserId: "string",
-                modifyUserName: "string",
-                required: true,
-                sequence: 0,
-                tenantSiteCode: "test"
-              }
-            ],
+          customizedFieldDefInfoList: this.ruleForm.customizedFieldDefInfoList,
             shopOrder: {
               shopOrder:this.searchForm.shopOrder,
               shopOrderType: this.ruleForm.shopOrderType, //类型
