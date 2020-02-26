@@ -617,9 +617,6 @@ export default {
     //确认选择lot
     handleConfirmSelectLot(val) {
       this.selectedLotList = val;
-      if (this.selectedLotList.length === 0) {
-        this.lotForm.lot = "";
-      }
       if (this.selectedLotList.length === 1) {
         this.lotForm.lot = this.selectedLotList[0].lot;
       }
