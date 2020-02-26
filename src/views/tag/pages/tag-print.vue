@@ -1,5 +1,5 @@
 <template>
-  <div class="tagPrint">
+  <div class="tag-print-page">
     <div class="top">
       <dsnPanel class="topLeft">
         <div slot="header" class="title clearfix">
@@ -54,15 +54,15 @@
         </el-tabs>
       </div>
     </div>
-    <dsnPanel class="showInfo">
+    <dsnPanel>
       <div slot="header" class="title clearfix">
         <span>搜索结果</span>
       </div>
-      <dsn-table
+      <el-table
         ref="multipleTable"
         :data="tableData"
         tooltip-effect="dark"
-        style="width: 100%"
+       
         height="350px"
       >
         <el-table-column type="selection" width="55"></el-table-column>
@@ -78,7 +78,7 @@
         <el-table-column prop="printDevice" label="打印设备" width="100"></el-table-column>
         <el-table-column prop="modifyUserName" label="打印人员" width="100"></el-table-column>
         <el-table-column prop="modifyTime" label="打印时间" show-overflow-tooltip></el-table-column>
-      </dsn-table>
+      </el-table>
     </dsnPanel>
 
     <el-dialog title="标签配置" :visible.sync="showConfig" width="400">
@@ -110,7 +110,7 @@ export default {
   data() {
     return {
       form: {
-        name: "",
+        name: null,
         labelUseType: ""
       },
       list: [], // 可用打印设备数组
@@ -295,7 +295,7 @@ export default {
 </script>
 
 <style lang="scss">
-.tagPrint {
+.tag-print-page{
   .mr-10 {
     margin-right: 10px;
   }

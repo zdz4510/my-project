@@ -2,7 +2,7 @@
   <el-input
     :placeholder="placeholder"
     :size="size"
-    :value="value"
+    :value="nativeValue"
     @input="input"
     @focus="focusEvent"
     @change="change"
@@ -44,6 +44,20 @@
 <script>
 export default {
   name: "dsnInput",
+  watch:{
+     value:function(){
+      console.log('111')
+    }
+  },
+  computed:{
+     nativeValue(){
+        return this.value === null || this.value === undefined ? '' : String(this.value);
+     }
+  },
+  model:{
+    prop:'value',
+    event:'input'
+  },
   props: {
     //medium / small / mini
     size: {
@@ -56,7 +70,7 @@ export default {
     },
     value: {
       type: [String, Number],
-      required: true
+      required: false
     },
     type: {
       type: String,
@@ -159,8 +173,7 @@ export default {
       this.$emit("input", str);
     },
     change() {
-      console.log(this.value);
-      this.$emit("change", this.value);
+      this.$emit("change", this.nativeValue);
     },
     blurEvent($event) {
       this.$emit("blur", $event);
