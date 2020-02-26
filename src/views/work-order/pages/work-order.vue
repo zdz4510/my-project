@@ -629,23 +629,38 @@ export default {
     },
     orderHandler(){
       this.orderDialog=true;
-      this.$nextTick(()=>{
-        const data={
-          shopOrder:"",
-          shopOrderType:""
+      const data={
+        shopOrder:"",
+        shopOrderType:""
+      }
+      findShopOrderListHttp(data).then(data =>{
+        const res = data.data
+        if(res.code == 200){
+          this.orderTable=res.data
+          this.orderAll=_.cloneDeep(res.data)
+        }else{
+          this.$message({
+            message:res.message,
+            type:'warning'
+          })
         }
-        findShopOrderListHttp(data).then(data =>{
-          const res = data.data
-          if(res.code == 200){
-            this.orderTable=res.data
-            this.orderAll=_.cloneDeep(res.data)
-          }else{
-            this.$message({
-              message:res.message,
-              type:'warning'
-            })
-          }
-        })
+      })
+    },
+    shopOrderAll(){
+      const data={
+        shopOrder:"",
+        shopOrderType:""
+      }
+      findShopOrderListHttp(data).then(data =>{
+        const res = data.data
+        if(res.code == 200){
+          this.orderAll=_.cloneDeep(res.data)
+        }else{
+          this.$message({
+            message:res.message,
+            type:'warning'
+          })
+        }
       })
     },
     // 初始化获取自定义字段
@@ -732,12 +747,11 @@ export default {
           type:'warning'
         })
       }else{
-        // let obj={};
-        // console.log(this.searchForm.shopOrder,"数据是")
-        // obj=this.orderAll.find(item=>{
-        //   item.shopOrder===this.searchForm.shopOrder
-        // })
-        // console.log(obj,"数据")
+        this.orderAll.forEach(item=>{
+          if(item.shopOrder===this.searchForm.shopOrder){
+            this.oldShopOrder=item.shopOrder
+          }
+        })
         const params = {
           customizedFieldDefInfoList: this.ruleForm.customizedFieldDefInfoList,
             shopOrder: {
@@ -832,7 +846,8 @@ export default {
     }
   },
   created(){
-    this.getCustom()
+    this.getCustom();
+    this.shopOrderAll();
   }
 };
 </script>
