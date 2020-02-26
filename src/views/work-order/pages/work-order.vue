@@ -42,7 +42,7 @@
         <span>搜索结果</span>
       </div>
       <div class="operate">
-        <dsn-button size="small" type="primary" @click.native="handleSave">保存</dsn-button>
+        <dsn-button size="small" type="primary" @click.native="handleSave" :disabled="visableSave">保存</dsn-button>
         <dsn-button size="small" type="danger" icon="el-icon-delete" @click.native="handleDelete" :disabled="disabelDel">删除</dsn-button>
       </div>
     <div class="showInfo">
@@ -392,12 +392,17 @@ export default {
     const numIssuedRules = (rule, value, callback) => {
       let reg = /^[1-9]\d*$/;
         if (value === "") {
+            this.visableSave=true;
             callback("生产数量不为空");
         }
         if (!reg.test(value)) {
+            this.visableSave=true;
             callback("生产数量应只包含非零整数");
+        }else{
+          this.visableSave=false;
+          callback();
         }
-        callback();
+
         };
     return {
       //工单表信息
@@ -427,6 +432,7 @@ export default {
           material:"",
           materialRev:""
         },
+        visableSave:false,
         selectOrderArr:[],
         selectMaterialArr:[],
         selectRouterArr:[],
@@ -688,8 +694,7 @@ export default {
       this.searchForm.shopOrder = ''
       //重置oldShopOrder
       this.oldShopOrder = ''
-      this.ruleForm.customizedFieldDefInfoList=[]
-      // this.getOrder();
+      this.getCustom();
     },
       //查询指定工单
     getOrder(){
