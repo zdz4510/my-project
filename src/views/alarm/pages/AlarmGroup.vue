@@ -16,8 +16,13 @@
             <dsn-input v-model="searchForm.alarmGroup"></dsn-input>
           </el-form-item>
           <el-form-item>
-            <dsn-button size="small" type="primary" @click.native="search">查询</dsn-button>
-            <dsn-button size="small" type="primary" @click.native="resetForm('searchForm')">重置</dsn-button>
+            <dsn-button size="small" type="primary" icon="el-icon-search" @click.native="search">查询</dsn-button>
+            <dsn-button
+              size="small"
+              type="primary"
+              icon="el-icon-refresh"
+              @click.native="resetForm('searchForm')"
+            >重置</dsn-button>
           </el-form-item>
         </el-form>
       </div>
@@ -27,7 +32,13 @@
         <span>搜索结果</span>
       </div>
       <div class="operate">
-        <dsn-button size="small" icon="el-icon-folder-add" type="success" @click.native="add" :disabled="this.checkedList.length>0">新增</dsn-button>
+        <dsn-button
+          size="small"
+          icon="el-icon-folder-add"
+          type="success"
+          @click.native="add"
+          :disabled="this.checkedList.length>0"
+        >新增</dsn-button>
         <dsn-button
           size="small"
           type="primary"
@@ -42,7 +53,12 @@
           @click.native="del"
           :disabled="this.checkedList.length === 0"
         >删除</dsn-button>
-        <dsn-button icon="el-icon-upload2" size="small" type="primary" @click.native="handleExport">导出</dsn-button>
+        <dsn-button
+          icon="el-icon-upload2"
+          size="small"
+          type="primary"
+          @click.native="handleExport"
+        >导出</dsn-button>
       </div>
 
       <div class>

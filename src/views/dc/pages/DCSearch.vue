@@ -81,22 +81,27 @@
           >
             <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
             <el-table-column type="index" label="序号"></el-table-column>
-            <el-table-column prop="dcGroup" label="数据收集组"></el-table-column>
-            <el-table-column prop="collectionType" label="收集类型">
+            <el-table-column prop="dcGroup" label="数据收集组" width="100" show-overflow-tooltip></el-table-column>
+            <el-table-column label="接收值" width="100" show-overflow-tooltip>
+              <template
+                slot-scope="scope"
+              >{{ parseInt(scope.row.collectionType)===10?scope.row.lot:scope.row.resource}}</template>
+            </el-table-column>
+            <el-table-column prop="collectionType" label="收集类型" width="100" show-overflow-tooltip>
               <template slot-scope="scope">{{ parseInt(scope.row.collectionType)===10?"LOT":"资源"}}</template>
             </el-table-column>
-            <el-table-column prop="resourceGroup" label="设备组"></el-table-column>
-            <el-table-column prop="resource" label="设备编号"></el-table-column>
-            <el-table-column prop="material" label="物料号"></el-table-column>
-            <el-table-column prop="materialGroup" label="物料组"></el-table-column>
-            <el-table-column prop="shopOrder" label="工单号"></el-table-column>
-            <el-table-column prop="workCenter" label="工作中心"></el-table-column>
-            <el-table-column prop="operation" label="工序"></el-table-column>
-            <el-table-column prop="testPass" label="校验结果">
+            <el-table-column prop="resourceGroup" label="设备组" width="100" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="resource" label="设备编号" width="100" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="material" label="物料号" width="100" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="materialGroup" label="物料组" width="100" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="shopOrder" label="工单号" width="100" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="workCenter" label="工作中心" width="100" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="operation" label="工序" width="100" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="testPass" label="校验结果" width="100" show-overflow-tooltip>
               <template slot-scope="scope">{{ parseInt(scope.row.testPass)===1?"通过":"不通过"}}</template>
             </el-table-column>
-            <el-table-column prop="createUserName" label="创建人"></el-table-column>
-            <el-table-column prop="createTime" label="创建时间" width="140"></el-table-column>
+            <el-table-column prop="createUserName" label="创建人" width="100" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="createTime" label="创建时间" width="140" show-overflow-tooltip></el-table-column>
           </dsn-table>
           <dsn-pagination
             background
@@ -124,22 +129,27 @@
             row-key="mat"
           >
             <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
-            <el-table-column type="index" label="序号"></el-table-column>
-            <el-table-column prop="dcGroup" label="数据收集组"></el-table-column>
-            <el-table-column prop="collectionType" label="收集类型">
-              <template slot-scope="scope">{{ parseInt(scope.row.collectionType)===10?"LOT":"资源"}}</template>
+            <el-table-column type="index" label="序号" fixed></el-table-column>
+            <el-table-column prop="dcGroup" label="数据收集组" width="100" fixed show-overflow-tooltip></el-table-column>
+            <el-table-column label="接收值" width="100" fixed show-overflow-tooltip>
+              <template
+                slot-scope="scope"
+              >{{ parseInt(scope.row.collectionType)===10?scope.row.lot:scope.row.resource}}</template>
             </el-table-column>
             <el-table-column
-              prop="lot"
-              label="LOT"
-              v-if="parseInt(tableParamsData.tableData[0].collectionType) === 10"
-            ></el-table-column>
-            <el-table-column
-              prop="resource"
-              label="资源"
-              v-if="parseInt(tableParamsData.tableData[0].collectionType) === 20"
-            ></el-table-column>
-            <template v-for="(item,index) in tableParamsData.tableHead">
+              prop="collectionType"
+              label="收集类型"
+              width="100"
+              fixed
+              show-overflow-tooltip
+            >
+              <template slot-scope="scope">{{ parseInt(scope.row.collectionType)===10?"LOT":"资源"}}</template>
+            </el-table-column>
+            <template
+              v-for="(item,index) in tableParamsData.tableHead"
+              width="100"
+              show-overflow-tooltip
+            >
               <el-table-column :prop="item.column_name" :label="item.column_comment" :key="index"></el-table-column>
             </template>
           </dsn-table>
@@ -213,8 +223,8 @@ const filterValLeft = [
   "createTime"
 ];
 const fileNameLeft = "已收集数据收集组清单";
-const tHeaderRight = ["数据收集组", "收集类型"];
-const filterValRight = ["dcGroup", "collectionType"];
+const tHeaderRight = ["数据收集组", "接收值", "收集类型"];
+const filterValRight = ["dcGroup", "resource", "collectionType"];
 const fileNameRight = "已收集数据收集组参数清单表格数据";
 export default {
   name: "dc-search",
@@ -235,7 +245,7 @@ export default {
       searchForm: {
         resource: "",
         dcGroup: "",
-        collectionType: "10",
+        collectionType: 10,
         tenantSiteCode: "test"
       },
       rules: {
