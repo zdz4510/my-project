@@ -276,6 +276,7 @@ export default {
     this.operateType = this.$route.query.operateType; // 获取报错的类型 add or edit
 
     this.init();
+      this.tagConfigForm = _.cloneDeep(this.tagConfigList); // 拷贝
     if (this.operateType === "edit") {
       this.isEditResource = true;
       this.getLabelStorageByLabelId(this.tagConfigForm.label);  //  查看标签的内容
@@ -288,7 +289,7 @@ export default {
         1
       );
     }
-    this.tagConfigForm = _.cloneDeep(this.tagConfigList); // 拷贝
+  
     //this.list = this.tagConfigForm.labelLinkList || [];
     //this.tagConfigForm.cloneLeftList = _.cloneDeep(this.list);
   },
