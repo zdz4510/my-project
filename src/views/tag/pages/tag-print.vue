@@ -110,7 +110,7 @@ export default {
   data() {
     return {
       form: {
-        name: null,
+        name: "",
         labelUseType: ""
       },
       list: [], // 可用打印设备数组
