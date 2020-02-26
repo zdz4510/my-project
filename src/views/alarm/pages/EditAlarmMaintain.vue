@@ -29,7 +29,6 @@
             border
             highlight-current-row
             style="width: 100%"
-            height="513"
             @row-click="(row) => {handleCurrentChange(row, 'table')}"
           >
             <el-table-column label="事件编号" prop="alarm"></el-table-column>
@@ -349,6 +348,7 @@ export default {
       const tempList = this.cloneList.filter(item => item["alarm"] == value);
       // this.cloneList = tempList;
       this.editForm = tempList[0];
+      console.log('changoption', this.editForm)
       this.cloneModify = _.cloneDeep(this.editForm);
       this.setCurrent(tempList[0]);
       let params = this.editForm.alarm;
@@ -374,7 +374,9 @@ export default {
     handleCurrentChange(currentRow, type) {
       const { cloneAllocateData, allocateData, alarmMaintainEditList, editForm } = this;
       const defaultForm = alarmMaintainEditList.find(item => item.alarm === this.currentRow.alarm);
-      if (allocateData.length !== cloneAllocateData.length || _.differenceBy(allocateData, cloneAllocateData,  'informUserId').length > 0 || JSON.stringify(editForm) !== JSON.stringify(defaultForm)) {
+      if (allocateData.length !== cloneAllocateData.length
+        || _.differenceBy(allocateData, cloneAllocateData,  'informUserId').length > 0
+        || JSON.stringify(editForm) !== JSON.stringify(defaultForm)) {
         this.$confirm('所选数据还未保存，是否保存?', '提示', {
           confirmButtonText: '保存',
           cancelButtonText: '取消',
@@ -393,7 +395,6 @@ export default {
     },
 
     changeCallBack(currentRow, type) {
-      console.log(currentRow, type)
       const { alarmMaintainEditList } = this;
       this.editForm = type === 'table' ? _.cloneDeep(alarmMaintainEditList.find(item => item.alarm === currentRow.alarm)) : _.cloneDeep(alarmMaintainEditList.find(item => item.alarm === currentRow));
       const { alarm } = this.editForm;
@@ -401,7 +402,12 @@ export default {
       this.alarm = alarm;
       this.input2 = '';
       this.select2 = '';
-      if (type === 'select') this.setCurrent(this.currentRow)
+      this.value = alarm;
+      console.log('this.', this.editForm)
+      if (type === 'select') {
+        const tempList = this.cloneList.filter(item => item["alarm"] == currentRow);
+        this.setCurrent(tempList[0]);
+      }
       getWorkerInfo({alarm}).then(data => {
         this.unallocateData = [];
         this.cloneUnallocateData = _.cloneDeep(data.data.data);
@@ -422,27 +428,7 @@ export default {
     findIndexByItem(arr, v) {
       return arr.findIndex(item => item["alarm"] == v);
     },
-    // 取消操作  一般是在弹框出现的时候才有取消操作
-    handleCancle() {
-      //数据还原
-      if (
-        this.cloneList.length < this.alarmMaintainEditList.length &&
-        this.value != ""
-      ) {
-        this.cloneList = _.cloneDeep([this.cloneModify]);
-        this.editForm = this.cloneList[0];
-        return;
-      }
-      this.cloneList = _.cloneDeep(this.alarmMaintainEditList); //取消直接复制一份副本
-      if (this.currentRow) {
-        let code = this.currentRow.alarm;
-        let item = this.findItemByKey(this.cloneList, code, "alarm");
-        if (item) {
-          this.setCurrent(item);
-        }
-        this.editForm = item;
-      }
-    },
+    
     //保存操作
     handleSave(formName, callback) {
       this.$refs[formName].validate(valid => {
@@ -463,8 +449,8 @@ export default {
                 type: "success"
               });
               const { editForm, alarmMaintainEditList } = this;
-              const savedIndex = alarmMaintainEditList.findIndex(item => item.alarm === editForm.alarm);
-              this.SETALARMMAINTAINEDITLIST(_.fill(alarmMaintainEditList, editForm, savedIndex, 1));
+              const savedIndex = alarmMaintainEditList.findIndex(item => item.alarmGroup === editForm.alarmGroup);
+              this.SETALARMMAINTAINEDITLIST(_.fill(alarmMaintainEditList, editForm, savedIndex, savedIndex + 1));
               callback && callback();
             } else {
               this.$message({

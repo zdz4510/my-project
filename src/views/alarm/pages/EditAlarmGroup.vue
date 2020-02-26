@@ -13,10 +13,7 @@
             v-model="value"
             clearable
             placeholder="请选择"
-            :disabled="selectIsDisabled"
-            @clear="handleClearSelect"
-            @change="handleChangeOption"
-            @focus="handleSelectFocus"
+            @change="(value) => {handleCurrentChange(value, 'select')}"
             ref="select"
           >
             <el-option
@@ -32,7 +29,7 @@
             border
             highlight-current-row
             style="width: 100%"
-            @row-click="handleCurrentChange"
+            @row-click="(value) => {handleCurrentChange(value, 'table')}"
           >
             <el-table-column label="事件分组名称" prop="alarmGroup"></el-table-column>
           </dsn-table>
@@ -117,14 +114,6 @@
               </el-col>
             </el-row>
           </el-form>
-          <!-- 确认模态框 -->
-          <el-dialog title="保存" :visible.sync="saveDialog" width="30%">
-            <span>是否保存数据？</span>
-            <span slot="footer" class="dialog-footer">
-              <dsn-button @click="handleCancle">取 消</dsn-button>
-              <dsn-button type="primary" @click="handleSave('editForm')">确 定</dsn-button>
-            </span>
-          </el-dialog>
         </div>
       </el-col>
     </el-row>
@@ -194,18 +183,22 @@ export default {
     this.$nextTick(() => {
       this.init();
     });
-    this.alarmGroup = this.alarmGroupEditList[0].alarmGroup;
-    let p = {
-      alarmGroup: this.alarmGroup
-    };
-    getWorkerInfo(p).then(data => {
-      this.allocateData = data.data.data.data;
-      this.cloneAllocateData = data.data.data;
-    });
-    let params = "";
-    getDataByAlarm(params).then(data => {
-      this.unallocateData = _.differenceBy(data.data.data, this.allocateData, 'alarm');
-    });
+
+    const { alarmGroup } = this.alarmGroupEditList[0]
+    const params = "";
+    this.value = alarmGroup;
+    Promise.all([
+      getWorkerInfo({alarmGroup}).then(data => {
+        this.allocateData = data.data.data.data;
+        this.cloneAllocateData = _.cloneDeep(data.data.data.data);
+      }),
+      getDataByAlarm(params).then(data => {
+        // this.unallocateData = _.differenceBy(data.data.data, this.allocateData, 'alarm');
+        this.unallocateData = data.data.data;
+      })]).then(()=>{
+      this.unallocateData = _.differenceBy(this.unallocateData, this.allocateData, 'alarm');
+    })
+    
   },
   methods: {
     ...mapMutations(["SETALARMGROUPEDITLIST"]),
@@ -230,13 +223,21 @@ export default {
       }
       //过滤数组
       const tempList = this.cloneList.filter(item => item["alarmGroup"] == row);
-      this.cloneList = tempList;
+      // this.cloneList = tempList;
       this.editForm = tempList[0];
       this.cloneModify = _.cloneDeep(this.editForm);
       this.setCurrent(tempList[0]);
-      let params = this.editForm.alarmGroup;
-      getDataByAlarm(params).then(data => {
-        this.unallocateData = _.differenceBy(data.data.data, this.allocateData, 'alarm');
+      const { alarmGroup } = this.editForm;
+      Promise.all([
+        getWorkerInfo({alarmGroup}).then(data => {
+          this.allocateData = data.data.data.data;
+          this.cloneAllocateData = _.cloneDeep(data.data.data.data);
+        }),
+        getDataByAlarm("").then(data => {
+          this.unallocateData = data.data.data;
+        })
+      ]).then(()=>{
+        this.unallocateData = _.differenceBy(this.unallocateData, this.allocateData, 'alarm');
       });
     },
     //下拉列表获取到焦点时触发
@@ -266,18 +267,57 @@ export default {
       return null;
     },
     // 点击某一行选中后操作的状态你
-    handleCurrentChange(currentRow) {
-      const { alarmGroupEditList } = this;
-      this.editForm = _.cloneDeep(alarmGroupEditList.find(item => item.alarmGroup === currentRow.alarmGroup));
-      const { alarmGroup } = this.editForm;
-      getWorkerInfo({alarmGroup}).then(data => {
-        this.allocateData = data.data.data.data;
-        this.cloneAllocateData = data.data.data;
-      });
-      getDataByAlarm(alarmGroup).then(data => {
-        this.unallocateData = _.differenceBy(data.data.data, this.allocateData, 'alarm');
-      });
+    handleCurrentChange(currentRow, type) {
+      const { cloneAllocateData, allocateData, alarmGroupEditList, editForm } = this;
+      const defaultForm = alarmGroupEditList.find(item => item.alarmGroup === this.currentRow.alarmGroup);
+      console.log('difference',allocateData, cloneAllocateData, _.differenceBy(allocateData, cloneAllocateData, 'alarm'))
+      if (allocateData.length !== cloneAllocateData.length
+        || _.differenceBy(allocateData, cloneAllocateData, 'alarm').length > 0
+        || JSON.stringify(editForm) !== JSON.stringify(defaultForm)) {
+        this.$confirm('所选数据还未保存，是否保存?', '提示', {
+          confirmButtonText: '保存',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.handleSave('editForm', () => {
+            this.changeCallBack(currentRow, type);
+          });
+        }).catch(() => {
+          this.changeCallBack(currentRow, type);
+        })
+      } else {
+        this.changeCallBack(currentRow, type);
+      }
+     
     },
+
+    changeCallBack(currentRow, type) {
+      const { alarmGroupEditList } = this;
+      this.editForm = type === 'table' ? _.cloneDeep(alarmGroupEditList.find(item => item.alarmGroup === currentRow.alarmGroup)) : _.cloneDeep(alarmGroupEditList.find(item => item.alarmGroup === currentRow));
+      const { alarmGroup } = this.editForm;
+      this.currentRow = type === 'table' ? _.cloneDeep(currentRow) : _.cloneDeep(alarmGroupEditList.find(item => item.alarmGroup === currentRow));
+      this.alarm = alarmGroup;
+      this.input2 = '';
+      this.select2 = '';
+      this.value = alarmGroup;
+      if (type === 'select') {
+        const tempList = this.cloneList.filter(item => item["alarmGroup"] == currentRow);
+        this.setCurrent(tempList[0]);
+      }
+      Promise.all([
+        getWorkerInfo({alarmGroup}).then(data => {
+          this.allocateData = data.data.data.data;
+          this.cloneAllocateData = _.cloneDeep(data.data.data.data);
+        }),
+        getDataByAlarm("").then(data => {
+          // this.unallocateData = _.differenceBy(data.data.data, this.allocateData, 'alarm');
+          this.unallocateData = data.data.data;
+        })]).then(()=>{
+        this.unallocateData = _.differenceBy(this.unallocateData, this.allocateData, 'alarm');
+      })
+    },
+
+
     //选中某一行
     //返回操作
     goBack() {
@@ -290,84 +330,32 @@ export default {
     findIndexByItem(arr, v) {
       return arr.findIndex(item => item["alarmGroup"] == v);
     },
-    // 取消操作  一般是在弹框出现的时候才有取消操作
-    handleCancle() {
-      this.saveDialog = false;
-      this.selectIsDisabled = false;
-      //数据还原
-      if (
-        this.cloneList.length < this.alarmGroupEditList.length &&
-        this.value != ""
-      ) {
-        this.cloneList = _.cloneDeep([this.cloneModify]);
-        this.editForm = this.cloneList[0];
-        return;
-      }
-      this.cloneList = _.cloneDeep(this.alarmGroupEditList); //取消直接复制一份副本
-      if (this.currentRow) {
-        let code = this.currentRow.alarmGroup;
-        let item = this.findItemByKey(this.cloneList, code, "alarmGroup");
-        if (item) {
-          this.setCurrent(item);
-        }
-        this.editForm = item;
-      }
-    },
+
     //保存操作
-    handleSave(formName) {
+    handleSave(formName, callback) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          let arr = [];
-          this.allocateData.map(item => {
-            arr.push(item.alarm);
-          });
-          this.editForm.alarmList = arr;
+          this.editForm.alarmList = this.allocateData.map(item => item.alarm);
           let params = this.editForm;
-
           updateData(params).then(data => {
             const res = data.data;
-            this.saveDialog = false; // 保存的提示框消失
-            this.selectIsDisabled = false;
 
             // 直接成功
             if (res.code === 200) {
-              this.saveDialog = false;
-              this.selectIsDisabled = false;
               this.$message({
                 message: "修改成功",
                 type: "success"
               });
-              // 直接覆盖
-              if (this.cloneList.length == this.alarmGroupEditList.length) {
-                //直接覆盖
-                //重新更改初始的副本
-                //设置左边的选中状态
-                this.SETALARMGROUPEDITLIST(
-                  _.cloneDeep(this.cloneList)
-                );
-                this.editForm = this.currentRow;
-                this.cloneModify = _.cloneDeep(this.editForm);
-              }
-
-              if (this.cloneList.length == 1) {
-                let index = this.findIndexByItem(
-                  this.alarmGroupEditList,
-                  this.editForm.alarmGroup
-                );
-                if (index > -1) {
-                  this.alarmGroupEditList.splice(index, 1, this.editForm); // 替换
-                  this.SETALARMGROUPEDITLIST(
-                    _.cloneDeep(this.alarmGroupEditList)
-                  );
-                  this.cloneModify = _.cloneDeep(this.editForm);
-                }
-              }
+              const { editForm, alarmGroupEditList } = this;
+              const savedIndex = alarmGroupEditList.findIndex(item => item.alarmGroup === editForm.alarmGroup);
+              console.log('save', editForm, savedIndex);
+              this.SETALARMGROUPEDITLIST(_.fill(alarmGroupEditList, editForm, savedIndex, savedIndex + 1));
+              callback && callback();
             } else {
               this.$message({
                 message: res.data,
                 type: "error"
               });
-              this.saveDialog = false;
               this.setCurrent(this.oldRow);
             }
           });
@@ -378,12 +366,16 @@ export default {
       const { editForm, alarmGroupEditList } = this;
       this.editForm = _.cloneDeep(alarmGroupEditList.find(item => item.alarmGroup === editForm.alarmGroup));
       const { alarmGroup } = this.editForm;
-      getWorkerInfo({alarmGroup}).then(data => {
-        this.allocateData = data.data.data.data;
-        this.cloneAllocateData = data.data.data;
-      });
-      getDataByAlarm(alarmGroup).then(data => {
-        this.unallocateData = _.differenceBy(data.data.data, this.allocateData, 'alarm');
+      Promise.all([
+        getWorkerInfo({alarmGroup}).then(data => {
+          this.allocateData = data.data.data.data;
+          this.cloneAllocateData = _.cloneDeep(data.data.data.data);
+        }),
+        getDataByAlarm("").then(data => {
+          this.unallocateData = data.data.data;
+        })
+      ]).then(()=>{
+        this.unallocateData = _.differenceBy(this.unallocateData, this.allocateData, 'alarm');
       });
     },
     check1(val) {
@@ -393,19 +385,15 @@ export default {
       this.selectedList2 = val;
     },
     right() {
-      this.unallocateData = _.concat(this.unallocateData, this.selectedList);
-      this.unallocateData = _.uniq(this.unallocateData);
+      this.unallocateData = _.uniq(_.concat(this.unallocateData, this.selectedList));
       this.allocateData = _.difference(this.allocateData, this.selectedList);
-      this.cloneAllocateData = _.cloneDeep(this.allocateData);
     },
     left() {
-      this.allocateData = _.concat(this.allocateData, this.selectedList2);
-      this.allocateData = _.uniq(this.allocateData);
+      this.allocateData = _.uniq(_.concat(this.allocateData, this.selectedList2));
       this.unallocateData = _.difference(
         this.unallocateData,
         this.selectedList2
       );
-      this.cloneAllocateData = _.cloneDeep(this.allocateData);
     }
   }
 };
