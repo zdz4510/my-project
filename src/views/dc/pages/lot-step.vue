@@ -518,24 +518,29 @@ export default {
     },
     //整个数量置于队列中
     inQueue() {
+      //找出勾选数据中stepSequence最大的
       let stepSequence = 0;
+      let equalityList = [];
       this.selectionList.forEach(element => {
-        if (element.stepSequence > stepSequence) {
+        if (element.stepSequence >= stepSequence) {
           stepSequence = element.stepSequence;
         }
       });
-      console.log(stepSequence);
-      let count = 1;
-      this.tableData.forEach(element => {
+      //找出勾选状态下stepSequence一样的
+      this.selectionList.forEach(element => {
         if (element.stepSequence === stepSequence) {
-          element.stepStatus = "排队中";
-          element.qtyInQueue = count++; //待修改
-          element.qtyInWork = 0;
+          equalityList.push(element.stepId);
         }
+      });
+      this.tableData.forEach(element => {
         if (element.stepSequence > stepSequence) {
           element.stepStatus = "";
           element.qtyInQueue = 0;
           element.qtyInWork = 0;
+          this.stepStatusList.push({
+            changeType: "INQUEUE",
+            stepId: element.stepId
+          });
         }
         if (
           element.stepSequence < stepSequence &&
@@ -544,12 +549,23 @@ export default {
           element.stepStatus = "已绕过";
           element.qtyInQueue = 0;
           element.qtyInWork = 0;
+          this.stepStatusList.push({
+            changeType: "INQUEUE",
+            stepId: element.stepId
+          });
         }
       });
-      this.selectionList.forEach(element => {
-        this.stepStatusList.push({
-          changeType: "INQUEUE",
-          stepId: element.stepId
+      this.tableData.forEach(element1 => {
+        equalityList.forEach(element2 => {
+          if (element1.stepId === element2) {
+            element1.stepStatus = "排队中";
+            element1.qtyInQueue = element1.lotQuantity++; //待修改lotQuantity
+            element1.qtyInWork = 0;
+            this.stepStatusList.push({
+              changeType: "INQUEUE",
+              stepId: element1.stepId
+            });
+          }
         });
       });
     },

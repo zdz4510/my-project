@@ -174,20 +174,7 @@ import {
 } from "../../../api/dc.search.api";
 import _ from "lodash";
 import { exportExcel } from "@/until/excel.js";
-let tableHead = [
-  // {
-  //   column_name: "resource",
-  //   column_comment: "接收值"
-  // },
-  // {
-  //   column_name: "collectionType",
-  //   column_comment: "收集类型"
-  // },
-  // {
-  //   column_name: "dcGroup",
-  //   column_comment: "数据收集组"
-  // }
-];
+let tableHead = [];
 const tHeaderLeft = [
   "数据收集组",
   "收集类型",
