@@ -132,14 +132,21 @@ export default {
     handleAdd() {
       this.selectionList = [];
       const emptyObj = {
-        labelUseType: "", //标签应用类型
-        useTemplateType: "", //使用命令行设定
-        printFileSize: "", //标签内存大小，单位KB
-        labelDes: "", //标签描述
-        label: "", //label
-        labelStorageList: [],
+        tagDes: "",
+        //标签ID
+        label: "", //标签id
+        checked: true,
+        labelUseType: "",
+        previewImage: "",
+        labelCommand: "",
+        
         labelLinkList: [],
-        url: ""
+        labelTemplate: "",
+        leftList:[],
+        rightList:[],
+        cloneLeftList:[],  // 克隆左边的
+        v1:"", //左边输入key
+        v2:'' // 右边输入key
       };
       this.TAGCONFIGLIST(emptyObj);
       this.$router.push({
@@ -156,7 +163,40 @@ export default {
         });
         return;
       }
-      this.TAGCONFIGLIST(this.selectionList[0]);
+      const { 
+         tagDes='',
+          //标签ID
+          label='', //标签id
+          useTemplateType='',
+          labelUseType='',
+          labelTemplate='',
+          labelDes='',
+          previewImage='',
+          labelCommand=''}
+          =   this.selectionList[0];
+          
+      this.TAGCONFIGLIST({
+        //标签ID
+        checked: true,
+        labelLinkList: [],
+        leftList:[],
+        rightList:[],
+        cloneLeftList:[],  // 克隆左边的
+        v1:"", //左边输入key
+        v2:'', // 右边输入key
+        selectDeiveName:'',
+        s1:'',
+        s2:"10",
+        label,
+        useTemplateType,
+        labelTemplate,
+        previewImage:previewImage||"",
+        tagDes,
+        labelDes,
+        labelCommand:labelCommand||'',
+        labelUseType
+      });
+      
       this.$router.push({
         name: "tagConfigEdit",
         query: { operateType: "edit" }

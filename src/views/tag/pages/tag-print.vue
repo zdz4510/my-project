@@ -7,11 +7,7 @@
         </div>
         <el-form ref="form" :model="form" label-width="100px" :inline="true">
           <el-form-item label="标签应用类型">
-            <el-select
-              size="small"
-              v-model="form.labelUseType"
-              placeholder="请选择标签应用类型"
-            >
+            <el-select size="small" v-model="form.labelUseType" placeholder="请选择标签应用类型">
               <el-option label="LOT" value="10"></el-option>
               <el-option label="容器" value="20"></el-option>
             </el-select>
@@ -25,16 +21,14 @@
               size="small"
               type="primary"
               @click="handleSearchByLotNo"
-              >检索</dsn-button
-            >
+            >检索</dsn-button>
             <el-button
               icon="el-icon-printer"
               size="small"
               type="primary"
               class="mr-10"
               @click="print"
-              >打印</el-button
-            >
+            >打印</el-button>
             <el-checkbox v-model="autoPrint">自动打印</el-checkbox>
           </el-form-item>
         </el-form>
@@ -71,35 +65,19 @@
         style="width: 100%"
         height="350px"
       >
-        <el-table-column type="selection" width="55"> </el-table-column>
-        <el-table-column prop="resourceGroup" label="接收值" width="100">
-        </el-table-column>
-        <el-table-column prop="resourceCount" label="标签ID" width="100">
-        </el-table-column>
-        <el-table-column prop="groupDes" label="标签应用类型" width="100">
-        </el-table-column>
-        <el-table-column prop="createUserName" label="物料组" width="100">
-        </el-table-column>
-        <el-table-column prop="createTime" label="物料号" width="100">
-        </el-table-column>
-        <el-table-column prop="modifyUserName" label="工单号" width="100">
-        </el-table-column>
-        <el-table-column prop="groupDes" label="包装层级" width="100">
-        </el-table-column>
-        <el-table-column prop="createUserName" label="容器类型" width="100">
-        </el-table-column>
-        <el-table-column prop="createTime" label="打印份数" width="100">
-        </el-table-column>
-        <el-table-column prop="modifyUserName" label="打印设备" width="100">
-        </el-table-column>
-        <el-table-column prop="modifyUserName" label="打印人员" width="100">
-        </el-table-column>
-        <el-table-column
-          prop="modifyTime"
-          label="打印时间"
-          show-overflow-tooltip
-        >
-        </el-table-column>
+        <el-table-column type="selection" width="55"></el-table-column>
+        <el-table-column prop="resourceGroup" label="接收值" width="100"></el-table-column>
+        <el-table-column prop="label" label="标签ID" width="100"></el-table-column>
+        <el-table-column prop="labelUseType" label="标签应用类型" width="100"></el-table-column>
+        <el-table-column prop="matGroup" label="物料组" width="100"></el-table-column>
+        <el-table-column prop="mat" label="物料号" width="100"></el-table-column>
+        <el-table-column prop="shopOrder" label="工单号" width="100"></el-table-column>
+        <el-table-column prop="groupDes" label="包装层级" width="100"></el-table-column>
+        <el-table-column prop="createUserName" label="容器类型" width="100"></el-table-column>
+        <el-table-column prop="creaprintCopiesteTime" label="打印份数" width="100"></el-table-column>
+        <el-table-column prop="printDevice" label="打印设备" width="100"></el-table-column>
+        <el-table-column prop="modifyUserName" label="打印人员" width="100"></el-table-column>
+        <el-table-column prop="modifyTime" label="打印时间" show-overflow-tooltip></el-table-column>
       </dsn-table>
     </dsnPanel>
 
@@ -107,14 +85,12 @@
       <tag-print-config :labelList="labelList" v-model="configArr" />
       <span slot="footer" class="dialog-footer">
         <el-button @click="showConfig = false">取 消</el-button>
-        <el-button type="primary">
-          确 定
-        </el-button>
+        <el-button type="primary" @click="handleTagConfigConfirm">确 定</el-button>
       </span>
     </el-dialog>
 
     <DsnFooter>
-      <dsn-button  :disabled="this.info.mat===''" @click="handlePrintConfig">打印配置</dsn-button>
+      <dsn-button :disabled="this.info.mat===''" @click="handlePrintConfig">打印配置</dsn-button>
       <!-- <dsn-button @click="handlePrintConfig">打印配置</dsn-button> -->
     </DsnFooter>
   </div>
@@ -124,7 +100,8 @@
 import {
   searchByLotNo,
   getPrintDevicesAvailable,
-  searchLabelIdListByMat
+  searchLabelIdListByMat,
+  printLabel
 } from "@/api/tag/tag.print.api.js";
 import TagPrintConfig from "./tag-print-config";
 import DsnFooter from "@/views/layout/dsn-footer";
@@ -139,6 +116,7 @@ export default {
       list: [], // 可用打印设备数组
       autoPrint: false,
       activeName: "baseInfo",
+      
       tableData: [],
       total: 0,
       pageSize: 10,
@@ -153,14 +131,16 @@ export default {
       cloneInfo: {
         matGroup: "",
         mat: "",
-        packingClass: ""
+        packingClass: "",
+        shopOrder:""
       },
       labelList: [],
       configArr: [],
       nextInfo: {
         matGroup: "",
         mat: "",
-        packingClass: ""
+        packingClass: "",
+        shopOrder:''
       }
     };
   },
@@ -173,10 +153,58 @@ export default {
     handlePrintConfig() {
       this.showConfig = true;
     },
+    async printLabelAysnc(configArr) {
+      try {
+        for (let index = 0; index < configArr.length; index++) {
+          const element = configArr[index];
+          const data = await printLabel(element);
+          const res = data.data;
+          if (res.code == 200) {
+            this.addPrintLog(element);
+            this.$message({
+              type: "success",
+              message: "打印成功"
+            });
+          } else {
+            this.$message({
+              type: "error",
+              message: res.message
+            });
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
     // 打印标签
-    print() {},
+    print() {
+      this.printLabelAysnc();
+    },
     // 添加打野记录
-    addPrintLog() {},
+    addPrintLog(config) {
+      const { printDevice, label, printCopies } = config;
+      const {labelUseType} = this.form;
+      const { 
+        matGroup,mat,packingClass} = this.info;
+      this.tableData.push({
+        printDevice,
+        label,
+        printCopies,
+        labelUseType,
+        matGroup,
+        mat,
+        packingClass
+      })
+    },
+    // 标签打印配置的
+    handleTagConfigConfirm() {
+      // 如果勾选了自动打印
+      if (this.autoPrint) {
+        this.print();
+      }
+      // 不管有没有勾选弹出框点击确认后都要消失
+      this.showConfig = false;
+    },
     //  检索
     handleSearchByLotNo() {
       searchByLotNo({

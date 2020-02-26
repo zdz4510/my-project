@@ -2,16 +2,25 @@ const tagConfigEdit = {
   // 初始化状态
   state: {
     tagConfigList: {
-      labelUseType:'',    //标签应用类型
-      useTemplateType:'',  //使用命令行设定
-      printFileSize:'', //标签内存大小，单位KB
-      labelDes:'',  //标签描述
-      label:'',  //label
-      labelStorage:'',
-      labelLinkList:[],
-      clonelabelLinkList:[],
-      labelCommand:'',
-      previewImage:'',
+       tagDes: "",
+        //标签ID
+        label: "", //标签id
+        checked: true,
+        useTemplateType:true,
+        labelUseType: "",
+        labelTemplate:'',
+        labelDes:'',
+        previewImage: "",
+        labelCommand: "",
+        labelLinkList: [],
+        leftList:[],
+        rightList:[],
+        cloneLeftList:[],  // 克隆左边的
+        v1:"", //左边输入key
+        v2:'', // 右边输入key
+        selectDeiveName:'',
+        s1:'',
+        s2:"10"
 
 
     }
