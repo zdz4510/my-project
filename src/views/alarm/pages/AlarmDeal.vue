@@ -95,7 +95,7 @@
             >
               <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
               <el-table-column type="index" label="序号"></el-table-column>
-              <el-table-column prop="sequence" label="触发序号"></el-table-column>
+              <el-table-column prop="sequence" label="触发序号" width="80"></el-table-column>
               <el-table-column prop="triggeringTime" label="触发时间" width="140"></el-table-column>
               <el-table-column prop="alarmGroup" label="预警分组" width="100" show-overflow-tooltip></el-table-column>
               <el-table-column prop="alarm" label="事件编号" width="80" show-overflow-tooltip></el-table-column>
@@ -340,8 +340,8 @@
               <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
               <el-table-column type="index" label="序号"></el-table-column>
               <el-table-column prop="sequence" label="触发序号" width="80" show-overflow-tooltip></el-table-column>
-              <el-table-column prop="mainNumber" label="容器" width="80" show-overflow-tooltip></el-table-column>
-              <el-table-column prop="lot" label="LOT" width="80" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="mainNumber" label="容器" width="100" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="lot" label="LOT" width="100" show-overflow-tooltip></el-table-column>
               <el-table-column prop="resource" label="设备编号" width="80" show-overflow-tooltip></el-table-column>
               <el-table-column prop="shopOrder" label="工单" width="80" show-overflow-tooltip></el-table-column>
               <el-table-column prop="alarm" label="事件编号" width="80" show-overflow-tooltip></el-table-column>
