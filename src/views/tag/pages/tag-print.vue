@@ -12,7 +12,7 @@
               <el-option label="容器" value="20"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="输入栏">
+          <el-form-item label="接收值">
             <dsn-input size="small" v-model="form.name"></dsn-input>
           </el-form-item>
           <el-form-item>
@@ -46,7 +46,7 @@
                 <span class="val">{{ info.shopOrder }}</span>
               </div>
               <div class="item">
-                <span class="name">容器层级:</span>
+                <span class="name">包装层级:</span>
                 <span class="val">{{ info.packingClass }}</span>
               </div>
             </div>
@@ -66,15 +66,15 @@
         height="350px"
       >
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="resourceGroup" label="接收值" width="100"></el-table-column>
+        <el-table-column prop="name" label="接收值" width="100"></el-table-column>
         <el-table-column prop="label" label="标签ID" width="100"></el-table-column>
         <el-table-column prop="labelUseType" label="标签应用类型" width="100"></el-table-column>
         <el-table-column prop="matGroup" label="物料组" width="100"></el-table-column>
         <el-table-column prop="mat" label="物料号" width="100"></el-table-column>
         <el-table-column prop="shopOrder" label="工单号" width="100"></el-table-column>
         <el-table-column prop="groupDes" label="包装层级" width="100"></el-table-column>
-        <el-table-column prop="createUserName" label="容器类型" width="100"></el-table-column>
-        <el-table-column prop="creaprintCopiesteTime" label="打印份数" width="100"></el-table-column>
+        <el-table-column prop="containerType" label="容器类型" width="100"></el-table-column>
+        <el-table-column prop="printCopies" label="打印份数" width="100"></el-table-column>
         <el-table-column prop="printDevice" label="打印设备" width="100"></el-table-column>
         <el-table-column prop="modifyUserName" label="打印人员" width="100"></el-table-column>
         <el-table-column prop="modifyTime" label="打印时间" show-overflow-tooltip></el-table-column>
@@ -105,7 +105,7 @@ import {
 } from "@/api/tag/tag.print.api.js";
 import TagPrintConfig from "./tag-print-config";
 import DsnFooter from "@/views/layout/dsn-footer";
-
+import moment  from  'moment'
 export default {
   data() {
     return {
@@ -148,6 +148,9 @@ export default {
     TagPrintConfig,
     DsnFooter
   },
+  created(){
+   
+  },
   methods: {
     // 打印配置
     handlePrintConfig() {
@@ -178,14 +181,14 @@ export default {
     },
     // 打印标签
     print() {
-      this.printLabelAysnc();
+      this.printLabelAysnc(this.configArr);
     },
     // 添加打野记录
     addPrintLog(config) {
       const { printDevice, label, printCopies } = config;
-      const {labelUseType} = this.form;
+      const {labelUseType,name} = this.form;
       const { 
-        matGroup,mat,packingClass} = this.info;
+        matGroup,mat,packingClass,containerType} = this.info;
       this.tableData.push({
         printDevice,
         label,
@@ -193,7 +196,10 @@ export default {
         labelUseType,
         matGroup,
         mat,
-        packingClass
+        packingClass,
+        name ,  // 接受值
+        containerType,
+        modifyTime:moment().format('YYYY-MM-DD HH:mm:SS')
       })
     },
     // 标签打印配置的

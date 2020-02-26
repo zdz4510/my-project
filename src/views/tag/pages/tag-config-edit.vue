@@ -276,7 +276,9 @@ export default {
     this.operateType = this.$route.query.operateType; // 获取报错的类型 add or edit
 
     this.init();
+   
       this.tagConfigForm = _.cloneDeep(this.tagConfigList); // 拷贝
+     
     if (this.operateType === "edit") {
       this.isEditResource = true;
       this.getLabelStorageByLabelId(this.tagConfigForm.label);  //  查看标签的内容
@@ -328,7 +330,7 @@ export default {
     },
     // 选择的标签id 改变后请求对应标签id 的内容
     handleTagIdChange(key) {
-      this.getTagByLable(key);
+      this.getLabelStorageByLabelId(key);
     },
 
     // 获取可用的打印设置
@@ -415,8 +417,9 @@ export default {
        // this.getLabelStorageByLabelId(this.tagConfigForm.label);
         return;
       }
-
+      console.log('bianji')
       //  编辑的时候
+      console.log(this.tagConfigList)
       this.tagConfigForm = {
         ..._.cloneDeep(this.tagConfigList),
         v1: "", //左边输入key

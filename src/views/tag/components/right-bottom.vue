@@ -220,7 +220,7 @@ export default {
 
   .tab-content-container{
     height: calc(100%-60px);
-    overflow: scroll;
+    // overflow: scroll;
   }
 }
 </style>

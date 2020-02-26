@@ -6,7 +6,7 @@
     "serve": "vue-cli-service serve --mode development",
     "build:production": "vue-cli-service build --mode production",
     "build:test": "vue-cli-service build --mode test",
-    "lint":"eslint --fix --ext .js,.vue src",
+    "lint": "eslint --fix --ext .js,.vue src",
     "lint2": "vue-cli-service  lint"
   },
   "dependencies": {
@@ -16,6 +16,7 @@
     "file-saver": "^2.0.2",
     "jsplumb": "^2.12.8",
     "lodash": "^4.17.15",
+    "moment": "^2.24.0",
     "qs": "^6.9.1",
     "register-service-worker": "^1.6.2",
     "script-loader": "^0.7.2",
