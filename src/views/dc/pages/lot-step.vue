@@ -420,6 +420,8 @@ export default {
       this.stepStatusList = this.lotStepAllInfo[0].stepStatusList;
       this.stepIdList = this.lotStepAllInfo[0].stepIdList;
       this.tableData = this.lotStepAllInfo[0].tableData;
+      this.selectedLotList = this.lotStepAllInfo[0].selectedLotList;
+      this.lotTableData = this.lotStepAllInfo[0].lotTableData;
     }
     //查询页面返回带的数据
     if (this.lotQueryList.length === 1) {
@@ -461,10 +463,11 @@ export default {
           tableData: this.tableData,
           queryLots: this.queryLots,
           stepStatusList: this.stepStatusList,
-          stepIdList: this.stepIdList
+          stepIdList: this.stepIdList,
+          selectedLotList: this.selectedLotList,
+          lotTableData: this.lotTableData
         }
       ];
-      console.log(tempData);
       this.LOTSTEPALLINFO(tempData);
       this.$router.push({ name: "lotStepDetail" });
     },
@@ -515,24 +518,29 @@ export default {
     },
     //整个数量置于队列中
     inQueue() {
+      //找出勾选数据中stepSequence最大的
       let stepSequence = 0;
+      let equalityList = [];
       this.selectionList.forEach(element => {
-        if (element.stepSequence > stepSequence) {
+        if (element.stepSequence >= stepSequence) {
           stepSequence = element.stepSequence;
         }
       });
-      console.log(stepSequence);
-      let count = 1;
-      this.tableData.forEach(element => {
+      //找出勾选状态下stepSequence一样的
+      this.selectionList.forEach(element => {
         if (element.stepSequence === stepSequence) {
-          element.stepStatus = "排队中";
-          element.qtyInQueue = count++; //待修改
-          element.qtyInWork = 0;
+          equalityList.push(element.stepId);
         }
+      });
+      this.tableData.forEach(element => {
         if (element.stepSequence > stepSequence) {
           element.stepStatus = "";
           element.qtyInQueue = 0;
           element.qtyInWork = 0;
+          this.stepStatusList.push({
+            changeType: "INQUEUE",
+            stepId: element.stepId
+          });
         }
         if (
           element.stepSequence < stepSequence &&
@@ -541,12 +549,23 @@ export default {
           element.stepStatus = "已绕过";
           element.qtyInQueue = 0;
           element.qtyInWork = 0;
+          this.stepStatusList.push({
+            changeType: "INQUEUE",
+            stepId: element.stepId
+          });
         }
       });
-      this.selectionList.forEach(element => {
-        this.stepStatusList.push({
-          changeType: "INQUEUE",
-          stepId: element.stepId
+      this.tableData.forEach(element1 => {
+        equalityList.forEach(element2 => {
+          if (element1.stepId === element2) {
+            element1.stepStatus = "排队中";
+            element1.qtyInQueue = element1.lotQuantity++; //待修改lotQuantity
+            element1.qtyInWork = 0;
+            this.stepStatusList.push({
+              changeType: "INQUEUE",
+              stepId: element1.stepId
+            });
+          }
         });
       });
     },
@@ -636,13 +655,17 @@ export default {
     },
     //请求LOT的状态置为完成
     setFinishHttp() {
-      const lots = [];
-      this.selectionList.forEach(element => {
-        lots.push(element.lot);
-      });
+      this.queryLots = [];
+      if (this.selectedLotList.length > 0) {
+        this.selectedLotList.forEach(element => {
+          this.queryLots.push(element.lot);
+        });
+      } else {
+        this.queryLots.push(this.lotStepForm.lot);
+      }
       const data = {
         comment: this.lotStepForm.comment,
-        lots
+        lots: this.queryLots
       };
       setLotsStatusDoneHttp(data).then(data => {
         const res = data.data;
@@ -806,7 +829,6 @@ export default {
     //确认选择lot
     handleConfirmSelectLot(val) {
       this.selectedLotList = val;
-      console.log(this.selectedLotList);
       if (this.selectedLotList.length === 0) {
         this.lotStepForm.lot = "";
       }
