@@ -807,6 +807,15 @@ export default {
     handleConfirmSelectLot(val) {
       this.selectedLotList = val;
       console.log(this.selectedLotList);
+      if (this.selectedLotList.length === 0) {
+        this.lotStepForm.lot = "";
+      }
+      if (this.selectedLotList.length === 1) {
+        this.lotStepForm.lot = this.selectedLotList[0].lot;
+      }
+      if (this.selectedLotList.length > 1) {
+        this.lotStepForm.lot = `已选择${this.selectedLotList.length}个`;
+      }
       this.lotQueryDialog = false;
     },
     handleCancleSelectLot() {
