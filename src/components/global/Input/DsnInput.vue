@@ -3,6 +3,7 @@
     :placeholder="placeholder"
     :size="size"
     :value="value"
+    :v-model="vModel"
     @input="input"
     @focus="focusEvent"
     @change="change"
@@ -56,7 +57,11 @@ export default {
     },
     value: {
       type: [String, Number],
-      required: true
+      required: false
+    },
+    vModel: {
+      type: [String, Number],
+      required: false
     },
     type: {
       type: String,
