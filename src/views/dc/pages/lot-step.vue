@@ -420,6 +420,8 @@ export default {
       this.stepStatusList = this.lotStepAllInfo[0].stepStatusList;
       this.stepIdList = this.lotStepAllInfo[0].stepIdList;
       this.tableData = this.lotStepAllInfo[0].tableData;
+      this.selectedLotList = this.lotStepAllInfo[0].selectedLotList;
+      this.lotTableData = this.lotStepAllInfo[0].lotTableData;
     }
     //查询页面返回带的数据
     if (this.lotQueryList.length === 1) {
@@ -461,10 +463,11 @@ export default {
           tableData: this.tableData,
           queryLots: this.queryLots,
           stepStatusList: this.stepStatusList,
-          stepIdList: this.stepIdList
+          stepIdList: this.stepIdList,
+          selectedLotList: this.selectedLotList,
+          lotTableData: this.lotTableData
         }
       ];
-      console.log(tempData);
       this.LOTSTEPALLINFO(tempData);
       this.$router.push({ name: "lotStepDetail" });
     },
@@ -636,13 +639,17 @@ export default {
     },
     //请求LOT的状态置为完成
     setFinishHttp() {
-      const lots = [];
-      this.selectionList.forEach(element => {
-        lots.push(element.lot);
-      });
+      this.queryLots = [];
+      if (this.selectedLotList.length > 0) {
+        this.selectedLotList.forEach(element => {
+          this.queryLots.push(element.lot);
+        });
+      } else {
+        this.queryLots.push(this.lotStepForm.lot);
+      }
       const data = {
         comment: this.lotStepForm.comment,
-        lots
+        lots: this.queryLots
       };
       setLotsStatusDoneHttp(data).then(data => {
         const res = data.data;
@@ -806,7 +813,6 @@ export default {
     //确认选择lot
     handleConfirmSelectLot(val) {
       this.selectedLotList = val;
-      console.log(this.selectedLotList);
       if (this.selectedLotList.length === 0) {
         this.lotStepForm.lot = "";
       }
