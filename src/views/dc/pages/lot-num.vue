@@ -185,7 +185,26 @@ export default {
             adjustLotQuantityHttp(data).then(data => {
                 const res = data.data;
                 if (res.code === 200) {
-                    console.log(res,"数据");
+                    this.$message({
+                    message: "排队数量调整成功",
+                    type: "success"
+                    });
+                    this.lotDivestitureForm = {
+                      quantity: "",
+                      num:"",// 新排队数量
+                    };
+                    this.lotForm = {
+                        lot: ""
+                    };
+                    this.showInfo = {
+                      status: "",
+                      operationList: "",
+                      resourceList: "",
+                      quantity: "",
+                      shopOrder: "",
+                      materialRev: "",
+                      routerRev: "",
+                  }
                 }else{
                     this.$message({
                     message: res.message,
@@ -211,12 +230,11 @@ export default {
       findLotAtOperationHttp(data).then(data => {
         const res = data.data;
         if (res.code === 200) {
-          // console.log(res.data,"数据")
           this.showInfo = res.data;
           if(res.data.wipSteps.length>0){
-            this.lotDivestitureFormRules.quantity=res.data.wipSteps[0].stepQuantity;
+            this.lotDivestitureForm.quantity=res.data.wipSteps[0].stepQuantity;
           }else{
-            this.lotDivestitureFormRules.quantity="";
+            this.lotDivestitureForm.quantity="";
           }
           const operations = res.data.operationList.join(",");
           this.showInfo.operationList = operations;
@@ -244,7 +262,6 @@ export default {
     //查询LOT
     goQuery() {
       const data = { lot: this.lotForm.lot };
-      console.log(data,"数据集")
       listLotHttp(data).then(data => {
         const res = data.data;
         if (res.code === 200) {
