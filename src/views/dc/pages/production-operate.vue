@@ -394,6 +394,51 @@
         </el-table-column>
       </template>
     </DsnSelectDialog>
+    <!-- 物料弹框start -->
+    <el-dialog title="物料" :visible.sync="materialDialog" width="400px">
+      <materialModel :material="materialList" @selectMaterial="selectMaterial"></materialModel>
+      <span slot="footer" class="dialog-footer">
+        <dsn-button @click.native="materialDialog = false">取 消</dsn-button>
+        <dsn-button type="primary" @click.native="handleMaterialComfire">确 定</dsn-button>
+      </span>
+    </el-dialog>
+    <!-- 物料弹框end -->
+    <!-- 工艺路线弹框start -->
+    <el-dialog title="工艺路线" :visible.sync="routerDialog" width="400px">
+      <routerModel :router="routerList" @selectRouter="selectRouter"></routerModel>
+      <span slot="footer" class="dialog-footer">
+        <dsn-button @click.native="routerDialog = false">取 消</dsn-button>
+        <dsn-button type="primary" @click.native="handleRouterComfire">确 定</dsn-button>
+      </span>
+    </el-dialog>
+    <!-- 工艺路线弹框end -->
+    <!-- 工单弹框start -->
+    <el-dialog title="工单" :visible.sync="shopOrderDialog" width="400px">
+      <shopOrderModel :shopOrder="shopOrderList" @selectShopOrder="selectShopOrder"></shopOrderModel>
+      <span slot="footer" class="dialog-footer">
+        <dsn-button @click.native="shopOrderDialog = false">取 消</dsn-button>
+        <dsn-button type="primary" @click.native="handleShopOrderComfire">确 定</dsn-button>
+      </span>
+    </el-dialog>
+    <!-- 工单弹框end -->
+    <!-- 工序弹框start -->
+    <el-dialog title="工序" :visible.sync="operationDialog" width="400px">
+      <operationModel :operation="operationList" @selectOperation="selectOperation"></operationModel>
+      <span slot="footer" class="dialog-footer">
+        <dsn-button @click.native="operationDialog = false">取 消</dsn-button>
+        <dsn-button type="primary" @click.native="handleOperationComfire">确 定</dsn-button>
+      </span>
+    </el-dialog>
+    <!-- 工序弹框end -->
+    <!-- 资源弹框start -->
+    <el-dialog title="资源" :visible.sync="resourceDialog" width="400px">
+      <resourceModel :resource="resourceList" @selectResource="selectResource"></resourceModel>
+      <span slot="footer" class="dialog-footer">
+        <dsn-button @click.native="resourceDialog = false">取 消</dsn-button>
+        <dsn-button type="primary" @click.native="handleResourceComfire">确 定</dsn-button>
+      </span>
+    </el-dialog>
+    <!-- 资源弹框end -->
   </div>
 </template>
 <script>
@@ -413,11 +458,19 @@ import { listRouterPage } from "@/api/material/route.maintenance.api.js";
 import { findShopOrderListRequest } from "@/api/work-order/work-order.api.js";
 import { listAllResourceHttp } from "@/api/device/maintenance.api.js";
 import { searchLotDetailHttp } from "@/api/dc/lot.step.api.js";
+import materialModel from "../components/material-model.vue";
+import routerModel from "../components/router-model.vue";
+import shopOrderModel from "../components/shop-order-model.vue";
+import operationModel from "../components/operation-model.vue";
+import resourceModel from "../components/resource-model.vue";
 export default {
   name: "productionOperate",
   components: {
-    // mergeLotModel,
-    // dimQueryLotModel
+    materialModel,
+    routerModel,
+    shopOrderModel,
+    operationModel,
+    resourceModel
   },
   data() {
     return {
@@ -446,15 +499,31 @@ export default {
       ],
       tableData: [],
       selectedLotList: [],
+      //物料
+      materialDialog: false,
+      materialList: [],
+      currentRow: {},
+      //工艺路线
+      routerDialog: false,
+      routerList: [],
+      //工单
+      shopOrderDialog: false,
+      shopOrderList: [],
+      //工序
+      operationDialog: false,
+      operationList: [],
+      //资源
+      resourceDialog: false,
+      resourceList: [],
       list: [],
       lotDatas: [],
       currentLot: {},
       //工序搜索建议
       operationFn: null,
-      operationList: [],
+      operationList2: [],
       //设备搜索建议
       resourceFn: null,
-      resourceList: [],
+      resourceList2: [],
       v:"",
       v2:"",
       v3:"",
@@ -479,6 +548,43 @@ export default {
     this.handlePodConfig();
   },
   methods: {
+    handleResourceComfire() {
+      this.lotConditionForm.resource = this.currentRow.resource;
+      this.resourceDialog = false;
+    },
+    handleOperationComfire() {
+      this.lotConditionForm.operation = this.currentRow.operation;
+      this.operationDialog = false;
+    },
+    handleShopOrderComfire() {
+      this.lotConditionForm.shopOrder = this.currentRow.shopOrder;
+      this.shopOrderDialog = false;
+    },
+    handleRouterComfire() {
+      this.lotConditionForm.routerRev = this.currentRow.revision;
+      this.lotConditionForm.router = this.currentRow.router;
+      this.routerDialog = false;
+    },
+    handleMaterialComfire() {
+      this.lotConditionForm.materialRev = this.currentRow.materialRev;
+      this.lotConditionForm.material = this.currentRow.material;
+      this.materialDialog = false;
+    },
+    selectResource(row) {
+      this.currentRow = row;
+    },
+    selectOperation(row) {
+      this.currentRow = row;
+    },
+    selectShopOrder(row) {
+      this.currentRow = row;
+    },
+    selectRouter(row) {
+      this.currentRow = row;
+    },
+    selectMaterial(row) {
+      this.currentRow = row;
+    },
     //重置查询条件
     handleResetCondition() {
       this.$refs["lotConditionForm"].resetFields();
@@ -680,11 +786,11 @@ export default {
         findPageHttp(data).then(data => {
           const res = data.data;
           if (res.code === 200) {
-            this.operationList = res.data.data;
-            this.operationList.forEach(element => {
+            this.operationList2 = res.data.data;
+            this.operationList2.forEach(element => {
               element.value = element.operation;
             });
-            cb(this.operationList);
+            cb(this.operationList2);
           } else {
             this.$message({
               message: res.message,
@@ -709,11 +815,11 @@ export default {
         findResourceListHttp(data).then(data => {
           const res = data.data;
           if (res.code === 200) {
-            this.resourceList = res.data.data;
-            this.resourceList.forEach(element => {
+            this.resourceList2 = res.data.data;
+            this.resourceList2.forEach(element => {
               element.value = element.resource;
             });
-            cb(this.resourceList);
+            cb(this.resourceList2);
           } else {
             this.$message({
               message: res.message,

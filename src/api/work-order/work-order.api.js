@@ -76,6 +76,11 @@ export const findMaterialRequest = data => {
         `${window.VUE_APP_URL}/mes/material/findMaterial`, data);
 };
 
+export const findMaterialOneRequest = data => {
+    return request.post(
+        `${window.VUE_APP_URL}/mes/material/findMaterial?currentPage=${data.currentPage}&material=${data.material}&materialRev=${data.materialRev}&pageSize=${data.pageSize}`, data);
+};
+
 // router/getRouter
 // 查询单条工艺路线
 export const getRouterRequest = data => {

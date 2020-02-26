@@ -369,6 +369,7 @@ import{
     deleteRequest,
     findShopOrderListHttp,
     findMaterialRequest,
+    findMaterialOneRequest,
     listRouterPageHttp,
     getRouterRequest
 } from '@/api/work-order/work-order.api.js' 
@@ -535,7 +536,7 @@ export default {
       const data=this.searchMaterialForm;
       data.pageSize=0;
       data.currentPage=1;
-      findMaterialRequest(data).then(data =>{
+      findMaterialOneRequest(data).then(data =>{
         const res = data.data
         if(res.code == 200){
           this.materialTable=res.data.data
