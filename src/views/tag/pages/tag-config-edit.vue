@@ -181,7 +181,7 @@
 
     <!-- 底部的菜单栏 -->
     <DsnFooter>
-      <dsn-button @click="testPrint">测试打印</dsn-button>
+      <dsn-button  :disabled="tagConfigForm.labelStorage==''||tagConfigForm.selectDeiveName==''"  @click="testPrint">测试打印</dsn-button>
       <dsn-select v-model="tagConfigForm.selectDeiveName" @focus="handleGetPrintDevicesAvailable">
         <el-option :label="item" :value="item" v-for="(item, index) in getDeviceList" :key="index"></el-option>
       </dsn-select>
@@ -624,8 +624,8 @@ export default {
       }).then(data => {
         const res = data.data;
         if (res.code == 200) {
-          if (res.data != "") {
-            this.tagConfigForm.labelStorage = JSON.parse(res.data);
+          if (res.data.length===1) {
+            this.tagConfigForm.labelStorage = JSON.parse(res.data[1]);
           }
           this.TAGCONFIGLIST(this.tagConfigForm);
         } else {
