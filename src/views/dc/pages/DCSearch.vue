@@ -131,21 +131,22 @@
             <el-table-column type="selection" width="55" :reserve-selection="true"></el-table-column>
             <el-table-column type="index" label="序号" fixed></el-table-column>
             <el-table-column prop="dcGroup" label="数据收集组" width="100" fixed></el-table-column>
+            <el-table-column prop="collectionType" label="收集类型" width="100" fixed>
+              <template slot-scope="scope">{{ parseInt(scope.row.collectionType)===10?"LOT":"资源"}}</template>
+            </el-table-column>
             <el-table-column label="接收值" width="100" fixed>
               <template
                 slot-scope="scope"
               >{{ parseInt(scope.row.collectionType)===10?scope.row.lot:scope.row.resource}}</template>
             </el-table-column>
-            <el-table-column prop="collectionType" label="收集类型" width="100" fixed>
-              <template slot-scope="scope">{{ parseInt(scope.row.collectionType)===10?"LOT":"资源"}}</template>
-            </el-table-column>
-            <template
+            <el-table-column
               v-for="(item,index) in tableParamsData.tableHead"
               width="100"
               show-overflow-tooltip
-            >
-              <el-table-column :prop="item.column_name" :label="item.column_comment" :key="index"></el-table-column>
-            </template>
+              :prop="item.column_name"
+              :label="item.column_comment"
+              :key="index"
+            ></el-table-column>
           </dsn-table>
           <!-- 已收集数据收集组参数清单表格数据end -->
           <!-- 分页start -->
@@ -204,8 +205,8 @@ const filterValLeft = [
   "createTime"
 ];
 const fileNameLeft = "已收集数据收集组清单";
-const tHeaderRight = ["数据收集组", "接收值", "收集类型"];
-const filterValRight = ["dcGroup", "resource", "collectionType"];
+const tHeaderRight = ["数据收集组", "收集类型", "接收值"];
+const filterValRight = ["dcGroup", "collectionType"];
 const fileNameRight = "已收集数据收集组参数清单表格数据";
 export default {
   name: "dc-search",
@@ -426,19 +427,22 @@ export default {
         this.exportHttpRight();
       }
       if (this.checkedListRight.length > 0) {
-        if (parseInt(this.tableParamsData.tableData[0].collectionType) === 10) {
-          this.clonetHeaderRight.push("LOT");
+        const cloneCheckedListRight = _.cloneDeep(this.checkedListRight);
+        cloneCheckedListRight.forEach(element => {
+          element.collectionType =
+            element.collectionType === 10 ? "LOT" : "资源";
+        });
+        if (parseInt(this.searchForm.collectionType) === 10) {
           this.clonefilterValRight.push("lot");
         }
-        if (parseInt(this.tableParamsData.tableData[0].collectionType) === 20) {
-          this.clonetHeaderRight.push("资源");
+        if (parseInt(this.searchForm.collectionType) === 20) {
           this.clonefilterValRight.push("resource");
         }
         this.tableParamsData.tableHead.forEach(element => {
           this.clonetHeaderRight.push(element.column_name);
           this.clonefilterValRight.push(element.column_name);
         });
-        this.exportResultRight(this.checkedListRight);
+        this.exportResultRight(cloneCheckedListRight);
       }
     },
     exportHttpRight() {
@@ -450,18 +454,22 @@ export default {
       findDcParamPageHttp(params).then(data => {
         const res = data.data;
         if (res.code == 200) {
-          if (parseInt(res.data.dcParamPage.data[0].collectionType) === 10) {
-            this.clonetHeaderRight.push("LOT");
+          res.data.dcParamPage.data.forEach(element => {
+            element.collectionType =
+              element.collectionType === 10 ? "LOT" : "资源";
+          });
+          if (parseInt(this.searchForm.collectionType) === 10) {
             this.clonefilterValRight.push("lot");
           }
-          if (parseInt(res.data.dcParamPage.data[0].collectionType) === 20) {
-            this.clonetHeaderRight.push("资源");
+          if (parseInt(this.searchForm.collectionType) === 20) {
             this.clonefilterValRight.push("resource");
           }
+          console.log(this.clonefilterValRight);
           res.data.dcParamColumnHead.forEach(element => {
             this.clonetHeaderRight.push(element);
             this.clonefilterValRight.push(element);
           });
+          console.log(this.clonefilterValRight);
           this.exportResultRight(res.data.dcParamPage.data);
           return;
         }
