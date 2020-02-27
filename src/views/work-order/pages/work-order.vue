@@ -119,7 +119,7 @@
             </el-form-item>
             <el-form-item label="生产数量:" prop="productQty" :label-width="formLabelWidth">
               <el-col :span="4">
-                <dsn-input placeholder="请输入生产数量" v-model="ruleForm.productQty"></dsn-input>
+                <dsn-input type="number" placeholder="请输入生产数量" v-model="ruleForm.productQty"></dsn-input>
               </el-col>
               <!--已下达数量-->
               <el-form>
@@ -731,22 +731,23 @@ export default {
     },
     //保存
     handleSave(){
-      if(this.ruleForm.style ==''){
-        this.$message({
-          message:'类型未填写,提交失败',
-          type:'warning'
-        })
-      }else if(this.ruleForm.state ==''){
-        this.$message({
-          message:'状态未填写,提交失败',
-          type:'warning'
-        }) 
-      }else if(this.ruleForm.plannedMaterial ==''){
-        this.$message({
-          message:'计划物料未填写,提交失败',
-          type:'warning'
-        })
-      }else if(this.ruleForm.productQty == ''){
+      // if(this.ruleForm.style ==''){
+      //   this.$message({
+      //     message:'类型未填写,提交失败',
+      //     type:'warning'
+      //   })
+      // }else if(this.ruleForm.state ==''){
+      //   this.$message({
+      //     message:'状态未填写,提交失败',
+      //     type:'warning'
+      //   }) 
+      // }else if(this.ruleForm.plannedMaterial ==''){
+      //   this.$message({
+      //     message:'计划物料未填写,提交失败',
+      //     type:'warning'
+      //   })
+      // }
+      if(this.ruleForm.productQty == ''){
         this.$message({
           message:'生产数量未填写,提交失败',
           type:'warning'
