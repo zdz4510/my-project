@@ -117,9 +117,9 @@
           <el-table-column label="序号" width="55" type="index">
             <!-- <template slot-scope="scope">{{ scope.row.date }}</template> -->
           </el-table-column>
-          <el-table-column prop="buttonName" label="按钮名称" width="120">
+          <el-table-column prop="buttonId" label="按钮名称" width="120">
             <template slot-scope="scoped">
-              <dsn-input v-model="scoped.row.buttonName"></dsn-input>
+              <dsn-input v-model="scoped.row.buttonId"></dsn-input>
             </template>
           </el-table-column>
           <el-table-column prop="buttionDesc" label="按钮描述" show-overflow-tooltip>
@@ -131,7 +131,7 @@
 
             <template slot-scope="scoped">
               <dsn-select v-model="scoped.row.groupFlag" placeholder="已启用">
-                <el-option label="组" :value="true"></el-option>
+                <!-- <el-option label="组" :value="true"></el-option> -->
                 <el-option label="普通" :value="false"></el-option>
               </dsn-select>
               <!-- <dsn-input v-model="scoped.row.groupFlag">
@@ -301,7 +301,7 @@ export default {
     addButton(){
       const len = this.tableData2.length;
       this.tableData2.splice(len, 0, {
-        buttonName:"",
+        buttonId:"",
         buttionDesc:"",
         groupFlag:false
       });
