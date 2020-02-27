@@ -159,7 +159,7 @@ $bg: #515a6e;
   top: 0;
   padding: 0px 0px 10px 0px;
   overflow-y: auto;
-  z-index: 3;
+  z-index: 999;
   &::-webkit-scrollbar {
     //滚动条整体样式/
     width: 1px;

@@ -391,7 +391,7 @@ export default {
   top: 0;
   width: 100%;
   padding-left: 256px;
-  z-index: 1;
+  z-index: 998;
   display: flex;
   align-items: center;
   background: #fff;
