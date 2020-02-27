@@ -405,6 +405,18 @@ export default {
         }
 
         };
+        // message: "请输入计划物料"
+        const materialRule = (rule, value, callback) => {
+        if (value === "") {
+            this.visableSave=true;
+            callback("计划物料不为空");
+        }else{
+          this.visableSave=false;
+          callback();
+        }
+
+        };
+        
     return {
       //工单表信息
         ruleForm: {
@@ -445,7 +457,7 @@ export default {
             style: [{ required: true, message: "请选择类型", trigger: "blur" }],
             state: [{ required: true, message: "请选择状态", trigger: "blur" }],
             plannedMaterial: [
-                { required: true, message: "请输入计划物料", trigger: "blur" }
+                { required: true,validator: materialRule, trigger: "blur" }
             ],
             productQty: [{ required: true, validator: numIssuedRules, trigger: "blur" }],
             // custom: [{ required: true, message: "请输入自定义字段", trigger: "blur" }],
